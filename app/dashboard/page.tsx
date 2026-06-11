@@ -116,7 +116,7 @@ export default async function Dashboard() {
                   <p className="text-[#00b4ff] font-bold text-lg">{nextAppointment.time} <span className="text-sm font-medium text-slate-400 ml-1">({nextAppointment.date.split('-').reverse().join('/')})</span></p>
                   {nextAppointment.service && (
                     <p className="text-sm text-slate-300 font-medium mt-1 truncate max-w-[200px]">
-                      ✨ {nextAppointment.service.name}
+                      ✨ {nextAppointment.service.name} ({nextAppointment.service.duration} min)
                     </p>
                   )}
                 </div>
@@ -219,7 +219,7 @@ export default async function Dashboard() {
                     </p>
                     {app.service && (
                       <p className="text-xs text-slate-300 mt-1 font-medium">
-                        ✨ {app.service.name}
+                        ✨ {app.service.name} ({app.service.duration} min)
                       </p>
                     )}
                     {app.customerPhone !== "0000000000" && (
