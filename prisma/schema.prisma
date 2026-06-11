@@ -1,0 +1,76 @@
+// Questo blocco dice a Prisma come generare il codice per leggere i dati
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Connessione al cloud di Neon
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------
+// 1. LA TABELLA: IL NEGOZIO (TENANT)
+// ------------------------------------------------------
+model Tenant {
+  id           String        @id @default(cuid()) 
+  slug         String        @unique              
+  name         String                             
+  createdAt    DateTime      @default(now())
+
+  // Relazioni
+  appointments Appointment[]
+  blockedSlots BlockedSlot[]
+  services     Service[]     // 🌟 AGGIUNTO: Un negozio possiede molti servizi
+}
+
+// ------------------------------------------------------
+// 2. NUOVA TABELLA: I SERVIZI OFFERTI DAL NEGOZIO
+// ------------------------------------------------------
+model Service {
+  id          String        @id @default(cuid())
+  name        String        // Es. "Taglio Capelli" o "Massaggio Relax"
+  duration    Int           // Durata in minuti (Es. 15, 30, 45, 60)
+  price       Float?        // Prezzo del servizio (Opzionale)
+
+  // Collegamento al Negozio
+  tenantId    String
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+
+  appointments Appointment[]
+}
+
+// ------------------------------------------------------
+// 3. TABELLA APPUNTAMENTI (AGGIORNATA PER DURATE VARIABILI)
+// ------------------------------------------------------
+model Appointment {
+  id            String   @id @default(cuid()) 
+  customerName  String   
+  customerPhone String   
+  date          String   
+  
+  // 🌟 LOGICA TEMPORALE CONTINUA
+  time          String   // Ora di inizio (es. "09:00")
+  endTime       String?  // Ora di fine (es. "09:45"). Opzionale per non rompere i vecchi!
+  
+  // 🌟 RELAZIONE CON IL SERVIZIO
+  serviceId     String?
+  service       Service? @relation(fields: [serviceId], references: [id])
+
+  tenantId      String?
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+  createdAt     DateTime @default(now()) 
+}
+
+// ------------------------------------------------------
+// 4. TABELLA ORARI E GIORNI BLOCCATI (AGGIORNATA)
+// ------------------------------------------------------
+model BlockedSlot {
+  id       String  @id @default(cuid())
+  date     String  
+  time     String? // Ora inizio pausa
+  endTime  String? // 🌟 AGGIUNTO: Ora fine pausa (Opzionale)
+
+  tenantId String?
+  tenant   Tenant? @relation(fields: [tenantId], references: [id])
+}
