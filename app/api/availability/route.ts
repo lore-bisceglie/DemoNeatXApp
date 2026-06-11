@@ -74,12 +74,7 @@ export async function GET(request: Request) {
         }
 
         if (!hasOverlap) {
-          const isTondo = (slotStart % 30 === 0); 
-          const touchesBoundary = (slotStart === period.start || slotEnd === period.end); 
-
-          if (isTondo || touchesBoundary || touchesExisting) {
-            availableSlots.push(minsToTime(slotStart));
-          }
+          availableSlots.push(minsToTime(slotStart));
         }
       }
     }
