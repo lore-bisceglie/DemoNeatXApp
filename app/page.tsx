@@ -83,11 +83,6 @@ export default function Home() {
     fetch(`/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`)
       .then((res) => res.json())
       .then((data) => {
-        setSlots(data.slots || []);
-        setLoading(true);
-    fetch(`/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`)
-      .then((res) => res.json())
-      .then((data) => {
         let fetchedSlots = data.slots || [];
 
         // 🛡️ FILTRO ANTI-VIAGGIO NEL TEMPO
@@ -110,15 +105,6 @@ export default function Home() {
 
         setSlots(fetchedSlots);
         setIsHoliday(data.isHoliday || false); 
-        setSelectedSlot("");
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Errore di connessione:", error);
-        setSlots([]);
-        setIsHoliday(false);
-        setLoading(false);
-      });isHoliday(data.isHoliday || false); 
         setSelectedSlot("");
         setLoading(false);
       })
