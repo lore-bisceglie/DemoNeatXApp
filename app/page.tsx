@@ -267,7 +267,7 @@ export default function Home() {
             {loading ? (
               <p className="text-slate-400 text-sm">Caricamento orari...</p>
             ) : slots.length > 0 ? (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-2">
                 {slots.map((slot) => (
                   <button
                     key={slot}
