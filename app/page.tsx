@@ -221,9 +221,7 @@ export default function Home() {
         
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-white mb-3 flex justify-center items-center gap-3 flex-wrap">
-            <Link href="/dashboard" className="cursor-pointer hover:text-slate-300 transition">
-              {tenantInfo.name}
-            </Link>
+            {tenantInfo.name}
           </h1>
           
           <a 
