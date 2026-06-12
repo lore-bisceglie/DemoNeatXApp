@@ -84,12 +84,12 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setSlots(data.slots || []);
-        setsetLoading(true);
+        setLoading(true);
     fetch(`/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`)
       .then((res) => res.json())
       .then((data) => {
         let fetchedSlots = data.slots || [];
-        
+
         // 🛡️ FILTRO ANTI-VIAGGIO NEL TEMPO
         const now = new Date();
         // Calcola la data locale di oggi (YYYY-MM-DD)
@@ -104,7 +104,7 @@ export default function Home() {
             const slotTotalMinutes = hours * 60 + minutes;
 
             // Mostra l'orario SOLO se mancano almeno 30 minuti da adesso
-            return slotTotalMinutes >= (currentTotalMinutes + 30);
+            return slotTotalMinutes >= currentTotalMinutes + 30;
           });
         }
 
@@ -118,7 +118,7 @@ export default function Home() {
         setSlots([]);
         setIsHoliday(false);
         setLoading(false);
-      });IsHoliday(data.isHoliday || false); 
+      });isHoliday(data.isHoliday || false); 
         setSelectedSlot("");
         setLoading(false);
       })
