@@ -84,7 +84,41 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         setSlots(data.slots || []);
+        setsetLoading(true);
+    fetch(`/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`)
+      .then((res) => res.json())
+      .then((data) => {
+        let fetchedSlots = data.slots || [];
+        
+        // 🛡️ FILTRO ANTI-VIAGGIO NEL TEMPO
+        const now = new Date();
+        // Calcola la data locale di oggi (YYYY-MM-DD)
+        const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+
+        // Se la data selezionata è oggi, applichiamo il filtro
+        if (date === localToday) {
+          const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+
+          fetchedSlots = fetchedSlots.filter((slot: string) => {
+            const [hours, minutes] = slot.split(":").map(Number);
+            const slotTotalMinutes = hours * 60 + minutes;
+
+            // Mostra l'orario SOLO se mancano almeno 30 minuti da adesso
+            return slotTotalMinutes >= (currentTotalMinutes + 30);
+          });
+        }
+
+        setSlots(fetchedSlots);
         setIsHoliday(data.isHoliday || false); 
+        setSelectedSlot("");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Errore di connessione:", error);
+        setSlots([]);
+        setIsHoliday(false);
+        setLoading(false);
+      });IsHoliday(data.isHoliday || false); 
         setSelectedSlot("");
         setLoading(false);
       })
