@@ -99,7 +99,7 @@ export default function Home() {
             const slotTotalMinutes = hours * 60 + minutes;
 
             // Mostra l'orario SOLO se mancano almeno 30 minuti da adesso
-            return slotTotalMinutes >= currentTotalMinutes + 30;
+            return slotTotalMinutes >= currentTotalMinutes + 5;
           });
         }
 
@@ -232,7 +232,7 @@ export default function Home() {
           >
             {tenantInfo.address}
           </a>
-        </div>
+        </div> 
 
         {/* BOTTONE INSTAGRAM DEL CLIENTE */}
         <div className="flex justify-center mb-8">
