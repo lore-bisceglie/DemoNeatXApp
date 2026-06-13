@@ -6,7 +6,7 @@ import ReminderButton from "./ReminderButton";
 import DeleteButton from "./DeleteButton";
 import { unstable_noStore as noStore } from 'next/cache';
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: { searchParams: { error?: string } }) {
   noStore();
 
   const now = new Date();
@@ -100,6 +100,27 @@ export default async function Dashboard() {
             [+] Nuova Prenotazione
           </Link>
         </div>
+
+        {/* 🚨 BANNER DI ERRORE SCUDI 🚨 */}
+        {searchParams.error === "SCUDO_PAUSA_ATTIVO" && (
+          <div className="mb-8 bg-red-500/10 border border-red-500/30 p-4 rounded-2xl flex items-center gap-4 shadow-lg shadow-red-900/10 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="bg-red-500/20 p-2 rounded-xl text-red-400 text-xl">⚠️</div>
+            <div>
+              <h3 className="font-bold text-red-400">Impossibile bloccare l'orario</h3>
+              <p className="text-sm text-slate-300">C'è già un cliente prenotato in quella fascia oraria! Sposta prima l'appuntamento.</p>
+            </div>
+          </div>
+        )}
+
+        {searchParams.error === "SCUDO_FERIE_ATTIVO" && (
+          <div className="mb-8 bg-orange-500/10 border border-orange-500/30 p-4 rounded-2xl flex items-center gap-4 shadow-lg shadow-orange-900/10 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="bg-orange-500/20 p-2 rounded-xl text-orange-400 text-xl">🌴</div>
+            <div>
+              <h3 className="font-bold text-orange-400">Impossibile inserire le ferie</h3>
+              <p className="text-sm text-slate-300">Hai degli appuntamenti segnati in quei giorni! Disdici i clienti prima di chiudere il salone.</p>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
           
