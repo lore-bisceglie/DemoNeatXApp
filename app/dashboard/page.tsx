@@ -6,8 +6,10 @@ import ReminderButton from "./ReminderButton";
 import DeleteButton from "./DeleteButton";
 import { unstable_noStore as noStore } from 'next/cache';
 
-export default async function Dashboard({ searchParams }: { searchParams: { error?: string } }) {
+// 🛡️ Next.js 15: searchParams è una Promise asincrona
+export default async function Dashboard(props: { searchParams: Promise<{ error?: string, name?: string, phone?: string, cDate?: string, cTime?: string }> }) {
   noStore();
+  const searchParams = await props.searchParams;
 
   const now = new Date();
   const dateFormatter = new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -57,6 +59,52 @@ export default async function Dashboard({ searchParams }: { searchParams: { erro
       const endIndex = allSlots.indexOf(endTime);
 
       if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
+        
+        // --- 🛡️ SCUDO MATEMATICO ANTI-SOVRAPPOSIZIONE ---
+        const existingApps = await prisma.appointment.findMany({ 
+          where: { date: date },
+          include: { service: true }
+        });
+        
+        let conflictApp = null;
+
+        for (let i = startIndex; i < endIndex; i++) {
+          const pauseTime = allSlots[i];
+          const [h, m] = pauseTime.split(':').map(Number);
+          const pauseStart = h * 60 + m;
+          const pauseEnd = pauseStart + 15; // Ogni blocco è 15 min
+
+          for (const app of existingApps) {
+            // Ignoriamo pause passate o ferie
+            if (app.time === "ALL_DAY" || app.customerName.includes("FERIE") || app.customerName.includes("PAUSA")) continue;
+            
+            const [ah, am] = app.time.split(':').map(Number);
+            const appStart = ah * 60 + am;
+            const appDuration = app.service?.duration || 15;
+            const appEnd = appStart + appDuration;
+
+            // Logica di intersezione degli intervalli
+            if (pauseStart < appEnd && pauseEnd > appStart) {
+              conflictApp = app;
+              break;
+            }
+          }
+          if (conflictApp) break;
+        }
+
+        // Se troviamo un conflitto, blocchiamo l'operazione del DB e facciamo Redirect passando i dati!
+        if (conflictApp) {
+          const params = new URLSearchParams({
+            error: "CONFLICT",
+            name: conflictApp.customerName,
+            phone: conflictApp.customerPhone,
+            cDate: conflictApp.date,
+            cTime: conflictApp.time
+          });
+          redirect(`/dashboard?${params.toString()}`);
+        }
+        // --- FINE SCUDO ---
+
         for (let i = startIndex; i < endIndex; i++) {
           await prisma.appointment.create({
             data: { customerName: "☕ PAUSA", customerPhone: "0000000000", date, time: allSlots[i] }
@@ -75,10 +123,49 @@ export default async function Dashboard({ searchParams }: { searchParams: { erro
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      const loop = new Date(start);
+      
+      // --- 🛡️ SCUDO ANTI-SOVRAPPOSIZIONE (GIORNI INTERI) ---
+      const datesToCheck: string[] = [];
+      const checkLoop = new Date(start);
+      while (checkLoop <= end) {
+        datesToCheck.push(checkLoop.toISOString().split("T")[0]);
+        checkLoop.setDate(checkLoop.getDate() + 1);
+      }
 
+      // Cerca il primo vero cliente in quei giorni scelti per le ferie
+      const conflictApp = await prisma.appointment.findFirst({
+        where: {
+          date: { in: datesToCheck },
+          NOT: {
+            OR: [
+              { customerName: { contains: "PAUSA" } },
+              { customerName: { contains: "FERIE" } }
+            ]
+          }
+        }
+      });
+
+      if (conflictApp) {
+        const params = new URLSearchParams({
+          error: "CONFLICT",
+          name: conflictApp.customerName,
+          phone: conflictApp.customerPhone,
+          cDate: conflictApp.date,
+          cTime: conflictApp.time
+        });
+        redirect(`/dashboard?${params.toString()}`);
+      }
+      // --- FINE SCUDO ---
+
+      const loop = new Date(start);
       while (loop <= end) {
         const d = loop.toISOString().split("T")[0];
+        
+        // Pulizia igienica pre-inserimento per evitare doppioni sporchi nel DB
+        await prisma.appointment.deleteMany({
+          where: { date: d, OR: [{ customerName: { contains: "PAUSA" } }, { customerName: { contains: "FERIE" } }] }
+        });
+
         await prisma.appointment.create({
           data: { customerName: "🌴 FERIE", customerPhone: "0000000000", date: d, time: "ALL_DAY" }
         });
@@ -101,23 +188,47 @@ export default async function Dashboard({ searchParams }: { searchParams: { erro
           </Link>
         </div>
 
-        {/* 🚨 BANNER DI ERRORE SCUDI 🚨 */}
-        {searchParams.error === "SCUDO_PAUSA_ATTIVO" && (
-          <div className="mb-8 bg-red-500/10 border border-red-500/30 p-4 rounded-2xl flex items-center gap-4 shadow-lg shadow-red-900/10 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="bg-red-500/20 p-2 rounded-xl text-red-400 text-xl">⚠️</div>
-            <div>
-              <h3 className="font-bold text-red-400">Impossibile bloccare l'orario</h3>
-              <p className="text-sm text-slate-300">C'è già un cliente prenotato in quella fascia oraria! Sposta prima l'appuntamento.</p>
-            </div>
-          </div>
-        )}
+        {/* 🚨 MODALE DI ERRORE PREMIUM: CONFLITTO APPUNTAMENTO 🚨 */}
+        {searchParams.error === "CONFLICT" && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-[#0b1221] border border-red-500/30 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-red-900/20 max-w-md w-full transform scale-100 animate-in zoom-in-95 duration-200">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-red-500/20 p-3 rounded-2xl text-red-400 text-2xl shadow-inner">⚠️</div>
+                <div>
+                  <h3 className="text-xl font-bold text-white tracking-tight">Sovrapposizione Rilevata</h3>
+                  <p className="text-sm text-slate-400 mt-1 leading-snug">Impossibile chiudere l'agenda. C'è un cliente prenotato in questa fascia oraria.</p>
+                </div>
+              </div>
+              
+              <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 mb-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-[#00b4ff]/10 rounded-bl-full pointer-events-none"></div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Dettagli Cliente</p>
+                <p className="text-xl font-extrabold text-white">{searchParams.name}</p>
+                <p className="text-cyan-400 font-bold mt-1">{searchParams.phone}</p>
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#1e2b4a]">
+                  <span className="text-xs text-slate-400 font-medium">📅 {searchParams.cDate?.split('-').reverse().join('/')}</span>
+                  <span className="text-slate-600">•</span>
+                  <span className="text-xs text-slate-400 font-medium">⏰ {searchParams.cTime}</span>
+                </div>
+              </div>
 
-        {searchParams.error === "SCUDO_FERIE_ATTIVO" && (
-          <div className="mb-8 bg-orange-500/10 border border-orange-500/30 p-4 rounded-2xl flex items-center gap-4 shadow-lg shadow-orange-900/10 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="bg-orange-500/20 p-2 rounded-xl text-orange-400 text-xl">🌴</div>
-            <div>
-              <h3 className="font-bold text-orange-400">Impossibile inserire le ferie</h3>
-              <p className="text-sm text-slate-300">Hai degli appuntamenti segnati in quei giorni! Disdici i clienti prima di chiudere il salone.</p>
+              <div className="flex flex-col gap-3">
+                <a 
+                  href={`https://wa.me/${searchParams.phone?.replace(/\D/g, '')}?text=${encodeURIComponent(`Ciao ${searchParams.name}, ti scrivo dal salone. Purtroppo abbiamo avuto un piccolo imprevisto per il tuo appuntamento del ${searchParams.cDate?.split('-').reverse().join('/')} alle ${searchParams.cTime}. Possiamo riprogrammare?`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-[#050814] font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 hover:scale-[1.02]"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  Avvisa su WhatsApp
+                </a>
+                <Link 
+                  href="/dashboard"
+                  className="w-full bg-transparent border border-[#1e2b4a] hover:bg-[#1a2642] text-slate-300 font-bold py-3.5 rounded-xl flex items-center justify-center transition"
+                >
+                  Chiudi e Annulla Operazione
+                </Link>
+              </div>
             </div>
           </div>
         )}
