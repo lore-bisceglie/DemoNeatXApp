@@ -33,7 +33,7 @@ export default function Home() {
   const [tenantInfo] = useState({
     id: "cmq9aubwu0000936e9e4wt68j",
     name: "Appuntamenti Demo NeatX",
-    address: "📍 Via dell'Innovazione, 1 - Milano (MI)",
+    address: "📍 Indirizzo del Salone (Città)",
     phone: "390000000000",
     isDemo: true
   });
