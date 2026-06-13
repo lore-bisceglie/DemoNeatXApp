@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// Funzione matematica per convertire l'orario in minuti (es. 14:00 -> 840)
 function timeToMins(t: string) {
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
@@ -13,49 +12,38 @@ export async function POST(req: Request) {
   const time = formData.get("time") as string;
 
   if (date && time) {
-    // 1. Carichiamo tutti gli appuntamenti di quella giornata
-    const appointments = await prisma.appointment.findMany({
-      where: { date: date }
-    });
-
-    // 2. Carichiamo i servizi per sapere quanto durano
+    const appointments = await prisma.appointment.findMany({ where: { date: date } });
     const services = await prisma.service.findMany();
     const durateServizi: Record<string, number> = {};
     services.forEach((s: any) => durateServizi[s.id] = s.duration);
 
-    // 3. Calcoliamo lo spazio della pausa (ogni slot di pausa dura 15 minuti)
     const pauseStart = timeToMins(time);
     const pauseEnd = pauseStart + 15;
-
     let isOverlapping = false;
 
-    // 4. Verifichiamo se c'è "schianto" con altri appuntamenti
     for (const app of appointments) {
-      if (app.time === "ALL_DAY") continue; // Ignoriamo le ferie
+      // Ignoriamo le ferie e le altre pause dal calcolo
+      if (app.time === "ALL_DAY" || app.customerName.includes("FERIE") || app.customerName.includes("PAUSA")) continue;
 
       const appStart = timeToMins(app.time);
-      // Se è un cliente prendiamo la sua durata, se è un'altra pausa vale 15 min
       const appDuration = (app.serviceId && durateServizi[app.serviceId]) ? durateServizi[app.serviceId] : 15;
       const appEnd = appStart + appDuration;
 
-      // C'è sovrapposizione se la pausa inizia PRIMA della fine dell'appuntamento 
-      // E finisce DOPO l'inizio dell'appuntamento
+      // Se c'è un incastro con un VERO cliente, scatta l'allarme
       if (pauseStart < appEnd && pauseEnd > appStart) {
         isOverlapping = true;
         break;
       }
     }
 
-    // 5. Se rileva uno schianto, blocca l'inserimento nel database!
     if (isOverlapping) {
-      return NextResponse.redirect(new URL("/dashboard?error=overlap", req.url));
+      // 🚨 LA NOSTRA SPIA SEGRETA 🚨
+      return NextResponse.redirect(new URL("/dashboard?error=SCUDO_PAUSA_ATTIVO", req.url));
     }
 
-    // 6. Se è tutto libero, crea la pausa in sicurezza
     await prisma.appointment.create({
       data: { customerName: "☕ PAUSA", customerPhone: "0000000000", date, time }
     });
   }
-
   return NextResponse.redirect(new URL("/dashboard", req.url));
 }
