@@ -34,6 +34,7 @@ export default function Home() {
     id: "cmq9aubwu0000936e9e4wt68j",
     name: "Appuntamenti Demo NeatX",
     address: "📍 Indirizzo del Salone (Città)",
+    mapsLink: "https://maps.app.goo.gl/W9vbcGsr3ZfgdTPy5",
     phone: "390000000000",
     isDemo: true
   });
@@ -225,7 +226,7 @@ export default function Home() {
           </h1>
           
           <a 
-            href="https://maps.app.goo.gl/wzDPqhcyqcRsxbC99" 
+            href={tenantInfo.mapsLink} 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-sm font-medium text-slate-400 hover:text-[#00b4ff] transition flex items-center justify-center gap-1"
