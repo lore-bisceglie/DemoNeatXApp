@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DeleteButton({ 
   appointmentId, 
@@ -19,6 +20,7 @@ export default function DeleteButton({
 }) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter(); // 🛡️ Inizializziamo il router di Next.js
 
   const handleConfirm = async () => {
     setLoading(true);
@@ -43,10 +45,16 @@ export default function DeleteButton({
           `_(Per favore, usa solo il link per prenotare. Non rispondere a questo messaggio automatizzato)_`
         );
         
-        window.location.href = `https://wa.me/39${cleanPhone}?text=${text}`;
-      } else {
-        window.location.reload();
+        // 🛡️ Apre WhatsApp in una NUOVA SCHEDA
+        window.open(`https://wa.me/39${cleanPhone}?text=${text}`, "_blank");
       }
+      
+      // 🛡️ In ogni caso (sia speciali che clienti veri): 
+      // Chiude il modale e chiede a Next.js di aggiornare la Dashboard in background
+      setShowModal(false);
+      setLoading(false);
+      router.refresh();
+
     } catch (error) {
       alert("Errore di rete durante l'eliminazione. Riprova!");
       setLoading(false);
