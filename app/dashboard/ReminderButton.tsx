@@ -6,10 +6,13 @@ export default function ReminderButton({ name, date, time, phone }: { name: stri
   const [showModal, setShowModal] = useState(false);
 
   const handleConfirm = () => {
-    const cleanPhone = phone.replace(/\D/g, "");
-    const text = encodeURIComponent(`Ciao ${name}, ti confermo l'appuntamento presso la Demo NeatX il ${date} alle ${time}. Ti aspetto!`);
+    // 🛡️ Controllo Demo: Invece del redirect reale, mostriamo un avviso di simulazione
+    alert(
+      `🚀 [AMBIENTE DEMO - SIMULAZIONE PROMEMORIA]\n\n` +
+      `Nella versione reale, si aprirebbe automaticamente WhatsApp con questo messaggio pronto da inviare al cliente:\n\n` +
+      `"Ciao ${name}, ti confermo l'appuntamento presso il salone il ${date} alle ${time}. Ti aspetto!"`
+    );
     
-    window.open(`https://wa.me/39${cleanPhone}?text=${text}`, "_blank");
     setShowModal(false);
   };
 
