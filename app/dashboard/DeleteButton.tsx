@@ -19,41 +19,31 @@ export default function DeleteButton({
   isSpecial: boolean;
 }) {
   const [showModal, setShowModal] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // 🛡️ Inizializziamo il router di Next.js
+  const router = useRouter(); 
 
   const handleConfirm = async () => {
     setLoading(true);
 
     try {
-      // 1. Elimina dal database (Svuota lo slot)
+      // 1. Elimina fisicamente dal database
       const noCache = Date.now();
       let res = await fetch(`/api/actions/delete?id=${appointmentId}&t=${noCache}`);
       if (!res.ok) {
         res = await fetch(`/api/action/delete?id=${appointmentId}&t=${noCache}`);
       }
 
-      // 2. Controllo: Manda il messaggio solo se è un cliente reale
+      // 2. Selezioniamo cosa fare: Modal Premium o Refresh Diretto
       if (!isSpecial && phone && phone !== "0000000000") {
-        const cleanPhone = phone.replace(/\D/g, "");
-        
-        const text = encodeURIComponent(
-          `[!] *APPUNTAMENTO ANNULLATO*\n\n` +
-          `Ciao *${customerName}*, ti informiamo che il tuo appuntamento presso la *Demo NeatX* del *${date}* alle ore *${time}* è stato annullato.\n\n` +
-          `Per prenotare un nuovo orario, clicca sul link qui sotto e scegli il posto in autonomia:\n` +
-          `-> https://demo-neatx-app.vercel.app \n\n` +
-          `_(Per favore, usa solo il link per prenotare. Non rispondere a questo messaggio automatizzato)_`
-        );
-        
-        // 🛡️ Apre WhatsApp in una NUOVA SCHEDA
-        window.open(`https://wa.me/39${cleanPhone}?text=${text}`, "_blank");
+        setShowModal(false);
+        setLoading(false);
+        setShowDemoModal(true); // Apriamo la simulazione
+      } else {
+        setShowModal(false);
+        setLoading(false);
+        router.refresh(); // Se è una pausa, si aggiorna e scompare subito
       }
-      
-      // 🛡️ In ogni caso (sia speciali che clienti veri): 
-      // Chiude il modale e chiede a Next.js di aggiornare la Dashboard in background
-      setShowModal(false);
-      setLoading(false);
-      router.refresh();
 
     } catch (error) {
       alert("Errore di rete durante l'eliminazione. Riprova!");
@@ -72,7 +62,7 @@ export default function DeleteButton({
         {isSpecial ? "Sblocca" : "Elimina"}
       </button>
 
-      {/* POPUP STILE NEATX IDENTICO AL PROMEMORIA MA ROSSO */}
+      {/* 1. MODALE DI CONFERMA */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
           <div className="bg-[#0b1221] border border-red-500/30 p-8 rounded-3xl shadow-2xl shadow-red-900/20 max-w-sm w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
@@ -106,6 +96,29 @@ export default function DeleteButton({
                 {loading ? "Attendere..." : (isSpecial ? "Sblocca" : "Elimina")}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. 🚀 MODALE DI SIMULAZIONE DEMO (UX PREMIUM) */}
+      {showDemoModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
+          <div className="bg-[#0b1221] border border-red-500/30 p-8 rounded-3xl shadow-2xl shadow-red-900/20 max-w-sm w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
+            <div className="text-4xl mb-4">🚀</div>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Simulazione Annullamento</h3>
+            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+              L'appuntamento è stato rimosso dal database. Nella versione reale, si aprirebbe automaticamente WhatsApp con questo messaggio pronto per <strong>{customerName}</strong>:<br/><br/>
+              <span className="italic text-slate-300">"[!] APPUNTAMENTO ANNULLATO - Ciao {customerName}, ti informiamo che il tuo appuntamento del {date} alle {time} è stato annullato..."</span>
+            </p>
+            <button 
+              onClick={() => {
+                setShowDemoModal(false);
+                router.refresh(); // Il ricaricamento della pagina avviene solo DOPO aver chiuso il modale!
+              }} 
+              className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-red-500/50 font-bold py-3 rounded-xl transition shadow-lg"
+            >
+              Ho capito
+            </button>
           </div>
         </div>
       )}
