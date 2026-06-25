@@ -2,49 +2,95 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const formData = await req.formData();
-  const startDate = formData.get("startDate") as string;
-  const endDate = formData.get("endDate") as string;
-  
-  if (startDate && endDate) {
+  try {
+    const formData = await req.formData();
+
+    const startDate = formData.get("startDate") as string;
+    const endDate = formData.get("endDate") as string;
+
+    if (!startDate || !endDate) {
+      return NextResponse.json(
+        { error: "Date mancanti" },
+        { status: 400 }
+      );
+    }
+
+    const tenant = await prisma.tenant.findFirst();
+
+    if (!tenant) {
+      return NextResponse.json(
+        { error: "Nessun salone configurato" },
+        { status: 400 }
+      );
+    }
+
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const datesToCheck: string[] = [];
-    const checkLoop = new Date(start);
-    while (checkLoop <= end) {
-      datesToCheck.push(checkLoop.toISOString().split("T")[0]);
-      checkLoop.setDate(checkLoop.getDate() + 1);
+    if (start > end) {
+      return NextResponse.json(
+        { error: "Intervallo date non valido" },
+        { status: 400 }
+      );
     }
 
-    const existingRealAppointments = await prisma.appointment.findFirst({
-      where: {
-        date: { in: datesToCheck },
-        NOT: {
-          OR: [
-            { customerName: { contains: "PAUSA" } },
-            { customerName: { contains: "FERIE" } }
-          ]
-        }
-      }
-    });
-
-    if (existingRealAppointments) {
-      // 🚨 LA NOSTRA SPIA SEGRETA 🚨
-      return NextResponse.redirect(new URL("/dashboard?error=SCUDO_FERIE_ATTIVO", req.url));
-    }
-
+    const datesToBlock: string[] = [];
     const loop = new Date(start);
+
     while (loop <= end) {
-      const d = loop.toISOString().split("T")[0];
-      await prisma.appointment.deleteMany({
-        where: { date: d, OR: [{ customerName: { contains: "PAUSA" } }, { customerName: { contains: "FERIE" } }] }
-      });
-      await prisma.appointment.create({
-        data: { customerName: "🌴 FERIE", customerPhone: "0000000000", date: d, time: "ALL_DAY" }
-      });
+      datesToBlock.push(loop.toISOString().split("T")[0]);
       loop.setDate(loop.getDate() + 1);
     }
+
+    const existingAppointments = await prisma.appointment.findMany({
+      where: {
+        tenantId: tenant.id,
+        date: {
+          in: datesToBlock,
+        },
+        customerName: {
+          notIn: ["☕ PAUSA", "🌴 FERIE"],
+        },
+      },
+    });
+
+    if (existingAppointments.length > 0) {
+      return NextResponse.redirect(
+        new URL("/dashboard?error=MULTIPLE_CONFLICTS", req.url)
+      );
+    }
+
+    for (const date of datesToBlock) {
+      const existingHoliday = await prisma.appointment.findFirst({
+        where: {
+          tenantId: tenant.id,
+          date,
+          time: "ALL_DAY",
+          customerName: "🌴 FERIE",
+        },
+      });
+
+      if (!existingHoliday) {
+        await prisma.appointment.create({
+          data: {
+            customerName: "🌴 FERIE",
+            customerPhone: "0000000000",
+            date,
+            time: "ALL_DAY",
+            tenantId: tenant.id,
+            cancelToken: crypto.randomUUID(),
+          },
+        });
+      }
+    }
+
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  } catch (error) {
+    console.error("Errore blocco ferie:", error);
+
+    return NextResponse.json(
+      { error: "Errore interno" },
+      { status: 500 }
+    );
   }
-  return NextResponse.redirect(new URL("/dashboard", req.url));
 }

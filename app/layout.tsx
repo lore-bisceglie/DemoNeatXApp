@@ -7,17 +7,18 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://neatx-mito.vercel.app"),
-  title: "Agenda NeatX | Prenota Ora", // 🌟 TITOLO DELLA SCHEDA AGGIORNATO
-  description: "Prenota il tuo appuntamento in 10 secondi comodamente online.",
+  metadataBase: new URL("https://demo-neatx-app.vercel.app"),
+  title: "Demo NeatX | Prenotazioni", 
+  description: "Prova una prenotazione demo in 10 secondi.",
   openGraph: {
-    title: "Agenda NeatX", // 🌟 TITOLO WHATSAPP AGGIORNATO
-    description: "Scegli il giorno e l'orario e prenota in 10 secondi.",
-    url: "https://neatx-mito.vercel.app",
-    siteName: "Agenda NeatX", // 🌟 NOME SITO AGGIORNATO
+    title: "Demo NeatX | Prenotazioni", 
+    description: "Prova una prenotazione demo in 10 secondi.",
+    url: "https://demo-neatx-app.vercel.app",
+    siteName: "Demo NeatX",
     images: [
       {
-        url: "/preview.png", 
+        // 🔥 LINK ASSOLUTO: Costringe WhatsApp a trovare l'immagine!
+        url: "https://demo-neatx-app.vercel.app/preview.png", 
         width: 1200,
         height: 630,
       },
@@ -30,7 +31,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="it">
-      {/* ✅ 2. HO RESO IL BODY SCURO PER EVITARE IL "RIMBALZO BIANCO" SU IPHONE */}
       <body className="bg-[#050814] text-slate-200 antialiased">
         {children}
       </body>

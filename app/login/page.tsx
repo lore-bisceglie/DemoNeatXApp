@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,14 +18,14 @@ export default function Login() {
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password }),
     });
 
     if (res.ok) {
-      router.push("/dashboard");
-      router.refresh();
+      // 🚀 Hard redirect: forza il browser a ricaricare la pagina portando con sé il nuovo Cookie
+      window.location.href = "/dashboard"; 
     } else {
-      setError("Password non corretta. Riprova.");
+      setError("Credenziali non valide. Riprova.");
       setLoading(false);
     }
   };
@@ -35,24 +36,37 @@ export default function Login() {
         <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">
           <span className="text-white">Neat</span><span className="text-[#00b4ff]">X</span> <span className="text-slate-500 font-medium">| Auth</span>
         </h1>
-        <p className="text-xs text-slate-400 mb-8">Area riservata. Inserisci la password per accedere all'Agenda.</p>
+        <p className="text-xs text-slate-400 mb-8">Area riservata. Inserisci ID e Password per accedere all'Agenda.</p>
 
         <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="text"
+            placeholder="ID Utente"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition text-center tracking-widest placeholder-slate-500"
+          />
+          
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition text-center tracking-widest"
+            className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition text-center tracking-widest placeholder-slate-500"
           />
-          {error && <p className="text-red-400 text-xs font-bold">{error}</p>}
+          
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold px-3 py-2 rounded-lg">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
-            disabled={loading || !password}
+            disabled={loading || !password || !username}
             className="w-full bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] font-bold py-3 rounded-xl transition shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Accesso in corso..." : "🔑 Accedi"}
+            {loading ? "Accesso in corso..." : "🔑 Accedi all'Agenda"}
           </button>
         </form>
       </div>

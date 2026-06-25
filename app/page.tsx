@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import WaitlistButton from "./WaitlistButton";
 
-// 🌟 DEFINIAMO COME È FATTO UN SERVIZIO
 type Service = {
   id: string;
   name: string;
@@ -14,6 +14,11 @@ type Service = {
 
 export default function Home() {
   const today = new Date().toISOString().split("T")[0];
+
+  const maxDateObj = new Date();
+  maxDateObj.setDate(maxDateObj.getDate() + 60);
+  const maxDate = maxDateObj.toISOString().split("T")[0];
+
   const [date, setDate] = useState(today);
   const [slots, setSlots] = useState<string[]>([]);
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -21,23 +26,55 @@ export default function Home() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateError, setDateError] = useState("");
-  
-  const [honey, setHoney] = useState("");
+  const [formError, setFormError] = useState("");
+  const [isBooking, setIsBooking] = useState(false);
   const [demoModal, setDemoModal] = useState({ show: false, date: "", time: "", serviceName: "" });
+  const [showCancelBanner, setShowCancelBanner] = useState(false);
+  const [honey, setHoney] = useState("");
   const [isHoliday, setIsHoliday] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  
+  // ✅ NUOVO STATO PER L'EASTER EGG DELL'IMMAGINE
+  const [logoClicked, setLogoClicked] = useState(false);
+  
   const router = useRouter();
 
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const [tenantInfo] = useState({
-    id: "cmq9aubwu0000936e9e4wt68j",
+    id: "cmqtds1840000yyqbd23x1jdj",
     name: "Appuntamenti Demo NeatX",
     address: "📍 Indirizzo del Salone (Città)",
-    mapsLink: "https://maps.app.goo.gl/W9vbcGsr3ZfgdTPy5",
     phone: "390000000000",
-    isDemo: true
+    instagramUrl: "https://www.instagram.com",
+    mapsLink: "https://maps.app.goo.gl/W9vbcGsr3ZfgdTPy5",
+    isDemo: true,
   });
+
+  // ✅ FUNZIONE CHE FA PARTIRE L'ANIMAZIONE QUANDO TOCCHI LA FOTO
+  const handleLogoClick = () => {
+    if (logoClicked) return; // Evita che l'utente clicchi 100 volte di fila
+    setLogoClicked(true);
+    
+    // Fa vibrare leggermente il telefono se supportato (Haptic Feedback)
+    if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) {
+      window.navigator.vibrate(50);
+    }
+
+    // Spegne l'animazione dopo 2 secondi
+    setTimeout(() => setLogoClicked(false), 2000);
+  };
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.location.search.includes("canceled=true")
+    ) {
+      setShowCancelBanner(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
 
   useEffect(() => {
     fetch(`/api/services?tenantId=${tenantInfo.id}`)
@@ -45,108 +82,180 @@ export default function Home() {
       .then((data) => {
         if (data.services && data.services.length > 0) {
           setServices(data.services);
-          setSelectedService(data.services[0]); 
+          setSelectedService(data.services[0]);
+        } else {
+          setInitialLoad(false);
+          setDateError("Nessun servizio configurato per questo salone.");
         }
       })
-      .catch((err) => console.error("Errore servizi:", err));
+      .catch((err) => {
+        console.error("Errore servizi:", err);
+        setInitialLoad(false);
+      });
   }, [tenantInfo.id]);
 
   useEffect(() => {
-    if (!date || !selectedService) return; 
-    
+    if (!date || !selectedService) return;
+
     const d = new Date(date);
     const day = d.getDay();
-    
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const dayOfMonth = String(d.getDate()).padStart(2, '0');
-    const giornoMese = `${dayOfMonth}-${month}`; 
-    
+
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const dayOfMonth = String(d.getDate()).padStart(2, "0");
+    const giornoMese = `${dayOfMonth}-${month}`;
+
     const festeNazionali = [
-      "01-01", "06-01", "25-04", "01-05", "02-06", 
-      "15-08", "01-11", "08-12", "25-12", "26-12"
+      "01-01",
+      "06-01",
+      "25-04",
+      "01-05",
+      "02-06",
+      "15-08",
+      "01-11",
+      "08-12",
+      "25-12",
+      "26-12",
     ];
+
+    if (date > maxDate) {
+      setDateError("Puoi prenotare con un massimo di 60 giorni di anticipo.");
+      setSlots([]);
+      setIsHoliday(false);
+      return;
+    }
+
+    if (date < today) {
+      setDateError("Non puoi prenotare in una data passata.");
+      setSlots([]);
+      setIsHoliday(false);
+      return;
+    }
 
     if (day === 0 || day === 1) {
       setDateError("La domenica e il lunedì sono chiuso! Scegli un altro giorno.");
-      setSlots([]); 
+      setSlots([]);
       setIsHoliday(false);
-      return; 
-    } else if (festeNazionali.includes(giornoMese)) {
-      setDateError("Il salone è chiuso in questa data per festività nazionale!");
-      setSlots([]); 
-      setIsHoliday(false);
-      return; 
-    } else {
-      setDateError(""); 
+      return;
     }
-    
+
+    if (festeNazionali.includes(giornoMese)) {
+      setDateError("Il salone è chiuso in questa data per festività nazionale!");
+      setSlots([]);
+      setIsHoliday(false);
+      return;
+    }
+
+    setDateError("");
     setLoading(true);
-    fetch(`/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`)
+
+    fetch(
+      `/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`
+    )
       .then((res) => res.json())
       .then((data) => {
         let fetchedSlots = data.slots || [];
 
-        // 🛡️ FILTRO ANTI-VIAGGIO NEL TEMPO
         const now = new Date();
-        // Calcola la data locale di oggi (YYYY-MM-DD)
-        const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+        const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+          .toISOString()
+          .split("T")[0];
 
-        // Se la data selezionata è oggi, applichiamo il filtro
         if (date === localToday) {
           const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
 
           fetchedSlots = fetchedSlots.filter((slot: string) => {
             const [hours, minutes] = slot.split(":").map(Number);
             const slotTotalMinutes = hours * 60 + minutes;
-
-            // Mostra l'orario SOLO se mancano almeno 30 minuti da adesso
-            return slotTotalMinutes >= currentTotalMinutes + 5;
+            return slotTotalMinutes >= currentTotalMinutes + 30;
           });
         }
 
         setSlots(fetchedSlots);
-        setIsHoliday(data.isHoliday || false); 
+        setIsHoliday(data.isHoliday || false);
         setSelectedSlot("");
         setLoading(false);
+        setInitialLoad(false);
       })
       .catch((error) => {
-        console.error("Errore di connessione:", error);
+        console.error("Errore:", error);
         setSlots([]);
         setIsHoliday(false);
         setLoading(false);
+        setInitialLoad(false);
       });
-  }, [date, tenantInfo.id, selectedService]); 
+  }, [date, maxDate, selectedService, tenantInfo.id, today]);
+
+  const handleFirstAvailable = () => {
+    if (slots.length > 0) {
+      setSelectedSlot(slots[0]);
+      setFormError("");
+    } else {
+      setFormError("Nessun posto disponibile in questa data.");
+    }
+  };
+
+  const isScarce = slots.length > 0 && slots.length <= 5;
 
   const handleBook = async () => {
+    setFormError("");
+
     if (!name || !phone || !selectedSlot || !selectedService) {
-      alert("Per favore, compila tutti i campi.");
+      setFormError(
+        "Per favore, seleziona un servizio, un orario e inserisci Nome e Telefono."
+      );
       return;
     }
 
-    if (dateError || isHoliday) return; 
+    if (!tenantInfo.isDemo && phone !== "0000") {
+      const cifre = phone.replace(/\D/g, "");
+      let isValid = false;
+
+      if (cifre.length === 10) isValid = true;
+      else if (cifre.length === 12 && cifre.startsWith("39")) isValid = true;
+      else if (cifre.length === 14 && cifre.startsWith("0039")) isValid = true;
+
+      if (!isValid) {
+        setFormError(
+          "Il numero non è valido. Un cellulare italiano deve avere 10 cifre. Riprova!"
+        );
+        return;
+      }
+    }
+
+    if (dateError || isHoliday) return;
+
+    setIsBooking(true);
 
     const res = await fetch("/api/book", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        customerName: name, 
-        customerPhone: phone, 
-        date, 
-        time: selectedSlot, 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        customerName: name,
+        customerPhone: phone,
+        date,
+        time: selectedSlot,
         honey,
         tenantId: tenantInfo.id,
-        serviceId: selectedService.id 
+        serviceId: selectedService.id,
+        duration: selectedService.duration,
       }),
     });
 
     if (res.ok) {
+      const data = await res.json();
+      const cancelToken = data.cancelToken;
+
       if (tenantInfo.isDemo) {
-        setDemoModal({ show: true, date: date, time: selectedSlot, serviceName: selectedService.name });
+        setDemoModal({ show: true, date, time: selectedSlot, serviceName: selectedService.name });
         setName("");
         setPhone("");
         setSelectedSlot("");
-        setHoney(""); 
-        setSlots([]); 
+        setDate(today);
+        setSlots([]);
+        setHoney("");
+        setIsBooking(false);
         return;
       }
 
@@ -158,49 +267,123 @@ export default function Home() {
       const [year, month, day] = date.split("-");
       const italianDate = `${day}/${month}/${year}`;
       const cleanPhone = phone.replace(/\D/g, "");
-      const shopPhone = tenantInfo.phone; 
-      
+      const shopPhone = tenantInfo.phone;
+
+      const baseUrl =
+        window.location.hostname === "localhost"
+          ? "http://localhost:3000"
+          : window.location.origin;
+
+      const cancelUrl = `${baseUrl}/cancel/${cancelToken}`;
+
       const text = encodeURIComponent(
-        `✂️ *Nuova Prenotazione!*\n\n` +
-        `👤 *Cliente:* ${name}\n` +
-        `📞 *Telefono:* ${cleanPhone}\n` +
-        `💇‍♂️ *Servizio:* ${selectedService.name}\n` +
-        `📅 *Data:* ${italianDate}\n` +
-        `⏰ *Ora:* ${selectedSlot}\n\n` +
-        `_Prenotazione gestita tramite NeatX._ 🚀`
+        `✨ *Nuova Prenotazione!*\n\n` +
+          `👤 *Cliente:* ${name}\n` +
+          `📞 *Telefono:* ${cleanPhone}\n` +
+          `📅 *Data:* ${italianDate}\n` +
+          `⏰ *Ora:* ${selectedSlot}\n` +
+          `💆‍♀️ *Servizio:* ${selectedService.name} (${selectedService.price}€)\n\n` +
+          `❌ *Per annullare in autonomia:*\n` +
+          `Puoi usare questo link fino a 2 ore prima:\n${cancelUrl}\n\n` +
+          `_Prenotazione gestita tramite Demo NeatX._ 🚀`
       );
 
-      window.location.href = `https://wa.me/${shopPhone}?text=${text}`;
+      const whatsappUrl = `https://wa.me/${shopPhone}?text=${text}`;
+      const link = document.createElement("a");
+      link.href = whatsappUrl;
+      link.target = "_top";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
       setName("");
       setPhone("");
       setSelectedSlot("");
       setDate(today);
       setSlots([]);
-      setHoney(""); 
+      setHoney("");
+      setIsBooking(false);
+    } else if (res.status === 429) {
+      setFormError("Troppi tentativi ravvicinati! Attendi un paio di minuti e riprova.");
+      setIsBooking(false);
     } else {
-      const errorData = await res.json();
-      alert(errorData.error || "Si è verificato un errore, riprova!");
+      setFormError("Si è verificato un errore di connessione, riprova!");
+      setIsBooking(false);
     }
   };
 
-  const isButtonDisabled = dateError !== "" || isHoliday || slots.length === 0;
+  const isButtonDisabled =
+    isBooking || selectedSlot === "" || name === "" || phone === "";
 
-  // 🌟 MESSAGGIO PRECOMPILATO WHATSAPP PER TE (Sostituisci il numero se serve)
-  const whatsappMessage = encodeURIComponent("Ciao Lorenzo! Ho visto la tua app NeatX e vorrei informazioni.");
-  const myPhoneNumber = "393480480942"; // INSERISCI QUI IL TUO NUMERO REALE
+  const isSelectedLastMinute = isScarce && selectedSlot !== "";
+
+  // ✅ Messaggio dinamico quando non ci sono orari disponibili
+  // Modifica qui l'orario di chiusura del salone, se necessario.
+  const closingHour = 19;
+  const closingMinute = 0;
+
+  const nowForMessage = new Date();
+  const localTodayForMessage = new Date(
+    nowForMessage.getTime() - nowForMessage.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
+
+  const currentTotalMinutesForMessage =
+    nowForMessage.getHours() * 60 + nowForMessage.getMinutes();
+  const closingTotalMinutes = closingHour * 60 + closingMinute;
+
+  const isTodaySelected = date === localTodayForMessage;
+  const isSalonClosedNow =
+    isTodaySelected && currentTotalMinutesForMessage >= closingTotalMinutes;
+
+  const noSlotsMessage = isSalonClosedNow
+    ? {
+        icon: "🌙",
+        badge: "SALONE CHIUSO",
+        badgeClass:
+          "bg-cyan-500/10 text-cyan-300 border border-cyan-500/20",
+        title: "Abbiamo terminato la giornata lavorativa.",
+        text: "Seleziona una nuova data sul calendario per trovare il momento perfetto per il tuo relax.",
+      }
+    : {
+        icon: "📅",
+        badge: "TUTTO PRENOTATO",
+        badgeClass:
+          "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20",
+        title: "Nessun orario disponibile per questa data.",
+        text: "La giornata è al completo o non c'è abbastanza tempo per il servizio selezionato. Prova a scegliere un altro giorno.",
+      };
+
+  if (initialLoad) {
+    return (
+      <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center font-sans">
+        <div className="relative flex justify-center items-center mb-6">
+          <div className="absolute w-20 h-20 border-4 border-[#1a2642] border-t-[#00b4ff] rounded-full animate-spin"></div>
+          <span className="text-2xl mt-1">🌿</span>
+        </div>
+
+        <h2 className="text-2xl font-extrabold text-white tracking-tight">
+          Neat<span className="text-[#00b4ff]">X</span> Demo
+        </h2>
+
+        <p className="text-slate-500 text-sm mt-3 font-medium animate-pulse">
+          Sincronizzazione agenda in corso...
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30">
-      
+    <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-500">
       {demoModal.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
           <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-sm w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
             <div className="text-4xl mb-4">🚀</div>
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Prenotazione Simulata</h3>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Prenotazione Demo Salvata</h3>
             <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-              Hai finto di prenotare <strong>{demoModal.serviceName}</strong> per il <strong>{demoModal.date.split("-").reverse().join("/")}</strong> alle <strong>{demoModal.time}</strong>.<br /><br />
-              Nella realtà, i dati verrebbero inviati al database e saresti reindirizzato a WhatsApp per la conferma finale.
+              Hai prenotato <strong>{demoModal.serviceName}</strong> per il <strong>{demoModal.date.split("-").reverse().join("/")}</strong> alle <strong>{demoModal.time}</strong>.<br /><br />
+              La prenotazione è stata salvata nel database DemoNeatX ed è visibile in Dashboard.
             </p>
             <button 
               onClick={() => setDemoModal({ show: false, date: "", time: "", serviceName: "" })}
@@ -212,60 +395,116 @@ export default function Home() {
         </div>
       )}
 
-      {tenantInfo.isDemo && (
-        <div className="max-w-md w-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-xs text-center p-2 rounded-xl mb-4 font-semibold uppercase tracking-wide">
-          ⚠️ Ambiente Demo - Dati fittizi
-        </div>
-      )}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#00b4ff] opacity-[0.04] blur-[120px] pointer-events-none rounded-full"></div>
 
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl shadow-cyan-900/10 border border-[#1a2642] p-6 sm:p-8">
-        
+      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl shadow-cyan-900/10 border border-[#1a2642] p-6 sm:p-8 relative z-10">
+        {tenantInfo.isDemo && (
+          <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-xs text-center p-2 rounded-xl font-semibold uppercase tracking-wide">
+            ⚠️ Ambiente Demo - Dati fittizi accettati
+          </div>
+        )}
+
+        {showCancelBanner && (
+          <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl text-center animate-in fade-in zoom-in duration-300">
+            <span className="block text-2xl mb-1">✅</span>
+            <span className="font-bold block text-sm">Appuntamento annullato</span>
+            <span className="text-xs text-emerald-200">
+              Il tuo slot è stato liberato con successo.
+            </span>
+          </div>
+        )}
+
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white mb-3 flex justify-center items-center gap-3 flex-wrap">
-            {tenantInfo.name}
-          </h1>
           
-          <a 
-            href={tenantInfo.mapsLink} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-slate-400 hover:text-[#00b4ff] transition flex items-center justify-center gap-1"
-          >
-            {tenantInfo.address}
-          </a>
-        </div> 
+          {/* ✅ LA MAGIA DELLA FOTO CHE GIRA */}
+          <div className="flex flex-col items-center justify-center mb-10 relative">
+            <div
+              onClick={handleLogoClick}
+              className={`relative w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-[#00b4ff] to-purple-600 cursor-pointer transition-all duration-1000 z-20 ${
+                logoClicked
+                  ? "rotate-[360deg] scale-110 shadow-[0_0_30px_rgba(0,180,255,0.4)]"
+                  : "shadow-lg shadow-cyan-500/20 hover:scale-105"
+              }`}
+            >
+              <img
+                src="/apple-icon.png"
+                alt="Logo Demo NeatX"
+                className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
+              />
+            </div>
 
-        {/* BOTTONE INSTAGRAM DEL CLIENTE */}
-        <div className="flex justify-center mb-8">
-          <a 
-            href="https://instagram.com/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="flex items-center gap-2 bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 hover:opacity-90 text-white text-xs font-bold px-6 py-2.5 rounded-full shadow-lg shadow-pink-500/20 transition-all transform hover:scale-105"
-          >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
-            </svg>
-            Seguici su Instagram
-          </a>
+            {/* Messaggio fluttuante Easter Egg */}
+            {logoClicked && (
+              <div className="absolute -bottom-8 text-sm font-bold text-[#00b4ff] animate-in fade-in slide-in-from-top-2 zoom-in duration-500 z-10 whitespace-nowrap">
+                Animazione da Demo! 🚀
+              </div>
+            )}
+          </div>
+
+          <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
+            <span className="text-slate-100">{tenantInfo.name}</span>
+          </h1>
+
+          <p className="text-slate-400 text-[13px] font-medium mb-6">
+            Prova la prenotazione online con dati fittizi.
+          </p>
+
+          <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
+            <a
+              href={tenantInfo.mapsLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/50 underline-offset-4 transition-colors text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300"
+            >
+              {tenantInfo.address}
+            </a>
+
+            <a
+              href={tenantInfo.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 hover:from-orange-300 hover:via-pink-400 hover:to-purple-500 text-white px-7 py-3 rounded-full text-sm font-extrabold shadow-lg shadow-pink-500/30 transition transform hover:scale-105"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+              </svg>
+              Seguici su Instagram
+            </a>
+          </div>
         </div>
 
         {services.length > 0 && (
           <div className="mb-6">
-            <label className="block text-sm font-bold mb-2 text-slate-300">Scegli il servizio</label>
-            <select 
-              value={selectedService?.id || ""} 
+            <label className="block text-sm font-bold mb-2 text-slate-300">
+              Scegli il servizio
+            </label>
+
+            <select
+              value={selectedService?.id || ""}
               onChange={(e) => {
-                const s = services.find(srv => srv.id === e.target.value);
+                const s = services.find((srv) => srv.id === e.target.value);
                 setSelectedService(s || null);
-                setSlots([]); 
+                setSlots([]);
                 setSelectedSlot("");
-              }} 
-              className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
+                setFormError("");
+              }}
+              className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer"
             >
               {services.map((srv) => (
                 <option key={srv.id} value={srv.id}>
-                  {srv.name} ({srv.duration} min) - {srv.price}€
+                  {srv.name} ({srv.duration} min) - {srv.price ? `${srv.price}€` : ""}
                 </option>
               ))}
             </select>
@@ -273,129 +512,229 @@ export default function Home() {
         )}
 
         <div className="mb-6">
-          <label className="block text-sm font-bold mb-2 text-slate-300">Scegli il giorno</label>
-          <input 
-            type="date" 
-            value={date} 
-            min={today} 
-            onChange={(e) => setDate(e.target.value)} 
-            className={`w-full bg-[#131c31] border ${dateError ? 'border-red-500' : 'border-[#1e2b4a]'} text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition`} 
+          <label className="block text-sm font-bold mb-2 text-slate-300">
+            Scegli il giorno
+          </label>
+
+          <input
+            type="date"
+            value={date}
+            min={today}
+            max={maxDate}
+            onChange={(e) => {
+              setDate(e.target.value);
+              setFormError("");
+            }}
+            className={`w-full bg-[#131c31] border ${
+              dateError ? "border-red-500" : "border-[#1e2b4a]"
+            } text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition`}
             style={{ colorScheme: "dark" }}
           />
+
           {dateError && (
-            <div className="mt-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium px-4 py-3 rounded-xl flex items-center gap-2">
+            <div className="mt-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium px-4 py-3 rounded-xl flex items-center gap-2 animate-in fade-in">
               <span>[!]</span> {dateError}
             </div>
           )}
         </div>
 
         {isHoliday ? (
-          <div className="mb-6 bg-orange-500/10 border border-orange-500/20 text-orange-400 p-6 rounded-2xl text-center shadow-inner">
+          <div className="bg-orange-500/10 border border-orange-500/20 text-orange-400 p-6 rounded-2xl text-center shadow-inner animate-in fade-in zoom-in duration-300">
             <span className="text-4xl mb-2 block">🏖️</span>
             <h3 className="font-extrabold text-lg mb-1 text-white">Siamo in Ferie!</h3>
-            <p className="text-sm font-medium">Il salone è chiuso in questa data. Per favore, seleziona un altro giorno dal calendario.</p>
+            <p className="text-sm font-medium">
+              Il salone è chiuso in questa data. Per favore, seleziona un altro giorno dal calendario.
+            </p>
+          </div>
+        ) : dateError !== "" ? null : loading ? (
+          <div className="text-center py-8">
+            <p className="text-slate-400 text-sm font-medium animate-pulse">
+              Calcolo incastri perfetti in corso...
+            </p>
+          </div>
+        ) : slots.length === 0 ? (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 mt-8">
+            <div className="mb-4 text-center">
+              <span className="text-4xl mb-3 block">{noSlotsMessage.icon}</span>
+
+              <span
+                className={`inline-block ${noSlotsMessage.badgeClass} px-3 py-1 rounded-full text-xs font-bold mb-3 tracking-widest`}
+              >
+                {noSlotsMessage.badge}
+              </span>
+
+              <h3 className="font-extrabold text-lg mb-1 text-white">
+                {noSlotsMessage.title}
+              </h3>
+
+              <p className="text-slate-300 text-sm font-medium">
+                {noSlotsMessage.text}
+              </p>
+            </div>
+
+            <WaitlistButton selectedDate={date} selectedService={selectedService} tenantId={tenantInfo.id} />
           </div>
         ) : (
-          <div className="mb-6">
-            <label className="block text-sm font-bold mb-2 text-slate-300">Orari disponibili</label>
-            {loading ? (
-              <p className="text-slate-400 text-sm">Caricamento orari...</p>
-            ) : slots.length > 0 ? (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-2">
-                {slots.map((slot) => (
-                  <button
-                    key={slot}
-                    onClick={() => setSelectedSlot(slot)}
-                    className={`py-2 px-1 rounded-xl text-sm font-bold transition-all border ${
-                      selectedSlot === slot
-                        ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-md shadow-cyan-500/20 transform scale-105"
-                        : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-[#00b4ff]/50 hover:bg-[#1a2642]"
-                    }`}
-                  >
-                    {slot}
-                  </button>
-                ))}
+          <div className="animate-in fade-in duration-300">
+            {isScarce && (
+              <div className="mb-5 bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-[0_0_15px_rgba(249,115,22,0.15)] animate-in zoom-in duration-300">
+                <div className="flex items-center gap-3">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+
+                  <span className="text-red-400 text-[11px] font-black tracking-widest uppercase">
+                    Giornata quasi piena
+                  </span>
+                </div>
+
+                <span className="text-orange-100 text-xs font-medium text-center sm:text-right">
+                  Solo{" "}
+                  <b className="text-white text-base bg-red-500/20 px-2 py-0.5 rounded-md border border-red-500/30">
+                    {slots.length}
+                  </b>{" "}
+                  {slots.length === 1 ? "incastro rimasto" : "incastri rimasti"}!
+                </span>
               </div>
-            ) : (
-              <p className="text-slate-400 text-sm">Nessun orario disponibile</p>
             )}
+
+            <div className="mb-6">
+              <label className="block text-sm font-bold mb-2 text-slate-300">
+                Orari disponibili
+              </label>
+
+              <div className="space-y-2">
+                <select
+                  value={selectedSlot}
+                  onChange={(e) => {
+                    setSelectedSlot(e.target.value);
+                    setFormError("");
+                  }}
+                  className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer"
+                >
+                  <option value="">-- Seleziona un orario --</option>
+                  {slots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot} {isScarce ? "🔥 (In esaurimento)" : ""}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={handleFirstAvailable}
+                  className="w-full text-xs font-semibold text-[#00b4ff] hover:text-cyan-400 transition"
+                >
+                  [+] Primo disponibile
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-6 space-y-3">
+              <input
+                type="text"
+                placeholder="Il tuo nome"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setFormError("");
+                }}
+                className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
+              />
+
+              <input
+                type="tel"
+                placeholder="Il tuo numero (WhatsApp)"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setFormError("");
+                }}
+                className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
+              />
+
+              <input
+                type="text"
+                value={honey}
+                onChange={(e) => setHoney(e.target.value)}
+                className="hidden"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
+            {formError && (
+              <div className="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl flex items-start gap-3 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                <span className="text-lg leading-none mt-0.5">⚠️</span>
+                <p className="text-sm font-medium">{formError}</p>
+              </div>
+            )}
+
+            <button
+              onClick={handleBook}
+              disabled={isButtonDisabled}
+              className={`w-full font-bold py-3 rounded-xl transition shadow-lg ${
+                isButtonDisabled
+                  ? "bg-[#131c31] text-slate-500 cursor-not-allowed shadow-none border border-[#1e2b4a]"
+                  : isSelectedLastMinute
+                  ? "bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white shadow-red-500/30"
+                  : "bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] shadow-cyan-500/20"
+              }`}
+            >
+              {isBooking
+                ? "⏳ Elaborazione..."
+                : isSelectedLastMinute
+                ? "🔥 Prenota Subito!"
+                : "✓ Prenota Ora"}
+            </button>
+
+            <p className="text-[10px] text-slate-500 mt-5 text-center mb-8">
+              Verrai reindirizzato a WhatsApp per confermare.
+            </p>
+
+            <div className="pt-6 border-t border-[#1e2b4a]">
+              <WaitlistButton selectedDate={date} selectedService={selectedService} tenantId={tenantInfo.id} />
+            </div>
           </div>
         )}
-
-        <div className="mb-6 space-y-3">
-          <input 
-            type="text" 
-            placeholder="Il tuo nome" 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition" 
-            disabled={isHoliday}
-          />
-          <input 
-            type="tel" 
-            placeholder="Il tuo numero (WhatsApp)" 
-            value={phone} 
-            onChange={(e) => setPhone(e.target.value)} 
-            className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition" 
-            disabled={isHoliday}
-          />
-          
-          <input 
-            type="text" 
-            value={honey} 
-            onChange={(e) => setHoney(e.target.value)} 
-            className="hidden" 
-            tabIndex={-1} 
-            autoComplete="off"
-          />
-        </div>
-
-        <button 
-          onClick={handleBook} 
-          disabled={isButtonDisabled}
-          className={`w-full font-bold py-3 rounded-xl transition shadow-lg ${
-            isButtonDisabled 
-              ? "bg-[#131c31] text-slate-500 cursor-not-allowed shadow-none border border-[#1e2b4a]" 
-              : "bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] shadow-cyan-500/20"
-          }`}
-        >
-          ✓ Prenota Ora
-        </button>
-        
-        <p className="text-[10px] text-slate-500 mt-5 text-center">
-          Verrai reindirizzato a WhatsApp per confermare.
-        </p>
-
       </div>
 
-      {/* 🌟 FOOTER CON I TUOI NUOVI LINK */}
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-5 mt-6 text-center flex flex-col items-center gap-3">
-        <p className="text-[10px] text-slate-400 tracking-wide">
-          Powered by <span className="font-bold text-slate-300">Neat</span><span className="font-bold text-[#00b4ff]">X</span> <br/> 
-          Developed by <span className="text-[#00b4ff]/90 font-semibold">Bisceglie Lorenzo</span>
+      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-5 mt-6 text-center flex flex-col items-center gap-4 relative z-10">
+        <p className="text-[10px] text-slate-400 tracking-wide leading-relaxed">
+          Powered by{" "}
+          <Link aria-hidden="true" className="cursor-default select-none outline-none" href="/dashboard" tabIndex={-1}>
+            <span className="font-bold text-slate-300">Neat</span>
+            <span className="font-bold text-[#00b4ff]">X</span>
+          </Link>
+          <br />
+          Developed by{" "}
+          <span className="text-[#00b4ff]/90 font-semibold">
+            Bisceglie Lorenzo
+          </span>
         </p>
-        
-        <Link href="/dashboard" className="text-[10px] font-bold text-slate-500 hover:text-slate-300 uppercase tracking-widest transition cursor-pointer">
-          AREA GESTIONE
-        </Link>
 
-        {/* I DUE BOTTONI COME DA FOTO */}
-        <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
-          <a href="https://www.instagram.com/lorebisceglie?igsh=cTIzeG15aXEzZ2Ey&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:text-[#00b4ff] transition cursor-pointer">
-            INSTAGRAM
-          </a>
-          <span className="text-slate-600">•</span>
-          <a 
-            href={`https://wa.me/${myPhoneNumber}?text=${whatsappMessage}`} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="hover:text-[#00b4ff] transition cursor-pointer"
+        <div className="flex gap-4 text-[9px] font-medium uppercase tracking-widest mt-1">
+          <a
+            href="https://www.instagram.com/lorebisceglie?igsh=cTIzeG15aXEzZ2Ey&utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-500 hover:text-[#E1306C] transition"
           >
-            WHATSAPP
+            Instagram
+          </a>
+
+          <span className="text-slate-700">•</span>
+
+          <a
+            href="https://wa.me/393480480942?text=Ciao%20Lorenzo!%20Ho%20visto%20la%20tua%20app%20NeatX%20e%20vorrei%20informazioni."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-500 hover:text-[#25D366] transition"
+          >
+            WhatsApp
           </a>
         </div>
       </div>
-
     </div>
   );
 }

@@ -2,34 +2,71 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 function timeToMins(t: string) {
-  const [h, m] = t.split(':').map(Number);
+  const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
 }
 
 export async function POST(req: Request) {
-  const formData = await req.formData();
-  const date = formData.get("date") as string;
-  const time = formData.get("time") as string;
+  try {
+    const formData = await req.formData();
 
-  if (date && time) {
-    const appointments = await prisma.appointment.findMany({ where: { date: date } });
-    const services = await prisma.service.findMany();
-    const durateServizi: Record<string, number> = {};
-    services.forEach((s: any) => durateServizi[s.id] = s.duration);
+    const date = formData.get("date") as string;
+    const time =
+      (formData.get("time") as string) ||
+      (formData.get("startTime") as string);
+
+    const endTime = formData.get("endTime") as string | null;
+
+    if (!date || !time) {
+      return NextResponse.redirect(
+        new URL("/dashboard?error=missing_params", req.url)
+      );
+    }
+
+    const tenant = await prisma.tenant.findFirst();
+
+    if (!tenant) {
+      return NextResponse.redirect(
+        new URL("/dashboard?error=no_tenant", req.url)
+      );
+    }
+
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        date,
+        tenantId: tenant.id,
+      },
+      include: {
+        service: true,
+      },
+    });
 
     const pauseStart = timeToMins(time);
-    const pauseEnd = pauseStart + 15;
+    const pauseEnd = endTime ? timeToMins(endTime) : pauseStart + 15;
+
+    if (pauseEnd <= pauseStart) {
+      return NextResponse.redirect(
+        new URL("/dashboard?error=invalid_time_range", req.url)
+      );
+    }
+
     let isOverlapping = false;
 
     for (const app of appointments) {
-      // Ignoriamo le ferie e le altre pause dal calcolo
-      if (app.time === "ALL_DAY" || app.customerName.includes("FERIE") || app.customerName.includes("PAUSA")) continue;
+      if (app.time === "ALL_DAY") continue;
 
       const appStart = timeToMins(app.time);
-      const appDuration = (app.serviceId && durateServizi[app.serviceId]) ? durateServizi[app.serviceId] : 15;
+
+      let appDuration = 15;
+
+      if (app.endTime) {
+        appDuration = timeToMins(app.endTime) - appStart;
+      } else if (app.service?.duration) {
+        appDuration = app.service.duration;
+      }
+
       const appEnd = appStart + appDuration;
 
-      // Se c'è un incastro con un VERO cliente, scatta l'allarme
       if (pauseStart < appEnd && pauseEnd > appStart) {
         isOverlapping = true;
         break;
@@ -37,13 +74,30 @@ export async function POST(req: Request) {
     }
 
     if (isOverlapping) {
-      // 🚨 LA NOSTRA SPIA SEGRETA 🚨
-      return NextResponse.redirect(new URL("/dashboard?error=SCUDO_PAUSA_ATTIVO", req.url));
+      return NextResponse.redirect(
+        new URL("/dashboard?error=overlap", req.url)
+      );
     }
 
     await prisma.appointment.create({
-      data: { customerName: "☕ PAUSA", customerPhone: "0000000000", date, time }
+      data: {
+        customerName: "☕ PAUSA",
+        customerPhone: "0000000000",
+        date,
+        time,
+        endTime: endTime || null,
+        tenantId: tenant.id,
+        cancelToken: crypto.randomUUID(),
+      },
     });
+
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  } catch (error) {
+    console.error("Errore blocco orario:", error);
+
+    return NextResponse.json(
+      { error: "Errore interno" },
+      { status: 500 }
+    );
   }
-  return NextResponse.redirect(new URL("/dashboard", req.url));
 }

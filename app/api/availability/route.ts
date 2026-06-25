@@ -1,87 +1,92 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-function timeToMins(t: string) {
+// Funzioni Helper per matematica oraria
+const timeToMins = (t: string) => {
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
-}
+};
 
-function minsToTime(m: number) {
+const minsToTime = (m: number) => {
   const h = Math.floor(m / 60).toString().padStart(2, '0');
   const min = (m % 60).toString().padStart(2, '0');
   return `${h}:${min}`;
-}
+};
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const date = searchParams.get("date");
   const tenantId = searchParams.get("tenantId");
-  const durationStr = searchParams.get("duration");
+  const duration = parseInt(searchParams.get("duration") || "30", 10);
 
-  if (!date || !tenantId || !durationStr) {
-    return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
+  if (!date || !tenantId) {
+    return NextResponse.json({ error: "Mancano parametri essenziali" }, { status: 400 });
   }
 
-  const duration = parseInt(durationStr, 10);
+  // 🌟 ORARI CENTRO ESTETICO: Dalle 09:00 alle 19:00 con step di 15 min
+  const openTime = 9 * 60; // 09:00
+  const closeTime = 19 * 60; // 19:00
+  const interval = 15;
 
   try {
     const appointments = await prisma.appointment.findMany({
-      where: { date: date, tenantId: tenantId }
+      where: { date: date, tenantId: tenantId },
+      select: { time: true, endTime: true, customerName: true }
     });
 
-    const services = await prisma.service.findMany({
-      where: { tenantId: tenantId }
-    });
-    
-    const durateServizi: Record<string, number> = {};
-    services.forEach(s => durateServizi[s.id] = s.duration);
-
-    const isHoliday = appointments.some(app => app.time === "ALL_DAY" || app.customerName.includes("FERIE"));
+    const isHoliday = appointments.some((app) => app.time === "ALL_DAY" || app.customerName.includes("FERIE"));
     if (isHoliday) {
       return NextResponse.json({ slots: [], isHoliday: true });
     }
 
+    // Costruiamo gli intervalli già occupati [Inizio, Fine]
     const bookedIntervals = appointments.map(app => {
-      const startMins = timeToMins(app.time);
-      const appDuration = (app.serviceId && durateServizi[app.serviceId]) ? durateServizi[app.serviceId] : 30;
-      return { start: startMins, end: startMins + appDuration };
+      // Le pause storiche senza endTime durano di default 15 min per coprire lo slot
+      const start = timeToMins(app.time);
+      const end = app.endTime ? timeToMins(app.endTime) : start + 15; 
+      return { start, end };
     });
 
-    const workPeriods = [
-      { start: timeToMins("09:00"), end: timeToMins("12:00") },
-      { start: timeToMins("14:00"), end: timeToMins("19:00") }
-    ];
+    // 🌟 MOTORE DI COLLISIONE
+    let availableSlots: string[] = [];
+    
+    for (let currentSlotMins = openTime; currentSlotMins <= closeTime - duration; currentSlotMins += interval) {
+      const potentialStart = currentSlotMins;
+      const potentialEnd = potentialStart + duration;
 
-    const availableSlots: string[] = [];
-    const step = 15; 
+      // Verifica se questo blocco di tempo si sovrappone a qualcosa già prenotato
+      const hasOverlap = bookedIntervals.some(interval => {
+        // La logica matematica della sovrapposizione: Max(inizio1, inizio2) < Min(fine1, fine2)
+        return Math.max(potentialStart, interval.start) < Math.min(potentialEnd, interval.end);
+      });
 
-    for (const period of workPeriods) {
-      for (let current = period.start; current + duration <= period.end; current += step) {
-        const slotStart = current;
-        const slotEnd = current + duration;
-
-        let hasOverlap = false;
-        let touchesExisting = false;
-
-        for (const booked of bookedIntervals) {
-          if (slotStart < booked.end && slotEnd > booked.start) {
-            hasOverlap = true;
-            break;
-          }
-          if (slotStart === booked.end || slotEnd === booked.start) {
-            touchesExisting = true;
-          }
-        }
-
-        if (!hasOverlap) {
-          availableSlots.push(minsToTime(slotStart));
-        }
+      if (!hasOverlap) {
+        availableSlots.push(minsToTime(potentialStart));
       }
+    }
+
+    // Filtro Passato
+    const now = new Date();
+    const dateFormatter = new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' });
+    const parts = dateFormatter.formatToParts(now);
+    const todayItaly = `${parts.find(p => p.type === 'year')?.value}-${parts.find(p => p.type === 'month')?.value}-${parts.find(p => p.type === 'day')?.value}`;
+
+    if (date === todayItaly) {
+      const timeFormatter = new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', hour: '2-digit', minute: '2-digit', hour12: false });
+      const currentTimeItaly = timeFormatter.format(now);
+      const [currentHours, currentMinutes] = currentTimeItaly.split(':').map(Number);
+      const currentTotalMinutes = currentHours * 60 + currentMinutes;
+
+      availableSlots = availableSlots.filter(slot => {
+        const slotMins = timeToMins(slot);
+        return slotMins > currentTotalMinutes;
+      });
     }
 
     return NextResponse.json({ slots: availableSlots, isHoliday: false });
     
   } catch (error) {
+    console.error("Errore Availability:", error);
     return NextResponse.json({ error: "Errore di connessione" }, { status: 500 });
   }
 }

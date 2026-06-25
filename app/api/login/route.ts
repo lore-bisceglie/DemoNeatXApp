@@ -1,23 +1,25 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { password } = await req.json();
+    const { username, password } = await req.json();
     
-    // 🔑 QUI È DOVE IMPOSTI LA PASSWORD
-    if (password === "mito2026") {
+    // 🔒 LEGGE ID E PASSWORD DIRETTAMENTE DAL FILE .env!
+    const validUser = process.env.ADMIN_USER;
+    const validPassword = process.env.ADMIN_PASSWORD;
+
+    if (username === validUser && password === validPassword) {
       const response = NextResponse.json({ success: true });
       response.cookies.set("neatx_auth", "true", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 24 * 7, // Resti loggato per 7 giorni
+        maxAge: 60 * 60 * 24 * 7, // Resti loggato per 7 giorni senza dover rimettere la password
         path: "/",
       });
       return response;
     }
     
-    return NextResponse.json({ error: "Password errata" }, { status: 401 });
+    return NextResponse.json({ error: "Credenziali non valide" }, { status: 401 });
   } catch (error) {
     return NextResponse.json({ error: "Errore server" }, { status: 500 });
   }

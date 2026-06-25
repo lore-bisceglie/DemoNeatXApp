@@ -3,74 +3,127 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Connessione al cloud di Neon
+// Connessione al cloud di Neon (PostgreSQL)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 // ------------------------------------------------------
-// 1. LA TABELLA: IL NEGOZIO (TENANT)
+// 1. IL NEGOZIO / CENTRO ESTETICO (TENANT)
 // ------------------------------------------------------
 model Tenant {
-  id           String        @id @default(cuid()) 
-  slug         String        @unique              
-  name         String                             
-  createdAt    DateTime      @default(now())
+  id            String        @id @default(cuid()) 
+  slug          String        @unique              // Es. "greenbeauty" per l'URL personalizzato
+  name          String        // Nome dell'attività
+  createdAt     DateTime      @default(now())
 
-  // Relazioni
-  appointments Appointment[]
-  blockedSlots BlockedSlot[]
-  services     Service[]     // 🌟 AGGIUNTO: Un negozio possiede molti servizi
+  // Relazioni: Tutto l'universo del salone è agganciato qui
+  appointments  Appointment[]
+  blockedSlots  BlockedSlot[]
+  services      Service[]
+  storeSettings StoreSettings?
+  noShows       NoShow[]
+  waitlists     Waitlist[]
 }
 
 // ------------------------------------------------------
-// 2. NUOVA TABELLA: I SERVIZI OFFERTI DAL NEGOZIO
+// 2. I SERVIZI OFFERTI (DURATE E PREZZI DINAMICI)
 // ------------------------------------------------------
 model Service {
-  id          String        @id @default(cuid())
-  name        String        // Es. "Taglio Capelli" o "Massaggio Relax"
-  duration    Int           // Durata in minuti (Es. 15, 30, 45, 60)
-  price       Float?        // Prezzo del servizio (Opzionale)
+  id           String        @id @default(cuid())
+  name         String        // Es. "Pulizia Viso Premium", "Massaggio Relax"
+  duration     Int           // Durata in minuti (Es. 30, 45, 60, 90)
+  price        Float?        // Prezzo del servizio per calcolo incassi reale
 
-  // Collegamento al Negozio
-  tenantId    String
-  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  // Collegamento al Tenant
+  tenantId     String
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
 
   appointments Appointment[]
 }
 
 // ------------------------------------------------------
-// 3. TABELLA APPUNTAMENTI (AGGIORNATA PER DURATE VARIABILI)
+// 3. APPUNTAMENTI (MATRICE SAAS CORAZZATA)
 // ------------------------------------------------------
 model Appointment {
   id            String   @id @default(cuid()) 
   customerName  String   
-  customerPhone String   
-  date          String   
+  customerPhone String   // Se inserito da admin (walk-in) può essere "0000000000"
+  date          String   // Giorno (es. "2026-06-22")
   
-  // 🌟 LOGICA TEMPORALE CONTINUA
-  time          String   // Ora di inizio (es. "09:00")
-  endTime       String?  // Ora di fine (es. "09:45"). Opzionale per non rompere i vecchi!
+  // Logica temporale elastica
+  time          String   // Ora inizio (es. "10:30")
+  endTime       String?  // Ora fine computata (es. "11:30")
   
-  // 🌟 RELAZIONE CON IL SERVIZIO
+  // Armatura di Sicurezza & Controllo del Progetto 1
+  cancelToken   String   @unique @default(uuid()) // Token per disdetta autonoma (limite 2h)
+  source        String   @default("ONLINE")       // ONLINE o WALK_IN
+  isPaid        Boolean  @default(false)          // Integrazione Stripe Mock / Salone
+  createdAt     DateTime @default(now()) 
+
+  // Relazione con il Servizio specifico
   serviceId     String?
   service       Service? @relation(fields: [serviceId], references: [id])
 
+  // Relazione con il Negozio
   tenantId      String?
   tenant        Tenant?  @relation(fields: [tenantId], references: [id])
-  createdAt     DateTime @default(now()) 
 }
 
 // ------------------------------------------------------
-// 4. TABELLA ORARI E GIORNI BLOCCATI (AGGIORNATA)
+// 4. GESTIONE CHIUSURE, PAUSE E FERIE
 // ------------------------------------------------------
 model BlockedSlot {
   id       String  @id @default(cuid())
-  date     String  
-  time     String? // Ora inizio pausa
-  endTime  String? // 🌟 AGGIUNTO: Ora fine pausa (Opzionale)
+  date     String  // Giorno del blocco
+  time     String? // Ora inizio blocco. Se null = Giornata intera di chiusura (Ferie)
+  endTime  String? // Ora fine blocco (opzionale, per pause orarie flessibili)
 
+  // Collegamento al Tenant
   tenantId String?
   tenant   Tenant? @relation(fields: [tenantId], references: [id])
+}
+
+// ------------------------------------------------------
+// 5. IMPOSTAZIONI SALONE & PORTAFOGLIO SMS
+// ------------------------------------------------------
+model StoreSettings {
+  id         String   @id @default(cuid())
+  smsCredits Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone
+  updatedAt  DateTime @updatedAt
+
+  // Relazione 1-a-1 col Tenant
+  tenantId   String   @unique
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+}
+
+// ------------------------------------------------------
+// 6. IL REGISTRO NERO: I NO-SHOW
+// ------------------------------------------------------
+model NoShow {
+  id            String   @id @default(cuid())
+  customerPhone String   // Numero tracciato anti-furbi
+  customerName  String?  
+  date          String   // Giorno del "buco"
+  createdAt     DateTime @default(now())
+
+  // Collegamento al Tenant per isolamento dati
+  tenantId      String?
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+}
+
+// ------------------------------------------------------
+// 7. LA LISTA D'ATTESA INTELLIGENTE
+// ------------------------------------------------------
+model Waitlist {
+  id        String   @id @default(cuid())
+  name      String   
+  phone     String   // Contatto WhatsApp
+  date      String   // Giorno desiderato
+  createdAt DateTime @default(now())
+
+  // Collegamento al Tenant per isolamento dati
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
 }

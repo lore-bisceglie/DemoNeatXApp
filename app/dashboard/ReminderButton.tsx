@@ -2,72 +2,79 @@
 
 import { useState } from "react";
 
-export default function ReminderButton({ name, date, time, phone }: { name: string, date: string, time: string, phone: string }) {
+export default function ReminderButton({
+  name,
+  date,
+  time,
+  phone,
+}: {
+  name: string;
+  date: string;
+  time: string;
+  phone: string;
+}) {
   const [showModal, setShowModal] = useState(false);
-  const [showDemoModal, setShowDemoModal] = useState(false);
 
-  const handleConfirm = () => {
-    // 🛡️ Nessun redirect. Chiudiamo il modale di conferma e apriamo quello di simulazione.
+  const handleSendReminder = () => {
+    const cleanPhone = phone.replace(/\D/g, "");
+    const finalPhone = cleanPhone.startsWith("39")
+      ? cleanPhone
+      : `39${cleanPhone}`;
+
+    const text = encodeURIComponent(
+      `Ciao *${name}*! Ti ricordiamo il tuo appuntamento da *Demo NeatX* per il *${date}* alle ore *${time}*.\n\n` +
+        `A presto 🌿`
+    );
+
+    window.open(`https://wa.me/${finalPhone}?text=${text}`, "_blank");
     setShowModal(false);
-    setShowDemoModal(true);
   };
 
   return (
     <>
-      <button 
-        type="button"
-        onClick={() => setShowModal(true)}
-        className="text-purple-400 hover:text-purple-300 text-xs font-bold px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg transition border border-purple-500/20 hover:border-purple-500/40 ml-2"
-      >
-        Promemoria
-      </button>
-
-      {/* 1. MODALE DI CONFERMA */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
-          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-sm w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
-            <div className="text-4xl mb-4">💬</div>
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Invia Promemoria</h3>
-            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-              Vuoi avvisare <strong>{name}</strong> su WhatsApp per l'appuntamento del {date} alle {time}?
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-xs w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-full flex items-center justify-center text-2xl mb-4 border border-purple-500/20">
+              💬
+            </div>
+
+            <h3 className="text-white font-extrabold text-lg mb-2">
+              Invia Promemoria
+            </h3>
+
+            <p className="text-slate-400 text-[13px] mb-6 leading-relaxed">
+              Vuoi inviare un promemoria WhatsApp a <b>{name}</b>?
             </p>
-            <div className="flex gap-3">
-              <button 
-                onClick={() => setShowModal(false)} 
-                className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] font-bold py-3 rounded-xl transition"
+
+            <div className="flex gap-3 w-full">
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="flex-1 bg-[#131c31] text-slate-300 hover:text-white border border-[#1e2b4a] py-3 rounded-xl text-sm font-bold transition"
               >
-                Annulla
+                No, chiudi
               </button>
-              <button 
-                onClick={handleConfirm} 
-                className="w-full bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] font-bold py-3 rounded-xl transition shadow-lg shadow-cyan-500/20"
+
+              <button
+                type="button"
+                onClick={handleSendReminder}
+                className="flex-1 bg-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white border border-purple-500/50 py-3 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2"
               >
-                Invia
+                ✓ Invia
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. 🚀 MODALE DI SIMULAZIONE DEMO (UX PREMIUM) */}
-      {showDemoModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
-          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-sm w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
-            <div className="text-4xl mb-4">🚀</div>
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Simulazione Promemoria</h3>
-            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-              Nella versione reale, si aprirebbe automaticamente WhatsApp con questo messaggio pronto da inviare a <strong>{name}</strong>:<br/><br/>
-              <span className="italic text-slate-300">"Ciao {name}, ti confermo l'appuntamento presso il salone il {date} alle {time}. Ti aspetto!"</span>
-            </p>
-            <button 
-              onClick={() => setShowDemoModal(false)} 
-              className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
-            >
-              Ho capito
-            </button>
-          </div>
-        </div>
-      )}
+      <button
+        type="button"
+        onClick={() => setShowModal(true)}
+        className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 px-3 py-2 rounded-xl text-xs font-bold transition"
+      >
+        Promemoria
+      </button>
     </>
   );
 }
