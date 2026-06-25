@@ -40,49 +40,14 @@ export default function WaitlistButton({
       return;
     }
 
-    const cifre = phone.replace(/\D/g, "");
-
-    const isValid =
-      cifre.length === 10 ||
-      (cifre.length === 12 && cifre.startsWith("39")) ||
-      (cifre.length === 14 && cifre.startsWith("0039"));
-
-    if (!isValid) {
-      setError("Il numero WhatsApp non è valido.");
-      return;
-    }
-
     setLoading(true);
 
-    try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          phone,
-          date: selectedDate,
-          tenantId,
-          serviceId: selectedService?.id || null,
-          serviceName: selectedService?.name || null,
-        }),
-      });
-
-      if (!res.ok) {
-        setError("Errore durante l'invio. Riprova.");
-        setLoading(false);
-        return;
-      }
-
+    // 🛡️ SIMULAZIONE DEMO WAITLIST: Saltiamo validazione telefono e chiamate API.
+    // Accettiamo lettere/numeri fittizi e simuliamo l'inserimento.
+    setTimeout(() => {
       setSuccess(true);
-    } catch (error) {
-      console.error(error);
-      setError("Errore di connessione. Riprova.");
-    }
-
-    setLoading(false);
+      setLoading(false);
+    }, 800);
   };
 
   if (success) {

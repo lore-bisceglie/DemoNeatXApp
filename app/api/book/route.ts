@@ -40,18 +40,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true }); // Trappola anti-bot scattata
     }
     
-    if (!customerName || !customerPhone || !date || !time || !tenantId || !serviceId) {
-      return NextResponse.json({ error: "Per favore, compila tutti i campi." }, { status: 400 });
+    if (!customerName || !date || !time || !tenantId || !serviceId) {
+      return NextResponse.json({ error: "Per favore, compila tutti i campi obbligatori." }, { status: 400 });
     }
 
     if (!isDemoTenant && customerName.trim().length < 3) {
       return NextResponse.json({ error: "Il nome inserito è troppo corto." }, { status: 400 });
     }
 
-    const cleanPhone = customerPhone.replace(/\s+/g, '');
+    const cleanPhone = customerPhone ? customerPhone.replace(/\s+/g, '') : "0000000000";
     const phoneRegex = /^[0-9]{8,15}$/;
 
-    if (!isDemoTenant && !phoneRegex.test(cleanPhone) && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
+    if (!isDemoTenant && !isAdmin && customerPhone && !phoneRegex.test(cleanPhone) && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
       return NextResponse.json({ error: "Inserisci un numero di telefono valido." }, { status: 400 });
     }
 

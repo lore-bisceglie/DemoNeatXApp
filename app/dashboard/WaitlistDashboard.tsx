@@ -10,47 +10,24 @@ type WaitlistItem = {
 };
 
 export default function WaitlistDashboard() {
-  const [waitlist, setWaitlist] = useState<WaitlistItem[]>([]);
+  // 🛡️ DATI FITTIZI PER LA DEMO (Così il componente non risulta mai vuoto)
+  const [waitlist, setWaitlist] = useState<WaitlistItem[]>([
+    { id: "demo-1", name: "Chiara Bianchi", phone: "393331112222", date: "2026-06-15" },
+    { id: "demo-2", name: "Valentina Neri", phone: "393334445555", date: "2026-06-16" }
+  ]);
+  
   const [deleteTarget, setDeleteTarget] = useState<WaitlistItem | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  // 🚀 NUOVO STATO PER IL MODALE DI AVVISO WHATSAPP PREMIUM
+  const [demoAlert, setDemoAlert] = useState<{ show: boolean; name: string; date: string } | null>(null);
 
-  useEffect(() => {
-    fetchWaitlist();
-  }, []);
-
-  const fetchWaitlist = async () => {
-    try {
-      const res = await fetch("/api/waitlist");
-
-      if (!res.ok) {
-        console.error("Errore API waitlist:", res.status);
-        setWaitlist([]);
-        return;
-      }
-
-      const data = await res.json();
-      setWaitlist(data.waitlist || []);
-    } catch (e) {
-      console.error(e);
-      setWaitlist([]);
-    }
-  };
+  // 🗑️ Rimosso lo useEffect che andava a chiamare /api/waitlist vera e propria.
 
   const handleWhatsApp = (name: string, phone: string, date: string) => {
-    const cleanPhone = phone.replace(/\D/g, "");
     const formattedDate = date.split("-").reverse().join("/");
-
-    const finalPhone = cleanPhone.startsWith("39")
-      ? cleanPhone
-      : `39${cleanPhone}`;
-
-    const text = encodeURIComponent(
-      `Ciao *${name}*! Sono Demo NeatX.\n\n` +
-        `Si è appena liberato un posto per la giornata del *${formattedDate}*.\n` +
-        `Sei ancora interessato? Rispondimi a questo messaggio così te lo blocco subito!`
-    );
-
-    window.open(`https://wa.me/${finalPhone}?text=${text}`, "_blank");
+    // 🛡️ INVECE DI APRIRE VERAMENTE WHATSAPP (Perché siamo in Demo), APRIAMO IL MODALE NEATX
+    setDemoAlert({ show: true, name, date: formattedDate });
   };
 
   const openRemovePopup = (item: WaitlistItem) => {
@@ -64,36 +41,42 @@ export default function WaitlistDashboard() {
 
   const confirmRemove = async () => {
     if (!deleteTarget) return;
-
     setLoading(true);
-
-    try {
-      const res = await fetch(`/api/waitlist?id=${deleteTarget.id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        console.error("Errore rimozione waitlist:", res.status);
-        setLoading(false);
-        return;
-      }
-
-      setWaitlist((prev) =>
-        prev.filter((item) => item.id !== deleteTarget.id)
-      );
-
+    
+    // 🛡️ SIMULAZIONE DEMO: Ritardo finto per cancellare l'item dall'array locale
+    setTimeout(() => {
+      setWaitlist((prev) => prev.filter((item) => item.id !== deleteTarget.id));
       setDeleteTarget(null);
-    } catch (e) {
-      console.error(e);
-    }
-
-    setLoading(false);
+      setLoading(false);
+    }, 600);
   };
 
   if (waitlist.length === 0) return null;
 
   return (
     <>
+      {/* 🚀 NUOVO MODALE SIMULAZIONE WHATSAPP PREMIUM */}
+      {demoAlert && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-sm w-full text-center transform scale-100 animate-in zoom-in-95 duration-200">
+            <div className="text-4xl mb-4">💬</div>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Simulazione Avviso</h3>
+            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+              Nella realtà, si aprirebbe WhatsApp con questo messaggio pronto da inviare a <strong>{demoAlert.name}</strong>:<br/><br/>
+              <span className="italic text-slate-300">
+                "Ciao {demoAlert.name}! Sono la Demo NeatX.<br/>Si è appena liberato un posto per la giornata del {demoAlert.date}.<br/>Sei ancora interessato? Rispondimi a questo messaggio così te lo blocco subito!"
+              </span>
+            </p>
+            <button 
+              onClick={() => setDemoAlert(null)} 
+              className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
+            >
+              Ho capito
+            </button>
+          </div>
+        </div>
+      )}
+
       {deleteTarget && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-xs w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">

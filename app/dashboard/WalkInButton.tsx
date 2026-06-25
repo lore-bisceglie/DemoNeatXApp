@@ -22,6 +22,8 @@ export default function WalkInButton({ date, time, tenantId, services }: { date:
     const serviceSelected = services.find(s => s.id === selectedServiceId);
 
     try {
+      // Ritorna a puntare all'API book, dato che ora l'abbiamo modificata 
+      // per accettare appuntamenti senza numero di telefono per gli admin.
       const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

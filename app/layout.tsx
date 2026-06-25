@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://demo-neatx-app.vercel.app"),
   title: "Demo NeatX | Prenotazioni", 
   description: "Prova una prenotazione demo in 10 secondi.",
+  icons: {
+    icon: "/apple-icon.png",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "Demo NeatX | Prenotazioni", 
     description: "Prova una prenotazione demo in 10 secondi.",

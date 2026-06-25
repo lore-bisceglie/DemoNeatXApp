@@ -696,7 +696,12 @@ export default async function Dashboard(props: {
       
 
         {/* ALTRE FUNZIONI DASHBOARD */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* AGENDA DINAMICA TERMINA QUI SOPRA */}
+
+        <WaitlistDashboard />
+
+        {/* ALTRE FUNZIONI DASHBOARD */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden">
             <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
               🎯

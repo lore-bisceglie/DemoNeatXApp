@@ -226,6 +226,22 @@ export default function Home() {
 
     setIsBooking(true);
 
+    // 🛡️ MODIFICA DEMO: Se è una demo, bypassiamo l'API vera e propria!
+    // Simuliamo il caricamento per permettere l'inserimento di lettere a caso.
+    if (tenantInfo.isDemo) {
+      setTimeout(() => {
+        setDemoModal({ show: true, date, time: selectedSlot, serviceName: selectedService.name });
+        setName("");
+        setPhone("");
+        setSelectedSlot("");
+        setDate(today);
+        setSlots([]);
+        setHoney("");
+        setIsBooking(false);
+      }, 800);
+      return;
+    }
+
     const res = await fetch("/api/book", {
       method: "POST",
       headers: {
@@ -360,7 +376,7 @@ export default function Home() {
       <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center font-sans">
         <div className="relative flex justify-center items-center mb-6">
           <div className="absolute w-20 h-20 border-4 border-[#1a2642] border-t-[#00b4ff] rounded-full animate-spin"></div>
-          <span className="text-2xl mt-1">🌿</span>
+          <span className="text-2xl mt-1">🚀</span>
         </div>
 
         <h2 className="text-2xl font-extrabold text-white tracking-tight">
@@ -700,18 +716,23 @@ export default function Home() {
       </div>
 
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-5 mt-6 text-center flex flex-col items-center gap-4 relative z-10">
-        <p className="text-[10px] text-slate-400 tracking-wide leading-relaxed">
-          Powered by{" "}
-          <Link aria-hidden="true" className="cursor-default select-none outline-none" href="/dashboard" tabIndex={-1}>
-            <span className="font-bold text-slate-300">Neat</span>
-            <span className="font-bold text-[#00b4ff]">X</span>
+        <div className="text-[10px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
+          <p>
+            Powered by{" "}
+            <span className="font-bold text-slate-300">Neat</span><span className="font-bold text-[#00b4ff]">X</span>
+            <br />
+            Developed by{" "}
+            <span className="text-[#00b4ff]/90 font-semibold">
+              Bisceglie Lorenzo
+            </span>
+          </p>
+          <Link 
+            href="/dashboard"
+            className="mt-1 inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 rounded-xl transition-all font-bold uppercase tracking-widest shadow-lg shadow-black/20"
+          >
+            ⚙️ Dashboard
           </Link>
-          <br />
-          Developed by{" "}
-          <span className="text-[#00b4ff]/90 font-semibold">
-            Bisceglie Lorenzo
-          </span>
-        </p>
+        </div>
 
         <div className="flex gap-4 text-[9px] font-medium uppercase tracking-widest mt-1">
           <a
