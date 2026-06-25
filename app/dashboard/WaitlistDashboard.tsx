@@ -12,8 +12,8 @@ type WaitlistItem = {
 export default function WaitlistDashboard() {
   // 🛡️ DATI FITTIZI PER LA DEMO (Così il componente non risulta mai vuoto)
   const [waitlist, setWaitlist] = useState<WaitlistItem[]>([
-    { id: "demo-1", name: "Chiara Bianchi", phone: "393331112222", date: "2026-06-15" },
-    { id: "demo-2", name: "Valentina Neri", phone: "393334445555", date: "2026-06-16" }
+    { id: "demo-1", name: "Clarissa Bianchi", phone: "393331112222", date: "2026-06-15" },
+    { id: "demo-2", name: "Veronica Neri", phone: "393334445555", date: "2026-06-16" }
   ]);
   
   const [deleteTarget, setDeleteTarget] = useState<WaitlistItem | null>(null);
