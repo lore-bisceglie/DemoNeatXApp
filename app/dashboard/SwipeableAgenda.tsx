@@ -8,26 +8,43 @@ export default function SwipeableAgenda({ children }: { children: React.ReactNod
   const searchParams = useSearchParams();
   const currentOffset = parseInt(searchParams.get("weekOffset") || "0", 10);
   
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  // ✅ Ora tracciamo sia la X (orizzontale) che la Y (verticale)
+  const [touchStart, setTouchStart] = useState<{ x: number, y: number } | null>(null);
+  const [touchEnd, setTouchEnd] = useState<{ x: number, y: number } | null>(null);
 
-  const minSwipeDistance = 50; 
+  // Aumentata leggermente la tolleranza
+  const minSwipeDistance = 60; 
 
   const onTouchStart = (e: TouchEvent) => {
     setTouchEnd(null); 
-    setTouchStart(e.targetTouches[0].clientX); 
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    }); 
   };
 
   const onTouchMove = (e: TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX); 
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    }); 
   };
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
+    const deltaX = touchStart.x - touchEnd.x;
+    const deltaY = touchStart.y - touchEnd.y;
+    
+    // ✅ IL BLOCCO DIREZIONALE: 
+    // Se lo spostamento verticale (Y) è maggiore di quello orizzontale (X),
+    // l'utente sta scorrendo la pagina. Abortiamo il cambio settimana!
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      return;
+    }
+
+    const isLeftSwipe = deltaX > minSwipeDistance;
+    const isRightSwipe = deltaX < -minSwipeDistance;
     
     if (isLeftSwipe) {
       router.push(`/dashboard?weekOffset=${currentOffset + 1}`, { scroll: false });
