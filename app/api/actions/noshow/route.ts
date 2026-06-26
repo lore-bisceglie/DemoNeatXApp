@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
+
 export async function POST(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -22,6 +24,7 @@ export async function POST(request: Request) {
         customerPhone: phone,
         customerName: name || "Sconosciuto",
         date,
+        tenantId: DEMO_TENANT_ID,
       },
     });
 

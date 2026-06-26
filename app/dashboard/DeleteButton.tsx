@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type ModalState = "NONE" | "CONFIRM_WHATSAPP" | "CONFIRM_NOSHOW";
+type ModalState = "NONE" | "DEMO_NOTICE" | "CONFIRM_NOSHOW";
 
 export default function DeleteButton({
   appointmentId,
@@ -21,6 +21,7 @@ export default function DeleteButton({
 }) {
   const [loading, setLoading] = useState(false);
   const [modalState, setModalState] = useState<ModalState>("NONE");
+  const [demoNotice, setDemoNotice] = useState("");
 
   const deleteAppointment = async () => {
     const noCache = Date.now();
@@ -43,8 +44,11 @@ export default function DeleteButton({
       await deleteAppointment();
 
       if (!isSpecial && phone && phone !== "0000000000") {
+        setDemoNotice(
+          `Demo: appuntamento di ${customerName} eliminato.\n\nNella versione reale si potrebbe aprire WhatsApp con questo testo:\n\nCiao ${customerName}, ti informiamo che il tuo appuntamento del ${date} alle ${time} e stato annullato. Puoi prenotare un nuovo orario dalla pagina prenotazioni.`
+        );
+        setModalState("DEMO_NOTICE");
         setLoading(false);
-        setModalState("CONFIRM_WHATSAPP");
       } else {
         window.location.reload();
       }
@@ -55,24 +59,8 @@ export default function DeleteButton({
     }
   };
 
-  const handleWhatsAppConfirm = () => {
-    const cleanPhone = phone.replace(/\D/g, "");
-    const finalPhone = cleanPhone.startsWith("39")
-      ? cleanPhone
-      : `39${cleanPhone}`;
-
-    const text = encodeURIComponent(
-      `[!] *APPUNTAMENTO ANNULLATO*\n\n` +
-        `Ciao *${customerName}*, ti informiamo che il tuo appuntamento da *Demo NeatX* del *${date}* alle ore *${time}* è stato annullato.\n\n` +
-        `Per prenotare un nuovo orario, usa il link della pagina prenotazioni.\n\n` +
-        `_Messaggio automatico gestito tramite NeatX._`
-    );
-
-    window.open(`https://wa.me/${finalPhone}?text=${text}`, "_blank");
-    window.location.reload();
-  };
-
-  const handleWhatsAppCancel = () => {
+  const closeDemoNotice = () => {
+    setModalState("NONE");
     window.location.reload();
   };
 
@@ -112,41 +100,33 @@ export default function DeleteButton({
 
   return (
     <>
-      {modalState === "CONFIRM_WHATSAPP" && (
+      {modalState === "DEMO_NOTICE" && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-xs w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center text-2xl mb-4 border border-green-500/20">
-              💬
+          <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center text-xl mb-4 border border-green-500/20">
+              OK
             </div>
 
             <h3 className="text-white font-extrabold text-lg mb-2">
-              Avvisa il Cliente
+              Avviso simulato
             </h3>
 
-            <p className="text-slate-400 text-[13px] mb-6 leading-relaxed">
-              L'appuntamento di <b>{customerName}</b> è stato rimosso.
-              <br />
-              <br />
-              Vuoi inviargli un messaggio WhatsApp per avvisarlo?
+            <p className="text-slate-400 text-[13px] mb-4 leading-relaxed">
+              Nella demo non apriamo WhatsApp dalla dashboard. Ti mostro solo
+              il messaggio che partirebbe nella versione reale.
             </p>
 
-            <div className="flex gap-3 w-full">
-              <button
-                type="button"
-                onClick={handleWhatsAppCancel}
-                className="flex-1 bg-[#131c31] text-slate-300 hover:text-white border border-[#1e2b4a] py-3 rounded-xl text-sm font-bold transition"
-              >
-                No, chiudi
-              </button>
+            <pre className="w-full text-left whitespace-pre-wrap bg-[#131c31] border border-[#1e2b4a] rounded-xl p-3 text-[11px] text-slate-300 mb-5">
+              {demoNotice}
+            </pre>
 
-              <button
-                type="button"
-                onClick={handleWhatsAppConfirm}
-                className="flex-1 bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-[#050814] border border-green-500/50 py-3 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2"
-              >
-                ✓ Avvisa
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={closeDemoNotice}
+              className="w-full bg-green-500/20 text-green-300 hover:bg-green-500 hover:text-[#050814] border border-green-500/50 py-3 rounded-xl text-sm font-bold transition"
+            >
+              Ho capito
+            </button>
           </div>
         </div>
       )}
@@ -155,20 +135,16 @@ export default function DeleteButton({
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-xs w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
             <div className="w-12 h-12 bg-yellow-500/10 text-yellow-500 rounded-full flex items-center justify-center text-2xl mb-4 border border-yellow-500/20">
-              ⚠️
+              !
             </div>
 
             <h3 className="text-white font-extrabold text-lg mb-2">
-              Cartellino Giallo?
+              Segnare come assente?
             </h3>
 
             <p className="text-slate-400 text-[13px] mb-6 leading-relaxed">
-              Vuoi segnare <b>{customerName}</b> come{" "}
-              <span className="text-yellow-500 font-bold">ASSENTE</span>?
-              <br />
-              <br />
-              L'appuntamento verrà rimosso e il cliente verrà registrato nei
-              No-Show.
+              Vuoi segnare <b>{customerName}</b> come assente? L'appuntamento
+              verra rimosso e il cliente entrera nello storico no-show.
             </p>
 
             <div className="flex gap-3 w-full">
@@ -199,7 +175,7 @@ export default function DeleteButton({
           disabled={loading}
           className="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2 rounded-lg transition text-sm disabled:opacity-50"
         >
-          {loading ? "⏳..." : "Sblocca"}
+          {loading ? "..." : "Sblocca"}
         </button>
       ) : (
         <div className="flex items-center gap-2">
@@ -210,7 +186,7 @@ export default function DeleteButton({
             title="Elimina appuntamento"
             className="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2 rounded-lg transition text-xs disabled:opacity-50 flex items-center justify-center gap-1"
           >
-            {loading ? "⏳..." : "🗑️ Elimina"}
+            {loading ? "..." : "Elimina"}
           </button>
 
           <button
@@ -220,7 +196,7 @@ export default function DeleteButton({
             title="Segna come assente"
             className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold px-3 py-2 rounded-lg transition text-xs disabled:opacity-50 flex items-center justify-center gap-1"
           >
-            {loading ? "⏳..." : "🟨 Assente"}
+            {loading ? "..." : "Assente"}
           </button>
         </div>
       )}

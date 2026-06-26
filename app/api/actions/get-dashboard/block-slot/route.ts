@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
+
 function timeToMins(t: string) {
   const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
@@ -23,7 +25,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const tenant = await prisma.tenant.findFirst();
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: DEMO_TENANT_ID },
+    });
 
     if (!tenant) {
       return NextResponse.redirect(

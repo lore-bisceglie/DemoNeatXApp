@@ -90,6 +90,19 @@ export default async function Dashboard(props: {
 
   const currentTotalMinutes = currentHours * 60 + currentMinutes;
 
+  const timeToMinutes = (value: string) => {
+    const [hours, minutes] = value.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const minutesToTime = (value: number) => {
+    const hours = Math.floor(value / 60)
+      .toString()
+      .padStart(2, "0");
+    const minutes = (value % 60).toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
   const weekOffset = parseInt(searchParams.weekOffset || "0", 10);
 
   const dayNames = [
@@ -238,6 +251,63 @@ export default async function Dashboard(props: {
       }
     }
   });
+
+  const freeGapReports = weekDays
+    .flatMap((dayInfo) => {
+      const gaps: {
+        date: string;
+        label: string;
+        start: string;
+        end: string;
+        duration: number;
+      }[] = [];
+
+      let gapStart: string | null = null;
+      let gapDuration = 0;
+
+      allSlots.forEach((slot) => {
+        const isPastToday =
+          dayInfo.date === todayItaly &&
+          timeToMinutes(slot) <= currentTotalMinutes;
+        const isFree = !isPastToday && !radarMap[dayInfo.date]?.[slot];
+
+        if (isFree) {
+          if (!gapStart) gapStart = slot;
+          gapDuration += 15;
+          return;
+        }
+
+        if (gapStart && gapDuration >= 30) {
+          gaps.push({
+            date: dayInfo.date,
+            label: dayInfo.label,
+            start: gapStart,
+            end: minutesToTime(timeToMinutes(gapStart) + gapDuration),
+            duration: gapDuration,
+          });
+        }
+
+        gapStart = null;
+        gapDuration = 0;
+      });
+
+      if (gapStart && gapDuration >= 30) {
+        gaps.push({
+          date: dayInfo.date,
+          label: dayInfo.label,
+          start: gapStart,
+          end: minutesToTime(timeToMinutes(gapStart) + gapDuration),
+          duration: gapDuration,
+        });
+      }
+
+      return gaps;
+    })
+    .sort((a, b) => {
+      if (a.date === b.date) return a.start.localeCompare(b.start);
+      return a.date.localeCompare(b.date);
+    })
+    .slice(0, 6);
 
   const appointments = rawAppointments.filter((app) => {
     if (app.date > todayItaly) return true;
@@ -463,6 +533,18 @@ export default async function Dashboard(props: {
           </div>
         </div>
 
+        <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-3xl p-5 mb-6 shadow-xl shadow-cyan-900/10">
+          <h2 className="text-white font-extrabold text-lg mb-2">
+            Demo condivisibile NeatX
+          </h2>
+          <p className="text-cyan-100 text-sm leading-relaxed">
+            Questa dashboard e pensata per far provare l'agenda a potenziali
+            clienti. Usa prenotazioni, nomi e numeri finti: puoi bloccare,
+            spostare, annullare, segnare pagato, aprire la rubrica e simulare
+            avvisi senza uscire dalla demo.
+          </p>
+        </div>
+
         {/* I 3 KPI */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px]">
@@ -563,6 +645,40 @@ export default async function Dashboard(props: {
         </div>
 
         <WaitlistDashboard />
+
+        {freeGapReports.length > 0 && (
+          <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <h2 className="text-lg font-extrabold text-white">
+                Buchi agenda da riempire
+              </h2>
+              <p className="text-xs text-slate-500 font-bold">
+                Spazi liberi utili nella settimana visibile
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {freeGapReports.map((gap) => (
+                <div
+                  key={`${gap.date}-${gap.start}`}
+                  className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-white font-bold capitalize">
+                      {gap.label}
+                    </p>
+                    <p className="text-[#00b4ff] font-extrabold text-lg">
+                      {gap.start} - {gap.end}
+                    </p>
+                  </div>
+                  <div className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    {gap.duration} min
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* AGENDA SETTIMANALE TETRIS */}
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
@@ -692,13 +808,6 @@ export default async function Dashboard(props: {
             </div>
           </SwipeableAgenda>
         </div>
-
-      
-
-        {/* ALTRE FUNZIONI DASHBOARD */}
-        {/* AGENDA DINAMICA TERMINA QUI SOPRA */}
-
-        <WaitlistDashboard />
 
         {/* ALTRE FUNZIONI DASHBOARD */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">

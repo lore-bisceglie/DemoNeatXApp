@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
@@ -12,74 +12,157 @@ export default function CancelPage() {
   const [appointment, setAppointment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);
+  const [finishedMessage, setFinishedMessage] = useState("");
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState("");
+  const [rescheduleTime, setRescheduleTime] = useState("");
+  const [slots, setSlots] = useState<string[]>([]);
+  const [moving, setMoving] = useState(false);
+  const [moveMessage, setMoveMessage] = useState("");
 
   useEffect(() => {
-    if (token) {
-      fetch(`/api/cancel?token=${token}`)
-        .then(res => res.json())
-        .then(data => {
-          setAppointment(data.appointment);
-          setLoading(false);
-        });
-    }
+    if (!token) return;
+
+    fetch(`/api/cancel?token=${token}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setAppointment(data.appointment);
+        setRescheduleDate(data.appointment?.date || "");
+        setLoading(false);
+      });
   }, [token]);
+
+  useEffect(() => {
+    if (!appointment || !rescheduleDate || !appointment.tenantId) return;
+
+    const duration = appointment.service?.duration || 15;
+
+    fetch(
+      `/api/availability?date=${rescheduleDate}&tenantId=${appointment.tenantId}&duration=${duration}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setSlots(data.slots || []);
+        setRescheduleTime("");
+      })
+      .catch(() => {
+        setSlots([]);
+      });
+  }, [appointment, rescheduleDate]);
 
   const handleCancel = async () => {
     setCanceling(true);
+
     const res = await fetch("/api/cancel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
+      body: JSON.stringify({ token }),
     });
 
     if (res.ok) {
       const [year, month, day] = appointment.date.split("-");
       const displayDate = `${day}/${month}/${year}`;
-      
-      const text = encodeURIComponent(
-        `Ciao Demo NeatX, ti avviso che ho appena annullato il mio appuntamento del *${displayDate}* alle *${appointment.time}* tramite l'app.`
+
+      setFinishedMessage(
+        `Demo: appuntamento annullato e slot del ${displayDate} alle ${appointment.time} liberato. Nella versione reale il cliente puo avvisare il negozio con WhatsApp.`
       );
-      
-      // 🚨 HACK iOS: Forza l'apertura automatica di WhatsApp ignorando i blocchi
-      const whatsappUrl = `https://wa.me/393480480942?text=${text}`;
-      const link = document.createElement("a");
-      link.href = whatsappUrl;
-      link.target = "_top";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Rimanda il browser in background alla home page con il banner verde
-      setTimeout(() => {
-        window.location.href = "/?canceled=true";
-      }, 500);
-
+      setCanceling(false);
     } else {
-      alert("Si è verificato un errore di connessione.");
+      alert("Si e verificato un errore di connessione.");
       setCanceling(false);
     }
   };
 
-  // 1. CARICAMENTO
+  const handleReschedule = async () => {
+    if (!rescheduleDate || !rescheduleTime) {
+      setMoveMessage("Scegli una data e un orario.");
+      return;
+    }
+
+    setMoving(true);
+    setMoveMessage("");
+
+    const res = await fetch(`/api/reschedule/${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: rescheduleDate,
+        time: rescheduleTime,
+      }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      setMoveMessage(data.error || "Non riesco a spostare l'appuntamento.");
+      setMoving(false);
+      return;
+    }
+
+    setAppointment(data.appointment);
+    setRescheduleOpen(false);
+    setMoving(false);
+
+    const [newYear, newMonth, newDay] = data.appointment.date.split("-");
+    const newDisplayDate = `${newDay}/${newMonth}/${newYear}`;
+    setMoveMessage(
+      `Demo: appuntamento spostato al ${newDisplayDate} alle ${data.appointment.time}. Nella versione reale il negozio riceve l'avviso.`
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4">
-        <span className="text-4xl animate-spin mb-4">🌿</span>
-        <p className="text-slate-400 font-medium animate-pulse">Ricerca appuntamento...</p>
+        <span className="text-4xl animate-spin mb-4">...</span>
+        <p className="text-slate-400 font-medium animate-pulse">
+          Ricerca appuntamento...
+        </p>
       </div>
     );
   }
 
-  // 2. APPUNTAMENTO GIÀ ANNULLATO O NON TROVATO
+  if (finishedMessage) {
+    return (
+      <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4">
+        <div className="bg-[#0b1221] border border-emerald-500/30 p-8 rounded-3xl shadow-xl max-w-sm w-full text-center">
+          <div className="bg-emerald-500/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/20 text-2xl">
+            OK
+          </div>
+          <h2 className="text-white font-extrabold text-xl mb-2">
+            Azione completata
+          </h2>
+          <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+            {finishedMessage}
+          </p>
+          <Link
+            href="/"
+            className="bg-[#131c31] border border-[#1e2b4a] text-white font-bold py-3 px-6 rounded-xl transition hover:bg-[#1e2b4a] block w-full"
+          >
+            Torna alla demo
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (!appointment) {
     return (
       <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4">
         <div className="bg-[#0b1221] border border-[#1e2b4a] p-8 rounded-3xl shadow-xl max-w-sm w-full text-center">
-          <span className="text-5xl block mb-4">👻</span>
-          <h2 className="text-white font-extrabold text-xl mb-2">Appuntamento non trovato</h2>
-          <p className="text-slate-400 text-sm mb-6">Questo appuntamento non esiste più. Probabilmente è già stato annullato in precedenza.</p>
-          <Link href="/" className="bg-[#131c31] border border-[#1e2b4a] text-white font-bold py-3 px-6 rounded-xl transition hover:bg-[#1e2b4a] block w-full">
-            Torna alla Home
+          <span className="text-5xl block mb-4">?</span>
+          <h2 className="text-white font-extrabold text-xl mb-2">
+            Appuntamento non trovato
+          </h2>
+          <p className="text-slate-400 text-sm mb-6">
+            Questo appuntamento non esiste piu o e gia stato annullato.
+          </p>
+          <Link
+            href="/"
+            className="bg-[#131c31] border border-[#1e2b4a] text-white font-bold py-3 px-6 rounded-xl transition hover:bg-[#1e2b4a] block w-full"
+          >
+            Torna alla demo
           </Link>
         </div>
       </div>
@@ -89,47 +172,121 @@ export default function CancelPage() {
   const [year, month, day] = appointment.date.split("-");
   const displayDate = `${day}/${month}/${year}`;
 
-  // 3. SCHERMATA DI CONFERMA INIZIALE (Tema Demo NeatX)
   return (
     <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4 text-slate-200 selection:bg-emerald-500/30">
-      
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-red-500 opacity-[0.03] blur-[100px] pointer-events-none rounded-full"></div>
-
       <div className="bg-[#0b1221] border border-red-900/30 p-8 rounded-3xl shadow-2xl shadow-red-900/10 max-w-sm w-full text-center relative z-10">
-        
         <div className="bg-red-500/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
-          <span className="text-2xl">⚠️</span>
+          <span className="text-2xl">!</span>
         </div>
 
-        <h2 className="text-white font-extrabold text-xl mb-2">Sei sicuro di voler annullare?</h2>
-        
+        <h2 className="text-white font-extrabold text-xl mb-2">
+          Gestisci appuntamento demo
+        </h2>
+
+        <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-3 my-5 text-left">
+          <p className="text-cyan-200 text-xs leading-relaxed">
+            Questa pagina mostra il link privato che il cliente riceve dopo la
+            prenotazione. In demo non parte nessun messaggio esterno.
+          </p>
+        </div>
+
         <div className="bg-[#131c31] border border-[#1e2b4a] rounded-xl p-4 my-6 text-left shadow-inner">
-          <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Dettagli Appuntamento</p>
-          <p className="text-white font-bold capitalize">{appointment.customerName}</p>
-          <p className="text-emerald-400 font-bold text-lg mt-1">{appointment.time} <span className="text-sm font-medium text-slate-400">({displayDate})</span></p>
+          <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">
+            Dettagli appuntamento
+          </p>
+          <p className="text-white font-bold capitalize">
+            {appointment.customerName}
+          </p>
+          <p className="text-emerald-400 font-bold text-lg mt-1">
+            {appointment.time}
+            <span className="text-sm font-medium text-slate-400">
+              {" "}
+              ({displayDate})
+            </span>
+          </p>
+          {appointment.service && (
+            <p className="text-xs text-slate-300 font-bold mt-2">
+              {appointment.service.name}
+            </p>
+          )}
         </div>
 
-        <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-          Annullando perderai questo posto e il sistema aprirà WhatsApp per avvisare Demo NeatX.
-        </p>
+        {moveMessage && (
+          <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold rounded-xl px-3 py-2 mb-4">
+            {moveMessage}
+          </div>
+        )}
+
+        {rescheduleOpen && (
+          <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 mb-4 text-left">
+            <label className="block text-xs text-slate-500 uppercase font-bold tracking-widest mb-2">
+              Nuova data
+            </label>
+            <input
+              type="date"
+              value={rescheduleDate}
+              onChange={(event) => setRescheduleDate(event.target.value)}
+              className="w-full bg-[#0b1221] border border-[#1e2b4a] rounded-xl px-3 py-2 text-white text-sm mb-3"
+              style={{ colorScheme: "dark" }}
+            />
+
+            <label className="block text-xs text-slate-500 uppercase font-bold tracking-widest mb-2">
+              Nuovo orario
+            </label>
+            <select
+              value={rescheduleTime}
+              onChange={(event) => setRescheduleTime(event.target.value)}
+              className="w-full bg-[#0b1221] border border-[#1e2b4a] rounded-xl px-3 py-2 text-white text-sm"
+            >
+              <option value="">Seleziona un orario</option>
+              {slots.map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </select>
+
+            {slots.length === 0 && (
+              <p className="text-[11px] text-slate-500 mt-2">
+                Nessun orario libero per questa data.
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-col gap-3">
-          <button 
+          {rescheduleOpen ? (
+            <button
+              onClick={handleReschedule}
+              disabled={moving || !rescheduleDate || !rescheduleTime}
+              className="w-full bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] font-bold py-3 rounded-xl transition disabled:opacity-50"
+            >
+              {moving ? "Spostamento..." : "Conferma nuovo orario"}
+            </button>
+          ) : (
+            <button
+              onClick={() => setRescheduleOpen(true)}
+              className="w-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold py-3 rounded-xl transition"
+            >
+              Sposta appuntamento
+            </button>
+          )}
+
+          <button
             onClick={handleCancel}
             disabled={canceling}
             className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold py-3 rounded-xl transition disabled:opacity-50"
           >
-            {canceling ? "Annullamento in corso..." : "Sì, Annulla Appuntamento"}
+            {canceling ? "Annullamento in corso..." : "Annulla appuntamento"}
           </button>
-          
-          <Link 
+
+          <Link
             href="/"
             className="w-full bg-[#131c31] border border-[#1e2b4a] text-white hover:bg-[#1e2b4a] font-bold py-3 rounded-xl transition block"
           >
-            No, ci ho ripensato
+            Torna indietro
           </Link>
         </div>
-
       </div>
     </div>
   );

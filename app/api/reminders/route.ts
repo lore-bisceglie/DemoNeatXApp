@@ -1,59 +1,45 @@
 import { NextResponse } from "next/server";
-import twilio from "twilio";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
 
 export async function GET() {
   try {
-    // 1. Inizializza Twilio con le tue chiavi segrete dal file .env
-    const client = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowString = tomorrow.toISOString().split("T")[0];
 
-    // 2. Calcola la data di domani
-    const domani = new Date();
-    domani.setDate(domani.getDate() + 1);
-    const dataDomani = domani.toISOString().split("T")[0];
-
-    // 3. Cerca gli appuntamenti di domani nel Database
-    const appuntamenti = await prisma.appointment.findMany({
-      where: { date: dataDomani },
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        tenantId: DEMO_TENANT_ID,
+        date: tomorrowString,
+        customerPhone: {
+          not: "0000000000",
+        },
+      },
+      include: {
+        service: true,
+      },
     });
 
-    if (appuntamenti.length === 0) {
-      return NextResponse.json({ message: "Nessun appuntamento per domani." });
-    }
-
-    // 4. Invia un messaggio WhatsApp a tutti i clienti trovati
-    let inviati = 0;
-    for (const app of appuntamenti) {
-      
-      // Controllo intelligente del numero di telefono
-      let numeroDestinatario = app.customerPhone;
-      
-      // Se il cliente ha dimenticato il "+39", lo aggiunge il codice in automatico
-      if (!numeroDestinatario.startsWith('+')) {
-        numeroDestinatario = '+39' + numeroDestinatario;
-      }
-
-      // Spedizione su rete WhatsApp
-      await client.messages.create({
-        body: `Ciao ${app.customerName}, ti ricordiamo il tuo appuntamento domani alle ${app.time} da Acconciature da Mito!`,
-        from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
-        to: `whatsapp:${numeroDestinatario}` 
-      });
-      
-      inviati++;
-    }
-
-    return NextResponse.json({ message: `Inviati ${inviati} promemoria WhatsApp con successo!` });
-
+    return NextResponse.json({
+      success: true,
+      mode: "demo",
+      message:
+        "Promemoria simulati: nella demo non viene inviato nessun SMS o WhatsApp reale.",
+      previewCount: appointments.length,
+      appointments: appointments.map((appointment) => ({
+        customerName: appointment.customerName,
+        customerPhone: appointment.customerPhone,
+        date: appointment.date,
+        time: appointment.time,
+        serviceName: appointment.service?.name || null,
+      })),
+    });
   } catch (error) {
-    console.error("Errore nell'invio dei messaggi:", error);
+    console.error("Errore simulazione promemoria:", error);
     return NextResponse.json(
-      { error: "Errore durante l'invio dei promemoria" },
+      { error: "Errore durante la simulazione dei promemoria" },
       { status: 500 }
     );
   }

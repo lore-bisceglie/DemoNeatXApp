@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -15,7 +17,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const tenant = await prisma.tenant.findFirst();
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: DEMO_TENANT_ID },
+    });
 
     if (!tenant) {
       return NextResponse.json(

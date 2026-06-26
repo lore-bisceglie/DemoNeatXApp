@@ -45,12 +45,27 @@ export default function Home() {
   const [tenantInfo] = useState({
     id: "cmqtds1840000yyqbd23x1jdj",
     name: "Appuntamenti Demo NeatX",
-    address: "📍 Indirizzo del Salone (Città)",
-    phone: "390000000000",
-    instagramUrl: "https://www.instagram.com",
-    mapsLink: "https://maps.app.goo.gl/W9vbcGsr3ZfgdTPy5",
+    address: "Demo agenda per saloni, studi e attivita su appuntamento",
+    phone: "393480480942",
+    instagramUrl:
+      "https://www.instagram.com/lorebisceglie?igsh=cTIzeG15aXEzZ2Ey&utm_source=qr",
     isDemo: true,
   });
+
+  const demoCustomers = [
+    { name: "Giulia Demo", phone: "3331234567" },
+    { name: "Marco Test", phone: "3459876543" },
+    { name: "Sara Prova", phone: "3471122334" },
+    { name: "Cliente Vetrina", phone: "3394455667" },
+  ];
+
+  const fillDemoCustomer = () => {
+    const randomCustomer =
+      demoCustomers[Math.floor(Math.random() * demoCustomers.length)];
+    setName(randomCustomer.name);
+    setPhone(randomCustomer.phone);
+    setFormError("");
+  };
 
   // ✅ FUNZIONE CHE FA PARTIRE L'ANIMAZIONE QUANDO TOCCHI LA FOTO
   const handleLogoClick = () => {
@@ -199,9 +214,11 @@ export default function Home() {
   const handleBook = async () => {
     setFormError("");
 
-    if (!name || !phone || !selectedSlot || !selectedService) {
+    if (!name || !selectedSlot || !selectedService || (!tenantInfo.isDemo && !phone)) {
       setFormError(
-        "Per favore, seleziona un servizio, un orario e inserisci Nome e Telefono."
+        tenantInfo.isDemo
+          ? "Per favore, seleziona un servizio, un orario e inserisci un nome demo."
+          : "Per favore, seleziona un servizio, un orario e inserisci Nome e Telefono."
       );
       return;
     }
@@ -226,22 +243,6 @@ export default function Home() {
 
     setIsBooking(true);
 
-    // 🛡️ MODIFICA DEMO: Se è una demo, bypassiamo l'API vera e propria!
-    // Simuliamo il caricamento per permettere l'inserimento di lettere a caso.
-    if (tenantInfo.isDemo) {
-      setTimeout(() => {
-        setDemoModal({ show: true, date, time: selectedSlot, serviceName: selectedService.name });
-        setName("");
-        setPhone("");
-        setSelectedSlot("");
-        setDate(today);
-        setSlots([]);
-        setHoney("");
-        setIsBooking(false);
-      }, 800);
-      return;
-    }
-
     const res = await fetch("/api/book", {
       method: "POST",
       headers: {
@@ -249,7 +250,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         customerName: name,
-        customerPhone: phone,
+        customerPhone: tenantInfo.isDemo && !phone ? "3330000000" : phone,
         date,
         time: selectedSlot,
         honey,
@@ -329,7 +330,10 @@ export default function Home() {
   };
 
   const isButtonDisabled =
-    isBooking || selectedSlot === "" || name === "" || phone === "";
+    isBooking ||
+    selectedSlot === "" ||
+    name === "" ||
+    (!tenantInfo.isDemo && phone === "");
 
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
@@ -399,14 +403,22 @@ export default function Home() {
             <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Prenotazione Demo Salvata</h3>
             <p className="text-sm text-slate-400 mb-6 leading-relaxed">
               Hai prenotato <strong>{demoModal.serviceName}</strong> per il <strong>{demoModal.date.split("-").reverse().join("/")}</strong> alle <strong>{demoModal.time}</strong>.<br /><br />
-              La prenotazione è stata salvata nel database DemoNeatX ed è visibile in Dashboard.
+              La prenotazione e stata salvata nel database DemoNeatX ed e visibile in Dashboard.
             </p>
-            <button 
-              onClick={() => setDemoModal({ show: false, date: "", time: "", serviceName: "" })}
-              className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
-            >
-              Ho capito
-            </button>
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/dashboard"
+                className="w-full bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] font-bold py-3 rounded-xl transition shadow-lg"
+              >
+                Vedi in dashboard
+              </Link>
+              <button 
+                onClick={() => setDemoModal({ show: false, date: "", time: "", serviceName: "" })}
+                className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
+              >
+                Resta qui
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -415,8 +427,10 @@ export default function Home() {
 
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl shadow-cyan-900/10 border border-[#1a2642] p-6 sm:p-8 relative z-10">
         {tenantInfo.isDemo && (
-          <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-xs text-center p-2 rounded-xl font-semibold uppercase tracking-wide">
-            ⚠️ Ambiente Demo - Dati fittizi accettati
+          <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs text-center p-3 rounded-xl font-semibold leading-relaxed">
+            Ambiente demo: puoi usare nomi e numeri finti. La prenotazione
+            viene salvata nel calendario demo per mostrare come funziona
+            NeatX.
           </div>
         )}
 
@@ -466,14 +480,9 @@ export default function Home() {
           </p>
 
           <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
-            <a
-              href={tenantInfo.mapsLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/50 underline-offset-4 transition-colors text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300"
-            >
+            <p className="text-blue-300 text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300 text-center">
               {tenantInfo.address}
-            </a>
+            </p>
 
             <a
               href={tenantInfo.instagramUrl}
@@ -669,6 +678,16 @@ export default function Home() {
                 className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
               />
 
+              {tenantInfo.isDemo && (
+                <button
+                  type="button"
+                  onClick={fillDemoCustomer}
+                  className="w-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-xl px-4 py-3 text-xs font-extrabold transition"
+                >
+                  Riempimento demo casuale
+                </button>
+              )}
+
               <input
                 type="text"
                 value={honey}
@@ -705,7 +724,9 @@ export default function Home() {
             </button>
 
             <p className="text-[10px] text-slate-500 mt-5 text-center mb-8">
-              Verrai reindirizzato a WhatsApp per confermare.
+              {tenantInfo.isDemo
+                ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
+                : "Verrai reindirizzato a WhatsApp per confermare."}
             </p>
 
             <div className="pt-6 border-t border-[#1e2b4a]">

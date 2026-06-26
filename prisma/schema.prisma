@@ -25,6 +25,7 @@ model Tenant {
   storeSettings StoreSettings?
   noShows       NoShow[]
   waitlists     Waitlist[]
+  customerNotes CustomerNote[]
 }
 
 // ------------------------------------------------------
@@ -126,4 +127,22 @@ model Waitlist {
   // Collegamento al Tenant per isolamento dati
   tenantId  String?
   tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+}
+
+// ------------------------------------------------------
+// 8. NOTE E PREFERENZE CLIENTE
+// ------------------------------------------------------
+model CustomerNote {
+  id           String   @id @default(cuid())
+  phone        String
+  customerName String?
+  note         String   @default("")
+  preference   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, phone])
 }

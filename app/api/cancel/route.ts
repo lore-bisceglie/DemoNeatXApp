@@ -10,7 +10,8 @@ export async function GET(request: Request) {
     if (!token) return NextResponse.json({ appointment: null });
 
     const appointment = await prisma.appointment.findUnique({
-      where: { cancelToken: token }
+      where: { cancelToken: token },
+      include: { service: true },
     });
 
     return NextResponse.json({ appointment });
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
     const { token } = await request.json();
     
     const appointment = await prisma.appointment.findUnique({
-      where: { cancelToken: token }
+      where: { cancelToken: token },
     });
 
     if (appointment) {

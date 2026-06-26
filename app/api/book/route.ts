@@ -23,18 +23,17 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     const authCookie = cookieStore.get("neatx_auth");
     const isAdmin = authCookie?.value === "true";
+    const body = await request.json();
+    const { customerName, customerPhone, date, time, honey, source, tenantId, serviceId, duration } = body;
+    const isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
 
-    if (!isAdmin) {
+    if (!isAdmin && !isDemoTenant) {
       const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
       const { success } = await ratelimit.limit(ip);
       if (!success) {
         return NextResponse.json({ error: "Hai raggiunto il limite massimo di prenotazioni." }, { status: 429 });
       }
     }
-
-    const body = await request.json();
-    const { customerName, customerPhone, date, time, honey, source, tenantId, serviceId, duration } = body;
-    const isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
 
     if (!isAdmin && honey && honey !== "") {
       return NextResponse.json({ success: true }); // Trappola anti-bot scattata
