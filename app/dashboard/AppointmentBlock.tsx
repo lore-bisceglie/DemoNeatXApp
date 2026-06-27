@@ -150,7 +150,7 @@ export default function AppointmentBlock({
         ) : (
           <>
             <span className="text-[9px] opacity-50 mb-0.5 font-medium tracking-wider flex items-center gap-1">
-              {appt.time} {isPaid && "OK"}
+              {appt.time} {isPaid && "✅"}
             </span>
             <span className="truncate w-full whitespace-normal leading-tight">
               {appt.customerName}
@@ -249,10 +249,10 @@ export default function AppointmentBlock({
               <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex items-center justify-between mb-6 shadow-inner">
                 <div>
                   <p className="text-sm font-bold text-white">
-                    Pagato in anticipo
+                    Pagato
                   </p>
                   <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
-                    Segna se il cliente ha gia saldato
+                    Segna pagamento ricevuto o pagamento online demo
                   </p>
                 </div>
                 <button

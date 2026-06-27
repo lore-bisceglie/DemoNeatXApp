@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 // import { cookies } from "next/headers"; // Riattivare per la login admin
 import { redirect } from "next/navigation";
+import DeleteButton from "./DeleteButton";
 import WalkInButton from "./WalkInButton";
 import AppointmentBlock from "./AppointmentBlock";
 import { unstable_noStore as noStore } from "next/cache";
@@ -12,6 +13,7 @@ import AutoRefreshMonitor from "./AutoRefreshMonitor";
 import SwipeableAgenda from "./SwipeableAgenda";
 import CustomerDrawer from "./CustomerDrawer";
 import WaitlistDashboard from "./WaitlistDashboard";
+import ResetDemoButton from "./ResetDemoButton";
 
 export default async function Dashboard(props: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -35,7 +37,7 @@ export default async function Dashboard(props: {
   if (!tenant) {
     return (
       <div className="p-10 text-white font-bold text-xl">
-        ⚠️ Nessun salone configurato nel Database.
+        ⚠️ Nessuna attività configurata nel Database.
       </div>
     );
   }
@@ -319,12 +321,13 @@ export default async function Dashboard(props: {
     return currentTotalMinutes <= appTotalMinutes + 30;
   });
 
-  const nextAppointment =
-    appointments.find(
-      (app) =>
-        !app.customerName.includes("☕ PAUSA") &&
-        !app.customerName.includes("🌴 FERIE")
-    ) || null;
+  const isClosure = (app: { customerName: string; time: string }) =>
+    app.time === "ALL_DAY" ||
+    app.customerName.includes("PAUSA") ||
+    app.customerName.includes("FERIE");
+
+  const nextAppointment = appointments.find((app) => !isClosure(app)) || null;
+  const currentClosures = appointments.filter((app) => isClosure(app));
 
   // 🌟 CALCOLO INCASSI DINAMICI PREMIUM
   const monthlyAppointments = await prisma.appointment.findMany({
@@ -392,9 +395,11 @@ export default async function Dashboard(props: {
             where: {
               date,
               tenantId,
-              customerName: {
-                notIn: ["☕ PAUSA", "🌴 FERIE"],
-              },
+              NOT: [
+                { customerName: { contains: "PAUSA" } },
+                { customerName: { contains: "FERIE" } },
+                { time: "ALL_DAY" },
+              ],
             },
           });
 
@@ -461,9 +466,11 @@ export default async function Dashboard(props: {
               in: datesToBlock,
             },
             tenantId,
-            customerName: {
-              notIn: ["☕ PAUSA", "🌴 FERIE"],
-            },
+            NOT: [
+              { customerName: { contains: "PAUSA" } },
+              { customerName: { contains: "FERIE" } },
+              { time: "ALL_DAY" },
+            ],
           },
         });
 
@@ -521,8 +528,9 @@ export default async function Dashboard(props: {
             </span>
           </h1>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <CustomerDrawer tenantId={tenantId} />
+            <ResetDemoButton />
 
             <Link
               href="/"
@@ -538,11 +546,61 @@ export default async function Dashboard(props: {
             Demo condivisibile NeatX
           </h2>
           <p className="text-cyan-100 text-sm leading-relaxed">
-            Questa dashboard e pensata per far provare l'agenda a potenziali
-            clienti. Usa prenotazioni, nomi e numeri finti: puoi bloccare,
-            spostare, annullare, segnare pagato, aprire la rubrica e simulare
-            avvisi senza uscire dalla demo.
+            Questa dashboard e pensata per far provare l'agenda a barbieri,
+            centri beauty, nails, studi, tattoo, massaggiatori e consulenti.
+            Usa nomi e numeri finti: puoi bloccare, spostare, annullare,
+            segnare pagato, aprire la rubrica e simulare avvisi senza uscire
+            dalla demo.
           </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {[
+            {
+              step: "01",
+              title: "Prenota come cliente",
+              text: "Dalla pagina pubblica scegli attività, servizio, giorno e pagamento demo.",
+            },
+            {
+              step: "02",
+              title: "Controlla il radar",
+              text: "Lo slot compare nell'agenda dinamica con durata, colore e stato pagamento.",
+            },
+            {
+              step: "03",
+              title: "Gestisci il lavoro",
+              text: "Apri il blocco per spostare, eliminare, segnare pagato o inviare avvisi simulati.",
+            },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="bg-[#0b1221] border border-[#1a2642] rounded-3xl p-4 shadow-xl shadow-cyan-900/5"
+            >
+              <p className="text-[#00b4ff] text-[10px] font-extrabold uppercase tracking-widest mb-2">
+                Tour {item.step}
+              </p>
+              <h3 className="text-white font-extrabold text-sm mb-1">
+                {item.title}
+              </h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                {item.text}
+              </p>
+            </div>
+          ))}
+
+          <div className="bg-[#0b1221] border border-yellow-500/25 rounded-3xl p-4 shadow-xl shadow-yellow-900/5">
+            <p className="text-yellow-300 text-[10px] font-extrabold uppercase tracking-widest mb-2">
+              Demo pulita
+            </p>
+            <h3 className="text-white font-extrabold text-sm mb-1">
+              Ricrea esempi
+            </h3>
+            <p className="text-slate-400 text-xs leading-relaxed mb-3">
+              Riporta la demo a una situazione piena di esempi pronti da
+              mostrare.
+            </p>
+            <ResetDemoButton compact />
+          </div>
         </div>
 
         {/* I 3 KPI */}
@@ -860,6 +918,61 @@ export default async function Dashboard(props: {
 
           <div className="flex flex-col gap-6">
             <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-red-900/5 border border-[#1a2642] h-fit flex flex-col">
+              <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                  <span>🧭</span>
+                  Chiusure attive
+                </h2>
+
+                <div className="overflow-y-auto max-h-[220px] custom-scrollbar space-y-2 pr-1">
+                  {currentClosures.length > 0 ? (
+                    currentClosures.map((app) => {
+                      const isFerie =
+                        app.time === "ALL_DAY" ||
+                        app.customerName.includes("FERIE");
+
+                      return (
+                        <div
+                          key={app.id}
+                          className="flex items-center justify-between gap-3 p-3 bg-[#131c31] rounded-xl border border-[#1e2b4a]"
+                        >
+                          <div className="min-w-0">
+                            <p
+                              className={`font-bold text-[12px] truncate ${
+                                isFerie ? "text-orange-400" : "text-slate-300"
+                              }`}
+                            >
+                              {isFerie ? "🌴 FERIE" : "☕ PAUSA"}
+                            </p>
+                            <p className="text-slate-400 text-[10px] uppercase mt-0.5">
+                              {app.date.split("-").reverse().join("/")} •{" "}
+                              {app.time === "ALL_DAY"
+                                ? "Tutto il giorno"
+                                : `${app.time}${app.endTime ? ` - ${app.endTime}` : ""}`}
+                            </p>
+                          </div>
+
+                          <div className="scale-75 origin-right shrink-0">
+                            <DeleteButton
+                              appointmentId={app.id}
+                              customerName={app.customerName}
+                              phone="0000000000"
+                              date={app.date}
+                              time={app.time}
+                              isSpecial={true}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-slate-500 text-sm italic">
+                      Nessuna pausa o ferie attiva nella settimana visibile.
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
                   <span>⚙️</span>

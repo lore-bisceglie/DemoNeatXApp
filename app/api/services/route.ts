@@ -11,7 +11,12 @@ export async function GET(request: Request) {
 
   try {
     const services = await prisma.service.findMany({
-      where: { tenantId: tenantId }
+      where: { tenantId: tenantId },
+      orderBy: [
+        { duration: "asc" },
+        { price: "asc" },
+        { name: "asc" },
+      ],
     });
     
     return NextResponse.json({ services });

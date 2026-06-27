@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, type CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import WaitlistButton from "./WaitlistButton";
@@ -11,6 +11,75 @@ type Service = {
   duration: number;
   price: number;
 };
+
+const activityProfiles = [
+  {
+    id: "all",
+    icon: "🚀",
+    label: "Tutte",
+    headline: "Demo NeatX Multi-Attività",
+    description:
+      "Prova la stessa agenda su barbieri, beauty, nails, massaggi, tattoo, studi e consulenze.",
+    matchWords: [] as string[],
+    demoName: "Cliente Vetrina",
+    demoPhone: "3394455667",
+  },
+  {
+    id: "barber",
+    icon: "💈",
+    label: "Barbiere",
+    headline: "Demo NeatX Barbiere",
+    description:
+      "Tagli rapidi, servizi da 30 minuti, agenda piena e gestione pagamento.",
+    matchWords: ["Barbiere"],
+    demoName: "Marco Taglio",
+    demoPhone: "3451112233",
+  },
+  {
+    id: "beauty",
+    icon: "✨",
+    label: "Beauty",
+    headline: "Demo NeatX Beauty",
+    description:
+      "Trattamenti viso, appuntamenti più lunghi, lista d'attesa e promemoria.",
+    matchWords: ["Beauty", "Massaggi"],
+    demoName: "Giulia Beauty",
+    demoPhone: "3331234567",
+  },
+  {
+    id: "nails",
+    icon: "💅",
+    label: "Nails",
+    headline: "Demo NeatX Nails",
+    description:
+      "Servizi ricorrenti, clienti abituali e calendario ordinato per ogni slot.",
+    matchWords: ["Nails"],
+    demoName: "Sara Nails",
+    demoPhone: "3471122334",
+  },
+  {
+    id: "tattoo",
+    icon: "🎨",
+    label: "Tattoo",
+    headline: "Demo NeatX Tattoo",
+    description:
+      "Consulenze, acconti demo e cancellazione autonoma con link personale.",
+    matchWords: ["Tattoo"],
+    demoName: "Luca Ink",
+    demoPhone: "3497788990",
+  },
+  {
+    id: "studio",
+    icon: "🗓️",
+    label: "Studio",
+    headline: "Demo NeatX Studio",
+    description:
+      "Consulenze private, appuntamenti ordinati e storico clienti sempre visibile.",
+    matchWords: ["Studio privato", "Fisioterapia"],
+    demoName: "Andrea Studio",
+    demoPhone: "3465557788",
+  },
+];
 
 export default function Home() {
   const today = new Date().toISOString().split("T")[0];
@@ -28,7 +97,17 @@ export default function Home() {
   const [dateError, setDateError] = useState("");
   const [formError, setFormError] = useState("");
   const [isBooking, setIsBooking] = useState(false);
-  const [demoModal, setDemoModal] = useState({ show: false, date: "", time: "", serviceName: "" });
+  const [demoModal, setDemoModal] = useState({
+    show: false,
+    date: "",
+    time: "",
+    serviceName: "",
+    paymentLabel: "",
+    customerName: "",
+    customerPhone: "",
+    cancelPath: "",
+    price: 0,
+  });
   const [showCancelBanner, setShowCancelBanner] = useState(false);
   const [honey, setHoney] = useState("");
   const [isHoliday, setIsHoliday] = useState(false);
@@ -36,6 +115,9 @@ export default function Home() {
   
   // ✅ NUOVO STATO PER L'EASTER EGG DELL'IMMAGINE
   const [logoClicked, setLogoClicked] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"salon" | "online">("salon");
+  const [selectedActivityId, setSelectedActivityId] = useState("all");
+  const [showActivityModal, setShowActivityModal] = useState(true);
   
   const router = useRouter();
 
@@ -44,13 +126,30 @@ export default function Home() {
 
   const [tenantInfo] = useState({
     id: "cmqtds1840000yyqbd23x1jdj",
-    name: "Appuntamenti Demo NeatX",
-    address: "Demo agenda per saloni, studi e attivita su appuntamento",
+    name: "Demo NeatX Multi-Attivita",
+    address:
+      "Agenda demo per barbieri, beauty, nails, massaggi, tattoo, studi e consulenze",
     phone: "393480480942",
     instagramUrl:
-      "https://www.instagram.com/lorebisceglie?igsh=cTIzeG15aXEzZ2Ey&utm_source=qr",
+      "https://www.instagram.com/",
     isDemo: true,
   });
+
+  const activeProfile =
+    activityProfiles.find((profile) => profile.id === selectedActivityId) ||
+    activityProfiles[0];
+
+  const visibleServices = useMemo(() => {
+    if (!activeProfile.matchWords.length) return services;
+
+    const filtered = services.filter((service) =>
+      activeProfile.matchWords.some((word) =>
+        service.name.toLowerCase().includes(word.toLowerCase())
+      )
+    );
+
+    return filtered.length > 0 ? filtered : services;
+  }, [activeProfile, services]);
 
   const demoCustomers = [
     { name: "Giulia Demo", phone: "3331234567" },
@@ -59,7 +158,40 @@ export default function Home() {
     { name: "Cliente Vetrina", phone: "3394455667" },
   ];
 
+  const chooseActivity = (profileId: string) => {
+    const nextProfile =
+      activityProfiles.find((profile) => profile.id === profileId) ||
+      activityProfiles[0];
+
+    const matchingServices = nextProfile.matchWords.length
+      ? services.filter((service) =>
+          nextProfile.matchWords.some((word) =>
+            service.name.toLowerCase().includes(word.toLowerCase())
+          )
+        )
+      : services;
+
+    setSelectedActivityId(profileId);
+
+    const nextService = matchingServices[0] || services[0] || null;
+    if (nextService) {
+      setSelectedService(nextService);
+      setSlots([]);
+      setSelectedSlot("");
+    }
+
+    setFormError("");
+    setShowActivityModal(false);
+  };
+
   const fillDemoCustomer = () => {
+    if (activeProfile.id !== "all") {
+      setName(activeProfile.demoName);
+      setPhone(activeProfile.demoPhone);
+      setFormError("");
+      return;
+    }
+
     const randomCustomer =
       demoCustomers[Math.floor(Math.random() * demoCustomers.length)];
     setName(randomCustomer.name);
@@ -100,7 +232,7 @@ export default function Home() {
           setSelectedService(data.services[0]);
         } else {
           setInitialLoad(false);
-          setDateError("Nessun servizio configurato per questo salone.");
+          setDateError("Nessun servizio configurato per questa demo.");
         }
       })
       .catch((err) => {
@@ -154,7 +286,7 @@ export default function Home() {
     }
 
     if (festeNazionali.includes(giornoMese)) {
-      setDateError("Il salone è chiuso in questa data per festività nazionale!");
+      setDateError("L'attività è chiusa in questa data per festività nazionale!");
       setSlots([]);
       setIsHoliday(false);
       return;
@@ -209,7 +341,44 @@ export default function Home() {
     }
   };
 
+  const isSaturday = date ? new Date(date).getDay() === 6 : false;
   const isScarce = slots.length > 0 && slots.length <= 5;
+  const isVeryScarce = slots.length > 0 && slots.length <= 2;
+  const shownSlots = slots.slice(0, 3).join(", ");
+  const slotSummary =
+    slots.length > 3 ? `${shownSlots} e altri ${slots.length - 3}` : shownSlots;
+  const demandMode = isVeryScarce
+    ? {
+        title: "Ultimi incastri disponibili",
+        message:
+          slots.length === 1
+            ? `E rimasto solo l'orario delle ${slots[0]}.`
+            : `Sono rimasti solo questi orari: ${slotSummary}.`,
+        tone: "red" as const,
+      }
+    : isSaturday
+    ? {
+        title: isScarce ? "Sabato quasi pieno" : "Sabato molto richiesto",
+        message: isScarce
+          ? `Per sabato rimangono ${slots.length} incastri: ${slotSummary}.`
+          : "Il sabato si riempie prima: nella demo vedi come spingere il cliente a scegliere subito.",
+        tone: "cyan" as const,
+      }
+    : isScarce
+    ? {
+        title: "Giornata quasi piena",
+        message: `Sono rimasti ${slots.length} incastri: ${slotSummary}.`,
+        tone: "orange" as const,
+      }
+    : null;
+  const demandClass =
+    demandMode?.tone === "cyan"
+      ? "from-cyan-500/10 to-blue-500/10 border-cyan-500/30 shadow-[0_0_15px_rgba(0,180,255,0.15)]"
+      : demandMode?.tone === "red"
+      ? "from-red-500/10 to-orange-500/10 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.15)]"
+      : "from-orange-500/10 to-red-500/10 border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]";
+  const demandAccent =
+    demandMode?.tone === "cyan" ? "text-cyan-300" : "text-red-400";
 
   const handleBook = async () => {
     setFormError("");
@@ -257,6 +426,7 @@ export default function Home() {
         tenantId: tenantInfo.id,
         serviceId: selectedService.id,
         duration: selectedService.duration,
+        paymentMethod,
       }),
     });
 
@@ -265,7 +435,20 @@ export default function Home() {
       const cancelToken = data.cancelToken;
 
       if (tenantInfo.isDemo) {
-        setDemoModal({ show: true, date, time: selectedSlot, serviceName: selectedService.name });
+        setDemoModal({
+          show: true,
+          date,
+          time: selectedSlot,
+          serviceName: selectedService.name,
+          paymentLabel:
+            paymentMethod === "online"
+              ? "Pagamento online simulato"
+              : "Pagamento in sede",
+          customerName: name,
+          customerPhone: tenantInfo.isDemo && !phone ? "3330000000" : phone,
+          cancelPath: `/cancel/${cancelToken}`,
+          price: selectedService.price || 0,
+        });
         setName("");
         setPhone("");
         setSelectedSlot("");
@@ -338,7 +521,7 @@ export default function Home() {
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
   // ✅ Messaggio dinamico quando non ci sono orari disponibili
-  // Modifica qui l'orario di chiusura del salone, se necessario.
+  // Modifica qui l'orario di chiusura dell'attivita, se necessario.
   const closingHour = 19;
   const closingMinute = 0;
 
@@ -365,6 +548,15 @@ export default function Home() {
           "bg-cyan-500/10 text-cyan-300 border border-cyan-500/20",
         title: "Abbiamo terminato la giornata lavorativa.",
         text: "Seleziona una nuova data sul calendario per trovare il momento perfetto per il tuo relax.",
+      }
+    : isSaturday
+    ? {
+        icon: "📅",
+        badge: "SABATO COMPLETO",
+        badgeClass:
+          "bg-red-500/10 text-red-300 border border-red-500/20",
+        title: "Il sabato della demo e gia pieno.",
+        text: "Questo mostra come NeatX comunica i giorni piu richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa.",
       }
     : {
         icon: "📅",
@@ -396,15 +588,92 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-500">
+      {tenantInfo.isDemo && showActivityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-lg w-full text-center animate-in fade-in zoom-in duration-200">
+            <div className="text-4xl mb-3">🚀</div>
+            <h3 className="text-xl font-extrabold text-white mb-2">
+              Scegli che demo vuoi provare
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed mb-5">
+              Ogni profilo filtra i servizi e prepara dati finti coerenti con
+              quell'attività. Puoi cambiare scelta anche dopo.
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
+              {activityProfiles.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  onClick={() => chooseActivity(profile.id)}
+                  className="bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] hover:border-[#00b4ff]/60 rounded-2xl px-3 py-3 text-left transition"
+                >
+                  <span className="block text-2xl mb-2">{profile.icon}</span>
+                  <span className="block text-sm font-extrabold text-white">
+                    {profile.label}
+                  </span>
+                  <span className="block text-[10px] text-slate-500 mt-1 leading-snug">
+                    {profile.description}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowActivityModal(false)}
+              className="text-xs font-bold text-slate-400 hover:text-white underline underline-offset-4"
+            >
+              Entra senza scegliere
+            </button>
+          </div>
+        </div>
+      )}
+
       {demoModal.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
-          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-sm w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-md w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
             <div className="text-4xl mb-4">🚀</div>
             <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Prenotazione Demo Salvata</h3>
-            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+            <p className="text-sm text-slate-400 mb-4 leading-relaxed">
               Hai prenotato <strong>{demoModal.serviceName}</strong> per il <strong>{demoModal.date.split("-").reverse().join("/")}</strong> alle <strong>{demoModal.time}</strong>.<br /><br />
-              La prenotazione e stata salvata nel database DemoNeatX ed e visibile in Dashboard.
+              Metodo: <strong>{demoModal.paymentLabel}</strong>.
             </p>
+
+            <div className="mb-4 rounded-2xl border border-emerald-500/25 bg-emerald-950/30 p-4 text-left">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <p className="text-[10px] uppercase tracking-widest font-extrabold text-emerald-300">
+                  Anteprima WhatsApp
+                </p>
+                <span className="text-[10px] text-emerald-200 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">
+                  simulata
+                </span>
+              </div>
+              <div className="bg-[#075e54] rounded-2xl p-3 text-white text-[12px] leading-relaxed shadow-lg">
+                <p className="font-bold mb-2">✨ Nuova Prenotazione!</p>
+                <p>👤 Cliente: {demoModal.customerName}</p>
+                <p>📞 Telefono: {demoModal.customerPhone || "3330000000"}</p>
+                <p>📅 Data: {demoModal.date.split("-").reverse().join("/")}</p>
+                <p>⏰ Ora: {demoModal.time}</p>
+                <p>💼 Servizio: {demoModal.serviceName}</p>
+                <p className="mt-2">
+                  ❌ Link annullo: {demoModal.cancelPath}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-5 rounded-2xl border border-[#1e2b4a] bg-[#131c31] p-4 text-left">
+              <p className="text-xs font-extrabold text-white mb-1">
+                {demoModal.paymentLabel.includes("online")
+                  ? "Pagamento demo completato"
+                  : "Pagamento segnato in sede"}
+              </p>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                {demoModal.paymentLabel.includes("online")
+                  ? `Nella dashboard lo vedrai gia come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+                  : "Nella dashboard il titolare potra segnarlo pagato con un tocco."}
+              </p>
+            </div>
             <div className="flex flex-col gap-2">
               <Link
                 href="/dashboard"
@@ -413,7 +682,19 @@ export default function Home() {
                 Vedi in dashboard
               </Link>
               <button 
-                onClick={() => setDemoModal({ show: false, date: "", time: "", serviceName: "" })}
+                onClick={() =>
+                  setDemoModal({
+                    show: false,
+                    date: "",
+                    time: "",
+                    serviceName: "",
+                    paymentLabel: "",
+                    customerName: "",
+                    customerPhone: "",
+                    cancelPath: "",
+                    price: 0,
+                  })
+                }
                 className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
               >
                 Resta qui
@@ -427,10 +708,19 @@ export default function Home() {
 
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl shadow-cyan-900/10 border border-[#1a2642] p-6 sm:p-8 relative z-10">
         {tenantInfo.isDemo && (
-          <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs text-center p-3 rounded-xl font-semibold leading-relaxed">
-            Ambiente demo: puoi usare nomi e numeri finti. La prenotazione
-            viene salvata nel calendario demo per mostrare come funziona
-            NeatX.
+          <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs p-3 rounded-xl font-semibold leading-relaxed">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-center sm:text-left">
+                Ambiente demo: usa nomi e numeri finti. Ogni prenotazione si
+                salva nella dashboard titolare.
+              </p>
+              <Link
+                href="/dashboard"
+                className="shrink-0 bg-yellow-300 text-[#050814] hover:bg-yellow-200 px-3 py-2 rounded-lg font-extrabold text-center"
+              >
+                Apri dashboard
+              </Link>
+            </div>
           </div>
         )}
 
@@ -446,43 +736,152 @@ export default function Home() {
 
         <div className="text-center mb-8">
           
-          {/* ✅ LA MAGIA DELLA FOTO CHE GIRA */}
           <div className="flex flex-col items-center justify-center mb-10 relative">
-            <div
-              onClick={handleLogoClick}
-              className={`relative w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-[#00b4ff] to-purple-600 cursor-pointer transition-all duration-1000 z-20 ${
-                logoClicked
-                  ? "rotate-[360deg] scale-110 shadow-[0_0_30px_rgba(0,180,255,0.4)]"
-                  : "shadow-lg shadow-cyan-500/20 hover:scale-105"
-              }`}
-            >
-              <img
-                src="/apple-icon.png"
-                alt="Logo Demo NeatX"
-                className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
-              />
-            </div>
+            <style>{`
+              @keyframes demoHaloSpin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+              }
 
-            {/* Messaggio fluttuante Easter Egg */}
+              @keyframes demoSoftPulse {
+                0%, 100% { opacity: .35; transform: scale(.96); }
+                50% { opacity: .72; transform: scale(1.06); }
+              }
+
+              @keyframes demoSweep {
+                0% { transform: translateX(-140%) rotate(22deg); opacity: 0; }
+                35% { opacity: .85; }
+                100% { transform: translateX(140%) rotate(22deg); opacity: 0; }
+              }
+
+              @keyframes demoSpark {
+                0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.4); }
+                22% { opacity: 1; }
+                100% { opacity: 0; transform: translate3d(var(--spark-x), var(--spark-y), 0) scale(1.15); }
+              }
+            `}</style>
+
+            <button
+              type="button"
+              onClick={handleLogoClick}
+              aria-label="Attiva effetto logo demo NeatX"
+              className="group relative w-32 h-32 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
+              style={{
+                transition: "transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
+                transform: logoClicked
+                  ? "rotate(360deg) scale(1.06)"
+                  : "rotate(0deg) scale(1)",
+                zIndex: 51,
+              }}
+            >
+              <span
+                className="absolute inset-0 rounded-full blur-xl"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(0,180,255,.5), rgba(236,72,153,.18) 42%, transparent 72%)",
+                  animation: logoClicked
+                    ? "demoSoftPulse .7s ease-in-out infinite"
+                    : "demoSoftPulse 3.2s ease-in-out infinite",
+                }}
+              />
+
+              <span
+                className="absolute inset-3 rounded-full"
+                style={{
+                  background:
+                    "conic-gradient(from 90deg, rgba(0,180,255,.05), rgba(0,180,255,1), rgba(255,255,255,.9), rgba(236,72,153,.95), rgba(0,180,255,.05))",
+                  filter: "drop-shadow(0 0 12px rgba(0,180,255,.6))",
+                  animation: logoClicked
+                    ? "demoHaloSpin .75s linear infinite"
+                    : "demoHaloSpin 7s linear infinite",
+                }}
+              />
+
+              <span className="absolute inset-[18px] rounded-full bg-[#050814]" />
+
+              <span
+                className="absolute inset-[14px] rounded-full opacity-60"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(0,180,255,.45), transparent 38%, rgba(236,72,153,.35) 70%, rgba(255,255,255,.28))",
+                  filter: "blur(5px)",
+                }}
+              />
+
+              <span className="relative w-24 h-24 rounded-full p-1 bg-[#0b1221] shadow-[0_20px_42px_rgba(0,180,255,.26)] overflow-hidden">
+                <img
+                  src="/apple-icon.png"
+                  alt="Logo Demo NeatX"
+                  className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
+                />
+
+                <span
+                  className={`absolute inset-y-[-20%] left-0 w-10 bg-white/35 blur-sm ${
+                    logoClicked ? "block" : "hidden"
+                  }`}
+                  style={{ animation: "demoSweep .9s ease-out both" }}
+                />
+              </span>
+
+              {logoClicked && (
+                <>
+                  {[
+                    ["left-5 top-8", "-22px", "-18px", "bg-cyan-200"],
+                    ["right-6 top-9", "24px", "-16px", "bg-pink-200"],
+                    ["bottom-7 left-8", "-18px", "22px", "bg-white"],
+                    ["bottom-8 right-7", "20px", "18px", "bg-cyan-100"],
+                  ].map(([position, x, y, color], index) => (
+                    <span
+                      key={`${position}-${x}`}
+                      className={`absolute ${position} h-1.5 w-1.5 rounded-full ${color} shadow-[0_0_12px_rgba(255,255,255,.9)]`}
+                      style={
+                        {
+                          "--spark-x": x,
+                          "--spark-y": y,
+                          animation: `demoSpark .9s ${index * 0.06}s ease-out both`,
+                        } as CSSProperties
+                      }
+                    />
+                  ))}
+                </>
+              )}
+            </button>
+
             {logoClicked && (
               <div className="absolute -bottom-8 text-sm font-bold text-[#00b4ff] animate-in fade-in slide-in-from-top-2 zoom-in duration-500 z-10 whitespace-nowrap">
-                Animazione da Demo! 🚀
+                Demo pronta da provare 🚀
               </div>
             )}
           </div>
 
           <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
-            <span className="text-slate-100">{tenantInfo.name}</span>
+            <span className="text-slate-100">{activeProfile.headline}</span>
           </h1>
 
-          <p className="text-slate-400 text-[13px] font-medium mb-6">
-            Prova la prenotazione online con dati fittizi.
+          <p className="text-slate-400 text-[13px] font-medium mb-5 leading-relaxed">
+            {activeProfile.description}
           </p>
 
           <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
             <p className="text-blue-300 text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300 text-center">
               {tenantInfo.address}
             </p>
+
+            <div className="grid grid-cols-2 gap-2 w-full">
+              {[
+                "Slot automatici",
+                "Lista d'attesa",
+                "Pagamento demo",
+                "Dashboard titolare",
+              ].map((badge) => (
+                <span
+                  key={badge}
+                  className="bg-[#131c31] border border-[#1e2b4a] text-slate-300 rounded-xl px-3 py-2 text-[10px] font-extrabold uppercase tracking-wide"
+                >
+                  {badge}
+                </span>
+              ))}
+            </div>
 
             <a
               href={tenantInfo.instagramUrl}
@@ -510,6 +909,41 @@ export default function Home() {
           </div>
         </div>
 
+        {tenantInfo.isDemo && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <label className="block text-sm font-bold text-slate-300">
+                Tipo attività demo
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowActivityModal(true)}
+                className="text-[10px] font-bold text-cyan-300 hover:text-cyan-100 underline underline-offset-4"
+              >
+                Guida rapida
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              {activityProfiles.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  onClick={() => chooseActivity(profile.id)}
+                  className={`rounded-xl border px-2 py-2 text-xs font-extrabold transition flex items-center justify-center gap-1.5 ${
+                    selectedActivityId === profile.id
+                      ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff]"
+                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500 hover:text-white"
+                  }`}
+                >
+                  <span>{profile.icon}</span>
+                  <span>{profile.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {services.length > 0 && (
           <div className="mb-6">
             <label className="block text-sm font-bold mb-2 text-slate-300">
@@ -519,7 +953,7 @@ export default function Home() {
             <select
               value={selectedService?.id || ""}
               onChange={(e) => {
-                const s = services.find((srv) => srv.id === e.target.value);
+                const s = visibleServices.find((srv) => srv.id === e.target.value);
                 setSelectedService(s || null);
                 setSlots([]);
                 setSelectedSlot("");
@@ -527,9 +961,9 @@ export default function Home() {
               }}
               className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer"
             >
-              {services.map((srv) => (
+              {visibleServices.map((srv) => (
                 <option key={srv.id} value={srv.id}>
-                  {srv.name} ({srv.duration} min) - {srv.price ? `${srv.price}€` : ""}
+                  {srv.name} ({srv.duration} min) - {srv.price ? `${srv.price}€` : "Gratis"}
                 </option>
               ))}
             </select>
@@ -568,7 +1002,7 @@ export default function Home() {
             <span className="text-4xl mb-2 block">🏖️</span>
             <h3 className="font-extrabold text-lg mb-1 text-white">Siamo in Ferie!</h3>
             <p className="text-sm font-medium">
-              Il salone è chiuso in questa data. Per favore, seleziona un altro giorno dal calendario.
+              L'attività è chiusa in questa data. Per favore, seleziona un altro giorno dal calendario.
             </p>
           </div>
         ) : dateError !== "" ? null : loading ? (
@@ -601,26 +1035,34 @@ export default function Home() {
           </div>
         ) : (
           <div className="animate-in fade-in duration-300">
-            {isScarce && (
-              <div className="mb-5 bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-[0_0_15px_rgba(249,115,22,0.15)] animate-in zoom-in duration-300">
-                <div className="flex items-center gap-3">
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                  </span>
+            {demandMode && (
+              <div
+                className={`mb-5 bg-gradient-to-r ${demandClass} border rounded-xl p-4 animate-in zoom-in duration-300`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-3">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
 
-                  <span className="text-red-400 text-[11px] font-black tracking-widest uppercase">
-                    Giornata quasi piena
+                    <span
+                      className={`${demandAccent} text-[11px] font-black tracking-widest uppercase text-center sm:text-left`}
+                    >
+                      {demandMode.title}
+                    </span>
+                  </div>
+
+                  <span className="text-orange-100 text-xs font-medium text-center sm:text-right">
+                    {slots.length === 1
+                      ? "1 incastro rimasto"
+                      : `${slots.length} incastri rimasti`}
                   </span>
                 </div>
 
-                <span className="text-orange-100 text-xs font-medium text-center sm:text-right">
-                  Solo{" "}
-                  <b className="text-white text-base bg-red-500/20 px-2 py-0.5 rounded-md border border-red-500/30">
-                    {slots.length}
-                  </b>{" "}
-                  {slots.length === 1 ? "incastro rimasto" : "incastri rimasti"}!
-                </span>
+                <p className="text-slate-300 text-xs leading-relaxed mt-2 text-center sm:text-left">
+                  {demandMode.message}
+                </p>
               </div>
             )}
 
@@ -698,6 +1140,57 @@ export default function Home() {
               />
             </div>
 
+            <div className="mb-6">
+              <label className="block text-sm font-bold mb-3 text-slate-300 text-center">
+                Simula metodo di pagamento
+              </label>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("salon")}
+                  className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                    paymentMethod === "salon"
+                      ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.15)]"
+                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
+                  }`}
+                >
+                  <span className="text-xs font-bold">In sede</span>
+                  <span className="text-[9px] opacity-70">Pagamento dopo</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("online")}
+                  className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                    paymentMethod === "online"
+                      ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
+                  }`}
+                >
+                  <span className="text-xs font-bold">Online demo</span>
+                  <span className="text-[9px] opacity-70">
+                    {selectedService?.price
+                      ? `${selectedService.price} EUR simulati`
+                      : "Simulazione"}
+                  </span>
+                </button>
+              </div>
+
+              {paymentMethod === "online" && (
+                <div className="mt-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-left">
+                  <p className="text-emerald-300 text-xs font-bold uppercase tracking-widest mb-1">
+                    Pagamento online simulato
+                  </p>
+                  <p className="text-slate-300 text-xs leading-relaxed">
+                    Nella demo non viene aperto Stripe e non ci sono addebiti:
+                    l'appuntamento viene salvato come gia pagato per mostrare
+                    la dashboard.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {formError && (
               <div className="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl flex items-start gap-3 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                 <span className="text-lg leading-none mt-0.5">⚠️</span>
@@ -718,6 +1211,8 @@ export default function Home() {
             >
               {isBooking
                 ? "⏳ Elaborazione..."
+                : paymentMethod === "online"
+                ? "Prenota e simula pagamento"
                 : isSelectedLastMinute
                 ? "🔥 Prenota Subito!"
                 : "✓ Prenota Ora"}

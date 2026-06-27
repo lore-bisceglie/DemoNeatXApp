@@ -24,7 +24,18 @@ export async function POST(request: Request) {
     const authCookie = cookieStore.get("neatx_auth");
     const isAdmin = authCookie?.value === "true";
     const body = await request.json();
-    const { customerName, customerPhone, date, time, honey, source, tenantId, serviceId, duration } = body;
+    const {
+      customerName,
+      customerPhone,
+      date,
+      time,
+      honey,
+      source,
+      tenantId,
+      serviceId,
+      duration,
+      paymentMethod,
+    } = body;
     const isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
 
     if (!isAdmin && !isDemoTenant) {
@@ -57,7 +68,7 @@ export async function POST(request: Request) {
     if (!isDemoTenant && !isAdmin && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
       const noShowCount = await prisma.noShow.count({ where: { customerPhone: cleanPhone, tenantId } });
       if (noShowCount >= 3) {
-        return NextResponse.json({ error: "Hai mancato troppi appuntamenti. Chiama il salone." }, { status: 403 });
+        return NextResponse.json({ error: "Hai mancato troppi appuntamenti. Contatta direttamente l'attivita." }, { status: 403 });
       }
     }
 
@@ -93,7 +104,8 @@ export async function POST(request: Request) {
         source: source || "ONLINE",
         cancelToken: newCancelToken,
         tenantId: tenantId,
-        serviceId: serviceId
+        serviceId: serviceId,
+        isPaid: isDemoTenant && paymentMethod === "online",
       },
     });
 

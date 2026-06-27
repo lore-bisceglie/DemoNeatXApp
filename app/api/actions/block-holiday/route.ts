@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     if (!tenant) {
       return NextResponse.json(
-        { error: "Nessun salone configurato" },
+        { error: "Nessuna attivita configurata" },
         { status: 400 }
       );
     }
