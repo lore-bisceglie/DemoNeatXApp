@@ -265,32 +265,36 @@ export default function Home() {
     ];
 
     if (date > maxDate) {
-      setDateError("Puoi prenotare con un massimo di 60 giorni di anticipo.");
-      setSlots([]);
-      setIsHoliday(false);
-      return;
-    }
+  setDateError("Puoi prenotare con un massimo di 60 giorni di anticipo.");
+  setSlots([]);
+  setIsHoliday(false);
+  setInitialLoad(false);
+  return;
+}
 
     if (date < today) {
-      setDateError("Non puoi prenotare in una data passata.");
-      setSlots([]);
-      setIsHoliday(false);
-      return;
-    }
+  setDateError("Non puoi prenotare in una data passata.");
+  setSlots([]);
+  setIsHoliday(false);
+  setInitialLoad(false);
+  return;
+}
 
     if (day === 0 || day === 1) {
-      setDateError("La domenica e il lunedì sono chiuso! Scegli un altro giorno.");
-      setSlots([]);
-      setIsHoliday(false);
-      return;
-    }
+  setDateError("La domenica e il lunedì sono chiuso! Scegli un altro giorno.");
+  setSlots([]);
+  setIsHoliday(false);
+  setInitialLoad(false);
+  return;
+}
 
     if (festeNazionali.includes(giornoMese)) {
-      setDateError("L'attività è chiusa in questa data per festività nazionale!");
-      setSlots([]);
-      setIsHoliday(false);
-      return;
-    }
+  setDateError("Il salone è chiuso in questa data per festività nazionale!");
+  setSlots([]);
+  setIsHoliday(false);
+  setInitialLoad(false);
+  return;
+}
 
     setDateError("");
     setLoading(true);
