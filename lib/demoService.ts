@@ -1,5 +1,5 @@
 export const DEMO_DEPOSIT = { price: 5, priceCents: 500, label: "Acconto prenotazione" };
-export const DEMO_TENANT_ID = "clx155ncf00007ukd1a2b5wbe";
+export const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
 export const DEMO_PHONE_NUMBER = "393406834163";
 export const DEMO_STANDARD_SERVICE = { name: "Taglio Capelli", duration: 30, price: 15 };
 
