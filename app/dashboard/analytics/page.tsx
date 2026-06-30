@@ -1,8 +1,5 @@
 export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { hasValidAuthCookie } from "@/lib/auth";
 import { unstable_noStore as noStore } from "next/cache";
 import { getDemoServiceForTime, DEMO_TENANT_ID } from "@/lib/demoService";
 import Link from "next/link";
@@ -11,10 +8,7 @@ import AnalyticsCharts from "./AnalyticsCharts";
 export default async function AnalyticsPage() {
   noStore();
 
-  const cookieStore = await cookies();
-  if (!hasValidAuthCookie(cookieStore)) {
-    redirect("/login");
-  }
+
 
   // 📅 Calcola date in fuso orario Italia
   const now = new Date();
