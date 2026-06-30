@@ -1,25 +1,12 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { csvLine } from "@/lib/csv";
 import { getDemoServiceForTime } from "@/lib/demoService";
-import {
-  hasValidAuthCookieHeader,
-  hasValidAuthCookie,
-  loginRedirectUrl,
-} from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const cookieStore = await cookies();
 
-  if (
-    !hasValidAuthCookie(cookieStore) &&
-    !hasValidAuthCookieHeader(request.headers.get("cookie"))
-  ) {
-    return NextResponse.redirect(loginRedirectUrl(request.url));
-  }
 
   const appointments = await prisma.appointment.findMany({
     orderBy: [
