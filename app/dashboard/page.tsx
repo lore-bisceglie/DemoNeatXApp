@@ -801,8 +801,8 @@ export default async function Dashboard(props: {
           </SwipeableAgenda>
 
           <div className="overflow-x-auto pb-4 custom-scrollbar">
-            <div className="min-w-[900px] grid grid-cols-6 gap-2">
-                <div className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2">
+            <div className="min-w-[650px] md:min-w-[900px] grid grid-cols-[60px_repeat(5,1fr)] md:grid-cols-[80px_repeat(5,1fr)] gap-2">
+                <div className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none">
                   Ora
                 </div>
 
@@ -830,7 +830,7 @@ export default async function Dashboard(props: {
 
                   return (
                     <div className="contents" key={slot}>
-                      <div className="text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-10 border-r border-transparent">
+                      <div className="text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-10 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
                         <span
                           className={`px-2 py-1 rounded-xl transition-all ${
                             isQuarter
