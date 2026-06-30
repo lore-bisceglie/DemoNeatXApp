@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity";
 
 const timeToMins = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -85,6 +86,20 @@ export async function POST(
       },
       include: { service: true },
     });
+
+    if (appointment.tenantId) {
+      await logActivity({
+        action: "MOVE_APPOINTMENT",
+        actor: "admin",
+        message: `${appointment.customerName} spostato dal ${appointment.date.split("-").reverse().join("/")} (${appointment.time}) al ${date.split("-").reverse().join("/")} (${time})`,
+        appointmentId: appointment.id,
+        customerName: appointment.customerName,
+        customerPhone: appointment.customerPhone,
+        date: date,
+        time: time,
+        tenantId: appointment.tenantId,
+      });
+    }
 
     return NextResponse.json({ appointment: updatedAppointment });
   } catch (error) {

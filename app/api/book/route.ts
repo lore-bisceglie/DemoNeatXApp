@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { cookies } from "next/headers";
+import { logActivity } from "@/lib/activity";
+import { revalidatePath } from "next/cache";
 
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
@@ -108,6 +110,22 @@ export async function POST(request: Request) {
         isPaid: isDemoTenant && paymentMethod === "online",
       },
     });
+
+    await logActivity({
+      action: "CREATE_APPOINTMENT",
+      actor: isAdmin ? "admin" : "client",
+      message: isAdmin 
+        ? `Nuovo appuntamento inserito per ${customerName}`
+        : `${customerName} si è prenotato dal sito web`,
+      appointmentId: newAppointment.id,
+      customerName: customerName.trim(),
+      customerPhone: cleanPhone,
+      date: date,
+      time: time,
+      tenantId: tenantId,
+    });
+
+    revalidatePath("/dashboard");
 
     return NextResponse.json({ 
       success: true, 

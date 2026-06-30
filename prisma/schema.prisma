@@ -26,6 +26,7 @@ model Tenant {
   noShows       NoShow[]
   waitlists     Waitlist[]
   customerNotes CustomerNote[]
+  activityLogs  ActivityLog[]
 }
 
 // ------------------------------------------------------
@@ -145,4 +146,26 @@ model CustomerNote {
   tenant   Tenant @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, phone])
+}
+
+// ------------------------------------------------------
+// 8. LOG ATTIVITA' RECENTI (ACTIVITY LOG)
+// ------------------------------------------------------
+model ActivityLog {
+  id            String   @id @default(cuid())
+  action        String   // es. "CREATE_APPOINTMENT", "DELETE_APPOINTMENT", "MOVE_APPOINTMENT", "NO_SHOW"
+  actor         String   @default("system") // "client", "admin", "system"
+  message       String   // Testo human-readable da mostrare nella UI
+  appointmentId String?
+  customerName  String?
+  customerPhone String?
+  date          String?
+  time          String?
+  metadata      String?
+  createdAt     DateTime @default(now())
+
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
 }

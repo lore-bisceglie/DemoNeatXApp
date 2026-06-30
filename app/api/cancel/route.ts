@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity";
 
 // Recupera i dati dell'appuntamento dal token segreto
 export async function GET(request: Request) {
@@ -34,6 +35,20 @@ export async function POST(request: Request) {
       await prisma.appointment.delete({
         where: { id: appointment.id }
       });
+      
+      if (appointment.tenantId) {
+        await logActivity({
+          action: "CANCEL_APPOINTMENT",
+          actor: "client",
+          message: `${appointment.customerName} ha disdetto l'appuntamento dal sito`,
+          appointmentId: appointment.id,
+          customerName: appointment.customerName,
+          customerPhone: appointment.customerPhone,
+          date: appointment.date,
+          time: appointment.time,
+          tenantId: appointment.tenantId,
+        });
+      }
     }
 
     return NextResponse.json({ success: true });

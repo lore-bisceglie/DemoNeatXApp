@@ -204,6 +204,12 @@ export default async function Dashboard(props: {
     },
   });
 
+  const recentActivities = await prisma.activityLog.findMany({
+    where: { tenantId },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+
   radarAppointments.forEach((app) => {
     if (app.time === "ALL_DAY") {
       // 🌟 FIX FERIE: Assegna un'altezza gigantesca che copre l'intera colonna
@@ -886,7 +892,7 @@ export default async function Dashboard(props: {
         </div>
 
         {/* ALTRE FUNZIONI DASHBOARD */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden">
             <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
               🎯
@@ -1092,6 +1098,79 @@ export default async function Dashboard(props: {
                   </form>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* 🧾 ATTIVITA RECENTI */}
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
+            <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
+              <span>🧾</span>
+              Attività Recenti
+            </h2>
+
+            <div className="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-3 max-h-[500px]">
+              {recentActivities.length > 0 ? (
+                recentActivities.map((log) => {
+                  let bgColor = "bg-[#131c31]";
+                  let dotColor = "bg-slate-500";
+                  let icon = "📝";
+
+                  if (log.action === "CREATE_APPOINTMENT") {
+                    bgColor = "bg-emerald-500/10 border-emerald-500/20";
+                    dotColor = "bg-emerald-400";
+                    icon = "✅";
+                  } else if (log.action === "DELETE_APPOINTMENT" || log.action === "CANCEL_APPOINTMENT") {
+                    bgColor = "bg-red-500/10 border-red-500/20";
+                    dotColor = "bg-red-400";
+                    icon = "❌";
+                  } else if (log.action === "MOVE_APPOINTMENT") {
+                    bgColor = "bg-amber-500/10 border-amber-500/20";
+                    dotColor = "bg-amber-400";
+                    icon = "🔄";
+                  } else if (log.action === "NO_SHOW") {
+                    bgColor = "bg-orange-500/10 border-orange-500/20";
+                    dotColor = "bg-orange-400";
+                    icon = "👻";
+                  }
+
+                  return (
+                    <div
+                      key={log.id}
+                      className={`p-4 rounded-2xl border ${bgColor} flex gap-3`}
+                    >
+                      <div className="mt-1">
+                        <span className="text-lg">{icon}</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white mb-1 leading-snug">
+                          {log.message}
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-2">
+                          <span>
+                            {new Date(log.createdAt).toLocaleDateString("it-IT", {
+                              day: "2-digit",
+                              month: "short",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${dotColor}`}
+                          ></span>
+                          <span>{log.actor === "admin" ? "Admin" : "Cliente"}</span>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-10 bg-[#131c31] rounded-2xl border border-[#1e2b4a]">
+                  <span className="text-4xl block mb-2 opacity-30">😴</span>
+                  <p className="text-slate-400 text-sm font-medium">
+                    Nessuna attività recente
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
