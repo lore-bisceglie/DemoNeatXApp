@@ -220,7 +220,7 @@ export default async function AnalyticsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
           <div className="bg-[#0b1221] p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#1a2642] shadow-xl">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
               Fatturato 3 Mesi
@@ -235,6 +235,14 @@ export default async function AnalyticsPage() {
             </p>
             <p className="text-2xl sm:text-3xl font-extrabold text-[#00b4ff]">
               €{avgDailyRevenue}
+            </p>
+          </div>
+          <div className="bg-[#0b1221] p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#1a2642] shadow-xl">
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+              Totale Prenotazioni
+            </p>
+            <p className="text-2xl sm:text-3xl font-extrabold text-amber-400">
+              {appointments.length}
             </p>
           </div>
           <div className="bg-[#0b1221] p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#1a2642] shadow-xl">
