@@ -32,7 +32,7 @@ export default async function AnalyticsPage() {
   const allAppointments = await prisma.appointment.findMany({
     where: {
       tenantId: DEMO_TENANT_ID,
-      date: { gte: threeMonthsAgoStr, lte: todayItaly },
+      date: { gte: threeMonthsAgoStr },
     },
     orderBy: { date: "asc" },
   });
@@ -47,7 +47,7 @@ export default async function AnalyticsPage() {
   const noShows = await prisma.noShow.findMany({
     where: {
       tenantId: DEMO_TENANT_ID,
-      date: { gte: threeMonthsAgoStr, lte: todayItaly },
+      date: { gte: threeMonthsAgoStr },
     },
   });
 
