@@ -117,41 +117,9 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
         }`}
       >
         <div className="p-5 border-b border-[#1e2b4a] flex items-center justify-between bg-[#131c31]">
-          <div className="flex items-center gap-4">
-            <h2 className="text-white font-extrabold text-lg">
-              Database clienti
-            </h2>
-            <button
-              onClick={() => {
-                import("sweetalert2").then((module) => {
-                  const Swal = module.default;
-                  Swal.fire({
-                    title: "Preparazione Export...",
-                    text: "Stiamo generando il file CSV con l'anagrafica...",
-                    icon: "info",
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                      Swal.showLoading();
-                    }
-                  });
-                  window.location.href = `/api/export/customers?tenantId=${tenantId}`;
-                  setTimeout(() => {
-                    Swal.fire({
-                      title: "Fatto!",
-                      text: "L'esportazione della clientela è pronta.",
-                      icon: "success",
-                      timer: 2000,
-                      showConfirmButton: false
-                    });
-                  }, 1500);
-                });
-              }}
-              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-2 text-xs"
-            >
-              <span>📥</span> Esporta (CSV)
-            </button>
-          </div>
+          <h2 className="text-white font-extrabold text-lg">
+            Database clienti
+          </h2>
           <button
             onClick={() => setIsOpen(false)}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1e2b4a] text-slate-300 hover:text-white hover:bg-red-500 transition"

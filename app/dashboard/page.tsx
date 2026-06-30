@@ -14,7 +14,6 @@ import SwipeableAgenda from "./SwipeableAgenda";
 import CustomerDrawer from "./CustomerDrawer";
 import WaitlistDashboard from "./WaitlistDashboard";
 import ResetDemoButton from "./ResetDemoButton";
-import ExportAgendaButton from "./ExportAgendaButton";
 
 export default async function Dashboard(props: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -531,7 +530,18 @@ export default async function Dashboard(props: {
 
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <CustomerDrawer tenantId={tenantId} />
-            <ExportAgendaButton tenantId={tenantId} />
+            <a
+              href={`/api/export/appointments?tenantId=${tenantId}`}
+              className="flex-shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-sm font-bold px-5 py-2.5 rounded-xl border border-emerald-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap"
+            >
+              Export agenda
+            </a>
+            <a
+              href={`/api/export/customers?tenantId=${tenantId}`}
+              className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-5 py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap"
+            >
+              Export clienti
+            </a>
             <ResetDemoButton />
             <Link
               href="/dashboard/analytics"
