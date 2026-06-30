@@ -830,7 +830,7 @@ export default async function Dashboard(props: {
 
                   return (
                     <div className="contents" key={slot}>
-                      <div className="text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-10 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
+                      <div className="text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-20 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
                         <span
                           className={`px-2 py-1 rounded-xl transition-all ${
                             isQuarter
