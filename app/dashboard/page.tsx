@@ -528,31 +528,31 @@ export default async function Dashboard(props: {
             </span>
           </h1>
 
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 custom-scrollbar snap-x">
             <CustomerDrawer tenantId={tenantId} />
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
-              className="flex-shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-sm font-bold px-5 py-2.5 rounded-xl border border-emerald-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap"
+              className="flex-shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
             >
               Export agenda
             </a>
             <a
               href={`/api/export/customers?tenantId=${tenantId}`}
-              className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-5 py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap"
+              className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
             >
               Export clienti
             </a>
             <ResetDemoButton />
             <Link
               href="/dashboard/analytics"
-              className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 text-sm"
+              className="flex-shrink-0 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-4 sm:px-4 py-2 sm:py-2.5 rounded-xl transition flex items-center gap-2 text-sm snap-center"
             >
               <span>📊</span> Analytics
             </Link>
 
             <Link
               href="/"
-              className="flex-1 sm:flex-none bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/20 transition flex justify-center items-center gap-2 whitespace-nowrap"
+              className="flex-shrink-0 bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-cyan-500/20 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
             >
               [+] Nuova Prenotazione
             </Link>
@@ -758,49 +758,50 @@ export default async function Dashboard(props: {
 
         {/* AGENDA SETTIMANALE TETRIS */}
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
-            <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
-              📒 Agenda Dinamica ({tenantName})
-            </h2>
-
-            <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
-              <Link
-                href={`/dashboard?weekOffset=${weekOffset - 1}`}
-                prefetch={false}
-                scroll={false}
-                className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
-              >
-                ← Prec
-              </Link>
-
-              {/* ✅ RIPRISTINATO IL BOTTONE "OGGI" AZZURRO */}
-              <Link
-                href="/dashboard"
-                prefetch={false}
-                scroll={false}
-                className={`px-4 py-2 text-sm font-bold rounded-xl transition ${
-                  weekOffset === 0
-                    ? "bg-[#00b4ff] text-[#050814] shadow-lg shadow-cyan-500/20"
-                    : "text-slate-300 hover:bg-[#1e2b4a]"
-                }`}
-              >
-                Oggi
-              </Link>
-
-              <Link
-                href={`/dashboard?weekOffset=${weekOffset + 1}`}
-                prefetch={false}
-                scroll={false}
-                className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
-              >
-                Pros →
-              </Link>
-            </div>
-          </div>
-
           <SwipeableAgenda>
-            <div className="overflow-x-auto pb-4 custom-scrollbar">
-              <div className="min-w-[900px] grid grid-cols-6 gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
+              <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                📒 Agenda Dinamica ({tenantName})
+              </h2>
+
+              <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
+                <Link
+                  href={`/dashboard?weekOffset=${weekOffset - 1}`}
+                  prefetch={false}
+                  scroll={false}
+                  className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
+                >
+                  ← Prec
+                </Link>
+
+                {/* ✅ RIPRISTINATO IL BOTTONE "OGGI" AZZURRO */}
+                <Link
+                  href="/dashboard"
+                  prefetch={false}
+                  scroll={false}
+                  className={`px-4 py-2 text-sm font-bold rounded-xl transition ${
+                    weekOffset === 0
+                      ? "bg-[#00b4ff] text-[#050814] shadow-lg shadow-cyan-500/20"
+                      : "text-slate-300 hover:bg-[#1e2b4a]"
+                  }`}
+                >
+                  Oggi
+                </Link>
+
+                <Link
+                  href={`/dashboard?weekOffset=${weekOffset + 1}`}
+                  prefetch={false}
+                  scroll={false}
+                  className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
+                >
+                  Pros →
+                </Link>
+              </div>
+            </div>
+          </SwipeableAgenda>
+
+          <div className="overflow-x-auto pb-4 custom-scrollbar">
+            <div className="min-w-[900px] grid grid-cols-6 gap-2">
                 <div className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2">
                   Ora
                 </div>
@@ -882,7 +883,6 @@ export default async function Dashboard(props: {
                 })}
               </div>
             </div>
-          </SwipeableAgenda>
         </div>
 
         {/* ALTRE FUNZIONI DASHBOARD */}
