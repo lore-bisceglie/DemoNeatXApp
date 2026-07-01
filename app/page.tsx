@@ -1243,7 +1243,7 @@ export default function Home() {
             <br />
             Developed by{" "}
             <span className="text-[#00b4ff]/90 font-semibold">
-              Bisceglie Lorenzo
+              NeatX Team
             </span>
           </p>
           <Link 
@@ -1252,28 +1252,6 @@ export default function Home() {
           >
             ⚙️ Dashboard
           </Link>
-        </div>
-
-        <div className="flex gap-4 text-[9px] font-medium uppercase tracking-widest mt-1">
-          <a
-            href="https://www.instagram.com/lorebisceglie?igsh=cTIzeG15aXEzZ2Ey&utm_source=qr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-500 hover:text-[#E1306C] transition"
-          >
-            Instagram
-          </a>
-
-          <span className="text-slate-700">•</span>
-
-          <a
-            href="https://wa.me/393480480942?text=Ciao%20Lorenzo!%20Ho%20visto%20la%20tua%20app%20NeatX%20e%20vorrei%20informazioni."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-500 hover:text-[#25D366] transition"
-          >
-            WhatsApp
-          </a>
         </div>
       </div>
     </div>
