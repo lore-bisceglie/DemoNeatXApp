@@ -53,6 +53,9 @@ def login_instagram():
     if not username or not password:
         print("❌ CRITICO: Credenziali INSTA_USER e INSTA_PASS non trovate nell'ambiente. Il bot non può operare in automatico.")
         return None
+        
+    try:
+        print("🔄 Effettuo il login...")
         cl.login(username, password)
         cl.dump_settings(SESSION_FILE)
         print("✅ Login effettuato e sessione salvata.")
