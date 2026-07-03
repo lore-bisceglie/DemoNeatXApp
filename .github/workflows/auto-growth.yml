@@ -41,12 +41,22 @@ jobs:
         INSTA_PASS: ${{ secrets.INSTA_PASS }}
       run: |
         cd bot_scripts/Social/GrowthHack
-        python spia_virale.py
+        python spia_virale.py || true
         
-    - name: Salva i dati dei nuovi video scoperti
+    - name: Avvia lo Sniping sui Competitor (Solo una volta al giorno)
+      if: github.event_name == 'workflow_dispatch' || startsWith(github.event.schedule, '0 12')
+      env:
+        INSTA_USER: ${{ secrets.INSTA_USER }}
+        INSTA_PASS: ${{ secrets.INSTA_PASS }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: |
+        cd bot_scripts/Social/GrowthHack
+        python cacciatore_scontenti.py || true
+        
+    - name: Salva i dati dei nuovi video scoperti e dei clienti scontenti
       run: |
         git config --global user.name "GitHub Actions - Growth Bot"
         git config --global user.email "actions@github.com"
-        git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt || true
+        git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt || true
         git commit -m "Auto-Update: Nuovi video virali trovati e commenti salvati" || true
         git push || true
