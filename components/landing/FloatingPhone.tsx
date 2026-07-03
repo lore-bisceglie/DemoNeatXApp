@@ -39,7 +39,7 @@ export default function FloatingPhone() {
 
   return (
     <div 
-      className="relative mx-auto mt-16 perspective-1000 animate-in fade-in zoom-in slide-in-from-bottom-12 duration-1000 delay-500"
+      className="relative mx-auto mt-16 perspective-1000 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500"
       style={{ width: '320px', height: '650px', flexShrink: 0 }}
     >
       

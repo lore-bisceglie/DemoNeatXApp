@@ -297,9 +297,12 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> 100 appuntamenti/mese</li>
                 <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Supporto via Email</li>
               </ul>
-              <Link href="/demo" className="mt-8 w-full py-4 border border-[#1e2b4a] hover:bg-[#131c31] text-white font-bold rounded-xl transition-all text-center">
-                Visualizza Demo Live
-              </Link>
+              <a 
+                href="mailto:info@neatx.it?subject=Candidatura%20Piano%20Starter&body=Ciao%21%20Vorrei%20candidarmi%20per%20il%20Piano%20Starter.%20Ecco%20i%20dati%20per%20aiutarvi%20a%20strutturare%20la%20mia%20agenda%20su%20misura%3A%0A%0A1.%20Nome%20del%20Salone%2FStudio%3A%20%0A%0A2.%20Quanti%20membri%20dello%20staff%20ci%20lavorano%3F%20%0A%0A3.%20Quali%20sono%20i%20vostri%20orari%20di%20apertura%20e%20chiusura%3F%20%0A%0A4.%20Quali%20sono%20i%20giorni%20di%20chiusura%20settimanale%3F%20%0A%0A5.%20Elenca%20i%20tuoi%20servizi%20principali%20%28con%20durata%20e%20prezzo%20stimati%29%3A%20%0A%0A6.%20Vuoi%20richiedere%20un%20anticipo%2Fcaparra%20al%20momento%20della%20prenotazione%3F%20%0A%0A7.%20Qual%20%C3%A8%20il%20problema%20pi%C3%B9%20grande%20che%20hai%20oggi%20con%20la%20gestione%20degli%20appuntamenti%3F%20%0A%0AIn%20attesa%20di%20un%20vostro%20riscontro."
+                className="mt-8 w-full block py-4 border border-[#1e2b4a] hover:bg-[#131c31] text-white font-bold rounded-xl transition-all text-center"
+              >
+                📝 Invia Candidatura
+              </a>
             </div>
 
             {/* PIANO PRO (EVIDENZIATO) */}
@@ -316,9 +319,12 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Accesso alla Dashboard Privata</li>
                 <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Blocco orari e ferie</li>
               </ul>
-              <Link href="/demo" className="mt-8 w-full py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl transition-all text-center shadow-lg shadow-cyan-500/25">
-                Visualizza Demo Live
-              </Link>
+              <a 
+                href="mailto:info@neatx.it?subject=Candidatura%20Piano%20Pro&body=Ciao%21%20Vorrei%20candidarmi%20per%20il%20Piano%20Pro.%20Ecco%20i%20dati%20per%20aiutarvi%20a%20strutturare%20la%20mia%20agenda%20su%20misura%3A%0A%0A1.%20Nome%20del%20Salone%2FStudio%3A%20%0A%0A2.%20Quanti%20membri%20dello%20staff%20ci%20lavorano%3F%20%0A%0A3.%20Quali%20sono%20i%20vostri%20orari%20di%20apertura%20e%20chiusura%3F%20%0A%0A4.%20Quali%20sono%20i%20giorni%20di%20chiusura%20settimanale%3F%20%0A%0A5.%20Elenca%20i%20tuoi%20servizi%20principali%20%28con%20durata%20e%20prezzo%20stimati%29%3A%20%0A%0A6.%20Vuoi%20richiedere%20un%20anticipo%2Fcaparra%20al%20momento%20della%20prenotazione%3F%20%0A%0A7.%20Qual%20%C3%A8%20il%20problema%20pi%C3%B9%20grande%20che%20hai%20oggi%20con%20la%20gestione%20degli%20appuntamenti%3F%20%0A%0AIn%20attesa%20di%20un%20vostro%20riscontro."
+                className="mt-8 w-full block py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl transition-all text-center shadow-lg shadow-cyan-500/25 hover:scale-105"
+              >
+                📝 Invia Candidatura
+              </a>
             </div>
 
             {/* PIANO ELITE */}
@@ -332,11 +338,11 @@ export default function Home() {
                 <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Assistenza Prioritaria H24</li>
               </ul>
               <div className="mt-8 flex flex-col gap-3">
-                <a href="mailto:info@neatx.it" className="w-full py-3 bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-bold rounded-xl transition-all text-center flex items-center justify-center gap-2">
-                  ✉️ Email
-                </a>
-                <a href="https://instagram.com/tuoprofilo" target="_blank" className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-xl transition-all text-center shadow-[0_0_15px_rgba(168,85,247,0.3)] flex items-center justify-center gap-2">
-                  📸 Instagram
+                <a 
+                  href="mailto:info@neatx.it?subject=Candidatura%20Piano%20Elite&body=Ciao%21%20Vorrei%20candidarmi%20per%20il%20Piano%20Elite.%20Ecco%20i%20dati%20per%20aiutarvi%20a%20strutturare%20la%20mia%20agenda%20su%20misura%3A%0A%0A1.%20Nome%20del%20Salone%2FStudio%3A%20%0A%0A2.%20Quanti%20membri%20dello%20staff%20ci%20lavorano%3F%20%0A%0A3.%20Quali%20sono%20i%20vostri%20orari%20di%20apertura%20e%20chiusura%3F%20%0A%0A4.%20Quali%20sono%20i%20giorni%20di%20chiusura%20settimanale%3F%20%0A%0A5.%20Elenca%20i%20tuoi%20servizi%20principali%20%28con%20durata%20e%20prezzo%20stimati%29%3A%20%0A%0A6.%20Vuoi%20richiedere%20un%20anticipo%2Fcaparra%20al%20momento%20della%20prenotazione%3F%20%0A%0A7.%20Qual%20%C3%A8%20il%20problema%20pi%C3%B9%20grande%20che%20hai%20oggi%20con%20la%20gestione%20degli%20appuntamenti%3F%20%0A%0AIn%20attesa%20di%20un%20vostro%20riscontro."
+                  className="w-full py-4 block bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-extrabold rounded-xl transition-all text-center shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-105"
+                >
+                  📝 Invia Candidatura
                 </a>
               </div>
             </div>

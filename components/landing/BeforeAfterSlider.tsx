@@ -90,25 +90,25 @@ export default function BeforeAfterSlider() {
 
         {/* LEFT SIDE: BEFORE (CHAOS) - Clipped Layer */}
         <div 
-          className="absolute inset-0 w-full h-full bg-white flex flex-col pt-10 px-8 pointer-events-none border-r-2 border-white shadow-[10px_0_15px_rgba(0,0,0,0.5)]"
+          className="absolute inset-0 w-full h-full bg-[#f8f9fa] flex flex-col pt-10 px-8 pointer-events-none border-r-2 border-white shadow-[10px_0_15px_rgba(0,0,0,0.5)]"
           style={{ 
             clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)`,
             backgroundImage: 'repeating-linear-gradient(transparent, transparent 39px, #e5e7eb 39px, #e5e7eb 40px)',
             backgroundPosition: '0 10px'
           }}
         >
-          <div className="text-red-700 font-extrabold text-lg mb-6 bg-white/80 inline-block px-2">AGENDA CARTACEA ❌</div>
+          <div className="text-red-700 font-extrabold text-lg mb-6 bg-[#f8f9fa]/80 inline-block px-2 rounded">AGENDA CARTACEA ❌</div>
           
-          <div className="relative font-[cursive] text-lg text-[#333] mb-3 pb-0">
+          <div className="relative font-['Comic_Sans_MS','Chalkboard_SE',cursive] text-lg text-slate-800 mb-3 pb-0">
             <span className="line-through decoration-red-500 decoration-4">15:30 - Mario (o Marco?) taglio boh</span>
-            <div className="absolute top-1 right-2 text-red-600 text-sm font-bold rotate-12">Non si è presentato!</div>
+            <div className="absolute top-1 right-2 text-red-600 text-sm font-bold rotate-12 bg-[#f8f9fa] px-1 rounded border border-red-200">Non si è presentato!</div>
           </div>
           
-          <div className="font-[cursive] text-lg text-[#333] mb-3 pb-0 mt-[10px]">
+          <div className="font-['Comic_Sans_MS','Chalkboard_SE',cursive] text-lg text-slate-800 mb-3 pb-0 mt-[10px]">
             16:15 - Giulia colore - LE HO SCRITTO SU IG???
           </div>
 
-          <div className="font-[cursive] text-lg text-[#333] mb-3 pb-0 text-red-500 mt-[10px]">
+          <div className="font-['Comic_Sans_MS','Chalkboard_SE',cursive] text-lg font-bold mb-3 pb-0 text-red-600 mt-[10px]">
             17:30 - BUCO ??? Chiama qualcuno!
           </div>
         </div>
