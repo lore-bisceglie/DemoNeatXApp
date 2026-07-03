@@ -344,6 +344,37 @@ export default function Home() {
               <h3 className="text-xl font-bold text-white mb-2">Autopilot Recensioni</h3>
               <p className="text-slate-400 text-sm leading-relaxed">Filtra i clienti scontenti con un modulo privato e spedisce in automatico quelli felici a lasciarti valanghe di recensioni a 5 stelle su Google Maps.</p>
             </div>
+            {/* Card 7 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-cyan-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">📸</div>
+              <h3 className="text-xl font-bold text-white mb-2">AR Face Analyzer</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Il cliente si fa un selfie sull'app e l'IA gli applica il taglio o il colore in Realtà Aumentata prima ancora di venire in salone. Upsell garantito.</p>
+            </div>
+            {/* Card 8 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-indigo-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🧠</div>
+              <h3 className="text-xl font-bold text-white mb-2">CRM Empatico (Il tuo Clone)</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Il bot si ricorda i dettagli dei clienti. Su WhatsApp li saluta dicendo: "Ciao Marco, com'è andata la partita di tuo figlio?". Fidelizzazione estrema.</p>
+            </div>
+            {/* Card 9 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-red-500/50 transition-all group shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-[30px]"></div>
+              <div className="text-4xl mb-4 relative z-10 group-hover:scale-110 transition-transform origin-left">💀</div>
+              <h3 className="text-xl font-bold text-white mb-2 relative z-10">No-Show Revenge</h3>
+              <p className="text-slate-400 text-sm leading-relaxed relative z-10">Un cliente non si presenta? L'IA abbassa il suo "Trust Score" e la prossima volta gli blocca la prenotazione finché non paga il 100% in anticipo senza rimborsi.</p>
+            </div>
+            {/* Card 10 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-teal-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">📦</div>
+              <h3 className="text-xl font-bold text-white mb-2">Magazzino Predittivo</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">L'IA calcola quante tinte o shampoo consumi in base agli appuntamenti fatti e manda l'ordine al tuo fornitore in automatico prima che finiscano.</p>
+            </div>
+            {/* Card 11 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-orange-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🎯</div>
+              <h3 className="text-xl font-bold text-white mb-2">Market Radar (Spionaggio IA)</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Scansiona in segreto i prezzi dei tuoi 3 maggiori competitor locali e ti avvisa su WhatsApp se lanciano sconti aggressivi, suggerendoti la contromossa.</p>
+            </div>
           </div>
         </div>
       </section>
