@@ -100,6 +100,7 @@ export default function Home() {
           <a href="#features" className="hover:text-white transition-colors">Funzionalità</a>
           <button onClick={() => setShowRoiModal(true)} className="hover:text-white transition-colors font-extrabold text-[#00b4ff]">Calcola ROI</button>
           <a href="#pricing" className="hover:text-white transition-colors">Prezzi</a>
+          <Link href="/blog" className="hover:text-white transition-colors text-purple-400">Blog</Link>
         </div>
         
       </nav>
