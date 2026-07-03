@@ -18,6 +18,7 @@ export async function GET(request: Request) {
   const date = searchParams.get("date");
   const tenantId = searchParams.get("tenantId");
   const duration = parseInt(searchParams.get("duration") || "30", 10);
+  const serviceId = searchParams.get("serviceId");
 
   if (!date || !tenantId) {
     return NextResponse.json({ error: "Mancano parametri essenziali" }, { status: 400 });
@@ -31,7 +32,7 @@ export async function GET(request: Request) {
   try {
     const appointments = await prisma.appointment.findMany({
       where: { date: date, tenantId: tenantId },
-      select: { time: true, endTime: true, customerName: true }
+      select: { time: true, endTime: true, customerName: true, staffId: true }
     });
 
     const isHoliday = appointments.some((app) => app.time === "ALL_DAY" || app.customerName.includes("FERIE"));
@@ -39,28 +40,72 @@ export async function GET(request: Request) {
       return NextResponse.json({ slots: [], isHoliday: true });
     }
 
-    // Costruiamo gli intervalli già occupati [Inizio, Fine]
-    const bookedIntervals = appointments.map(app => {
-      // Le pause storiche senza endTime durano di default 15 min per coprire lo slot
+    // Costruiamo gli intervalli già occupati per STAFF [Inizio, Fine]
+    const bookedIntervalsByStaff: Record<string, { start: number, end: number }[]> = {};
+
+    appointments.forEach(app => {
       const start = timeToMins(app.time);
       const end = app.endTime ? timeToMins(app.endTime) : start + 15; 
-      return { start, end };
+      
+      const sId = app.staffId || 'unassigned';
+      if (!bookedIntervalsByStaff[sId]) {
+        bookedIntervalsByStaff[sId] = [];
+      }
+      bookedIntervalsByStaff[sId].push({ start, end });
     });
 
-    // 🌟 MOTORE DI COLLISIONE
+    // Recuperiamo lo Staff capace di eseguire il servizio (o tutti se nessun serviceId)
+    let capableStaffIds: string[] = [];
+    
+    if (serviceId) {
+      const serviceWithStaff = await prisma.service.findUnique({
+        where: { id: serviceId },
+        include: { staff: true }
+      });
+      if (serviceWithStaff && serviceWithStaff.staff.length > 0) {
+        capableStaffIds = serviceWithStaff.staff.map(s => s.id);
+      }
+    }
+    
+    // Fallback: se non abbiamo staff specifico, permettiamo a tutti (simulazione vecchi tenant)
+    if (capableStaffIds.length === 0) {
+      const allStaff = await prisma.staff.findMany({ where: { tenantId } });
+      if (allStaff.length > 0) {
+        capableStaffIds = allStaff.map(s => s.id);
+      } else {
+        // Fallback totale per i tenant senza staff (retrocompatibilità)
+        capableStaffIds = ['unassigned'];
+      }
+    }
+
+    // 🌟 MOTORE DI COLLISIONE PER STAFF
     let availableSlots: string[] = [];
     
     for (let currentSlotMins = openTime; currentSlotMins <= closeTime - duration; currentSlotMins += interval) {
       const potentialStart = currentSlotMins;
       const potentialEnd = potentialStart + duration;
 
-      // Verifica se questo blocco di tempo si sovrappone a qualcosa già prenotato
-      const hasOverlap = bookedIntervals.some(interval => {
-        // La logica matematica della sovrapposizione: Max(inizio1, inizio2) < Min(fine1, fine2)
-        return Math.max(potentialStart, interval.start) < Math.min(potentialEnd, interval.end);
-      });
+      let isSlotAvailable = false;
 
-      if (!hasOverlap) {
+      // Se c'è almeno un membro dello staff in grado di farlo libero, lo slot è disponibile
+      for (const sId of capableStaffIds) {
+        const staffIntervals = bookedIntervalsByStaff[sId] || [];
+        
+        let staffHasOverlap = false;
+        for (const interval of staffIntervals) {
+          if (Math.max(potentialStart, interval.start) < Math.min(potentialEnd, interval.end)) {
+            staffHasOverlap = true;
+            break;
+          }
+        }
+        
+        if (!staffHasOverlap) {
+          isSlotAvailable = true;
+          break; // Trovato un parrucchiere libero, lo slot è valido
+        }
+      }
+
+      if (isSlotAvailable) {
         availableSlots.push(minsToTime(potentialStart));
       }
     }

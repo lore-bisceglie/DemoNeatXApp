@@ -726,7 +726,7 @@ export default async function Dashboard(props: {
           </div>
         </div>
 
-        <WaitlistDashboard />
+        {/* <WaitlistDashboard /> */}
 
         {freeGapReports.length > 0 && (
           <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">

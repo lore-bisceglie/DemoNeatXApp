@@ -1,0 +1,1188 @@
+export const dynamic = "force-dynamic";
+
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+// import { cookies } from "next/headers"; // Riattivare per la login admin
+import { redirect } from "next/navigation";
+import DeleteButton from "../../../dashboard/DeleteButton";
+import WalkInButton from "../../../dashboard/WalkInButton";
+import AppointmentBlock from "../../../dashboard/AppointmentBlock";
+import { unstable_noStore as noStore } from "next/cache";
+
+import AutoRefreshMonitor from "../../../dashboard/AutoRefreshMonitor";
+import SwipeableAgenda from "../../../dashboard/SwipeableAgenda";
+import CustomerDrawer from "../../../dashboard/CustomerDrawer";
+import TeamDrawer from "./TeamDrawer";
+import MarketingWidget from "./MarketingWidget";
+import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
+import ResetDemoButton from "../../../dashboard/ResetDemoButton";
+import DayNavigator from "../../../dashboard/DayNavigator";
+import AnalyticsChart from "../../../dashboard/AnalyticsChart";
+
+import { cookies } from "next/headers";
+import LoginScreen from "./LoginScreen";
+
+export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
+  noStore();
+
+  const searchParams = await props.searchParams;
+
+  
+  const { slug } = await props.params;
+  const cookieStore = await cookies();
+  const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { slug },
+    include: { services: true }
+  });
+
+  if (!tenant) return <div className="p-10 text-white">Attività non trovata.</div>;
+
+  if (tenant.adminPassword && authCookie !== tenant.adminPassword) {
+    return <LoginScreen slug={slug} correctPassword={tenant.adminPassword} tenantName={tenant.name} />;
+  }
+
+  const tenantId = tenant.id;
+  const tenantName = tenant.name;
+  const tenantServices = tenant.services;
+
+  const staffList = await prisma.staff.findMany({ where: { tenantId } });
+
+
+
+
+  // Logica PAYWALL
+  const todayDate = new Date();
+  const trialEndsAt = tenant.trialEndsAt;
+  const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
+  if (isTrialExpired) {
+    return (
+      <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4 selection:bg-[#00b4ff]/30 text-center">
+        <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-4xl mb-6 border border-red-500/20">⚠️</div>
+        <h1 className="text-4xl font-extrabold text-white mb-4">Periodo di Prova Scaduto</h1>
+        <p className="text-slate-400 mb-8 max-w-md mx-auto">
+          I tuoi 7 giorni di prova per <strong>{tenantName}</strong> sono terminati. Attiva il piano Pro (29€/mese) per sbloccare la tua agenda.
+        </p>
+        <a href={`https://wa.me/393333333333?text=Ciao,%20voglio%20attivare%20il%20piano%20Pro%20per%20${tenantName}!`} target="_blank" className="py-4 px-8 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-green-500/25 text-lg">Attiva Abbonamento Pro</a>
+      </div>
+    );
+  }
+
+
+  let storeSettings = await prisma.storeSettings.findUnique({
+    where: {
+      tenantId,
+    },
+  });
+
+  if (!storeSettings) {
+    storeSettings = await prisma.storeSettings.create({
+      data: {
+        tenantId,
+        smsCredits: 50,
+      },
+    });
+  }
+
+  
+  const now = new Date();
+  
+  const dateFormatter = new Intl.DateTimeFormat("it-IT", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = dateFormatter.formatToParts(now);
+  const todayItaly = `${parts.find((p) => p.type === "year")?.value}-${
+    parts.find((p) => p.type === "month")?.value
+  }-${parts.find((p) => p.type === "day")?.value}`;
+
+  const timeFormatter = new Intl.DateTimeFormat("it-IT", {
+    timeZone: "Europe/Rome",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const currentTimeItaly = timeFormatter.format(now);
+  const [currentHours, currentMinutes] = currentTimeItaly
+    .split(":")
+    .map(Number);
+  const currentTotalMinutes = currentHours * 60 + currentMinutes;
+
+  const urlDate = (await searchParams)?.date;
+  const targetDate = urlDate || todayItaly;
+
+  const timeToMinutes = (value: string) => {
+    const [hours, minutes] = value.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const minutesToTime = (value: number) => {
+    const hours = Math.floor(value / 60).toString().padStart(2, "0");
+    const minutes = (value % 60).toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const weekOffset = parseInt((await searchParams).weekOffset || "0", 10);
+
+
+  const isPremium = tenant.plan === "premium" || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
+  const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
+
+
+  let weekDays: { date: string, label: string }[] = [];
+  const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+
+  if (isMultiStaff) {
+    const d = new Date(targetDate);
+    const label = `${dayNames[d.getDay()]} ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}`;
+    weekDays = [{ date: targetDate, label }];
+  } else {
+    // Single staff fallback
+    const refDate = new Date(targetDate);
+    const dayOfWeek = refDate.getDay();
+    const diffToTue = dayOfWeek >= 2 ? 2 - dayOfWeek : -5;
+    const tuesday = new Date(refDate);
+    tuesday.setDate(refDate.getDate() + diffToTue);
+
+    weekDays = Array.from({ length: 5 }).map((_, i) => {
+      const d = new Date(tuesday);
+      d.setDate(tuesday.getDate() + i);
+
+      const iso = d.toISOString().split("T")[0];
+      const [, m, dayStr] = iso.split("-");
+      const label = `${dayNames[d.getDay()].substring(0, 3)} ${dayStr}/${m}`;
+
+      return { date: iso, label };
+    });
+  }
+
+  const past14Days = Array.from({ length: 14 }).map((_, i) => {
+    const d = new Date(now);
+    d.setDate(now.getDate() - (i + 1));
+    return d.toISOString().split("T")[0];
+  });
+
+  const weekDatesArray = Array.from(new Set([...weekDays.map(w => w.date), ...past14Days]));
+
+  const allSlots: string[] = [];
+  for (let h = 9; h <= 19; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      if (h === 19 && m > 0) break;
+      allSlots.push(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`);
+    }
+  }
+
+  const rawAppointments = await prisma.appointment.findMany({
+    where: {
+      date: { gte: todayItaly },
+      tenantId,
+    },
+    orderBy: [ { date: "asc" }, { time: "asc" } ],
+    include: { service: true },
+  });
+
+  const columns = staffList.length > 0 ? staffList.map(s => s.id) : ["unassigned"];
+  const maxConcurrent = columns.length;
+  const radarMap: Record<string, Record<string, Record<string, any>>> = {};
+
+  weekDatesArray.forEach((d) => {
+    radarMap[d] = {};
+    for (const colId of columns) {
+      radarMap[d][colId] = {};
+    }
+  });
+
+  const radarAppointments = await prisma.appointment.findMany({
+    where: {
+      date: {
+        in: weekDatesArray,
+      },
+      tenantId,
+    },
+    include: {
+      service: true,
+    },
+  });
+
+  const recentActivities = await prisma.activityLog.findMany({
+    where: { tenantId },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+
+  radarAppointments.forEach((app) => {
+    let durationMins = 15;
+    if (app.time === "ALL_DAY") {
+      durationMins = allSlots.length * 15;
+    } else if (app.service?.duration) {
+      durationMins = app.service.duration;
+    } else if (app.endTime) {
+      const start = app.time.split(":").map(Number);
+      const end = app.endTime.split(":").map(Number);
+      durationMins = end[0] * 60 + end[1] - (start[0] * 60 + start[1]);
+    }
+
+    const slotsToCover = Math.ceil(durationMins / 15);
+    const startIndex = app.time === "ALL_DAY" ? 0 : allSlots.indexOf(app.time);
+
+    if (startIndex !== -1) {
+      const appWithSpan = {
+        ...app,
+        _rowSpan: slotsToCover,
+      };
+
+      // Assegna la colonna in base allo staffId reale dell'appuntamento, fallback sulla prima colonna per appuntamenti vecchi
+      const targetCol = app.staffId && columns.includes(app.staffId) ? app.staffId : columns[0];
+      const actualTime = app.time === "ALL_DAY" ? "09:00" : app.time;
+      radarMap[app.date][targetCol][actualTime] = appWithSpan;
+
+      for (let idx = 1; idx < slotsToCover; idx++) {
+        const coveredSlot = allSlots[startIndex + idx];
+        if (coveredSlot) {
+          radarMap[app.date][targetCol][coveredSlot] = "COVERED";
+        }
+      }
+    }
+  });
+  const freeGapReports = weekDays
+    .flatMap((dayInfo) => {
+      const gaps: {
+        date: string;
+        label: string;
+        start: string;
+        end: string;
+        duration: number;
+      }[] = [];
+
+      let gapStart: string | null = null;
+      let gapDuration = 0;
+
+      allSlots.forEach((slot) => {
+        const isPastToday =
+          dayInfo.date === todayItaly &&
+          timeToMinutes(slot) <= currentTotalMinutes;
+        let isSlotCompletelyFree = false;
+        for (const colId of columns) {
+          if (!radarMap[dayInfo.date]?.[colId]?.[slot]) {
+            isSlotCompletelyFree = true;
+            break;
+          }
+        }
+        const isFree = !isPastToday && isSlotCompletelyFree;
+
+        if (isFree) {
+          if (!gapStart) gapStart = slot;
+          gapDuration += 15;
+          return;
+        }
+
+        if (gapStart && gapDuration >= 30) {
+          gaps.push({
+            date: dayInfo.date,
+            label: dayInfo.label,
+            start: gapStart,
+            end: minutesToTime(timeToMinutes(gapStart) + gapDuration),
+            duration: gapDuration,
+          });
+        }
+
+        gapStart = null;
+        gapDuration = 0;
+      });
+
+      if (gapStart && gapDuration >= 30) {
+        gaps.push({
+          date: dayInfo.date,
+          label: dayInfo.label,
+          start: gapStart,
+          end: minutesToTime(timeToMinutes(gapStart) + gapDuration),
+          duration: gapDuration,
+        });
+      }
+
+      return gaps;
+    })
+    .sort((a, b) => {
+      if (a.date === b.date) return a.start.localeCompare(b.start);
+      return a.date.localeCompare(b.date);
+    })
+    .slice(0, 6);
+
+  const appointments = rawAppointments.filter((app) => {
+    if (app.date > todayItaly) return true;
+    if (app.time === "ALL_DAY") return true;
+
+    const [appHours, appMinutes] = app.time.split(":").map(Number);
+    const appTotalMinutes = appHours * 60 + appMinutes;
+
+    return currentTotalMinutes <= appTotalMinutes + 30;
+  });
+
+  const isClosure = (app: { customerName: string; time: string }) =>
+    app.time === "ALL_DAY" ||
+    app.customerName.includes("PAUSA") ||
+    app.customerName.includes("FERIE");
+
+  const nextAppointment = appointments.find((app) => !isClosure(app)) || null;
+  const currentClosures = appointments.filter((app) => isClosure(app));
+
+  
+  // WAITLIST FETCH
+  const waitlistData = await prisma.waitlist.findMany({
+    where: { tenantId },
+    orderBy: { createdAt: 'desc' }
+  });
+
+
+  // 🌟 CALCOLO INCASSI DINAMICI PREMIUM
+  const currentMonthPrefix = todayItaly.substring(0, 7);
+  const monthlyAppointments = await prisma.appointment.findMany({
+    where: {
+      date: {
+        startsWith: currentMonthPrefix,
+      },
+      tenantId,
+    },
+    include: {
+      service: true,
+    },
+  });
+
+  const validMonthly = monthlyAppointments.filter(
+    (app) =>
+      !app.customerName.includes("PAUSA") &&
+      !app.customerName.includes("FERIE")
+  );
+
+  const estimatedRevenue = validMonthly.reduce(
+    (sum, app) => sum + (app.service?.price || 0),
+    0
+  );
+
+  const todayAppointmentsList = appointments.filter(
+    (a) =>
+      a.date === todayItaly &&
+      !a.customerName.includes("PAUSA") &&
+      !a.customerName.includes("FERIE")
+  );
+
+  const todayPaid = todayAppointmentsList.filter((a) => a.isPaid).length;
+
+
+
+  const todayTotalRevenue = todayAppointmentsList.reduce(
+    (sum, app) => sum + (app.service?.price || 0),
+    0
+  );
+
+
+
+  const allAppointments = await prisma.appointment.findMany({
+    where: {
+      tenantId,
+      date: { in: past14Days }
+    },
+    include: { service: true }
+  });
+
+  const analyticsData = past14Days.map(dateStr => {
+    const apps = allAppointments.filter(a => a.date === dateStr);
+    const rev = apps.reduce((sum, a) => sum + (a.service?.price || 0), 0);
+    return { date: dateStr, appointments: apps.length, revenue: rev };
+  });
+
+
+  // ------------------------------------------------------------------
+  // SERVER ACTIONS DA ADMIN
+  // ------------------------------------------------------------------
+
+  async function blockTimeRange(formData: FormData) {
+    "use server";
+
+    let redirectUrl = `/t/${slug}/admin`;
+
+    const date = formData.get("date") as string;
+    const startTime = formData.get("startTime") as string;
+    const endTime = formData.get("endTime") as string;
+
+    if (date && startTime && endTime) {
+      const startMins =
+        parseInt(startTime.split(":")[0]) * 60 +
+        parseInt(startTime.split(":")[1]);
+
+      const endMins =
+        parseInt(endTime.split(":")[0]) * 60 +
+        parseInt(endTime.split(":")[1]);
+
+      if (startMins < endMins) {
+        try {
+          const existingApps = await prisma.appointment.findMany({
+            where: {
+              date,
+              tenantId,
+              NOT: [
+                { customerName: { contains: "PAUSA" } },
+                { customerName: { contains: "FERIE" } },
+                { time: "ALL_DAY" },
+              ],
+            },
+          });
+
+          let overlapCount = 0;
+          existingApps.forEach((app) => {
+            const aStart =
+              parseInt(app.time.split(":")[0]) * 60 +
+              parseInt(app.time.split(":")[1]);
+
+            const aEnd = app.endTime
+              ? parseInt(app.endTime.split(":")[0]) * 60 +
+                parseInt(app.endTime.split(":")[1])
+              : aStart + 15;
+
+            if (Math.max(startMins, aStart) < Math.min(endMins, aEnd)) {
+              overlapCount++;
+            }
+          });
+          const hasOverlap = overlapCount >= (storeSettings?.maxConcurrentAppointments || 1);
+
+          if (hasOverlap) {
+            redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
+          } else {
+            await prisma.appointment.create({
+              data: {
+                customerName: "☕ PAUSA",
+                customerPhone: "0000000000",
+                date,
+                time: startTime,
+                endTime,
+                tenantId,
+                cancelToken: crypto.randomUUID(),
+              },
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+
+    redirect(redirectUrl);
+  }
+
+  async function blockHoliday(formData: FormData) {
+    "use server";
+
+    let redirectUrl = `/t/${slug}/admin`;
+
+    const startDate = formData.get("startDate") as string;
+    const endDate = formData.get("endDate") as string;
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const datesToBlock = [];
+      const checkLoop = new Date(start);
+
+      while (checkLoop <= end) {
+        datesToBlock.push(checkLoop.toISOString().split("T")[0]);
+        checkLoop.setDate(checkLoop.getDate() + 1);
+      }
+
+      try {
+        const existingAppointments = await prisma.appointment.findMany({
+          where: {
+            date: {
+              in: datesToBlock,
+            },
+            tenantId,
+            NOT: [
+              { customerName: { contains: "PAUSA" } },
+              { customerName: { contains: "FERIE" } },
+              { time: "ALL_DAY" },
+            ],
+          },
+        });
+
+        if (existingAppointments.length > 0) {
+          redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
+        } else {
+          const insertLoop = new Date(start);
+
+          while (insertLoop <= end) {
+            const d = insertLoop.toISOString().split("T")[0];
+
+            const existingFerie = await prisma.appointment.findFirst({
+              where: {
+                date: d,
+                time: "ALL_DAY",
+                tenantId,
+              },
+            });
+
+            if (!existingFerie) {
+              await prisma.appointment.create({
+                data: {
+                  customerName: "🌴 FERIE",
+                  customerPhone: "0000000000",
+                  date: d,
+                  time: "ALL_DAY",
+                  tenantId,
+                  cancelToken: crypto.randomUUID(),
+                },
+              });
+            }
+
+            insertLoop.setDate(insertLoop.getDate() + 1);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    redirect(redirectUrl);
+  }
+
+  return (
+    <div className="min-h-screen bg-[#050814] flex flex-col p-4 sm:p-8 font-sans text-slate-200 selection:bg-cyan-500/30">
+      <AutoRefreshMonitor appointmentCount={rawAppointments.length} />
+
+      <div className="max-w-7xl mx-auto w-full flex-grow">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            <span className="text-white">Neat</span>
+            <span className="text-[#00b4ff]">X</span>
+            <span className="text-slate-500 font-medium text-2xl ml-2">
+              | Agenda Privata {tenantName}
+            </span>
+          </h1>
+
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 custom-scrollbar snap-x">
+            <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} />
+            <CustomerDrawer tenantId={tenantId} />
+            <a
+              href={`/api/export/appointments?tenantId=${tenantId}`}
+              className="flex-shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+            >
+              Export agenda
+            </a>
+            <a
+              href={`/api/export/customers?tenantId=${tenantId}`}
+              className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+            >
+              Export clienti
+            </a>
+            
+            <Link
+              href={`/t/${slug}/admin/analytics`}
+              className="flex-shrink-0 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-4 sm:px-4 py-2 sm:py-2.5 rounded-xl transition flex items-center gap-2 text-sm snap-center"
+            >
+              <span>📊</span> Analytics
+            </Link>
+
+            <Link
+              href="/"
+              className="flex-shrink-0 bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-cyan-500/20 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+            >
+              [+] Nuova Prenotazione
+            </Link>
+          </div>
+        </div>
+
+        <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
+
+        {/* I 3 KPI */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px]">
+            <h2 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              Prossimo in arrivo
+            </h2>
+
+            {nextAppointment ? (
+              <div className="flex items-center justify-between mt-2">
+                <div>
+                  <p className="text-xl font-extrabold text-white truncate max-w-[150px]">
+                    {nextAppointment.customerName}
+                  </p>
+
+                  <p className="text-[#00b4ff] font-bold text-base">
+                    {nextAppointment.time}
+                    <span className="text-xs font-medium text-slate-400 ml-1">
+                      ({nextAppointment.date.split("-").reverse().join("/")})
+                    </span>
+                  </p>
+                </div>
+
+                <div className="bg-[#131c31] p-3 rounded-2xl border border-[#1e2b4a] text-xl shadow-inner">
+                  ⏳
+                </div>
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm font-medium italic mt-2">
+                Nessun cliente in attesa.
+              </p>
+            )}
+          </div>
+
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px] relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
+              📊
+            </div>
+
+            <h2 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+              <span>📈</span>
+              Statistiche Mese
+            </h2>
+
+            <div className="flex items-end gap-3 mt-2">
+              <span className="text-4xl font-extrabold text-emerald-400">
+                €{estimatedRevenue}
+              </span>
+
+              <span className="text-slate-400 font-medium mb-1 text-sm">
+                / {validMonthly.length} app.ti
+              </span>
+            </div>
+
+            <p className="text-[10px] text-slate-500 mt-2">
+              Calcolo dinamico sul prezzo dei servizi configurati.
+            </p>
+          </div>
+
+          <div
+            className={`p-6 rounded-3xl shadow-xl border flex flex-col justify-center h-full min-h-[140px] relative overflow-hidden transition-all ${
+              storeSettings.smsCredits > 20
+                ? "bg-[#0b1221] border-[#1a2642] shadow-cyan-900/10"
+                : "bg-red-950/20 border-red-900/50 shadow-red-900/20"
+            }`}
+          >
+            <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
+              💬
+            </div>
+
+            <h2
+              className={`text-xs font-bold mb-2 uppercase tracking-widest flex items-center justify-between ${
+                storeSettings.smsCredits > 20
+                  ? "text-slate-500"
+                  : "text-red-400"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <span>💬</span>
+                Messaggi Auto
+              </span>
+            </h2>
+
+            <div className="flex items-end gap-3 mt-2">
+              <span
+                className={`text-4xl font-extrabold ${
+                  storeSettings.smsCredits > 20 ? "text-white" : "text-red-500"
+                }`}
+              >
+                {storeSettings.smsCredits}
+              </span>
+
+              <span className="text-slate-400 font-medium mb-1 text-sm">
+                crediti residui
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/*  */}
+
+        
+        <WaitlistDashboard initialData={waitlistData} tenantId={tenantId} />
+        
+        {freeGapReports.length > 0 && (
+
+          <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <h2 className="text-lg font-extrabold text-white">
+                Buchi agenda da riempire
+              </h2>
+              <p className="text-xs text-slate-500 font-bold">
+                Spazi liberi utili nella settimana visibile
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {freeGapReports.map((gap) => (
+                <div
+                  key={`${gap.date}-${gap.start}`}
+                  className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-white font-bold capitalize">
+                      {gap.label}
+                    </p>
+                    <p className="text-[#00b4ff] font-extrabold text-lg">
+                      {gap.start} - {gap.end}
+                    </p>
+                  </div>
+                  <div className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    {gap.duration} min
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* DASHBOARD ANALYTICS */}
+        {isPremium ? (
+          <AnalyticsChart data={analyticsData} />
+        ) : (
+          <div className="bg-[#0b1221] p-10 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 flex flex-col items-center justify-center text-center">
+            <span className="text-6xl mb-4 opacity-50">🔒</span>
+            <h3 className="text-xl font-extrabold text-white mb-2">Analytics Avanzate Bloccate</h3>
+            <p className="text-slate-400 text-sm max-w-md mb-6">
+              Passa al piano Premium (59€) per sbloccare i grafici incassi, le stime orarie e l'agenda Day View multi-staff illimitata.
+            </p>
+            <button className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-orange-500/20 hover:scale-105 transition-transform">
+              Upgrade to Premium
+            </button>
+          </div>
+        )}
+
+        {/* AGENDA SETTIMANALE TETRIS */}
+        <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
+          <SwipeableAgenda>
+            <DayNavigator currentDate={targetDate} slug={slug} isMultiStaff={isMultiStaff} />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
+              <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                📒 Agenda Dinamica ({tenantName})
+              </h2>
+
+              <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
+                <Link
+                  href={`/dashboard?weekOffset=${weekOffset - 1}`}
+                  prefetch={false}
+                  scroll={false}
+                  className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
+                >
+                  ← Prec
+                </Link>
+
+                <Link
+                  href={`/t/${slug}/admin`}
+                  prefetch={false}
+                  scroll={false}
+                  className={`px-4 py-2 text-sm font-bold rounded-xl transition ${
+                    weekOffset === 0
+                      ? "bg-[#00b4ff] text-[#050814] shadow-lg shadow-cyan-500/20"
+                      : "text-slate-300 hover:bg-[#1e2b4a]"
+                  }`}
+                >
+                  Oggi
+                </Link>
+
+                <Link
+                  href={`/dashboard?weekOffset=${weekOffset + 1}`}
+                  prefetch={false}
+                  scroll={false}
+                  className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
+                >
+                  Pros →
+                </Link>
+              </div>
+            </div>
+
+          <div className="overflow-x-auto pb-4 custom-scrollbar">
+            <div
+              className="min-w-[650px] md:min-w-[900px] grid gap-x-2 gap-y-0"
+              style={{
+                gridTemplateColumns: `minmax(60px, 80px) repeat(${weekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
+              }}
+            >
+                <div style={{ gridColumn: 1 }} className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none border-b border-transparent">
+                  Ora
+                </div>
+
+                {weekDays.map((d, dIndex) => {
+                  const isToday = d.date === todayItaly;
+                  
+                  return (
+                    <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-2 mb-2">
+                      <div className={`text-center py-2 rounded-xl border capitalize transition-colors ${
+                        isToday 
+                          ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
+                          : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
+                      }`}>
+                        {d.label}
+                      </div>
+                      {staffList.length > 0 && (
+                        <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
+                          {staffList.map(s => (
+                            <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
+                              {s.name.split(' ')[0]}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {allSlots.map((slot) => {
+                  const isQuarter = slot.endsWith("15") || slot.endsWith("45");
+
+                  return (
+                    <div className="contents" key={slot}>
+                      <div style={{ gridColumn: 1 }} className="w-full h-full text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-20 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
+                        <span
+                          className={`px-2 py-1 rounded-xl transition-all ${
+                            isQuarter
+                              ? "text-[10px] text-slate-600"
+                              : "bg-[#131c31] border border-[#1e2b4a]"
+                          }`}
+                        >
+                          {slot}
+                        </span>
+                      </div>
+
+                      {weekDays.map((d, dIndex) => {
+                        const cols: any[] = [];
+                        columns.forEach((colId, cIndex) => {
+                          const appt = radarMap[d.date]?.[colId]?.[slot];
+                          const cellKey = `${d.date}-${slot}-${colId}`;
+                          const targetColumn = (dIndex * maxConcurrent) + cIndex + 2;
+
+                          if (appt === "COVERED") {
+                            return;
+                          }
+
+                          if (appt) {
+                            const [y, m, dStr] = d.date.split("-");
+                            cols.push(
+                              <div
+                                key={cellKey}
+                                style={{
+                                  gridRow: `span ${appt._rowSpan} / span ${appt._rowSpan}`,
+                                  gridColumn: targetColumn
+                                }}
+                                className="h-full min-h-[40px] py-[4px] relative z-10"
+                              >
+                                <AppointmentBlock
+                                  appt={appt}
+                                  italianDate={`${dStr}/${m}/${y}`}
+                                  durationInMinutes={appt._rowSpan * 15}
+                                />
+                              </div>
+                            );
+                            return;
+                          }
+
+                          cols.push(
+                            <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
+                              <WalkInButton
+                                date={d.date}
+                                time={slot}
+                                tenantId={tenantId}
+                                services={tenantServices}
+                              />
+                            </div>
+                          );
+                        });
+                        return cols;
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </SwipeableAgenda>
+        </div>
+
+        {/* ALTRE FUNZIONI DASHBOARD */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
+              🎯
+            </div>
+
+            <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
+              <span>🎯</span>
+              Focus di Oggi
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-[#131c31] border border-[#1e2b4a] p-4 rounded-2xl shadow-inner">
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                  Clienti Oggi
+                </p>
+
+                <p className="text-3xl font-extrabold text-white">
+                  {todayAppointmentsList.length}
+                </p>
+              </div>
+
+              <div className="bg-[#131c31] border border-[#1e2b4a] p-4 rounded-2xl shadow-inner">
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                  Già Pagati
+                </p>
+
+                <p className="text-3xl font-extrabold text-emerald-400">
+                  {todayPaid}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-[#131c31] border border-[#1e2b4a] p-5 rounded-2xl flex items-center justify-between shadow-inner mb-6">
+              <div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                  Incasso Stimato Oggi
+                </p>
+
+                <p className="text-4xl font-extrabold text-[#00b4ff]">
+                  {isPremium ? `€${todayTotalRevenue}` : '🔒'}
+                </p>
+              </div>
+
+              <div className="text-4xl opacity-20">💰</div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-red-900/5 border border-[#1a2642] h-fit flex flex-col">
+              <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                  <span>🧭</span>
+                  Chiusure attive
+                </h2>
+
+                <div className="overflow-y-auto max-h-[220px] custom-scrollbar space-y-2 pr-1">
+                  {currentClosures.length > 0 ? (
+                    currentClosures.map((app) => {
+                      const isFerie =
+                        app.time === "ALL_DAY" ||
+                        app.customerName.includes("FERIE");
+
+                      return (
+                        <div
+                          key={app.id}
+                          className="flex items-center justify-between gap-3 p-3 bg-[#131c31] rounded-xl border border-[#1e2b4a]"
+                        >
+                          <div className="min-w-0">
+                            <p
+                              className={`font-bold text-[12px] truncate ${
+                                isFerie ? "text-orange-400" : "text-slate-300"
+                              }`}
+                            >
+                              {isFerie ? "🌴 FERIE" : "☕ PAUSA"}
+                            </p>
+                            <p className="text-slate-400 text-[10px] uppercase mt-0.5">
+                              {app.date.split("-").reverse().join("/")} •{" "}
+                              {app.time === "ALL_DAY"
+                                ? "Tutto il giorno"
+                                : `${app.time}${app.endTime ? ` - ${app.endTime}` : ""}`}
+                            </p>
+                          </div>
+
+                          <div className="scale-75 origin-right shrink-0">
+                            <DeleteButton
+                              appointmentId={app.id}
+                              customerName={app.customerName}
+                              phone="0000000000"
+                              date={app.date}
+                              time={app.time}
+                              isSpecial={true}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-slate-500 text-sm italic">
+                      Nessuna pausa o ferie attiva nella settimana visibile.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                  <span>⚙️</span>
+                  Aggiungi Chiusura / Pausa
+                </h2>
+
+                <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                  <h3 className="text-[10px] text-slate-400 font-bold uppercase mb-3">
+                    ☕ Blocca Orari
+                  </h3>
+
+                  <form
+                    action={blockTimeRange}
+                    className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
+                  >
+                    <input
+                      type="date"
+                      name="date"
+                      required
+                      defaultValue={todayItaly}
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm w-full sm:w-[40%]"
+                      style={{
+                        colorScheme: "dark",
+                      }}
+                    />
+
+                    <select
+                      name="startTime"
+                      required
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm flex-grow"
+                    >
+                      <option value="">Dalle</option>
+                      {allSlots.map((s) => (
+                        <option key={`s-${s}`} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      name="endTime"
+                      required
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm flex-grow"
+                    >
+                      <option value="">Alle</option>
+                      {allSlots.map((s) => (
+                        <option key={`e-${s}`} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+
+                    <button
+                      type="submit"
+                      className="bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl text-sm w-full sm:w-auto"
+                    >
+                      Blocca
+                    </button>
+                  </form>
+                </div>
+
+                <div>
+                  <h3 className="text-[10px] text-orange-400 font-bold uppercase mb-2">
+                    🌴 Ferie (Dal - Al)
+                  </h3>
+
+                  <form
+                    action={blockHoliday}
+                    className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
+                  >
+                    <input
+                      type="date"
+                      name="startDate"
+                      required
+                      defaultValue={todayItaly}
+                      className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                      style={{
+                        colorScheme: "dark",
+                      }}
+                    />
+
+                    <input
+                      type="date"
+                      name="endDate"
+                      required
+                      defaultValue={todayItaly}
+                      className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                      style={{
+                        colorScheme: "dark",
+                      }}
+                    />
+
+                    <button
+                      type="submit"
+                      className="bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 font-bold px-3 py-2 rounded-xl transition text-sm w-full sm:w-auto"
+                    >
+                      Salva
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 🧾 ATTIVITA RECENTI */}
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
+            <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
+              <span>🧾</span>
+              Attività Recenti
+            </h2>
+
+            <div className="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-3 max-h-[500px]">
+              {recentActivities.length > 0 ? (
+                recentActivities.map((log) => {
+                  let bgColor = "bg-[#131c31]";
+                  let dotColor = "bg-slate-500";
+                  let icon = "📝";
+
+                  if (log.action === "CREATE_APPOINTMENT") {
+                    bgColor = "bg-emerald-500/10 border-emerald-500/20";
+                    dotColor = "bg-emerald-400";
+                    icon = "✅";
+                  } else if (log.action === "DELETE_APPOINTMENT" || log.action === "CANCEL_APPOINTMENT") {
+                    bgColor = "bg-red-500/10 border-red-500/20";
+                    dotColor = "bg-red-400";
+                    icon = "❌";
+                  } else if (log.action === "MOVE_APPOINTMENT") {
+                    bgColor = "bg-amber-500/10 border-amber-500/20";
+                    dotColor = "bg-amber-400";
+                    icon = "🔄";
+                  } else if (log.action === "NO_SHOW") {
+                    bgColor = "bg-orange-500/10 border-orange-500/20";
+                    dotColor = "bg-orange-400";
+                    icon = "👻";
+                  }
+
+                  return (
+                    <div
+                      key={log.id}
+                      className={`p-4 rounded-2xl border ${bgColor} flex gap-3`}
+                    >
+                      <div className="mt-1">
+                        <span className="text-lg">{icon}</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white mb-1 leading-snug">
+                          {log.message}
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-2">
+                          <span>
+                            {new Date(log.createdAt).toLocaleDateString("it-IT", {
+                              day: "2-digit",
+                              month: "short",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${dotColor}`}
+                          ></span>
+                          <span>{log.actor === "admin" ? "Admin" : "Cliente"}</span>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-10 bg-[#131c31] rounded-2xl border border-[#1e2b4a]">
+                  <span className="text-4xl block mb-2 opacity-30">😴</span>
+                  <p className="text-slate-400 text-sm font-medium">
+                    Nessuna attività recente
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

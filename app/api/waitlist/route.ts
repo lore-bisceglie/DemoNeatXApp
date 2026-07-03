@@ -37,9 +37,13 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const tenantId = searchParams.get("tenantId");
+
     const waitlist = await prisma.waitlist.findMany({
+      where: tenantId ? { tenantId } : {},
       orderBy: {
         createdAt: "desc",
       },

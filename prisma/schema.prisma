@@ -16,6 +16,9 @@ model Tenant {
   id            String        @id @default(cuid()) 
   slug          String        @unique              // Es. "greenbeauty" per l'URL personalizzato
   name          String        // Nome dell'attività
+  adminPassword String?       // Password autogenerata per l'accesso alla dashboard privata
+  trialEndsAt   DateTime?     // Scadenza del periodo di prova di 7 giorni
+  plan          String        @default("basic") // "basic" o "premium"
   createdAt     DateTime      @default(now())
 
   // Relazioni: Tutto l'universo del salone è agganciato qui
@@ -27,6 +30,7 @@ model Tenant {
   waitlists     Waitlist[]
   customerNotes CustomerNote[]
   activityLogs  ActivityLog[]
+  staff         Staff[]
 }
 
 // ------------------------------------------------------
@@ -43,6 +47,9 @@ model Service {
   tenant       Tenant        @relation(fields: [tenantId], references: [id])
 
   appointments Appointment[]
+
+  // Membri dello staff che possono eseguire questo servizio
+  staff        Staff[]
 }
 
 // ------------------------------------------------------
@@ -68,6 +75,10 @@ model Appointment {
   serviceId     String?
   service       Service? @relation(fields: [serviceId], references: [id])
 
+  // Relazione con lo Staff che esegue il servizio
+  staffId       String?
+  staff         Staff?   @relation(fields: [staffId], references: [id])
+
   // Relazione con il Negozio
   tenantId      String?
   tenant        Tenant?  @relation(fields: [tenantId], references: [id])
@@ -91,9 +102,10 @@ model BlockedSlot {
 // 5. IMPOSTAZIONI SALONE & PORTAFOGLIO SMS
 // ------------------------------------------------------
 model StoreSettings {
-  id         String   @id @default(cuid())
-  smsCredits Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone
-  updatedAt  DateTime @updatedAt
+  id                        String   @id @default(cuid())
+  smsCredits                Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone
+  maxConcurrentAppointments Int      @default(1) // Numero massimo di appuntamenti sovrapposti (Multi-staff)
+  updatedAt                 DateTime @updatedAt
 
   // Relazione 1-a-1 col Tenant
   tenantId   String   @unique
@@ -168,4 +180,20 @@ model ActivityLog {
   tenant        Tenant   @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId])
+}
+
+// ------------------------------------------------------
+// 9. STAFF E SPECIALIZZAZIONI
+// ------------------------------------------------------
+model Staff {
+  id           String        @id @default(cuid())
+  name         String        // Es. "Marco", "Giulia"
+  tenantId     String
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+
+  // Servizi che questo dipendente può svolgere
+  services     Service[]
+
+  // Appuntamenti assegnati a questo dipendente
+  appointments Appointment[]
 }

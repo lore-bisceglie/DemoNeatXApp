@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       serviceId,
       duration,
       paymentMethod,
+      staffId: explicitStaffId,
     } = body;
     const isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
 
