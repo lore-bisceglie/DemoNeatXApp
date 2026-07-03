@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { MessageSquare, Star, X } from "lucide-react";
+import IPhone17Pro from "./IPhone17Pro";
 
 export default function ReviewSimulator() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,21 +48,7 @@ export default function ReviewSimulator() {
       {/* MODAL / OVERLAY */}
       {isOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          {/* iPhone 17 Pro Chassis (Titanium Rim) */}
-          <div className="relative w-full max-w-[320px] h-[650px] rounded-[48px] p-[3px] bg-gradient-to-br from-slate-300 via-slate-500 to-slate-800 shadow-2xl flex flex-col"
-            style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.2)'
-            }}
-          >
-            {/* Inner Black Border & Screen */}
-            <div className="w-full h-full bg-black rounded-[45px] overflow-hidden flex flex-col relative border-[5px] border-black">
-              
-              {/* Dynamic Island */}
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-full z-50 flex items-center justify-between px-2.5">
-                <div className="w-2 h-2 rounded-full bg-[#111] shadow-[inset_0_0_1px_rgba(255,255,255,0.2)]"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a2a] shadow-[inset_0_0_2px_rgba(255,255,255,0.3)]"></div>
-              </div>
-            
+    <IPhone17Pro>
             <button 
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 z-20 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-white"
@@ -71,7 +58,7 @@ export default function ReviewSimulator() {
 
             {/* STEP 1: Fake SMS Notification */}
             {step === 1 && (
-              <div className="flex-1 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center flex items-start pt-16 px-4">
+              <div className="flex-1 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center flex items-start pt-16 px-4 w-full h-full">
                 <div className="w-full bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg animate-in slide-in-from-top-10 duration-500 cursor-pointer" onClick={() => setStep(2)}>
                   <div className="flex gap-3">
                     <div className="w-10 h-10 bg-[#00b4ff] rounded-full flex items-center justify-center text-white">
@@ -93,7 +80,7 @@ export default function ReviewSimulator() {
 
             {/* STEP 2: Rating Screen */}
             {step === 2 && (
-              <div className="flex-1 bg-white flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+              <div className="flex-1 bg-white flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300 w-full h-full">
                 <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl mb-6">
                   💈
                 </div>
@@ -117,7 +104,7 @@ export default function ReviewSimulator() {
 
             {/* STEP 3: Google Maps Success */}
             {step === 3 && (
-              <div className="flex-1 bg-white flex flex-col items-center justify-center p-6 text-center animate-in slide-in-from-bottom-10 duration-500">
+              <div className="flex-1 bg-white flex flex-col items-center justify-center p-6 text-center animate-in slide-in-from-bottom-10 duration-500 w-full h-full">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" alt="Google" className="w-16 mb-6" />
                 <h3 className="text-2xl font-bold text-slate-900 mb-4">Sei fantastico!</h3>
                 <p className="text-slate-600 mb-8">Siamo felici che ti sia piaciuto! Condividi questa tua recensione a 5 stelle su Google per aiutarci a crescere.</p>
@@ -132,7 +119,7 @@ export default function ReviewSimulator() {
 
             {/* STEP 4: Private Feedback */}
             {step === 4 && (
-              <div className="flex-1 bg-white flex flex-col p-6 animate-in slide-in-from-bottom-10 duration-500">
+              <div className="flex-1 bg-white flex flex-col p-6 animate-in slide-in-from-bottom-10 duration-500 w-full h-full">
                 <h3 className="text-xl font-bold text-slate-900 mb-2 mt-8">Ci dispiace!</h3>
                 <p className="text-slate-600 mb-6 text-sm">Cosa è andato storto? Scrivici un messaggio per aiutarci a migliorare.</p>
                 <textarea 
@@ -147,9 +134,7 @@ export default function ReviewSimulator() {
                 </div>
               </div>
             )}
-
-            </div>
-          </div>
+    </IPhone17Pro>
         </div>
       )}
 

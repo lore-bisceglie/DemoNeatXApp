@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, CreditCard, ShieldCheck } from "lucide-react";
+import IPhone17Pro from "./IPhone17Pro";
 
 interface StripeMockupProps {
   onSuccess: () => void;
@@ -23,10 +24,9 @@ export default function StripeMockup({ onSuccess, onCancel, amount }: StripeMock
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white text-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-        
+      <IPhone17Pro>
         {/* Header (Simil Stripe) */}
-        <div className="p-6 pb-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div className="p-6 pb-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 w-full">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
               <span className="font-bold text-slate-600 text-xs">NX</span>
@@ -42,7 +42,7 @@ export default function StripeMockup({ onSuccess, onCancel, amount }: StripeMock
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 flex-1 bg-white overflow-y-auto w-full">
           
           {/* Apple Pay / Google Pay Mock */}
           <button 
@@ -96,7 +96,7 @@ export default function StripeMockup({ onSuccess, onCancel, amount }: StripeMock
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50">
+        <div className="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50 w-full">
           <button onClick={onCancel} className="text-xs text-slate-500 hover:text-slate-800 transition-colors">
             Annulla
           </button>
@@ -106,7 +106,7 @@ export default function StripeMockup({ onSuccess, onCancel, amount }: StripeMock
           </div>
         </div>
 
-      </div>
+      </IPhone17Pro>
     </div>
   );
 }
