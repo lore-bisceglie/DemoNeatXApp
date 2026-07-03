@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
           {/* Pulsante Fluttuante Email */}
           <a 
-            href="mailto:neatx.info@gmail.com?subject=Richiesta App Personalizzata&body=Ciao, ho provato la demo e vorrei avere informazioni per creare la mia app NeatX personalizzata." 
+            href="mailto:neatx.info@gmail.com?subject=Richiesta%20App%20Personalizzata&body=Ciao,%20ho%20provato%20la%20demo%20e%20vorrei%20avere%20informazioni%20per%20creare%20la%20mia%20app%20NeatX%20personalizzata." 
             className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-5 py-3 rounded-full font-bold shadow-lg shadow-blue-500/30 hover:scale-105 transition-transform"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
