@@ -1,0 +1,52 @@
+name: Macchina Crescita Social (Growth Hack)
+
+on:
+  schedule:
+    # Esegue lo Sniper Commenti ogni 30 minuti
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-growth-bots:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Controlla il codice sorgente
+      uses: actions/checkout@v4
+      
+    - name: Installa Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Installa Librerie necessarie
+      run: |
+        python -m pip install --upgrade pip
+        pip install instagrapi google-generativeai python-dotenv
+        
+    - name: Avvia lo Sniper dei Commenti (Ogni 30 min)
+      env:
+        INSTA_USER: ${{ secrets.INSTA_USER }}
+        INSTA_PASS: ${{ secrets.INSTA_PASS }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: |
+        cd bot_scripts/Social/GrowthHack
+        python sniper_commenti.py
+
+    - name: Avvia la Spia Virale (Solo una volta al giorno)
+      # Un trucco per far girare la spia solo se sono circa le 12:00 UTC (usando un controllo bash semplice)
+      if: github.event_name == 'workflow_dispatch' || startsWith(github.event.schedule, '0 12')
+      env:
+        INSTA_USER: ${{ secrets.INSTA_USER }}
+        INSTA_PASS: ${{ secrets.INSTA_PASS }}
+      run: |
+        cd bot_scripts/Social/GrowthHack
+        python spia_virale.py
+        
+    - name: Salva i dati dei nuovi video scoperti
+      run: |
+        git config --global user.name "GitHub Actions - Growth Bot"
+        git config --global user.email "actions@github.com"
+        git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt || true
+        git commit -m "Auto-Update: Nuovi video virali trovati e commenti salvati" || true
+        git push || true
