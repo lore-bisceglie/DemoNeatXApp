@@ -145,12 +145,12 @@ export default function Home() {
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300 relative z-20">
-          <button 
-            onClick={() => setShowStripe(true)}
+          <Link 
+            href="/demo"
             className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(0,180,255,0.6)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
           >
             Esplora la Demo 🚀
-          </button>
+          </Link>
           <button 
             onClick={() => setShowRoiModal(true)}
             className="w-full sm:w-auto px-8 py-4 bg-[#131c31]/80 backdrop-blur-md hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
@@ -286,6 +286,26 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* SIMULATORE INCASSO ANTICIPATO */}
+      <div className="w-full flex flex-col items-center justify-center py-12 bg-[#080d1a] border-t border-[#1a2642]">
+        <div className="text-center mb-8 max-w-2xl px-4">
+          <h2 className="text-3xl font-extrabold text-white mb-4">
+            Simulatore <span className="text-[#00b4ff]">Incasso Acconti</span> 💳
+          </h2>
+          <p className="text-slate-400">
+            Vuoi vedere come i tuoi clienti pagheranno in anticipo? 
+            Provalo tu stesso (è un finto checkout, nessun addebito reale).
+          </p>
+        </div>
+        <button 
+          onClick={() => setShowStripe(true)}
+          className="bg-white hover:bg-slate-100 text-slate-900 font-bold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all transform hover:scale-105 flex items-center gap-2"
+        >
+          <span className="text-xl">💰</span>
+          Simula Pagamento Cliente
+        </button>
+      </div>
 
       {/* SIMULATORE RECENSIONI GOOGLE */}
       <ReviewSimulator />
