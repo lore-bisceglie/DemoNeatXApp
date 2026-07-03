@@ -112,7 +112,7 @@ export default function Home() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
           </span>
-          SaaS V 2.0 Ora Live
+          L'App N.1 in Italia per Saloni
         </div>
 
         <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-4xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
