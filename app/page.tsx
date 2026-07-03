@@ -533,9 +533,8 @@ export default function Home() {
             </div>
             
             <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Termini e Condizioni</a>
-              <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
+              <a href="https://www.iubenda.com/privacy-policy/32937890" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacy Policy</a>
+              <a href="https://www.iubenda.com/privacy-policy/32937890/cookie-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Cookie Policy</a>
             </div>
           </div>
           
