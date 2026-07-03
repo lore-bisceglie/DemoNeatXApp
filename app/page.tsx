@@ -287,103 +287,136 @@ export default function Home() {
         </div>
       </section>
 
-      {/* GOD-TIER AI SUITE (BENTO BOX) */}
+      {/* GOD-TIER AI SUITE (BENTO BOX CREDIBILE) */}
       <section id="ai-suite" className="relative z-10 bg-[#050814] py-32 border-t border-[#1a2642] overflow-hidden">
-        {/* Ambient Lights */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-600/5 blur-[150px] rounded-full pointer-events-none"></div>
+        {/* Ambient Lights & CSS Animations */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes float-slow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(1deg); }
+          }
+          @keyframes float-medium {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(-1deg); }
+          }
+          @keyframes float-fast {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(2deg); }
+          }
+          @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(250px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(250px) rotate(-360deg); }
+          }
+          .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
+          .animate-float-medium { animation: float-medium 5s ease-in-out infinite; }
+          .animate-float-fast { animation: float-fast 6s ease-in-out infinite; }
+          .animate-orbit { animation: orbit 20s linear infinite; }
+          
+          .tilt-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+          .tilt-card:hover {
+            transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
+          }
+        `}} />
+
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1px] h-[1px]">
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 blur-[100px] rounded-full animate-orbit"></div>
+        </div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/5 blur-[150px] rounded-full pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
-              NeatX God-Mode (Accesso Limitato)
+              NeatX AI Suite (Accesso Limitato)
             </div>
             <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
-              Non è un'agenda.<br className="hidden md:block" />
-              È un <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-[#00b4ff]">Cervello Aziendale.</span>
+              L'Intelligenza Artificiale<br className="hidden md:block" />
+              che <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-[#00b4ff]">Lavora al Posto Tuo.</span>
             </h2>
             <p className="text-slate-400 font-medium text-lg md:text-xl max-w-3xl mx-auto">
-              Abbiamo spinto l'Intelligenza Artificiale oltre il limite. NeatX ascolta, clona, spia e punisce. Il controllo totale sul tuo business.
+              Soluzioni reali a problemi reali. Niente fantascienza. Solo strumenti progettati per massimizzare gli incassi e azzerare il tempo perso in gestione.
             </p>
           </div>
 
-          {/* BENTO BOX GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[auto]">
+          {/* BENTO BOX GRID CON ANIMAZIONI */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-[auto]">
             
-            {/* 1. L'Algoritmo Taglia-Poveri (Span 2 cols su desktop) */}
-            <div className="md:col-span-2 bg-[#0a0f1c]/60 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden group shadow-2xl flex flex-col justify-between">
+            {/* 1. Dynamic Pricing (Span 2 cols su desktop) */}
+            <div className="tilt-card animate-float-slow md:col-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-cyan-500/40 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-cyan-500/10 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700"></div>
-              <div className="relative z-10 mb-8">
-                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(0,180,255,0.2)]">🩸</div>
-                <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">L'Algoritmo "Taglia-Poveri"</h3>
-                <h4 className="text-cyan-400 font-semibold mb-4 text-sm tracking-wide uppercase">Surge Pricing & VIP Bumping</h4>
+              <div className="relative z-10 mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(0,180,255,0.2)]">📈</div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Prezzi Dinamici (Modello Uber)</h3>
+                <h4 className="text-cyan-400 font-semibold mb-4 text-sm tracking-wide uppercase">Massimizzazione del Margine</h4>
                 <p className="text-slate-400 leading-relaxed text-sm md:text-base max-w-xl">
-                  Sabato alle 16:00. Il ragazzino da 15€ cerca di prenotare e l'IA gli dice "Tutto pieno". 
-                  Chiama il cliente VIP da 150€: l'IA gli cede magicamente il posto e sposta il ragazzino alle 18:00 regalandogli una cera per scusarsi. 
-                  <strong className="text-slate-200"> Massimizzazione estrema e spietata dei profitti.</strong>
+                  Il sabato mattina l'algoritmo alza automaticamente i prezzi del 15% per altissima richiesta. 
+                  Il martedì mattina invia sconti flash ai clienti inattivi per riempire i buchi in agenda. 
+                  <strong className="text-slate-200"> Tu tagli i capelli, l'IA pensa a fare cassa.</strong>
                 </p>
               </div>
             </div>
 
-            {/* 2. Voice Cloning (Span 2 rows su desktop) */}
-            <div className="lg:row-span-2 bg-[#0a0f1c]/60 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-purple-500/30 transition-all duration-500 relative overflow-hidden group shadow-2xl flex flex-col">
-              <div className="absolute bottom-0 right-0 w-full h-[200px] bg-purple-500/10 blur-[80px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700"></div>
+            {/* 2. WhatsApp Bot (Span 2 rows su desktop) */}
+            <div className="tilt-card animate-float-fast lg:row-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-green-500/40 relative overflow-hidden group flex flex-col">
+              <div className="absolute bottom-0 right-0 w-full h-[200px] bg-green-500/10 blur-[80px] rounded-full group-hover:bg-green-500/20 transition-all duration-700"></div>
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(168,85,247,0.2)]">🎤</div>
-                <h3 className="text-2xl font-extrabold text-white mb-3">Voice-Cloning Deepfake</h3>
-                <h4 className="text-purple-400 font-semibold mb-4 text-sm tracking-wide uppercase">Il Tuo Clone Digitale</h4>
+                <div className="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(34,197,94,0.2)]">💬</div>
+                <h3 className="text-2xl font-extrabold text-white mb-3">Assistente WhatsApp H24</h3>
+                <h4 className="text-green-400 font-semibold mb-4 text-sm tracking-wide uppercase">Prenotazioni in Chat</h4>
                 <p className="text-slate-400 leading-relaxed text-sm md:text-base mb-8">
-                  Ci bastano 5 minuti della tua voce. L'IA la clona perfettamente. 
-                  Quando il negozio è chiuso, i clienti chiamano e risponde la tua esatta voce (cadenza e accento inclusi). 
-                  Scherza, prende appuntamenti e fissa tutto in agenda. Il cliente penserà di aver parlato proprio con te.
+                  I clienti odiano chiamare e tu odi fermare il taglio per rispondere. 
+                  Il nostro Bot legge i messaggi su WhatsApp, capisce le richieste, propone gli orari liberi e inserisce l'appuntamento in agenda. Totalmente da solo.
                 </p>
-                <div className="w-full h-24 bg-black/40 rounded-2xl border border-white/5 flex items-center justify-center overflow-hidden relative">
-                  {/* Fake Audio Wave */}
-                  <div className="flex items-center gap-1 opacity-70">
-                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
-                      <div key={i} className="w-1.5 bg-purple-500 rounded-full animate-pulse" style={{height: `${Math.random() * 40 + 10}px`, animationDelay: `${i * 0.1}s`}}></div>
-                    ))}
+                <div className="w-full bg-[#111b2b] rounded-2xl p-4 border border-white/5 shadow-inner">
+                  <div className="flex gap-3 mb-3">
+                    <div className="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0"></div>
+                    <div className="bg-slate-800 rounded-2xl rounded-tl-none p-3 text-xs text-slate-300">Hai posto oggi alle 18 per barba e capelli?</div>
+                  </div>
+                  <div className="flex gap-3 justify-end">
+                    <div className="bg-green-600 rounded-2xl rounded-tr-none p-3 text-xs text-white">Oggi alle 18 è pieno. Ho un buco alle 18:30 o domani alle 11. Confermo 18:30? ✨</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 3. CCTV Sentiment Analysis */}
-            <div className="bg-[#0a0f1c]/60 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-emerald-500/30 transition-all duration-500 relative overflow-hidden group shadow-2xl">
-              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-emerald-500/10 blur-[60px] rounded-full group-hover:bg-emerald-500/20 transition-all duration-700"></div>
+            {/* 3. Predictive Inventory */}
+            <div className="tilt-card animate-float-medium bg-[#0a0f1c]/80 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-amber-500/40 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-500/10 blur-[60px] rounded-full group-hover:bg-amber-500/20 transition-all duration-700"></div>
               <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.2)]">👁️</div>
-                <h3 className="text-xl font-extrabold text-white mb-2">Lettura della Mente (CCTV)</h3>
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(245,158,11,0.2)]">📦</div>
+                <h3 className="text-xl font-extrabold text-white mb-2">Riordino Scorte Autonomo</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  L'app si collega alle tue telecamere. Analizza le espressioni facciali dei clienti allo specchio. A fine serata ti avvisa: "Marco ha finto un sorriso, ma il taglio non gli è piaciuto. Inviato coupon scuse automatico."
+                  L'IA sa che hai fatto 40 trattamenti colore questa settimana. Calcola il consumo di prodotto e prepara l'ordine al fornitore in automatico prima che finisca. Zero stress.
                 </p>
               </div>
             </div>
 
-            {/* 4. Protocollo Anti-Tradimento */}
-            <div className="bg-[#0a0f1c]/60 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-orange-500/30 transition-all duration-500 relative overflow-hidden group shadow-2xl">
-              <div className="absolute bottom-0 left-0 w-[150px] h-[150px] bg-orange-500/10 blur-[60px] rounded-full group-hover:bg-orange-500/20 transition-all duration-700"></div>
+            {/* 4. AR Face Analyzer */}
+            <div className="tilt-card animate-float-slow bg-[#0a0f1c]/80 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-purple-500/40 relative overflow-hidden group" style={{ animationDelay: '1s' }}>
+              <div className="absolute bottom-0 left-0 w-[150px] h-[150px] bg-purple-500/10 blur-[60px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700"></div>
               <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(249,115,22,0.2)]">🚨</div>
-                <h3 className="text-xl font-extrabold text-white mb-2">Protocollo Anti-Tradimento</h3>
+                <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(168,85,247,0.2)]">📸</div>
+                <h3 className="text-xl font-extrabold text-white mb-2">Simulatore AR Pre-Taglio</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  L'IA sa che Luca viene ogni 21 giorni. Se al giorno 28 non ha prenotato, sta provando la concorrenza. L'IA gli spara un vocale finto su WhatsApp: "Fratello, non ti vedo da un po', stasera ti offro una birra!". Tasso di recupero: 95%.
+                  Il cliente si scatta un selfie sull'app e l'IA gli applica il taglio in realtà aumentata. Mostragli come starebbe con il colore e vendigli un trattamento più costoso.
                 </p>
               </div>
             </div>
 
             {/* 5. No-Show Revenge (Span 2 cols su desktop) */}
-            <div className="md:col-span-2 bg-gradient-to-br from-red-950/40 to-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-red-500/20 hover:border-red-500/50 transition-all duration-500 relative overflow-hidden group shadow-2xl flex items-center">
+            <div className="tilt-card animate-float-medium md:col-span-2 bg-gradient-to-br from-red-950/50 to-[#0a0f1c]/90 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-red-500/20 hover:border-red-500/50 relative overflow-hidden group flex items-center shadow-2xl" style={{ animationDelay: '2s' }}>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-600/10 blur-[100px] rounded-full group-hover:bg-red-600/20 transition-all duration-700"></div>
               <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 w-full">
                 <div className="w-20 h-20 shrink-0 rounded-3xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse">💀</div>
                 <div>
-                  <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-2">No-Show Revenge</h3>
-                  <h4 className="text-red-400 font-semibold mb-3 text-sm tracking-wide uppercase">La fine delle prese in giro</h4>
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-2">Blacklist Intelligente</h3>
+                  <h4 className="text-red-400 font-semibold mb-3 text-sm tracking-wide uppercase">No-Show Revenge</h4>
                   <p className="text-slate-300 leading-relaxed text-sm md:text-base">
                     Un cliente prenota e non si presenta facendoti perdere tempo? 
-                    L'IA lo segna nella "Lista Nera" invisibile. La prossima volta che proverà a prenotare, il sistema gli bloccherà l'orario finché non pagherà il <strong className="text-white">100% dell'importo in anticipo, non rimborsabile.</strong> Smetti di farti calpestare.
+                    L'IA lo segna nella "Lista Nera". La prossima volta che proverà a prenotare, l'app gli bloccherà l'orario finché non pagherà il <strong className="text-white">100% dell'importo in anticipo, non rimborsabile.</strong> Smetti di farti calpestare.
                   </p>
                 </div>
               </div>
