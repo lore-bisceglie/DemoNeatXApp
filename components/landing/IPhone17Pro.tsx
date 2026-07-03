@@ -47,15 +47,6 @@ export default function IPhone17Pro({ children, className = "" }: IPhone17ProPro
             {/* Screen Content */}
             <div className="flex-1 bg-white flex flex-col relative overflow-hidden">
               {children}
-              {/* TRAPPOLA LINK-IN-BIO */}
-              <a 
-                href="https://neatx.it" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="absolute bottom-0 left-0 w-full text-center text-[10px] text-slate-500/70 py-3 bg-gradient-to-t from-white via-white/90 to-transparent hover:text-[#00b4ff] hover:font-bold transition-all z-40 pb-5"
-              >
-                ⚡ Sviluppato da <strong>NeatX</strong>
-              </a>
             </div>
 
           {/* Screen Reflections */}
