@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         
         {/* Pulsante Fluttuante Instagram */}
         <a 
-          href="https://instagram.com/neatx.info" 
+          href="https://www.instagram.com/neatx_agenda?utm_source=qr" 
           target="_blank" 
           rel="noopener noreferrer"
           className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-3 rounded-full font-bold shadow-lg shadow-pink-500/30 hover:scale-105 transition-transform"
