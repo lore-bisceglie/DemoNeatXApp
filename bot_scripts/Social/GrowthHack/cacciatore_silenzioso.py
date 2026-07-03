@@ -10,8 +10,17 @@ except ImportError:
 
 SESSION_FILE = "session_cacciatore.json"
 
-# Target di ricerca: hashtag tipici usati dai barbieri per trovare nuovi potenziali clienti
-TARGET_HASHTAGS = ["barbiere", "barbiereitaliano", "sfumatura", "barbershopitalia", "parrucchiere"]
+# Target di ricerca: espanso a TUTTI i professionisti che lavorano su appuntamento in Italia
+TARGET_HASHTAGS = [
+    # Capelli e Bellezza
+    "barbiereitaliano", "parrucchiere", "estetista", "nailsitalia", "onicotecnica", "laserdiodo",
+    # Salute e Benessere
+    "fisioterapista", "osteopata", "nutrizionista", "massaggiatore",
+    # Fitness e Sport
+    "personaltraineritalia", "palestra", "insegnanteyoga", "pilatesitalia",
+    # Altre professioni a prenotazione
+    "tatuatoreitaliano", "tattoostudio", "fotografoitalia", "psicologo"
+]
 
 def login_instagram():
     cl = Client()
