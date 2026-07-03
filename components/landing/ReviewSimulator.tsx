@@ -47,10 +47,20 @@ export default function ReviewSimulator() {
       {/* MODAL / OVERLAY */}
       {isOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-sm h-[600px] bg-slate-900 rounded-[40px] border-[8px] border-slate-800 shadow-2xl overflow-hidden flex flex-col">
-            
-            {/* Phone Notch */}
-            <div className="absolute top-0 inset-x-0 h-6 bg-slate-800 rounded-b-2xl w-1/2 mx-auto z-10"></div>
+          {/* iPhone 17 Pro Chassis (Titanium Rim) */}
+          <div className="relative w-full max-w-[320px] h-[650px] rounded-[48px] p-[3px] bg-gradient-to-br from-slate-300 via-slate-500 to-slate-800 shadow-2xl flex flex-col"
+            style={{
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.2)'
+            }}
+          >
+            {/* Inner Black Border & Screen */}
+            <div className="w-full h-full bg-black rounded-[45px] overflow-hidden flex flex-col relative border-[5px] border-black">
+              
+              {/* Dynamic Island */}
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-full z-50 flex items-center justify-between px-2.5">
+                <div className="w-2 h-2 rounded-full bg-[#111] shadow-[inset_0_0_1px_rgba(255,255,255,0.2)]"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a2a] shadow-[inset_0_0_2px_rgba(255,255,255,0.3)]"></div>
+              </div>
             
             <button 
               onClick={() => setIsOpen(false)}
@@ -138,6 +148,7 @@ export default function ReviewSimulator() {
               </div>
             )}
 
+            </div>
           </div>
         </div>
       )}

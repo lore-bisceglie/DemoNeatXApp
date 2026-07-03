@@ -63,20 +63,23 @@ export default function FloatingPhone() {
           }
         `}</style>
         
-        {/* iPhone Chassis */}
-        <div className="absolute inset-0 bg-[#111] rounded-[45px] shadow-2xl border-[8px] border-[#333] overflow-hidden flex flex-col relative z-10"
+        {/* iPhone 17 Pro Chassis (Titanium Rim) */}
+        <div className="absolute inset-0 rounded-[48px] shadow-2xl p-[3px] bg-gradient-to-br from-slate-300 via-slate-500 to-slate-800 flex flex-col relative z-10"
           style={{
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(255,255,255,0.1)'
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.2)'
           }}
         >
-          {/* Dynamic Island */}
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-50 flex items-center justify-between px-2">
-            <div className="w-2 h-2 rounded-full bg-[#111]"></div>
-            <div className="w-2 h-2 rounded-full bg-[#111]"></div>
-          </div>
+          {/* Inner Black Border & Screen */}
+          <div className="w-full h-full bg-black rounded-[45px] overflow-hidden flex flex-col relative border-[5px] border-black">
+            
+            {/* Dynamic Island */}
+            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-[30px] bg-black rounded-full z-50 flex items-center justify-between px-2.5">
+              <div className="w-2 h-2 rounded-full bg-[#111] shadow-[inset_0_0_1px_rgba(255,255,255,0.2)]"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a2a] shadow-[inset_0_0_2px_rgba(255,255,255,0.3)]"></div>
+            </div>
 
-          {/* Screen Content - WhatsApp Simulation */}
-          <div className="flex-1 bg-[#ebebeb] flex flex-col relative">
+            {/* Screen Content - WhatsApp Simulation */}
+            <div className="flex-1 bg-[#ebebeb] flex flex-col relative">
             
             {/* Header WhatsApp */}
             <div className="bg-[#075e54] pt-12 pb-3 px-4 shadow-md z-20 flex items-center gap-3">
@@ -118,7 +121,9 @@ export default function FloatingPhone() {
           </div>
 
           {/* Reflections */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none z-50"></div>
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none z-50 rounded-[45px]"></div>
+          
+          </div>
         </div>
       </div>
     </div>
