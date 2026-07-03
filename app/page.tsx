@@ -344,38 +344,39 @@ export default function Home() {
           {/* BENTO BOX GRID CON ANIMAZIONI */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-[auto]">
             
-            {/* 1. Receptionist Telefonica (Span 2 cols su desktop) */}
-            <div className="tilt-card animate-float-slow md:col-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-blue-500/40 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 blur-[80px] rounded-full group-hover:bg-blue-500/20 transition-all duration-700"></div>
+            {/* 1. Prezzi Dinamici (Span 2 cols su desktop) */}
+            <div className="tilt-card animate-float-slow md:col-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-cyan-500/40 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-cyan-500/10 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               <div className="relative z-10 mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(59,130,246,0.2)]">📞</div>
-                <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Receptionist AI Telefonica</h3>
-                <h4 className="text-blue-400 font-semibold mb-4 text-sm tracking-wide uppercase">Assistente Vocale H24</h4>
+                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(6,182,212,0.2)]">📈</div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Prezzi Dinamici (Modello Uber)</h3>
+                <h4 className="text-cyan-400 font-semibold mb-4 text-sm tracking-wide uppercase">Massimizzazione del Margine</h4>
                 <p className="text-slate-400 leading-relaxed text-sm md:text-base max-w-xl">
-                  Non fermare mai più il taglio per rispondere. Se non puoi rispondere al telefono, l'Intelligenza Artificiale prende la chiamata, controlla l'agenda in tempo reale, discute gli orari a voce con il cliente e fissa l'appuntamento da sola.
-                  <strong className="text-slate-200"> Il tuo salone è sempre aperto.</strong>
+                  Il sabato mattina l'algoritmo alza automaticamente i prezzi del 15% per altissima richiesta. Aumenta i tuoi margini in modo invisibile ma costante, esattamente come fanno le compagnie aeree e Uber.
+                  <strong className="text-slate-200"> Zero sforzo, incassi massimizzati.</strong>
                 </p>
               </div>
             </div>
 
-            {/* 2. Smart Rebooking (Span 2 rows su desktop) */}
-            <div className="tilt-card animate-float-fast lg:row-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-green-500/40 relative overflow-hidden group flex flex-col">
-              <div className="absolute bottom-0 right-0 w-full h-[200px] bg-green-500/10 blur-[80px] rounded-full group-hover:bg-green-500/20 transition-all duration-700"></div>
+            {/* 2. Lista d'Attesa (Span 2 rows su desktop) */}
+            <div className="tilt-card animate-float-fast lg:row-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-blue-500/40 relative overflow-hidden group flex flex-col">
+              <div className="absolute bottom-0 right-0 w-full h-[200px] bg-blue-500/10 blur-[80px] rounded-full group-hover:bg-blue-500/20 transition-all duration-700"></div>
               <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(34,197,94,0.2)]">🎯</div>
-                <h3 className="text-2xl font-extrabold text-white mb-3">Smart Rebooking</h3>
-                <h4 className="text-green-400 font-semibold mb-4 text-sm tracking-wide uppercase">Marketing Predittivo</h4>
+                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(59,130,246,0.2)]">⏳</div>
+                <h3 className="text-2xl font-extrabold text-white mb-3">Lista d'Attesa Automatica</h3>
+                <h4 className="text-blue-400 font-semibold mb-4 text-sm tracking-wide uppercase">Tappa i Buchi</h4>
                 <p className="text-slate-400 leading-relaxed text-sm md:text-base mb-8">
-                  L'IA studia le abitudini. Sa che Marco taglia i capelli ogni 20 giorni. Il 18° giorno gli invia un messaggio in automatico per bloccare il solito orario. Colma i "buchi" in agenda prima che si formino.
+                  Il sabato pomeriggio è pieno, ma Luca annulla all'ultimo minuto. Invece di perdere l'incasso, il sistema invia in automatico una notifica push all'app dei clienti in "Lista d'Attesa". Il primo che clicca, si prende il posto.
                 </p>
                 <div className="w-full bg-[#111b2b] rounded-2xl p-4 border border-white/5 shadow-inner">
-                  <div className="flex gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-green-900/50 flex-shrink-0 flex items-center justify-center text-xs">🤖</div>
-                    <div className="bg-slate-800 rounded-2xl rounded-tl-none p-3 text-xs text-slate-300">Ciao Marco! Sono passati 18 giorni dal tuo ultimo taglio. Vuoi che ti blocchi giovedì alle 18 come al solito?</div>
+                  <div className="flex items-center gap-3 mb-3 pb-3 border-b border-white/5">
+                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">🔔</div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">Posto liberato!</div>
+                      <div className="text-xs text-slate-400">Oggi alle 16:30 per Taglio e Barba</div>
+                    </div>
                   </div>
-                  <div className="flex gap-3 justify-end">
-                    <div className="bg-green-600 rounded-2xl rounded-tr-none p-3 text-xs text-white">Sì grazie, confermato! ✨</div>
-                  </div>
+                  <button className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors">Prenota Subito</button>
                 </div>
               </div>
             </div>
@@ -385,21 +386,21 @@ export default function Home() {
               <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-500/10 blur-[60px] rounded-full group-hover:bg-amber-500/20 transition-all duration-700"></div>
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(245,158,11,0.2)]">💰</div>
-                <h3 className="text-xl font-extrabold text-white mb-2">Split Automatico (Affitti Poltrona)</h3>
+                <h3 className="text-xl font-extrabold text-white mb-2">Split Automatico Incassi</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  Hai barbieri a percentuale o in affitto? L'IA calcola chi ha fatto i tagli e a mezzanotte divide i pagamenti Stripe in automatico sui loro conti. Fine delle liti a fine mese.
+                  Hai barbieri a percentuale o in "affitto poltrona"? Il sistema calcola chi ha fatto i tagli e a fine giornata divide i pagamenti matematicamente. Fine della contabilità manuale e delle incomprensioni.
                 </p>
               </div>
             </div>
 
-            {/* 4. Prezzi Dinamici */}
-            <div className="tilt-card animate-float-slow bg-[#0a0f1c]/80 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-cyan-500/40 relative overflow-hidden group" style={{ animationDelay: '1s' }}>
-              <div className="absolute bottom-0 left-0 w-[150px] h-[150px] bg-cyan-500/10 blur-[60px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+            {/* 4. Analisi Scorte */}
+            <div className="tilt-card animate-float-slow bg-[#0a0f1c]/80 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-purple-500/40 relative overflow-hidden group" style={{ animationDelay: '1s' }}>
+              <div className="absolute bottom-0 left-0 w-[150px] h-[150px] bg-purple-500/10 blur-[60px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700"></div>
               <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(6,182,212,0.2)]">📈</div>
-                <h3 className="text-xl font-extrabold text-white mb-2">Prezzi Dinamici (Uber Model)</h3>
+                <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(168,85,247,0.2)]">📦</div>
+                <h3 className="text-xl font-extrabold text-white mb-2">Analisi Scorte in Dashboard</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  Il listino si alza del 10% in automatico il sabato alle 16:00 per altissima richiesta. Aumenta i tuoi margini in modo invisibile ma costante, proprio come le compagnie aeree.
+                  Il sistema incrocia i dati: sa quanti trattamenti colore hai fatto in settimana, calcola il consumo stimato dei tubetti e ti avvisa in dashboard prima che le scorte finiscano.
                 </p>
               </div>
             </div>
