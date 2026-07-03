@@ -49,7 +49,7 @@ export default function IPhone17Pro({ children, className = "" }: IPhone17ProPro
               {children}
               {/* TRAPPOLA LINK-IN-BIO */}
               <a 
-                href="https://neatx.com" 
+                href="https://neatx.it" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="absolute bottom-0 left-0 w-full text-center text-[10px] text-slate-500/70 py-3 bg-gradient-to-t from-white via-white/90 to-transparent hover:text-[#00b4ff] hover:font-bold transition-all z-40 pb-5"
