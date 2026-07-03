@@ -25,16 +25,17 @@ jobs:
         run: |
           pip install google-generativeai
           
-      - name: Run Auto-SEO Machine
+      - name: Run Auto-SEO Machine & Impero Mediatico
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
         run: |
           cd bot_scripts/SEO_Machine
-          python auto_seo_machine.py
+          python auto_seo_machine.py || true
+          python impero_mediatico.py || true
 
       - name: Commit & Push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto-SEO: Nuovo articolo generato dall'IA 🤖"
-          file_pattern: "content/blog/*.md"
+          file_pattern: "content/blog/*.md bot_scripts/SEO_Machine/satellites_content/*.md"

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Treatwell",
+    "weaknesses": [
+      "Trattiene fino al 35% di commissioni sui nuovi clienti",
+      "Spinge i tuoi clienti a provare altri barbieri sulla loro app",
+      "Difficile da personalizzare per il proprio brand"
+    ],
+    "strengths": ["Molto famoso tra i clienti finali", "Ha un'app per utenti"],
+    "neatx_advantage": "NeatX prende ZERO commissioni sui clienti, si integra nel TUO Instagram e non ruba i tuoi clienti per portarli alla concorrenza."
+  },
+  {
+    "name": "Booksy",
+    "weaknesses": [
+      "Abbonamento mensile alto che sale se aggiungi collaboratori",
+      "Interfaccia complessa e poco intuitiva per i barbieri italiani",
+      "Assistenza spesso lenta"
+    ],
+    "strengths": ["Buone funzioni di marketing", "Usato a livello internazionale"],
+    "neatx_advantage": "NeatX ha un costo chiaro, è costruito a misura di barbiere italiano ed è così semplice che non ti serve assistenza. È fatto per chi taglia, non per chi sta al PC."
+  },
+  {
+    "name": "Uala",
+    "weaknesses": [
+      "Vincoli contrattuali spesso rigidi",
+      "Software a volte pesante e macchinoso",
+      "Mancanza di forte automazione sui social (es. DM bot integrati)"
+    ],
+    "strengths": ["Gestionale storico e completo in Italia", "Gestione magazzino profonda"],
+    "neatx_advantage": "NeatX è l'unico software della nuova generazione che pensa all'Acquisizione oltre che alla Gestione: ha i bot social inclusi per portarti nuovi clienti in automatico."
+  }
+]
