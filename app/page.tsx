@@ -287,163 +287,64 @@ export default function Home() {
         </div>
       </section>
 
-      {/* GOD-TIER AI SUITE (BENTO BOX CREDIBILE) */}
-      <section id="ai-suite" className="relative z-10 bg-[#050814] py-32 border-t border-[#1a2642] overflow-hidden">
-        {/* Ambient Lights & CSS Animations */}
+      {/* SIMULATORE INCASSO ANTICIPATO (FLUTTUANTE & TILT) */}
+      <section className="relative z-10 bg-[#050814] py-32 border-t border-[#1a2642] overflow-hidden">
+        {/* CSS Animazioni Universali */}
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes float-slow {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-15px) rotate(1deg); }
           }
-          @keyframes float-medium {
+          @keyframes float-fast {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(-1deg); }
           }
-          @keyframes float-fast {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(2deg); }
-          }
           @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(250px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(250px) rotate(-360deg); }
+            0% { transform: rotate(0deg) translateX(200px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
           }
           .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
-          .animate-float-medium { animation: float-medium 5s ease-in-out infinite; }
-          .animate-float-fast { animation: float-fast 6s ease-in-out infinite; }
+          .animate-float-fast { animation: float-fast 5s ease-in-out infinite; }
           .animate-orbit { animation: orbit 20s linear infinite; }
-          
-          .tilt-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-          }
-          .tilt-card:hover {
-            transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
-          }
+          .tilt-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+          .tilt-card:hover { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-5px); }
         `}} />
 
+        {/* Ambient Lights Orbitanti */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1px] h-[1px]">
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 blur-[100px] rounded-full animate-orbit"></div>
+          <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-cyan-600/10 blur-[120px] rounded-full animate-orbit"></div>
         </div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/5 blur-[150px] rounded-full pointer-events-none"></div>
-        
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
-              NeatX AI Suite (Accesso Limitato)
-            </div>
-            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
-              L'Intelligenza Artificiale<br className="hidden md:block" />
-              che <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-[#00b4ff]">Lavora al Posto Tuo.</span>
+
+        <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center justify-center">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
+              Azzera i <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">No-Show.</span>
             </h2>
-            <p className="text-slate-400 font-medium text-lg md:text-xl max-w-3xl mx-auto">
-              Soluzioni reali a problemi reali. Niente fantascienza. Solo strumenti progettati per massimizzare gli incassi e azzerare il tempo perso in gestione.
+            <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">
+              Richiedi acconti o pagamenti completi in anticipo tramite Stripe o PayPal, direttamente integrati nella tua app. Niente più perdite di tempo e denaro.
             </p>
           </div>
 
-          {/* BENTO BOX GRID CON ANIMAZIONI */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-[auto]">
-            
-            {/* 1. Prezzi Dinamici (Span 2 cols su desktop) */}
-            <div className="tilt-card animate-float-slow md:col-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-cyan-500/40 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-cyan-500/10 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700"></div>
-              <div className="relative z-10 mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(6,182,212,0.2)]">📈</div>
-                <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Prezzi Dinamici (Modello Uber)</h3>
-                <h4 className="text-cyan-400 font-semibold mb-4 text-sm tracking-wide uppercase">Massimizzazione del Margine</h4>
-                <p className="text-slate-400 leading-relaxed text-sm md:text-base max-w-xl">
-                  Il sabato mattina l'algoritmo alza automaticamente i prezzi del 15% per altissima richiesta. Aumenta i tuoi margini in modo invisibile ma costante, esattamente come fanno le compagnie aeree e Uber.
-                  <strong className="text-slate-200"> Zero sforzo, incassi massimizzati.</strong>
-                </p>
-              </div>
+          <div className="tilt-card animate-float-slow w-full max-w-3xl bg-[#0a0f1c]/80 backdrop-blur-xl p-10 md:p-14 rounded-[40px] border border-white/5 hover:border-cyan-500/40 relative overflow-hidden group shadow-[0_30px_60px_-15px_rgba(0,180,255,0.2)] flex flex-col items-center text-center">
+            <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/10 blur-[100px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+            <div className="relative z-10">
+              <div className="w-24 h-24 mx-auto rounded-[2rem] bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-5xl mb-8 shadow-[inset_0_0_30px_rgba(0,180,255,0.2)] animate-pulse">💳</div>
+              <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Simulatore Incasso Acconti</h3>
+              <p className="text-slate-300 leading-relaxed text-lg mb-10 max-w-xl mx-auto">
+                Vuoi vedere in prima persona come i tuoi clienti pagheranno l'acconto dal loro telefono? 
+                Provalo tu stesso (è un finto checkout interattivo).
+              </p>
+              <button 
+                onClick={() => setShowStripe(true)}
+                className="bg-white hover:bg-slate-100 text-slate-900 font-extrabold py-5 px-12 rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all transform hover:scale-105 flex items-center justify-center gap-3 mx-auto w-full sm:w-auto text-xl"
+              >
+                <span>💰</span>
+                Simula Pagamento
+              </button>
             </div>
-
-            {/* 2. Lista d'Attesa (Span 2 rows su desktop) */}
-            <div className="tilt-card animate-float-fast lg:row-span-2 bg-[#0a0f1c]/80 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-white/5 hover:border-blue-500/40 relative overflow-hidden group flex flex-col">
-              <div className="absolute bottom-0 right-0 w-full h-[200px] bg-blue-500/10 blur-[80px] rounded-full group-hover:bg-blue-500/20 transition-all duration-700"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-3xl mb-6 shadow-[inset_0_0_20px_rgba(59,130,246,0.2)]">⏳</div>
-                <h3 className="text-2xl font-extrabold text-white mb-3">Lista d'Attesa Automatica</h3>
-                <h4 className="text-blue-400 font-semibold mb-4 text-sm tracking-wide uppercase">Tappa i Buchi</h4>
-                <p className="text-slate-400 leading-relaxed text-sm md:text-base mb-8">
-                  Il sabato pomeriggio è pieno, ma Luca annulla all'ultimo minuto. Invece di perdere l'incasso, il sistema invia in automatico una notifica push all'app dei clienti in "Lista d'Attesa". Il primo che clicca, si prende il posto.
-                </p>
-                <div className="w-full bg-[#111b2b] rounded-2xl p-4 border border-white/5 shadow-inner">
-                  <div className="flex items-center gap-3 mb-3 pb-3 border-b border-white/5">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">🔔</div>
-                    <div>
-                      <div className="text-sm font-semibold text-white">Posto liberato!</div>
-                      <div className="text-xs text-slate-400">Oggi alle 16:30 per Taglio e Barba</div>
-                    </div>
-                  </div>
-                  <button className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors">Prenota Subito</button>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Split Pagamenti */}
-            <div className="tilt-card animate-float-medium bg-[#0a0f1c]/80 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-amber-500/40 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-500/10 blur-[60px] rounded-full group-hover:bg-amber-500/20 transition-all duration-700"></div>
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(245,158,11,0.2)]">💰</div>
-                <h3 className="text-xl font-extrabold text-white mb-2">Split Automatico Incassi</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Hai barbieri a percentuale o in "affitto poltrona"? Il sistema calcola chi ha fatto i tagli e a fine giornata divide i pagamenti matematicamente. Fine della contabilità manuale e delle incomprensioni.
-                </p>
-              </div>
-            </div>
-
-            {/* 4. Analisi Scorte */}
-            <div className="tilt-card animate-float-slow bg-[#0a0f1c]/80 backdrop-blur-xl p-8 rounded-[40px] border border-white/5 hover:border-purple-500/40 relative overflow-hidden group" style={{ animationDelay: '1s' }}>
-              <div className="absolute bottom-0 left-0 w-[150px] h-[150px] bg-purple-500/10 blur-[60px] rounded-full group-hover:bg-purple-500/20 transition-all duration-700"></div>
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-2xl mb-5 shadow-[inset_0_0_20px_rgba(168,85,247,0.2)]">📦</div>
-                <h3 className="text-xl font-extrabold text-white mb-2">Analisi Scorte in Dashboard</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  Il sistema incrocia i dati: sa quanti trattamenti colore hai fatto in settimana, calcola il consumo stimato dei tubetti e ti avvisa in dashboard prima che le scorte finiscano.
-                </p>
-              </div>
-            </div>
-
-            {/* 5. No-Show Revenge (Span 2 cols su desktop) */}
-            <div className="tilt-card animate-float-medium md:col-span-2 bg-gradient-to-br from-red-950/50 to-[#0a0f1c]/90 backdrop-blur-xl p-8 md:p-10 rounded-[40px] border border-red-500/20 hover:border-red-500/50 relative overflow-hidden group flex items-center shadow-2xl" style={{ animationDelay: '2s' }}>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-600/10 blur-[100px] rounded-full group-hover:bg-red-600/20 transition-all duration-700"></div>
-              <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 w-full">
-                <div className="w-20 h-20 shrink-0 rounded-3xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse">💀</div>
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-2">Blacklist Intelligente</h3>
-                  <h4 className="text-red-400 font-semibold mb-3 text-sm tracking-wide uppercase">No-Show Revenge</h4>
-                  <p className="text-slate-300 leading-relaxed text-sm md:text-base">
-                    Un cliente prenota e non si presenta facendoti perdere tempo? 
-                    L'IA lo segna nella "Lista Nera". La prossima volta che proverà a prenotare, l'app gli bloccherà l'orario finché non pagherà il <strong className="text-white">100% dell'importo in anticipo, non rimborsabile.</strong> Smetti di farti calpestare.
-                  </p>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </section>
-
-      {/* SIMULATORE INCASSO ANTICIPATO */}
-      <div className="w-full flex flex-col items-center justify-center py-12 bg-[#080d1a] border-t border-[#1a2642]">
-        <div className="text-center mb-8 max-w-2xl px-4">
-          <h2 className="text-3xl font-extrabold text-white mb-4">
-            Simulatore <span className="text-[#00b4ff]">Incasso Acconti</span> 💳
-          </h2>
-          <p className="text-slate-400">
-            Vuoi vedere come i tuoi clienti pagheranno in anticipo? 
-            Provalo tu stesso (è un finto checkout, nessun addebito reale).
-          </p>
-        </div>
-        <button 
-          onClick={() => setShowStripe(true)}
-          className="bg-white hover:bg-slate-100 text-slate-900 font-bold py-4 px-8 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all transform hover:scale-105 flex items-center gap-2"
-        >
-          <span className="text-xl">💰</span>
-          Simula Pagamento Cliente
-        </button>
-      </div>
 
       {/* SIMULATORE RECENSIONI GOOGLE */}
       <ReviewSimulator />
