@@ -287,6 +287,67 @@ export default function Home() {
         </div>
       </section>
 
+      {/* AI SUITE SECTION (ENTERPRISE) */}
+      <section id="ai-suite" className="relative z-10 bg-[#050814] py-24 border-t border-[#1a2642] overflow-hidden">
+        {/* Sfondo decorativo */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-purple-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-bold uppercase tracking-widest mb-6">
+              <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+              Moduli Enterprise (Solo su richiesta)
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
+              L'Unica Agenda Guidata <br className="hidden md:block" />
+              dall'<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-[#00b4ff]">Intelligenza Artificiale</span>
+            </h2>
+            <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">
+              Smetti di pagare stipendi per mansioni ripetitive. NeatX clona la tua mente e gestisce il salone al posto tuo, 24 ore su 24.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Card 1 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-purple-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">📞</div>
+              <h3 className="text-xl font-bold text-white mb-2">Receptionist Voice AI</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Smetti di fermare i tagli per rispondere al telefono. La nostra IA risponde con voce umana, capisce le richieste e fissa gli appuntamenti nell'agenda da sola.</p>
+            </div>
+            {/* Card 2 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-green-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">💬</div>
+              <h3 className="text-xl font-bold text-white mb-2">WhatsApp Booking Bot</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">I clienti ti scrivono su WhatsApp? Il bot legge i messaggi, propone orari liberi, sposta gli appuntamenti e risponde alle FAQ in automatico.</p>
+            </div>
+            {/* Card 3 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-amber-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">📈</div>
+              <h3 className="text-xl font-bold text-white mb-2">Dynamic Pricing (Uber Model)</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Il sabato mattina l'app alza i prezzi del 20% in automatico per altissima richiesta. Il martedì mattina li sconta per riempire i buchi. Massimizzazione pura.</p>
+            </div>
+            {/* Card 4 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-pink-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🤖</div>
+              <h3 className="text-xl font-bold text-white mb-2">Auto-Social & SEO</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Il tuo Social Media Manager integrato. Pubblica articoli ottimizzati sul tuo blog e genera video Reels ogni giorno per farti dominare Google e Instagram.</p>
+            </div>
+            {/* Card 5 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-emerald-500/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">📊</div>
+              <h3 className="text-xl font-bold text-white mb-2">AI Financial Advisor</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Un commercialista virtuale che analizza i tuoi incassi e ti invia SMS strategici: "Hai un calo sui trattamenti colore, lancia questa promo giovedì!".</p>
+            </div>
+            {/* Card 6 */}
+            <div className="bg-[#0b1221]/80 backdrop-blur-md p-8 rounded-3xl border border-[#1a2642] hover:border-yellow-400/50 transition-all group shadow-xl">
+              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">⭐</div>
+              <h3 className="text-xl font-bold text-white mb-2">Autopilot Recensioni</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">Filtra i clienti scontenti con un modulo privato e spedisce in automatico quelli felici a lasciarti valanghe di recensioni a 5 stelle su Google Maps.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SIMULATORE INCASSO ANTICIPATO */}
       <div className="w-full flex flex-col items-center justify-center py-12 bg-[#080d1a] border-t border-[#1a2642]">
         <div className="text-center mb-8 max-w-2xl px-4">
