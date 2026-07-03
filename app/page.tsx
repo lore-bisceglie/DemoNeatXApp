@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import FloatingPhone from "@/components/landing/FloatingPhone";
 import BeforeAfterSlider from "@/components/landing/BeforeAfterSlider";
+import StripeMockup from "@/components/landing/StripeMockup";
+import ReviewSimulator from "@/components/landing/ReviewSimulator";
 
 const FAKE_NOTIFICATIONS = [
   "🔥 Marco R. ha appena prenotato un Taglio",
@@ -19,6 +21,9 @@ export default function Home() {
   
   // ROI Calculator State
   const [showRoiModal, setShowRoiModal] = useState(false);
+  
+  // Stripe Demo State
+  const [showStripe, setShowStripe] = useState(false);
   
   const [clientsPerMonth, setClientsPerMonth] = useState(300);
   const [avgTicket, setAvgTicket] = useState(35);
@@ -61,6 +66,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050814] text-slate-200 font-sans selection:bg-[#00b4ff]/30 overflow-x-hidden relative">
+      
+      {/* MOCKUP STRIPE CHECKOUT */}
+      {showStripe && (
+        <StripeMockup 
+          amount={10.00} 
+          onSuccess={() => {
+            setShowStripe(false);
+            window.location.href = "/demo";
+          }}
+          onCancel={() => setShowStripe(false)}
+        />
+      )}
       
       
         <style>{`
@@ -128,12 +145,12 @@ export default function Home() {
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300 relative z-20">
-          <Link 
-            href="/demo"
+          <button 
+            onClick={() => setShowStripe(true)}
             className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(0,180,255,0.6)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
           >
             Esplora la Demo 🚀
-          </Link>
+          </button>
           <button 
             onClick={() => setShowRoiModal(true)}
             className="w-full sm:w-auto px-8 py-4 bg-[#131c31]/80 backdrop-blur-md hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
@@ -269,6 +286,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* SIMULATORE RECENSIONI GOOGLE */}
+      <ReviewSimulator />
 
       {/* PRICING SECTION */}
       <section id="pricing" className="relative z-10 bg-[#050814] py-24 border-y border-[#1a2642]">
