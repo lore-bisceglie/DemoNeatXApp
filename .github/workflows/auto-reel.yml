@@ -1,0 +1,48 @@
+name: NeatX Auto-Reel Machine
+
+on:
+  schedule:
+    # Esegue ogni giorno alle 14:00 UTC
+    - cron: '0 14 * * *'
+  workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
+
+jobs:
+  run-reel-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install System Dependencies (FFmpeg & ImageMagick)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg imagemagick
+
+      - name: Install Python dependencies
+        run: |
+          pip install google-generativeai requests moviepy==1.0.3 gtts SpeechRecognition pydub
+
+      - name: Run Generate Reel
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_ACTIONS: "true"
+        run: |
+          cd bot_scripts/Social/ReelGenerator
+          # Nota: generate_reel.py deve essere adattato per scaricare yt-dlp su linux o usare librerie alternative se yt-dlp.exe fallisce. 
+          # In questo script assumiamo che il video background ci sia già o venga generato internamente.
+          python generate_reel.py || true
+
+      - name: Publish Reel to Instagram
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
+          GITHUB_ACTIONS: "true"
+        run: |
+          cd bot_scripts/Social/ReelGenerator
+          python publish_reel.py || true

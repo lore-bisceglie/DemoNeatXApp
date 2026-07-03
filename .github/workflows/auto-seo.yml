@@ -1,0 +1,40 @@
+name: NeatX Auto-SEO Machine
+
+on:
+  schedule:
+    # Esegue ogni giorno alle 08:00 UTC
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
+
+jobs:
+  run-seo-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install google-generativeai
+          
+      - name: Run Auto-SEO Machine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_ACTIONS: "true"
+        run: |
+          cd bot_scripts/SEO_Machine
+          python auto_seo_machine.py
+
+      - name: Commit & Push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-SEO: Nuovo articolo generato dall'IA 🤖"
+          file_pattern: "content/blog/*.md"
