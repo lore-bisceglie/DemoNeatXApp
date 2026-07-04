@@ -1,9 +1,6 @@
 import os
 import time
 import requests
-import threading
-from http.server import SimpleHTTPRequestHandler, HTTPServer
-from pyngrok import ngrok
 import json
 from dotenv import load_dotenv
 
@@ -28,11 +25,6 @@ def get_caption():
             data = json.load(f)
             return data.get("caption", "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione")
     return "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione"
-
-def start_server(port):
-    handler = SimpleHTTPRequestHandler
-    httpd = HTTPServer(("", port), handler)
-    httpd.serve_forever()
 
 def publish_to_instagram():
     if not META_ACCESS_TOKEN or not IG_ACCOUNT_ID:

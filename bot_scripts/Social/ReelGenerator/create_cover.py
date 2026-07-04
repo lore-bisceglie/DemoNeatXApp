@@ -1,9 +1,11 @@
 import sys
 import os
+import html
 from playwright.sync_api import sync_playwright
 
 def generate_cover_with_playwright(cover_title, output_path="assets/cover.png"):
     logo_abs_path = os.path.abspath("assets/logo.png").replace("\\", "/")
+    title_html = html.escape(cover_title).replace("\n", "<br>")
     
     html_content = f"""
     <html>
@@ -43,7 +45,7 @@ def generate_cover_with_playwright(cover_title, output_path="assets/cover.png"):
     </head>
     <body>
         <img src="file:///{logo_abs_path}" class="logo" onerror="this.style.display='none'">
-        <div class="title">{cover_title.replace('\\n', '<br>').replace(chr(10), '<br>')}</div>
+        <div class="title">{title_html}</div>
     </body>
     </html>
     """
@@ -71,4 +73,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         generate_cover_with_playwright(sys.argv[1])
     else:
-        generate_cover_with_playwright("NEATX<br>APP PRENOTAZIONI")
+        generate_cover_with_playwright("NEATX\nAPP PRENOTAZIONI")
