@@ -189,9 +189,17 @@ export default function Home() {
 
       {/* NAVBAR */}
       <nav className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-2xl font-extrabold tracking-tight">
-          <span className="text-white">Neat</span>
-          <span className="text-[#00b4ff]">X</span>
+        <div className="w-full md:w-auto flex items-center justify-between">
+          <div className="text-2xl font-extrabold tracking-tight">
+            <span className="text-white">Neat</span>
+            <span className="text-[#00b4ff]">X</span>
+          </div>
+          <Link
+            href="/demo"
+            className="md:hidden rounded-full border border-[#00b4ff]/30 bg-[#00b4ff]/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-cyan-300"
+          >
+            Demo
+          </Link>
         </div>
         <div className="hidden md:flex gap-8 text-sm font-bold text-slate-400">
           <a href="#features" className="hover:text-white transition-colors">Funzionalità</a>
@@ -199,11 +207,29 @@ export default function Home() {
           <a href="#pricing" className="hover:text-white transition-colors">Prezzi</a>
           <Link href="/blog" className="hover:text-white transition-colors text-purple-400">Blog</Link>
         </div>
-        
+
+        <div className="grid grid-cols-2 gap-2 w-full md:hidden text-xs font-extrabold">
+          <a href="#features" className="rounded-2xl border border-[#1a2642] bg-[#0b1221]/80 px-4 py-3 text-center text-slate-300">
+            Funzionalità
+          </a>
+          <button
+            type="button"
+            onClick={() => setShowRoiModal(true)}
+            className="rounded-2xl border border-[#00b4ff]/25 bg-[#00b4ff]/10 px-4 py-3 text-center text-cyan-300"
+          >
+            Calcola ROI
+          </button>
+          <a href="#pricing" className="rounded-2xl border border-[#1a2642] bg-[#0b1221]/80 px-4 py-3 text-center text-slate-300">
+            Prezzi
+          </a>
+          <Link href="/blog" className="rounded-2xl border border-purple-500/20 bg-purple-500/10 px-4 py-3 text-center text-purple-300">
+            Blog
+          </Link>
+        </div>
       </nav>
 
       {/* HERO SECTION CON MOCKUP TILT */}
-      <main className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-16 md:pt-20 pb-20 flex flex-col items-center text-center">
+      <main className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 md:pt-20 pb-20 flex flex-col items-center text-center">
         
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-extrabold tracking-widest uppercase mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 hover:bg-cyan-500/20 transition-all cursor-default">
           <span className="relative flex h-2 w-2">
@@ -213,7 +239,7 @@ export default function Home() {
           Prenotazioni, acconti e promemoria in automatico
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
           Trasforma Instagram in <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] to-purple-500 animate-pulse">
             agenda piena

@@ -3,32 +3,39 @@
 import React from "react";
 import { Camera } from "lucide-react";
 
-export default function InstagramFloatingBtn() {
+type InstagramFloatingBtnProps = {
+  compact?: boolean;
+};
+
+export default function InstagramFloatingBtn({ compact = false }: InstagramFloatingBtnProps) {
+  const appUrl = "instagram://user?username=neatx_agenda";
+  const webUrl = "https://www.instagram.com/neatx_agenda";
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // Prova ad aprire l'app
-      window.location.href = "instagram://user?username=neatx_agenda";
-      // Fallback sul browser se l'app non è installata
+      window.location.assign(appUrl);
       setTimeout(() => {
-        window.location.href = "https://www.instagram.com/neatx_agenda";
-      }, 500);
+        window.location.href = webUrl;
+      }, 1500);
     } else {
-      // Su Desktop apri normalmente
-      window.open("https://www.instagram.com/neatx_agenda", "_blank");
+      window.open(webUrl, "_blank");
     }
   };
 
   return (
     <a 
-      href="https://www.instagram.com/neatx_agenda"
+      href={compact ? appUrl : webUrl}
       onClick={handleClick}
-      className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-3 rounded-full font-bold shadow-lg shadow-pink-500/30 hover:scale-105 transition-transform cursor-pointer"
+      aria-label="Apri Instagram NeatX"
+      className={`flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-bold shadow-lg shadow-pink-500/30 hover:scale-105 transition-transform cursor-pointer ${
+        compact ? "h-14 w-14" : "px-5 py-3"
+      }`}
     >
       <Camera size={20} />
-      Scrivici su IG
+      <span className={compact ? "sr-only" : ""}>Scrivici su IG</span>
     </a>
   );
 }

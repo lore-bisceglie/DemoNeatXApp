@@ -54,6 +54,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Pulsante Fluttuante Instagram (Apre App Nativa) */}
           <InstagramFloatingBtn />
         </div>
+
+        <div className="fixed bottom-4 right-4 z-50 sm:hidden">
+          <InstagramFloatingBtn compact />
+        </div>
       </body>
     </html>
   );
