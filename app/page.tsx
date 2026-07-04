@@ -395,8 +395,8 @@ export default function Home() {
               <div className="text-xs text-slate-500 font-medium mb-6">+ Setup Una Tantum iniziale</div>
               <ul className="space-y-4 mb-auto text-sm text-slate-200 font-medium">
                 <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Appuntamenti Illimitati</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> <strong className="text-white">Bot WhatsApp Automatico</strong></li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Accesso alla Dashboard Privata</li>
+                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> <strong className="text-white">Promemoria Email Gratuiti</strong></li>
+                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Integrazione SMS Automatica*</li>
                 <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Blocco orari e ferie</li>
               </ul>
               <a 
@@ -425,6 +425,19 @@ export default function Home() {
                   📝 Invia Candidatura
                 </a>
               </div>
+            </div>
+          </div>
+          
+          {/* BANNER TRASPARENZA SMS */}
+          <div className="mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+            <div className="text-4xl">💎</div>
+            <div className="text-left">
+              <h4 className="text-white font-bold text-lg mb-1">* Trasparenza 100% sui costi dei messaggi</h4>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Tutti i piani includono le notifiche via Email gratuite e illimitate. Se desideri usare gli <strong>SMS automatici</strong> per azzerare i no-show, il servizio si paga <em>esclusivamente a consumo</em> (ricarica crediti). 
+                Noi usiamo la rete ufficiale mondiale e non applichiamo margini nascosti. Paghi esattamente quello che spedisci, e decidi tu il tuo budget.
+              </p>
             </div>
           </div>
         </div>
