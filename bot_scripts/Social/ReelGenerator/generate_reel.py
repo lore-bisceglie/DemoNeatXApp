@@ -17,15 +17,23 @@ VOICE = "it-IT-ElsaNeural"
 
 import json
 import random
+import requests
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+client = OpenAI() # Prende la chiave da OPENAI_API_KEY nell'ambiente
 
 if os.path.exists("reel_data.json"):
     with open("reel_data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
         SCRIPT_TEXT = data.get("script_text", "Errore: Testo non trovato")
         HOOK_TEXT = data.get("hook_text", "Errore: Hook non trovato")
+        NICHE = data.get("niche", "Centro Estetico di lusso")
 else:
     SCRIPT_TEXT = "Testo di default in assenza del file json..."
     HOOK_TEXT = "Hook di default"
+    NICHE = "Centro Estetico di Lusso"
 
 OUTPUT_FILENAME = "reel_splitscreen.mp4"
 
@@ -132,6 +140,52 @@ def resize_and_crop(clip, target_width, target_height):
         resized = clip.resize(width=target_width)
         return resized.crop(y_center=resized.h/2, height=target_height)
 
+def genera_immagine_ai(nicchia):
+    percorso_img = "assets/niche_bg.jpg"
+    if os.path.exists(percorso_img):
+        print("[*] Immagine AI già presente. Salto la generazione.")
+        return percorso_img
+        
+    print(f"[*] Generazione immagine 4K per la nicchia: {nicchia} (tramite AI Gratuita)...")
+    try:
+        import urllib.parse
+        prompt = f"A professional {nicchia} at work in their typical workplace, cinematic 4k shot, photorealistic, highly detailed, dramatic lighting"
+        safe_prompt = urllib.parse.quote(prompt)
+        url = f"https://image.pollinations.ai/prompt/{safe_prompt}?width=1080&height=1920&nologo=true"
+        
+        img_data = requests.get(url).content
+        with open(percorso_img, 'wb') as handler:
+            handler.write(img_data)
+        print("[+] Immagine AI generata e salvata con successo!")
+    except Exception as e:
+        print(f"[!] Errore durante la generazione dell'immagine AI: {e}")
+        img = Image.new('RGB', (1080, 1920), color = (20, 20, 20))
+        img.save(percorso_img)
+        print("[!] Usata immagine nera di ripiego.")
+        
+    return percorso_img
+
+def zoom_in_effect(clip, zoom_ratio=0.04):
+    """Applica un leggero effetto zoom in (Ken Burns) su una ImageClip"""
+    def effect(get_frame, t):
+        img = Image.fromarray(get_frame(t))
+        base_size = img.size
+        # Calcola il ritaglio dinamico
+        zoom_factor = 1 + (zoom_ratio * (t / clip.duration))
+        new_w = int(base_size[0] / zoom_factor)
+        new_h = int(base_size[1] / zoom_factor)
+        
+        left = (base_size[0] - new_w) / 2
+        top = (base_size[1] - new_h) / 2
+        right = (base_size[0] + new_w) / 2
+        bottom = (base_size[1] + new_h) / 2
+        
+        img = img.crop((left, top, right, bottom))
+        img = img.resize(base_size, Image.LANCZOS)
+        return __import__('numpy').array(img)
+        
+    return clip.fl(effect)
+
 def crea_video():
     print("[*] Montaggio video SPLIT-SCREEN in corso...")
     
@@ -161,28 +215,18 @@ def crea_video():
     # Ridimensiona per occupare esattamente la metà superiore (1080x960)
     clip_top = resize_and_crop(clip_top, REEL_WIDTH, REEL_HEIGHT // 2)
 
-    # 2. Carica la registrazione dello schermo fornita dall'utente (Metà Inferiore)
-    path_app = "assets/app_demo.mp4"
-    if not os.path.exists(path_app):
-        print(f"[ERRORE] Manca il video dell'app registrato manualmente: {path_app}")
-        print("Registra il tuo schermo mentre usi l'app e salvalo come assets/app_demo.mp4!")
-        return
-        
-    clip_bottom = VideoFileClip(path_app).without_audio()
+    # 2. Carica l'immagine generata dall'AI (Metà Inferiore)
+    path_app = genera_immagine_ai(NICHE)
     
-    # NOVITA': Taglio intelligente per nascondere il browser! 
-    # Tagliamo il 12% in alto (URL bar) e il 5% in basso (barra di stato)
-    w_b, h_b = clip_bottom.size
-    clip_bottom = clip_bottom.crop(y1=h_b*0.12, y2=h_b*0.95)
+    # Crea una ImageClip e dalle la durata dell'audio
+    clip_bottom = ImageClip(path_app).set_duration(duration)
     
-    # Se il video dell'app è più corto dell'audio, mettilo in loop in modo fluido
-    if clip_bottom.duration < duration:
-        clip_bottom = clip_bottom.fx(vfx.loop, duration=duration)
-    else:
-        clip_bottom = clip_bottom.subclip(0, min(duration, clip_bottom.duration))
-        
-    # Ridimensiona per occupare esattamente la metà inferiore (1080x960)
+    # Ridimensiona l'immagine per riempire la metà inferiore
     clip_bottom = resize_and_crop(clip_bottom, REEL_WIDTH, REEL_HEIGHT // 2)
+    
+    # Applica il Ken Burns (Slow Zoom) per dare movimento
+    print("[*] Applicazione effetto Zoom Cinematografico sull'immagine...")
+    clip_bottom = zoom_in_effect(clip_bottom, zoom_ratio=0.08)
 
     # 3. Unisce i due video (Split-Screen Array)
     final_bg = clips_array([[clip_top], [clip_bottom]])

@@ -26,23 +26,18 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install google-generativeai requests moviepy==1.0.3 gtts SpeechRecognition pydub
+          pip install requests moviepy==1.0.3 edge-tts openai python-dotenv imageio-ffmpeg pydub numpy pillow
 
-      - name: Run Generate Reel
+      - name: Run Massive Content Machine
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
         run: |
           cd bot_scripts/Social/ReelGenerator
-          # Nota: generate_reel.py deve essere adattato per scaricare yt-dlp su linux o usare librerie alternative se yt-dlp.exe fallisce. 
-          # In questo script assumiamo che il video background ci sia già o venga generato internamente.
-          python generate_reel.py || true
+          python mass_content_machine.py || true
 
-      - name: Publish Reel to Instagram
-        env:
-          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
-          IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
-          GITHUB_ACTIONS: "true"
-        run: |
-          cd bot_scripts/Social/ReelGenerator
-          python publish_reel.py || true
+      - name: Upload Finished Reels Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Reels_Finiti
+          path: bot_scripts/Social/ReelGenerator/Reels_Finiti/
+          retention-days: 5
