@@ -179,7 +179,7 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
               </div>
               <div className="mx-auto bg-black/40 px-32 py-1 rounded-md text-[10px] text-slate-500 font-mono tracking-widest border border-white/5">
-                neatx.com/admin
+                www.neatx.store/admin
               </div>
             </div>
 

@@ -9,7 +9,7 @@ Modifiche principali applicate:
 - Validazioni nome/telefono/no-show disattivate lato backend per il tenant DemoNeatX.
 - La prenotazione demo viene salvata tramite `/api/book` e poi mostra un popup demo.
 - Dashboard vincolata al tenant DemoNeatX, non più al primo tenant trovato nel database.
-- Metadata aggiornati al dominio `demo-neatx-app.vercel.app`.
+- Metadata aggiornati al dominio `www.neatx.store`.
 - Messaggi residuali GreenBeauty in reminder, waitlist, cancel e delete sostituiti con Demo NeatX.
 - `.env` reale escluso dallo ZIP; usare `.env.example` come base e configurare le variabili su Vercel.
 

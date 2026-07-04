@@ -8,7 +8,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://demo-neatx-app.vercel.app"),
+  metadataBase: new URL("https://www.neatx.store"),
   title: "Demo NeatX | Prenotazioni", 
   description: "Prova una prenotazione demo in 10 secondi.",
   icons: {
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Demo NeatX | Prenotazioni", 
     description: "Prova una prenotazione demo in 10 secondi.",
-    url: "https://demo-neatx-app.vercel.app",
+    url: "https://www.neatx.store",
     siteName: "Demo NeatX",
     images: [
       {
         // 🔥 LINK ASSOLUTO: Costringe WhatsApp a trovare l'immagine!
-        url: "https://demo-neatx-app.vercel.app/preview.png", 
+        url: "https://www.neatx.store/preview.png", 
         width: 1200,
         height: 630,
       },

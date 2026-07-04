@@ -19,7 +19,7 @@ def record_site():
         # FASE 1: FLUSSO REALISTICO DI PRENOTAZIONE (Cliente Finale)
         # ==============================================================
         print("[*] Avvio della simulazione utente realista...")
-        page.goto("https://demo-neatx-app.vercel.app/", wait_until="networkidle")
+        page.goto("https://www.neatx.store/", wait_until="networkidle")
         time.sleep(1.5)
         
         # 1. Seleziona il servizio (dal menu a tendina)
@@ -66,7 +66,7 @@ def record_site():
         # FASE 2: DASHBOARD INTERNA E SCROLLING
         # ==============================================================
         print("[*] Passo alla dashboard e mostro l'agenda...")
-        page.goto("https://demo-neatx-app.vercel.app/dashboard", wait_until="networkidle")
+        page.goto("https://www.neatx.store/dashboard", wait_until="networkidle")
         time.sleep(3)
         
         page.evaluate("window.scrollBy({top: 400, behavior: 'smooth'})")

@@ -168,7 +168,7 @@ export default function Onboarding() {
                 </div>
                 <p className="text-xs text-slate-400 mb-3">I tuoi clienti cliccheranno qui per prenotare.</p>
                 <div className="text-cyan-400 font-medium break-all bg-[#0b1221] p-3 rounded-xl border border-[#1a2642] flex justify-between items-center">
-                  neatx.com/t/{successData.slug}
+                  www.neatx.store/t/{successData.slug}
                 </div>
               </div>
               
@@ -181,7 +181,7 @@ export default function Onboarding() {
                 </div>
                 <p className="text-xs text-slate-400 mb-3">Solo per te: qui gestirai incassi e appuntamenti.</p>
                 <div className="text-white font-medium mb-3 break-all bg-[#0b1221] p-3 rounded-xl border border-[#1a2642]">
-                  neatx.com/t/{successData.slug}/admin
+                  www.neatx.store/t/{successData.slug}/admin
                 </div>
                 <div className="flex justify-between items-center bg-yellow-500/10 p-3 rounded-xl border border-yellow-500/20">
                   <span className="text-yellow-500 text-xs font-bold uppercase tracking-widest">Password:</span>

@@ -2,6 +2,9 @@ import os
 import json
 import time
 from instagrapi import Client
+from dotenv import load_dotenv
+
+load_dotenv()
 
 SESSION_FILE = "session.json"
 PROCESSED_COMMENTS_FILE = "processed_comments.json"
@@ -9,15 +12,15 @@ PROCESSED_COMMENTS_FILE = "processed_comments.json"
 # ==========================================
 # CONFIGURAZIONI (Modifica queste liberamente)
 # ==========================================
-# Le tue credenziali di Instagram (NECESSARIE per i DM)
-IG_USERNAME = "neatx_agenda"
-IG_PASSWORD = "Roxanne1203"
+# Le credenziali arrivano dai GitHub Secrets o dal file .env locale.
+IG_USERNAME = os.environ.get("INSTA_USER", "")
+IG_PASSWORD = os.environ.get("INSTA_PASS", "")
 
 # Se un commento contiene una di queste parole, il bot si attiva
 TRIGGER_WORDS = ["agenda"]
 
 # Il messaggio che verrà inviato in PRIVATO (DM) all'utente
-DM_MESSAGE_TEXT = "Ciao! Ho visto il tuo commento. Ecco il link per scaricare e provare NeatX gratuitamente per la tua attività: https://linktr.ee/neatx \n\nFammi sapere se ti serve aiuto o hai domande!"
+DM_MESSAGE_TEXT = "Ciao! Ho visto il tuo commento. Ecco il link per scaricare e provare NeatX gratuitamente per la tua attività: https://www.neatx.store/ \n\nFammi sapere se ti serve aiuto o hai domande!"
 
 # La risposta pubblica che apparirà sotto al suo commento
 PUBLIC_REPLY_TEXT = "Ti ho inviato il link in messaggio privato (DM)! 🚀"
@@ -52,8 +55,8 @@ def main():
     # Ritardo per simulare comportamento umano ed evitare blocchi API
     cl.delay_range = [2, 5]
     
-    if IG_USERNAME == "INSERISCI_QUI_IL_TUO_USERNAME":
-        print("[!] Errore: Devi inserire il tuo IG_USERNAME e IG_PASSWORD nel file auto_dm.py!")
+    if not IG_USERNAME or not IG_PASSWORD:
+        print("[!] Errore: INSTA_USER e INSTA_PASS mancanti. Impostali nei GitHub Secrets o nel file .env locale.")
         return
 
     if os.path.exists(SESSION_FILE):
