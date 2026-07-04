@@ -4,6 +4,8 @@ on:
   schedule:
     # Esegue lo Sniper Commenti ogni 30 minuti
     - cron: '*/30 * * * *'
+    # Esegue il Cacciatore Silenzioso 2 volte al giorno
+    - cron: '15 9,17 * * *'
   workflow_dispatch:
 
 jobs:
@@ -33,6 +35,23 @@ jobs:
         cd bot_scripts/Social/GrowthHack
         python sniper_commenti.py
 
+    - name: Avvia il Cacciatore Silenzioso (Like + Storie)
+      if: github.event_name == 'workflow_dispatch' || github.event.schedule == '15 9,17 * * *'
+      env:
+        INSTA_USER: ${{ secrets.INSTA_USER }}
+        INSTA_PASS: ${{ secrets.INSTA_PASS }}
+        CACCIATORE_MAX_PROFILES: "3"
+        CACCIATORE_MIN_PAUSE_SECONDS: "55"
+        CACCIATORE_MAX_PAUSE_SECONDS: "140"
+        CACCIATORE_MAX_STORIES_PER_USER: "1"
+        CACCIATORE_STORY_LIKE_PROBABILITY: "0.75"
+        CACCIATORE_POST_LIKE: "true"
+        CACCIATORE_STORY_VIEW: "true"
+        CACCIATORE_STORY_LIKE: "true"
+      run: |
+        cd bot_scripts/Social/GrowthHack
+        python cacciatore_silenzioso.py || true
+
     - name: Avvia la Spia Virale (Solo una volta al giorno)
       # Un trucco per far girare la spia solo se sono circa le 12:00 UTC (usando un controllo bash semplice)
       if: github.event_name == 'workflow_dispatch' || startsWith(github.event.schedule, '0 12')
@@ -57,6 +76,6 @@ jobs:
       run: |
         git config --global user.name "GitHub Actions - Growth Bot"
         git config --global user.email "actions@github.com"
-        git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt || true
+        git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt bot_scripts/Social/GrowthHack/cacciatore_seen.txt || true
         git commit -m "Auto-Update: Nuovi video virali trovati e commenti salvati" || true
         git push || true
