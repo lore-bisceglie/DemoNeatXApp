@@ -19,21 +19,17 @@ import json
 import random
 import requests
 from dotenv import load_dotenv
-from openai import OpenAI
 
 load_dotenv()
-client = OpenAI() # Prende la chiave da OPENAI_API_KEY nell'ambiente
 
+data = {}
 if os.path.exists("reel_data.json"):
     with open("reel_data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-        SCRIPT_TEXT = data.get("script_text", "Errore: Testo non trovato")
-        HOOK_TEXT = data.get("hook_text", "Errore: Hook non trovato")
-        NICHE = data.get("niche", "Centro Estetico di lusso")
-else:
-    SCRIPT_TEXT = "Testo di default in assenza del file json..."
-    HOOK_TEXT = "Hook di default"
-    NICHE = "Centro Estetico di Lusso"
+
+SCRIPT_TEXT = data.get("script_text", "Testo di default in assenza del file json...")
+HOOK_TEXT = data.get("hook_text", "Hook di default")
+NICHE = data.get("niche", "Centro Estetico di Lusso")
 
 OUTPUT_FILENAME = "reel_splitscreen.mp4"
 
@@ -290,7 +286,9 @@ def crea_video():
         subprocess.run(["python", "create_cover.py", title], check=True)
     except Exception as e:
         print(f"[!] Errore generazione copertina grafica: {e}")
-        video_finale.save_frame("assets/cover.png", t=3.0)
+        fallback = Image.new("RGB", (REEL_WIDTH, REEL_HEIGHT), color=(5, 8, 20))
+        fallback.save("assets/cover.png")
+        print("[!] Creata copertina di ripiego.")
     
     print("[+] Finito! Video pronto.")
 
