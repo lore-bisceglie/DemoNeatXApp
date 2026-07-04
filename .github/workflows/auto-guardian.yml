@@ -1,0 +1,143 @@
+name: NeatX Guardian
+
+on:
+  schedule:
+    # 10:37 e 21:37 Europe/Rome in estate.
+    - cron: '37 8,19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+jobs:
+  guard-business-machine:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Check site, workflows and daily blog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GITHUB_TOKEN"]
+          headers = {
+              "Accept": "application/vnd.github+json",
+              "Authorization": f"Bearer {token}",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "neatx-guardian",
+          }
+          problems = []
+
+          def api_json(path, method="GET", body=None):
+              data = None if body is None else json.dumps(body).encode("utf-8")
+              req = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}{path}",
+                  data=data,
+                  method=method,
+                  headers=headers,
+              )
+              with urllib.request.urlopen(req, timeout=20) as response:
+                  return json.loads(response.read().decode("utf-8"))
+
+          def check_site():
+              try:
+                  req = urllib.request.Request(
+                      "https://www.neatx.store",
+                      headers={"User-Agent": "neatx-guardian"},
+                  )
+                  with urllib.request.urlopen(req, timeout=20) as response:
+                      if response.status >= 400:
+                          problems.append(f"Sito online ma risponde HTTP {response.status}.")
+              except Exception as exc:
+                  problems.append(f"Sito https://www.neatx.store non raggiungibile: {exc}")
+
+          def check_workflows():
+              workflows = ["auto-seo.yml", "auto-reel.yml", "auto-growth.yml"]
+              bad_conclusions = {"failure", "cancelled", "timed_out", "action_required"}
+              for workflow in workflows:
+                  try:
+                      runs = api_json(f"/actions/workflows/{workflow}/runs?per_page=3").get("workflow_runs", [])
+                  except Exception as exc:
+                      problems.append(f"Impossibile leggere i run di {workflow}: {exc}")
+                      continue
+                  if not runs:
+                      problems.append(f"Nessun run trovato per {workflow}.")
+                      continue
+                  latest = runs[0]
+                  conclusion = latest.get("conclusion")
+                  status = latest.get("status")
+                  if status == "completed" and conclusion in bad_conclusions:
+                      problems.append(
+                          f"{workflow} ha ultimo run {conclusion}: {latest.get('html_url')}"
+                      )
+
+          def check_daily_blog():
+              now_rome = datetime.now(ZoneInfo("Europe/Rome"))
+              if now_rome.hour < 10:
+                  return
+
+              blog_dir = Path("content/blog")
+              if not blog_dir.exists():
+                  problems.append("Cartella content/blog mancante.")
+                  return
+
+              today = now_rome.date().isoformat()
+              today_posts = []
+              for post in blog_dir.glob("*.md"):
+                  text = post.read_text(encoding="utf-8", errors="ignore")[:500]
+                  if f'date: "{today}"' in text or f"date: {today}" in text:
+                      today_posts.append(post.name)
+
+              if not today_posts:
+                  problems.append(
+                      f"Dopo le 10:00 Europe/Rome non risulta nessun articolo blog con data {today}."
+                  )
+
+          def create_issue():
+              if not problems:
+                  print("[Guardian] Tutto ok.")
+                  return
+
+              today = datetime.now(ZoneInfo("Europe/Rome")).date().isoformat()
+              title = f"NeatX Guardian Alert - {today}"
+              body = "\n".join(f"- {problem}" for problem in problems)
+
+              existing = api_json(f"/issues?state=open&per_page=50")
+              for issue in existing:
+                  if issue.get("title") == title:
+                      print("[Guardian] Issue gia presente per oggi.")
+                      print(body)
+                      return
+
+              api_json(
+                  "/issues",
+                  method="POST",
+                  body={
+                      "title": title,
+                      "body": "Controllo automatico NeatX Guardian:\n\n" + body,
+                  },
+              )
+              print("[Guardian] Issue creata:")
+              print(body)
+
+          check_site()
+          check_workflows()
+          check_daily_blog()
+          create_issue()
+          PY

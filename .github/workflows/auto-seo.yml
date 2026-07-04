@@ -6,18 +6,22 @@ on:
     - cron: '0 8 * * *'
   workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
 
+permissions:
+  contents: write
+
 jobs:
   run-seo-bot:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -31,11 +35,11 @@ jobs:
           GITHUB_ACTIONS: "true"
         run: |
           cd bot_scripts/SEO_Machine
-          python auto_seo_machine.py || true
+          python auto_seo_machine.py
           python impero_mediatico.py || true
 
       - name: Commit & Push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Auto-SEO: Nuovo articolo generato dall'IA 🤖"
           file_pattern: "content/blog/*.md bot_scripts/SEO_Machine/satellites_content/*.md"

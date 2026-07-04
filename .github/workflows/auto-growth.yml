@@ -8,6 +8,9 @@ on:
     - cron: '15 9,17 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   run-growth-bots:
     runs-on: ubuntu-latest
@@ -78,4 +81,4 @@ jobs:
         git config --global user.email "actions@github.com"
         git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt bot_scripts/Social/GrowthHack/cacciatore_seen.txt || true
         git commit -m "Auto-Update: Nuovi video virali trovati e commenti salvati" || true
-        git push || true
+        git push
