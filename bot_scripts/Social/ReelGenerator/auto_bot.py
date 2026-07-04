@@ -25,9 +25,17 @@ TARGET_AUDIENCES = [
     "Commercialisti"
 ]
 
+GAMEPLAY_STYLES = [
+    "runner",
+    "block_miner",
+    "neon_racer"
+]
+
 def generate_daily_content():
     target = random.choice(TARGET_AUDIENCES)
+    gameplay_style = random.choice(GAMEPLAY_STYLES)
     print(f"[*] Target di oggi selezionato: {target}")
+    print(f"[*] Gameplay di oggi selezionato: {gameplay_style}")
 
     if not GEMINI_API_KEY:
         raise RuntimeError("GEMINI_API_KEY mancante. Impostalo nei GitHub Secrets o nel file .env locale.")
@@ -55,6 +63,9 @@ Sei un esperto di marketing virale su Instagram e TikTok (stile ADHD retention).
 Stai promuovendo 'NeatX', un'app geniale per prenotazioni automatiche online.
 
 Scrivi un copione mirato per: {target}.
+Il tema "{target}" deve guidare TUTTO: copione, hook, titolo, caption, immagine e promessa.
+Non citare o descrivere altre professioni.
+Lo sfondo superiore sara un gameplay stile "{gameplay_style}", quindi il testo deve restare leggibile e veloce.
 
 {history_context}
 Regole:
@@ -66,14 +77,16 @@ Regole:
 - La scritta a schermo (hook_text) DEVE ESSERE IDENTICA a cover_title. Saranno le 3-4 parole enormi che appaiono in faccia all'utente.
 - La caption di Instagram deve essere persuasiva e contenere hashtag rilevanti e l'invito a commentare la parola AGENDA.
 - Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante (es: TATUATORI: BASTA NO-SHOW! oppure SMETTILA DI PERDERE CLIENTI).
-- Il "pexels_query" deve essere in INGLESE (max 3 parole) e descrivere un video di repertorio adatto al target.
+- Il "image_prompt" deve essere in INGLESE e descrivere una scena fotografica coerente con {target}, con un professionista vero al lavoro nel suo ambiente.
 
 Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtick):
 {{
+  "niche": "{target}",
   "script_text": "il copione letto dalla voce, aggressivo e dritto al punto",
   "hook_text": "DEVE ESSERE IDENTICO AL COVER_TITLE",
   "cover_title": "TITOLO SHOCK MAX 4 PAROLE",
-  "pexels_query": "ricerca in inglese per video di sfondo",
+  "image_prompt": "prompt fotografico coerente con il target",
+  "gameplay_style": "{gameplay_style}",
   "caption": "la descrizione per instagram con hashtag"
 }}
 """
@@ -84,6 +97,14 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     content = response.text.strip()
     
     data = json.loads(content)
+    data["niche"] = target
+    data["gameplay_style"] = data.get("gameplay_style") or gameplay_style
+    if data["gameplay_style"] not in GAMEPLAY_STYLES:
+        data["gameplay_style"] = gameplay_style
+    if not data.get("image_prompt"):
+        data["image_prompt"] = f"photorealistic {target} professional working in a modern real workplace"
+    if data.get("cover_title"):
+        data["hook_text"] = data["cover_title"]
     
     # Rimuovi forzatamente eventuali emoji dal testo parlato per evitare che l'audio le pronunci
     data["script_text"] = re.sub(r'[^\w\s,.\'!?àèìòùÀÈÌÒÙ-]', '', data["script_text"])
@@ -92,7 +113,7 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     with open("reel_data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
         
-    print("[+] Copione e testi creati con successo da OpenAI e salvati in reel_data.json!")
+    print("[+] Copione e testi creati con successo da Gemini e salvati in reel_data.json!")
     return data
 
 def download_pexels_video(query):
@@ -160,9 +181,8 @@ def run_pipeline():
     # 1. Genera il contenuto
     data = generate_daily_content()
     
-    # 1.5 Scarica il video dinamico
-    pexels_query = data.get("pexels_query", "satisfying abstract")
-    download_pexels_video(pexels_query)
+    # 1.5 Il gameplay viene scelto/generato dentro generate_reel.py.
+    print(f"[*] Sfondo gameplay richiesto: {data.get('gameplay_style', 'runner')}")
     
     # 2. Monta il video (usando il video registrato manualmente app_demo.mp4)
     print("\n[*] Esecuzione generate_reel.py...")
