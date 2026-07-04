@@ -2,17 +2,97 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  BellRing,
+  CalendarCheck2,
+  Check,
+  Clock3,
+  CreditCard,
+  LineChart,
+  LockKeyhole,
+  MousePointerClick,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  WalletCards,
+  Zap,
+} from "lucide-react";
 import FloatingPhone from "@/components/landing/FloatingPhone";
 import BeforeAfterSlider from "@/components/landing/BeforeAfterSlider";
 import StripeMockup from "@/components/landing/StripeMockup";
 import ReviewSimulator from "@/components/landing/ReviewSimulator";
 
 const FAKE_NOTIFICATIONS = [
-  "🔥 Marco R. ha appena prenotato un Taglio",
-  "💸 Giulia ha versato 50€ di anticipo",
-  "✅ Il Dott. Bianchi ha azzerato i No-Show",
-  "🚀 Nuovo cliente iscritto a NeatX",
-  "📅 Prenotazione confermata per le 15:30",
+  "Marco R. ha appena prenotato Taglio + Barba",
+  "Giulia ha versato 50 euro di anticipo",
+  "Promemoria inviato: appuntamento confermato",
+  "Nuovo cliente arrivato da Instagram",
+  "Slot delle 15:30 riempito in automatico",
+];
+
+const HERO_METRICS = [
+  { value: "24/7", label: "prenotazioni attive" },
+  { value: "0%", label: "commissioni sui clienti" },
+  { value: "-90%", label: "no-show in meno" },
+];
+
+const TRUST_POINTS = [
+  "Link brandizzato per ogni salone o studio",
+  "Promemoria automatici prima dell'appuntamento",
+  "Acconti e pagamenti integrati nella prenotazione",
+];
+
+const FEATURE_CARDS = [
+  {
+    icon: MousePointerClick,
+    title: "Prenotazione in pochi tocchi",
+    description:
+      "Il cliente apre il link, sceglie servizio, giorno e orario. Tu non devi rispondere ogni volta su WhatsApp.",
+    accent: "text-cyan-400",
+    border: "hover:border-cyan-400/50",
+  },
+  {
+    icon: BellRing,
+    title: "Promemoria anti no-show",
+    description:
+      "NeatX ricorda al cliente l'appuntamento e riduce i buchi in agenda senza inseguimenti manuali.",
+    accent: "text-purple-400",
+    border: "hover:border-purple-400/50",
+  },
+  {
+    icon: WalletCards,
+    title: "Acconti prima del servizio",
+    description:
+      "Per i servizi importanti puoi richiedere caparra o pagamento completo prima della conferma.",
+    accent: "text-emerald-400",
+    border: "hover:border-emerald-400/50",
+  },
+];
+
+const OPERATING_STEPS = [
+  {
+    icon: Sparkles,
+    title: "Ti configuriamo la vetrina",
+    text: "Servizi, prezzi, orari, pause, staff e regole del tuo business diventano una pagina pronta a vendere.",
+  },
+  {
+    icon: CalendarCheck2,
+    title: "I clienti prenotano da soli",
+    text: "Da Instagram, Google o WhatsApp entrano nel tuo link e trovano subito lo slot giusto.",
+  },
+  {
+    icon: LineChart,
+    title: "Tu controlli tutto dalla dashboard",
+    text: "Agenda, incassi, appuntamenti, clienti e promemoria restano ordinati in un unico posto.",
+  },
+];
+
+const PROOF_ITEMS = [
+  { icon: Clock3, title: "Meno telefono", text: "Le richieste ripetitive diventano prenotazioni automatiche." },
+  { icon: ShieldCheck, title: "Più controllo", text: "Ogni appuntamento ha regole chiare, conferme e storico." },
+  { icon: Star, title: "Più reputazione", text: "Il cliente soddisfatto viene guidato verso la recensione giusta." },
 ];
 
 export default function Home() {
@@ -125,38 +205,58 @@ export default function Home() {
       {/* HERO SECTION CON MOCKUP TILT */}
       <main className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-16 md:pt-20 pb-20 flex flex-col items-center text-center">
         
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-extrabold tracking-widest uppercase mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 hover:bg-cyan-500/20 transition-all cursor-default">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-extrabold tracking-widest uppercase mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 hover:bg-cyan-500/20 transition-all cursor-default">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
           </span>
-          L'App N.1 in Italia per Saloni
+          Prenotazioni, acconti e promemoria in automatico
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-4xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-          L'Agenda Intelligente per <br className="hidden md:block" />
+        <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+          Trasforma Instagram in <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] to-purple-500 animate-pulse">
-            Professionisti Top
+            agenda piena
           </span>
         </h1>
 
-        <p className="mt-6 text-lg md:text-xl text-slate-400 max-w-2xl leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          Il tuo tempo ha un valore. Smetti di perderlo al telefono. Trasforma i tuoi follower in clienti paganti con l'app di prenotazione n.1 in Italia.
+        <p className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          NeatX è la tua agenda online brandizzata: i clienti prenotano da soli, pagano l'acconto se serve e ricevono promemoria senza farti perdere tempo al telefono.
         </p>
+
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          {TRUST_POINTS.map((point) => (
+            <div key={point} className="flex items-center justify-center gap-2 rounded-2xl border border-[#1a2642] bg-[#0b1221]/70 px-4 py-3 text-sm font-semibold text-slate-300">
+              <BadgeCheck size={16} className="text-emerald-400 flex-shrink-0" />
+              <span>{point}</span>
+            </div>
+          ))}
+        </div>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300 relative z-20">
           <Link 
             href="/demo"
             className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(0,180,255,0.6)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
           >
-            Esplora la Demo 🚀
+            Esplora la demo
+            <ArrowRight size={20} />
           </Link>
           <button 
             onClick={() => setShowRoiModal(true)}
             className="w-full sm:w-auto px-8 py-4 bg-[#131c31]/80 backdrop-blur-md hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
           >
-            Simula i tuoi incassi 💸
+            Simula i tuoi incassi
+            <LineChart size={20} />
           </button>
+        </div>
+
+        <div className="mt-10 grid grid-cols-3 gap-3 w-full max-w-2xl">
+          {HERO_METRICS.map((metric) => (
+            <div key={metric.label} className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-5">
+              <div className="text-2xl md:text-3xl font-extrabold text-white">{metric.value}</div>
+              <div className="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-500">{metric.label}</div>
+            </div>
+          ))}
         </div>
 
         <div className="mt-16 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-8 relative z-20">
@@ -222,7 +322,7 @@ export default function Home() {
         
         <div className="flex animate-marquee w-max">
           <div className="flex items-center gap-16 px-8 min-w-max text-slate-500 font-extrabold tracking-widest uppercase text-sm">
-            <span>Trusted By 100+ Professionals</span>
+            <span>Per professionisti che lavorano su appuntamento</span>
             <span>✦</span>
             <span className="text-white">Barbieri Top</span>
             <span>✦</span>
@@ -237,7 +337,7 @@ export default function Home() {
           </div>
           {/* Duplicato per scroll continuo perfetto */}
           <div className="flex items-center gap-16 px-8 min-w-max text-slate-500 font-extrabold tracking-widest uppercase text-sm">
-            <span>Trusted By 100+ Professionals</span>
+            <span>Per professionisti che lavorano su appuntamento</span>
             <span>✦</span>
             <span className="text-white">Barbieri Top</span>
             <span>✦</span>
@@ -260,28 +360,87 @@ export default function Home() {
       <section id="features" className="relative z-10 bg-[#0b1221] py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Perché scegliere NeatX?</h2>
-            <p className="text-slate-400 font-medium">Creato su misura per chi vende il proprio tempo.</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-cyan-300 mb-5">
+              <Zap size={14} />
+              Il sistema operativo dell'agenda
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">Meno messaggi. Più slot pieni.</h2>
+            <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX non è solo una pagina di prenotazione: è un flusso completo che porta il cliente dalla curiosità alla conferma.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl group hover:border-[#00b4ff]/50 transition-all duration-300">
-              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">📱</div>
-              <h3 className="text-xl font-extrabold text-white mb-3">La Tua App Dedicata</h3>
-              <p className="text-slate-400 leading-relaxed text-sm">Niente piattaforme caotiche con i tuoi competitor di fianco. Ai tuoi clienti dai un link pulito, brandizzato con il tuo nome, solo tuo.</p>
-            </div>
-            
-            <div className="glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl relative overflow-hidden group hover:border-purple-500/50 transition-all duration-300">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-[50px]"></div>
-              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 transition-transform">🤖</div>
-              <h3 className="text-xl font-extrabold text-white mb-3 relative z-10">Zero No-Show</h3>
-              <p className="text-slate-400 leading-relaxed text-sm relative z-10">Il nostro bot invia promemoria automatici via WhatsApp ai tuoi clienti, abbattendo drasticamente le assenze dell'ultimo minuto.</p>
+            {FEATURE_CARDS.map((feature) => {
+              const Icon = feature.icon;
+              return (
+                <div key={feature.title} className={`glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl group ${feature.border} transition-all duration-300`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 ${feature.accent} group-hover:scale-110 transition-transform`}>
+                    <Icon size={26} />
+                  </div>
+                  <h3 className="text-xl font-extrabold text-white mb-3">{feature.title}</h3>
+                  <p className="text-slate-400 leading-relaxed text-sm">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* OPERATING SYSTEM SECTION */}
+      <section className="relative z-10 bg-[#050814] py-24 border-t border-[#1a2642]">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 items-start">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-purple-300 mb-6">
+                <LockKeyhole size={14} />
+                Processo chiuso, clienti liberi di prenotare
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
+                Il tuo link diventa un venditore sempre acceso.
+              </h2>
+              <p className="text-slate-400 leading-relaxed text-lg mb-8">
+                NeatX prende il lavoro ripetitivo della segreteria e lo trasforma in un flusso ordinato: prenotazione, conferma, acconto, promemoria e dashboard.
+              </p>
+              <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-4">
+                {PROOF_ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="flex gap-4 rounded-2xl border border-[#1a2642] bg-[#0b1221]/70 p-4">
+                      <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-300 flex-shrink-0">
+                        <Icon size={20} />
+                      </div>
+                      <div>
+                        <div className="font-extrabold text-white">{item.title}</div>
+                        <div className="text-sm text-slate-400 leading-relaxed">{item.text}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl group hover:border-emerald-500/50 transition-all duration-300">
-              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">💸</div>
-              <h3 className="text-xl font-extrabold text-white mb-3">Anticipi & Pagamenti</h3>
-              <p className="text-slate-400 leading-relaxed text-sm">Chiedi una caparra per i servizi più costosi. I pagamenti sono integrati con Stripe/PayPal direttamente in fase di prenotazione.</p>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-transparent blur-3xl"></div>
+              <div className="relative rounded-3xl border border-white/10 bg-[#0b1221]/80 backdrop-blur-xl p-5 md:p-8 shadow-2xl">
+                <div className="grid gap-4">
+                  {OPERATING_STEPS.map((step, index) => {
+                    const Icon = step.icon;
+                    return (
+                      <div key={step.title} className="relative rounded-2xl border border-[#1a2642] bg-[#050814]/80 p-5 md:p-6">
+                        <div className="flex gap-5">
+                          <div className="w-12 h-12 rounded-2xl bg-[#00b4ff]/10 border border-[#00b4ff]/20 text-[#00b4ff] flex items-center justify-center flex-shrink-0">
+                            <Icon size={23} />
+                          </div>
+                          <div>
+                            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-500 mb-2">Step {index + 1}</div>
+                            <h3 className="text-xl font-extrabold text-white mb-2">{step.title}</h3>
+                            <p className="text-slate-400 leading-relaxed">{step.text}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -328,7 +487,9 @@ export default function Home() {
           <div className="tilt-card animate-float-slow w-full max-w-3xl bg-[#0a0f1c]/80 backdrop-blur-xl p-10 md:p-14 rounded-[40px] border border-white/5 hover:border-cyan-500/40 relative overflow-hidden group shadow-[0_30px_60px_-15px_rgba(0,180,255,0.2)] flex flex-col items-center text-center">
             <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/10 blur-[100px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700"></div>
             <div className="relative z-10">
-              <div className="w-24 h-24 mx-auto rounded-[2rem] bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-5xl mb-8 shadow-[inset_0_0_30px_rgba(0,180,255,0.2)] animate-pulse">💳</div>
+              <div className="w-24 h-24 mx-auto rounded-[2rem] bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-300 mb-8 shadow-[inset_0_0_30px_rgba(0,180,255,0.2)] animate-pulse">
+                <CreditCard size={40} />
+              </div>
               <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Simulatore Incasso Acconti</h3>
               <p className="text-slate-300 leading-relaxed text-lg mb-10 max-w-xl mx-auto">
                 Vuoi vedere in prima persona come i tuoi clienti pagheranno l'acconto dal loro telefono? 
@@ -338,7 +499,7 @@ export default function Home() {
                 onClick={() => setShowStripe(true)}
                 className="bg-white hover:bg-slate-100 text-slate-900 font-extrabold py-5 px-12 rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all transform hover:scale-105 flex items-center justify-center gap-3 mx-auto w-full sm:w-auto text-xl"
               >
-                <span>💰</span>
+                <CreditCard size={22} />
                 Simula Pagamento
               </button>
             </div>
@@ -373,15 +534,15 @@ export default function Home() {
               <div className="text-4xl font-extrabold text-white mb-1">19€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
               <div className="text-xs text-slate-500 font-medium mb-6">+ Setup Una Tantum iniziale</div>
               <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
-                <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Link pubblico di prenotazione</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> 100 appuntamenti/mese</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Supporto via Email</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Link pubblico di prenotazione</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> 100 appuntamenti/mese</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Supporto via Email</li>
               </ul>
               <a 
                 href="mailto:info@neatx.it?subject=Candidatura%20Piano%20Starter&body=Ciao%21%20Vorrei%20candidarmi%20per%20il%20Piano%20Starter.%20Ecco%20i%20dati%20per%20aiutarvi%20a%20strutturare%20la%20mia%20agenda%20su%20misura%3A%0A%0A1.%20Nome%20del%20Salone%2FStudio%3A%20%0A%0A2.%20Quanti%20membri%20dello%20staff%20ci%20lavorano%3F%20%0A%0A3.%20Quali%20sono%20i%20vostri%20orari%20di%20apertura%20e%20chiusura%3F%20%0A%0A4.%20Quali%20sono%20i%20giorni%20di%20chiusura%20settimanale%3F%20%0A%0A5.%20Elenca%20i%20tuoi%20servizi%20principali%20%28con%20durata%20e%20prezzo%20stimati%29%3A%20%0A%0A6.%20Vuoi%20richiedere%20un%20anticipo%2Fcaparra%20al%20momento%20della%20prenotazione%3F%20%0A%0A7.%20Qual%20%C3%A8%20il%20problema%20pi%C3%B9%20grande%20che%20hai%20oggi%20con%20la%20gestione%20degli%20appuntamenti%3F%20%0A%0AIn%20attesa%20di%20un%20vostro%20riscontro."
                 className="mt-8 w-full block py-4 border border-[#1e2b4a] hover:bg-[#131c31] text-white font-bold rounded-xl transition-all text-center"
               >
-                📝 Invia Candidatura
+                Candidati allo Starter
               </a>
             </div>
 
@@ -394,16 +555,16 @@ export default function Home() {
               <div className="text-5xl font-extrabold text-white mb-1">29€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
               <div className="text-xs text-slate-500 font-medium mb-6">+ Setup Una Tantum iniziale</div>
               <ul className="space-y-4 mb-auto text-sm text-slate-200 font-medium">
-                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Appuntamenti Illimitati</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> <strong className="text-white">Promemoria Email Gratuiti</strong></li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Integrazione SMS Automatica*</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500 font-bold">✓</span> Blocco orari e ferie</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti Illimitati</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-white">Promemoria Email Gratuiti</strong></li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Integrazione SMS Automatica*</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Blocco orari e ferie</li>
               </ul>
               <a 
                 href="mailto:info@neatx.it?subject=Candidatura%20Piano%20Pro&body=Ciao%21%20Vorrei%20candidarmi%20per%20il%20Piano%20Pro.%20Ecco%20i%20dati%20per%20aiutarvi%20a%20strutturare%20la%20mia%20agenda%20su%20misura%3A%0A%0A1.%20Nome%20del%20Salone%2FStudio%3A%20%0A%0A2.%20Quanti%20membri%20dello%20staff%20ci%20lavorano%3F%20%0A%0A3.%20Quali%20sono%20i%20vostri%20orari%20di%20apertura%20e%20chiusura%3F%20%0A%0A4.%20Quali%20sono%20i%20giorni%20di%20chiusura%20settimanale%3F%20%0A%0A5.%20Elenca%20i%20tuoi%20servizi%20principali%20%28con%20durata%20e%20prezzo%20stimati%29%3A%20%0A%0A6.%20Vuoi%20richiedere%20un%20anticipo%2Fcaparra%20al%20momento%20della%20prenotazione%3F%20%0A%0A7.%20Qual%20%C3%A8%20il%20problema%20pi%C3%B9%20grande%20che%20hai%20oggi%20con%20la%20gestione%20degli%20appuntamenti%3F%20%0A%0AIn%20attesa%20di%20un%20vostro%20riscontro."
                 className="mt-8 w-full block py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl transition-all text-center shadow-lg shadow-cyan-500/25 hover:scale-105"
               >
-                📝 Invia Candidatura
+                Candidati al Pro
               </a>
             </div>
 
@@ -413,16 +574,16 @@ export default function Home() {
               <div className="text-4xl font-extrabold text-white mb-1">59€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
               <div className="text-xs text-slate-500 font-medium mb-6">+ Setup Una Tantum iniziale</div>
               <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
-                <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Tutto quello che c'è nel PRO</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Gestione Multi-Staff</li>
-                <li className="flex items-center gap-2"><span className="text-emerald-500">✓</span> Assistenza Prioritaria H24</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Tutto quello che c'è nel PRO</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione Multi-Staff</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Assistenza Prioritaria H24</li>
               </ul>
               <div className="mt-8 flex flex-col gap-3">
                 <a 
                   href="mailto:info@neatx.it?subject=Candidatura%20Piano%20Elite&body=Ciao%21%20Vorrei%20candidarmi%20per%20il%20Piano%20Elite.%20Ecco%20i%20dati%20per%20aiutarvi%20a%20strutturare%20la%20mia%20agenda%20su%20misura%3A%0A%0A1.%20Nome%20del%20Salone%2FStudio%3A%20%0A%0A2.%20Quanti%20membri%20dello%20staff%20ci%20lavorano%3F%20%0A%0A3.%20Quali%20sono%20i%20vostri%20orari%20di%20apertura%20e%20chiusura%3F%20%0A%0A4.%20Quali%20sono%20i%20giorni%20di%20chiusura%20settimanale%3F%20%0A%0A5.%20Elenca%20i%20tuoi%20servizi%20principali%20%28con%20durata%20e%20prezzo%20stimati%29%3A%20%0A%0A6.%20Vuoi%20richiedere%20un%20anticipo%2Fcaparra%20al%20momento%20della%20prenotazione%3F%20%0A%0A7.%20Qual%20%C3%A8%20il%20problema%20pi%C3%B9%20grande%20che%20hai%20oggi%20con%20la%20gestione%20degli%20appuntamenti%3F%20%0A%0AIn%20attesa%20di%20un%20vostro%20riscontro."
                   className="w-full py-4 block bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-extrabold rounded-xl transition-all text-center shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-105"
                 >
-                  📝 Invia Candidatura
+                  Candidati all'Elite
                 </a>
               </div>
             </div>
@@ -431,7 +592,9 @@ export default function Home() {
           {/* BANNER TRASPARENZA SMS */}
           <div className="mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-            <div className="text-4xl">💎</div>
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck size={26} />
+            </div>
             <div className="text-left">
               <h4 className="text-white font-bold text-lg mb-1">* Trasparenza 100% sui costi dei messaggi</h4>
               <p className="text-slate-400 text-sm leading-relaxed">
@@ -469,7 +632,9 @@ export default function Home() {
             </button>
             
             <div className="text-center mb-6">
-              <div className="text-4xl mb-3">💸</div>
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center mb-4">
+                <LineChart size={27} />
+              </div>
               <h3 className="text-2xl font-extrabold text-white mb-2">Quanti soldi perdi per i No-Show?</h3>
               <p className="text-slate-400 text-sm">Scopri quanto incasso extra genererai attivando i promemoria automatici NeatX.</p>
             </div>
@@ -517,7 +682,7 @@ export default function Home() {
               <div className="flex justify-between items-end">
                 <div>
                   <div className="text-[10px] uppercase font-extrabold tracking-widest text-emerald-500 mb-1">IL TUO RECUPERO CON NEATX</div>
-                  <div className="text-slate-300 text-xs">Ricavi extra stimati 🚀</div>
+                  <div className="text-slate-300 text-xs">Ricavi extra stimati</div>
                 </div>
                 <div className="text-3xl font-extrabold text-white">
                   +{recoveredRevenue} <span className="text-lg text-slate-500">€/m</span>
@@ -543,13 +708,14 @@ export default function Home() {
           Pronto a riempire la tua agenda?
         </h2>
         <p className="text-slate-400 text-lg mb-10 max-w-2xl relative z-10">
-          Tocca con mano l'intelligenza di NeatX. Prova l'esperienza dal punto di vista dei tuoi clienti e scopri quanto è facile fargli prenotare in pochi secondi.
+          Tocca con mano l'esperienza che vedranno i tuoi clienti: prenotazione veloce, agenda ordinata e meno tempo perso in chat.
         </p>
         <Link 
           href="/demo"
           className="relative z-10 px-10 py-5 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-2xl shadow-[0_0_40px_rgba(0,180,255,0.5)] transition-all text-xl flex items-center justify-center gap-3 hover:scale-105 hover:-translate-y-1 group border border-[#00b4ff]/50"
         >
-          <span className="group-hover:animate-bounce">🚀</span> Esplora la Demo Gratuita
+          Esplora la demo gratuita
+          <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </section>
 

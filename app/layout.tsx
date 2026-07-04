@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Mail } from "lucide-react";
 import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
@@ -40,16 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         
         {/* Gruppo Pulsanti Contatto */}
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        <div className="fixed bottom-6 right-6 z-50 hidden sm:flex flex-col items-end gap-3">
           {/* Pulsante Fluttuante Email */}
           <a 
             href="mailto:neatx.info@gmail.com?subject=Richiesta%20App%20Personalizzata&body=Ciao,%20ho%20provato%20la%20demo%20e%20vorrei%20avere%20informazioni%20per%20creare%20la%20mia%20app%20NeatX%20personalizzata." 
             className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-5 py-3 rounded-full font-bold shadow-lg shadow-blue-500/30 hover:scale-105 transition-transform"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
+            <Mail size={20} />
             Invia Email
           </a>
 
