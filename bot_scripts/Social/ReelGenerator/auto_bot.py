@@ -5,9 +5,12 @@ import subprocess
 import requests
 import re
 import google.generativeai as genai
+from dotenv import load_dotenv
 
-GEMINI_API_KEY = "AQ.Ab8RN6IYABYuEVWWhzJTKKl9MUQ9HjhIyOF2ppoBe3mkV_VmJQ"
-PEXELS_API_KEY = "rm0Libug2omiS09UL46zpkTXhfz3I7zcgBl5SxR0JE895f9hEWkCx2B7"
+load_dotenv()
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
 
 TARGET_AUDIENCES = [
     "Parrucchieri",
@@ -25,6 +28,9 @@ TARGET_AUDIENCES = [
 def generate_daily_content():
     target = random.choice(TARGET_AUDIENCES)
     print(f"[*] Target di oggi selezionato: {target}")
+
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY mancante. Impostalo nei GitHub Secrets o nel file .env locale.")
     
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
@@ -90,6 +96,10 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     return data
 
 def download_pexels_video(query):
+    if not PEXELS_API_KEY:
+        print("[!] PEXELS_API_KEY mancante. Salto il download Pexels e uso il fallback video se disponibile.")
+        return False
+
     print(f"[*] Ricerca video Pexels per la query: '{query}'...")
     url = f"https://api.pexels.com/videos/search?query={query}&orientation=portrait&size=medium&per_page=15"
     headers = {"Authorization": PEXELS_API_KEY}

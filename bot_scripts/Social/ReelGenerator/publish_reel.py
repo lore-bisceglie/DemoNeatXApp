@@ -5,18 +5,20 @@ import threading
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from pyngrok import ngrok
 import json
+from dotenv import load_dotenv
 
 # ==========================================
 # CONFIGURAZIONE
 # ==========================================
-if os.environ.get("GITHUB_ACTIONS"):
-    META_ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN")
-    IG_ACCOUNT_ID = os.environ.get("IG_ACCOUNT_ID")
-else:
-    META_ACCESS_TOKEN = "EAAW9SXB1ygABRZBS15ZBOZCoZBwRudvZBPkfxKXtl374Kx3ZCA3ubLvH4RO4kf925bmIp3Tkr2LSxbJOymyiE3GzXwz0qFAIdZCpihNcE5nzRpBPnUhKuaKxEgs4RKTkJPUlcU4H67C1zaiOsOu3h400mHfePIYbgeydhIkJHbhzBUgjGGVlrBFK8n3hR3AWhkbrgZDZD"
-    IG_ACCOUNT_ID = "17841413414572750" # Il tuo ID Account Instagram
-    
-TIKTOK_SESSION_ID = "b97e92f95372e1d89e4f68531ece9b9f" # Session ID per TikTok
+load_dotenv()
+
+META_ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN")
+IG_ACCOUNT_ID = os.environ.get("IG_ACCOUNT_ID")
+TIKTOK_SESSION_ID = os.environ.get("TIKTOK_SESSION_ID")
+TIKTOK_HEADLESS = os.environ.get(
+    "TIKTOK_HEADLESS",
+    "true" if os.environ.get("GITHUB_ACTIONS") else "false",
+).lower() in ("1", "true", "yes", "y")
 VIDEO_FILE = "reel_splitscreen_subbed.mp4"
 # ==========================================
 
@@ -33,13 +35,17 @@ def start_server(port):
     httpd.serve_forever()
 
 def publish_to_instagram():
+    if not META_ACCESS_TOKEN or not IG_ACCOUNT_ID:
+        print("[!] Errore: META_ACCESS_TOKEN o IG_ACCOUNT_ID mancanti. Impostali nei GitHub Secrets o nel file .env locale.")
+        return False
+
     if META_ACCESS_TOKEN.startswith("EAxxxx"):
-        print("[!] Errore: Inserisci il tuo META_ACCESS_TOKEN e IG_ACCOUNT_ID nel file publish_reel.py prima di eseguire!")
-        return
+        print("[!] Errore: META_ACCESS_TOKEN non valido.")
+        return False
 
     if not os.path.exists(VIDEO_FILE):
         print(f"[!] Errore: Il video {VIDEO_FILE} non esiste. Generalo prima con generate_reel.py")
-        return
+        return False
 
     caption = get_caption()
     
@@ -51,7 +57,7 @@ def publish_to_instagram():
         print(f"[+] URL temporaneo generato: {video_url}")
     except Exception as e:
         print("[!] Errore durante il caricamento temporaneo:", e)
-        return
+        return False
         
     # 2. Caricamento temporaneo della copertina
     cover_url = ""
@@ -80,7 +86,7 @@ def publish_to_instagram():
     r = requests.post(url_media, data=payload)
     if r.status_code != 200:
         print("[!] Errore creazione container:", r.json())
-        return
+        return False
         
     container_id = r.json().get("id")
     print(f"[+] Container creato con ID: {container_id}")
@@ -97,7 +103,7 @@ def publish_to_instagram():
             break
         elif status == "ERROR":
             print("[!] Errore durante l'elaborazione del video su Meta.")
-            return
+            return False
         time.sleep(5)
         
     # 5. Pubblicazione
@@ -112,17 +118,19 @@ def publish_to_instagram():
     if r_pub.status_code == 200:
         print("[+] REEL PUBBLICATO CON SUCCESSO SU INSTAGRAM!")
         print("ID Post:", r_pub.json().get("id"))
+        return True
     else:
         print("[!] Errore in fase di pubblicazione:", r_pub.json())
+        return False
 
 def publish_to_tiktok():
     if not TIKTOK_SESSION_ID:
         print("[!] Errore: TIKTOK_SESSION_ID mancante!")
-        return
+        return False
         
     if not os.path.exists(VIDEO_FILE):
         print(f"[!] Errore: Il video {VIDEO_FILE} non esiste.")
-        return
+        return False
         
     caption = get_caption()
     
@@ -134,16 +142,18 @@ def publish_to_tiktok():
             description=caption,
             cookies_list=[{"name": "sessionid", "value": TIKTOK_SESSION_ID, "domain": ".tiktok.com", "path": "/"}],
             browser="chromium", # Usa la versione locale invece di quella globale
-            headless=False # Impostato a False per vedere se ci sono blocchi captcha la prima volta
+            headless=TIKTOK_HEADLESS
         )
         print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
+        return True
     except Exception as e:
         print(f"[!] Errore durante la pubblicazione su TikTok: {e}")
+        return False
 
 def publish_to_youtube():
     if not os.path.exists(VIDEO_FILE):
         print(f"[!] Errore: Il video {VIDEO_FILE} non esiste.")
-        return
+        return False
         
     caption = get_caption()
     title = caption.split("#")[0][:60] # Prende la prima frase prima degli hashtag come titolo
@@ -184,15 +194,25 @@ def publish_to_youtube():
                 json.dump(history, f, indent=4)
                 
             print(f"[*] Aggiunto {video_id} a history.json per auto-apprendimento.")
+            return True
             
     except Exception as e:
         print(f"[!] Errore durante la pubblicazione su YouTube: {e}")
+    return False
 
 if __name__ == "__main__":
     print("=== INIZIO PUBBLICAZIONE MULTI-PIATTAFORMA ===")
-    publish_to_instagram()
+    results = {
+        "instagram": publish_to_instagram(),
+    }
     print("----------------------------------------------")
-    publish_to_tiktok()
+    results["tiktok"] = publish_to_tiktok()
     print("----------------------------------------------")
-    publish_to_youtube()
+    results["youtube"] = publish_to_youtube()
     print("=== PUBBLICAZIONE COMPLETATA ===")
+    print("[*] Esito piattaforme:", results)
+
+    if os.environ.get("STRICT_PUBLISH", "").lower() in ("1", "true", "yes", "y"):
+        failed = [name for name, ok in results.items() if not ok]
+        if failed:
+            raise SystemExit(f"Pubblicazione fallita per: {', '.join(failed)}")

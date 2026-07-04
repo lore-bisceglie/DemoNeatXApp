@@ -2,42 +2,86 @@ name: NeatX Auto-Reel Machine
 
 on:
   schedule:
-    # Esegue ogni giorno alle 14:00 UTC
-    - cron: '0 14 * * *'
+    # 14:00 e 20:00 Europe/Rome, gestendo ora legale/solare con il gate sotto.
+    # I cron sono in UTC: 12/18 in estate, 13/19 in inverno.
+    - cron: '5 12,13,18,19 * * *'
   workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
+
+concurrency:
+  group: neatx-auto-reel
+  cancel-in-progress: false
 
 jobs:
   run-reel-bot:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Check Italian posting window
+        id: gate
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Manual run: publishing now."
+            exit 0
+          fi
+
+          rome_hour="$(TZ=Europe/Rome date +'%H')"
+          rome_time="$(TZ=Europe/Rome date +'%Y-%m-%d %H:%M:%S %Z')"
+          if [ "$rome_hour" = "14" ] || [ "$rome_hour" = "20" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "Posting window matched: $rome_time"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping outside posting window: $rome_time"
+          fi
+
       - name: Checkout repository
+        if: steps.gate.outputs.should_run == 'true'
         uses: actions/checkout@v3
 
       - name: Setup Python
+        if: steps.gate.outputs.should_run == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Install System Dependencies (FFmpeg & ImageMagick)
+        if: steps.gate.outputs.should_run == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
 
       - name: Install Python dependencies
+        if: steps.gate.outputs.should_run == 'true'
         run: |
-          pip install requests moviepy==1.0.3 edge-tts openai python-dotenv imageio-ffmpeg pydub numpy pillow
+          python -m pip install --upgrade pip
+          pip install requests moviepy==1.0.3 edge-tts google-generativeai google-auth-oauthlib google-api-python-client python-dotenv imageio-ffmpeg pydub numpy pillow playwright tiktok-uploader
+          python -m playwright install chromium
 
-      - name: Run Massive Content Machine
+      - name: Run Auto-Reel Publisher
+        if: steps.gate.outputs.should_run == 'true'
         env:
           GITHUB_ACTIONS: "true"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
+          TIKTOK_SESSION_ID: ${{ secrets.TIKTOK_SESSION_ID }}
+          TIKTOK_HEADLESS: "true"
+          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+          YOUTUBE_CLIENT_SECRETS_JSON: ${{ secrets.YOUTUBE_CLIENT_SECRETS_JSON }}
         run: |
           cd bot_scripts/Social/ReelGenerator
-          python mass_content_machine.py || true
+          python auto_bot.py
 
-      - name: Upload Finished Reels Artifact
+      - name: Upload generated reel artifact
+        if: steps.gate.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Reels_Finiti
-          path: bot_scripts/Social/ReelGenerator/Reels_Finiti/
+          name: Published_Reel
+          path: |
+            bot_scripts/Social/ReelGenerator/reel_splitscreen_subbed.mp4
+            bot_scripts/Social/ReelGenerator/assets/cover.png
+            bot_scripts/Social/ReelGenerator/reel_data.json
           retention-days: 5
