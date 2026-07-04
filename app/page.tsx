@@ -536,6 +536,23 @@ export default function Home() {
         </div>
       )}
 
+      {/* CTA FINALE */}
+      <section className="relative z-10 bg-[#0b1221] py-24 border-y border-[#1a2642] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+        <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 relative z-10">
+          Pronto a riempire la tua agenda?
+        </h2>
+        <p className="text-slate-400 text-lg mb-10 max-w-2xl relative z-10">
+          Tocca con mano l'intelligenza di NeatX. Prova l'esperienza dal punto di vista dei tuoi clienti e scopri quanto è facile fargli prenotare in pochi secondi.
+        </p>
+        <Link 
+          href="/demo"
+          className="relative z-10 px-10 py-5 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-2xl shadow-[0_0_40px_rgba(0,180,255,0.5)] transition-all text-xl flex items-center justify-center gap-3 hover:scale-105 hover:-translate-y-1 group border border-[#00b4ff]/50"
+        >
+          <span className="group-hover:animate-bounce">🚀</span> Esplora la Demo Gratuita
+        </Link>
+      </section>
+
       {/* FOOTER */}
       <footer className="relative z-10 w-full bg-[#050814] border-t border-[#1a2642]">
         <div className="max-w-6xl mx-auto px-6 py-12">
