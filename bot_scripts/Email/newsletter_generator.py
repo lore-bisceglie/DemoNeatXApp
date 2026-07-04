@@ -25,7 +25,7 @@ if not GEMINI_API_KEY:
     exit(1)
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 # Path
 SCRIPT_DIR = Path(__file__).parent
