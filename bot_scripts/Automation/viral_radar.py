@@ -4,6 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from ai_provider import openai_json
+
 try:
     import google.generativeai as genai
 except Exception:
@@ -122,6 +124,29 @@ def gemini_ideas(signals):
     return None
 
 
+def openai_ideas(signals):
+    prompt = {
+        "role": "viral radar for NeatX",
+        "goal": "Create short-form video and blog ideas from available signals.",
+        "rules": [
+            "Italian output.",
+            "No emojis.",
+            "Hooks must be concrete, punchy and niche-specific.",
+            "Prioritize ideas that sell bookings automation without sounding like an ad.",
+            "Return JSON with key ideas, an array of 5 objects.",
+        ],
+        "signals": signals,
+    }
+    data = openai_json(prompt, max_tokens=2500)
+    if isinstance(data, dict) and isinstance(data.get("ideas"), list):
+        print("[+] Idee radar generate con OpenAI.")
+        return data["ideas"]
+    if isinstance(data, list):
+        print("[+] Idee radar generate con OpenAI.")
+        return data
+    return None
+
+
 def write_outputs(signals, ideas):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -148,7 +173,7 @@ def write_outputs(signals, ideas):
 
 def main():
     signals = collect_signals()
-    ideas = gemini_ideas(signals) or fallback_ideas(signals)
+    ideas = openai_ideas(signals) or gemini_ideas(signals) or fallback_ideas(signals)
     write_outputs(signals, ideas)
 
 

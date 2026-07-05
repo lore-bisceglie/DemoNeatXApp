@@ -35,6 +35,7 @@ jobs:
           
       - name: Run Auto-SEO Machine & Impero Mediatico
         env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
         run: |

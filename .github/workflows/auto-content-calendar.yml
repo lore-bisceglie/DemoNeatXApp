@@ -34,12 +34,14 @@ jobs:
 
       - name: Generate legacy daily theme
         env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
         run: python bot_scripts/Content/content_calendar.py || true
 
       - name: Generate unified content strategy
         env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python bot_scripts/Automation/generate_content_calendar.py
 

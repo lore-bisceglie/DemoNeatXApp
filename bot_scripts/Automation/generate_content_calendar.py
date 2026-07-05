@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from ai_provider import openai_json
+
 try:
     import google.generativeai as genai
 except Exception:
@@ -120,6 +122,31 @@ def gemini_calendar(seed_items):
     return None
 
 
+def openai_calendar(seed_items):
+    prompt = {
+        "role": "NeatX senior content strategist",
+        "task": "Improve this 7-day Italian content calendar for short videos and SEO blog posts. Keep the same JSON shape.",
+        "rules": [
+            "Use Italian copy that sounds human and commercially sharp.",
+            "Each hook must be concrete, painful and specific to the niche.",
+            "cover_title max 4 words.",
+            "No emojis.",
+            "Keep image_prompt in English and coherent with the niche.",
+            "Avoid generic marketing language.",
+            "Return JSON with key days, an array of 7 objects.",
+        ],
+        "calendar": seed_items,
+    }
+    data = openai_json(prompt, max_tokens=3500)
+    if isinstance(data, dict) and isinstance(data.get("days"), list):
+        print("[+] Calendario migliorato con OpenAI.")
+        return data["days"]
+    if isinstance(data, list):
+        print("[+] Calendario migliorato con OpenAI.")
+        return data
+    return None
+
+
 def build_seed_calendar():
     today = rome_today()
     items = []
@@ -179,7 +206,7 @@ def write_outputs(days):
 
 def main():
     seed = build_seed_calendar()
-    days = gemini_calendar(seed) or seed
+    days = openai_calendar(seed) or gemini_calendar(seed) or seed
     write_outputs(days)
 
 

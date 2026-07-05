@@ -4,6 +4,7 @@ import time
 import random
 import subprocess
 import json
+import sys
 from datetime import datetime
 import google.generativeai as genai
 
@@ -11,6 +12,8 @@ import google.generativeai as genai
 APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 BLOG_DIR = os.path.join(APP_DIR, "content", "blog")
 STRATEGY_BRIEF = os.path.join(APP_DIR, "content_strategy", "today_brief.json")
+sys.path.insert(0, os.path.join(APP_DIR, "bot_scripts", "Automation"))
+from ai_provider import openai_text
 
 def load_strategy_brief():
     if not os.path.exists(STRATEGY_BRIEF):
@@ -46,6 +49,9 @@ def setup_gemini():
         print(f"[!] Errore recupero API Key: {e}")
     return False
 
+def has_openai():
+    return bool(os.environ.get("OPENAI_API_KEY"))
+
 def inventa_argomento():
     brief = load_strategy_brief()
     if brief.get("blog_topic"):
@@ -56,13 +62,25 @@ def inventa_argomento():
     target = random.choice(["Barbieri", "Estetiste e Centri Estetici", "Tatuatori", "Studi Medici e Fisioterapisti", "Consulenti e Coach"])
     print(f"\n[*] IA: Sto inventando un argomento virale per il target: {target}...")
     
-    model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "text/plain"})
     prompt = f"""Sei un marketer esperto. Inventa UN (1) solo titolo accattivante e specifico per un articolo di blog SEO.
     L'articolo è rivolto a: {target}.
     Deve trattare di problemi legati alla gestione del tempo, no-show (clienti che non si presentano), organizzazione dell'agenda, o come aumentare i guadagni.
     Rispondi SOLO con il titolo dell'articolo, senza virgolette e senza testo aggiuntivo."""
+
+    openai_title = openai_text(
+        prompt,
+        system="Sei un strategist SEO italiano. Rispondi solo con il titolo richiesto.",
+        max_tokens=120,
+    )
+    if openai_title:
+        titolo = openai_title.strip().replace('"', '')
+        print(f"[+] OpenAI ha scelto l'argomento: '{titolo}'")
+        return titolo
     
     try:
+        if not setup_gemini():
+            return f"Come gestire al meglio gli appuntamenti per {target}"
+        model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "text/plain"})
         response = model.generate_content(prompt)
         titolo = response.text.strip().replace('"', '')
         print(f"[+] L'IA ha scelto l'argomento: '{titolo}'")
@@ -73,8 +91,6 @@ def inventa_argomento():
 
 def genera_articolo_seo(argomento):
     print(f"[*] IA: Sto scrivendo un articolo SEO approfondito su '{argomento}'...")
-    
-    model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "text/plain"})
     
     prompt = f"""
 Sei un Copywriter SEO esperto di posizionamento su Google e un venditore persuasivo.
@@ -94,7 +110,19 @@ Regole:
 - Almeno 400 parole.
 - Non includere frontmatter, restituisci solo il Markdown pulito partendo da # Titolo.
 """
+    openai_article = openai_text(
+        prompt,
+        system="Sei un copywriter SEO italiano esperto di SaaS per prenotazioni. Scrivi markdown pulito.",
+        max_tokens=2600,
+    )
+    if openai_article:
+        print("[+] Articolo SEO scritto con OpenAI.")
+        return openai_article.strip()
+
     try:
+        if not setup_gemini():
+            return None
+        model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "text/plain"})
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
@@ -156,7 +184,7 @@ def esegui_ciclo_completo():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] INIZIO CICLO AUTO-SEO MACHINE")
     print("="*50)
     
-    if not setup_gemini():
+    if not has_openai() and not setup_gemini():
         print("[!] Abortito: Impossibile configurare Gemini.")
         return
         

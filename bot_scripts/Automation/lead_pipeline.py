@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+from ai_provider import openai_json
+
 try:
     import google.generativeai as genai
 except Exception:
@@ -90,10 +92,6 @@ def fallback_messages(brief, rows):
 
 
 def generate_messages(brief, rows):
-    model = setup_gemini()
-    if model is None:
-        return fallback_messages(brief, rows)
-
     prompt = {
         "task": "Scrivi messaggi brevi per prospect B2B italiani.",
         "product": "NeatX, app per prenotazioni automatiche online, promemoria e riduzione no-show.",
@@ -111,6 +109,15 @@ def generate_messages(brief, rows):
             "comment_reply": "risposta a chi commenta AGENDA",
         },
     }
+
+    data = openai_json(prompt, max_tokens=900)
+    if isinstance(data, dict) and all(data.get(key) for key in ("dm_1", "follow_up", "comment_reply")):
+        print("[Lead Pipeline] Messaggi generati con OpenAI.")
+        return data
+
+    model = setup_gemini()
+    if model is None:
+        return fallback_messages(brief, rows)
 
     try:
         response = model.generate_content(json.dumps(prompt, ensure_ascii=False))

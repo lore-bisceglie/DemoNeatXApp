@@ -4,6 +4,7 @@ import random
 import subprocess
 import requests
 import re
+import sys
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -12,6 +13,8 @@ load_dotenv()
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+sys.path.insert(0, os.path.join(REPO_ROOT, "bot_scripts", "Automation"))
+from ai_provider import openai_json
 
 TARGET_AUDIENCES = [
     "Parrucchieri",
@@ -154,8 +157,12 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
 """
 
     data = None
-    if not GEMINI_API_KEY:
-        data = build_fallback_content(target, gameplay_style, strategy, "GEMINI_API_KEY mancante")
+    openai_data = openai_json(prompt, max_tokens=1800)
+    if isinstance(openai_data, dict):
+        print("[+] Copione reel generato con OpenAI.")
+        data = openai_data
+    elif not GEMINI_API_KEY:
+        data = build_fallback_content(target, gameplay_style, strategy, "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili")
     else:
         try:
             genai.configure(api_key=GEMINI_API_KEY)
@@ -190,7 +197,11 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     with open("reel_data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-    source = "fallback locale" if data.get("fallback_reason") else "Gemini"
+    source = "fallback locale" if data.get("fallback_reason") else data.get("ai_provider", "AI")
+    if not data.get("fallback_reason") and openai_data is data:
+        source = "OpenAI"
+    elif not data.get("fallback_reason") and openai_data is None:
+        source = "Gemini"
     print(f"[+] Copione e testi creati con successo da {source} e salvati in reel_data.json!")
     return data
 
