@@ -16,6 +16,11 @@ model Tenant {
   id            String        @id @default(cuid()) 
   slug          String        @unique              // Es. "greenbeauty" per l'URL personalizzato
   name          String        // Nome dell'attività
+  category      String?       // Categoria scelta in onboarding
+  city          String?       // Citta dell'attivita
+  ownerName     String?       // Nome del proprietario
+  ownerEmail    String?       // Email del proprietario
+  description   String?       // Descrizione pubblica generata dal template
   phone         String?       // Numero WhatsApp del salone per ricevere notifiche
   address       String?       // Indirizzo dell'attività es. "Via Roma 1, Milano"
   instagramUrl  String?       // Link profilo Instagram
@@ -27,6 +32,10 @@ model Tenant {
   closedDays    String?       // Giorni chiusura settimanali in JSON array es. "[0,1]" (dom=0, lun=1)
   adminPassword String?       // Password autogenerata per l'accesso alla dashboard privata
   trialEndsAt   DateTime?     // Scadenza del periodo di prova di 7 giorni
+  trialStatus   String        @default("demo") // demo, trial_active, published, expired, converted
+  isDemoData    Boolean       @default(true)   // Dati generati da template, convertibili in reali
+  publishedAt   DateTime?
+  convertedAt   DateTime?
   plan          String        @default("basic") // "basic" o "premium"
   createdAt     DateTime      @default(now())
 

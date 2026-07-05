@@ -172,7 +172,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           closedDays: parsedClosedDays,
           instagramUrl: data.instagramUrl || "",
           mapsLink: data.mapsLink || "",
-          isDemo: false,
+          isDemo: Boolean(data.isDemoData),
           trialExpired: data.trialExpired || false,
           isPremium: data.isPremium || false,
           staff: data.staff || [],

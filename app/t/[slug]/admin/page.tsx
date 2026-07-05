@@ -20,6 +20,7 @@ import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 
 import LoginScreen from "./LoginScreen";
+import TrialLaunchPanel from "./TrialLaunchPanel";
 import crypto from "crypto";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
@@ -597,7 +598,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         {/* SETUP CHECKLIST */}
-        {rawAppointments.filter(a => !a.customerName.includes("PAUSA") && !a.customerName.includes("FERIE")).length === 0 && (
+        {false && rawAppointments.filter(a => !a.customerName.includes("PAUSA") && !a.customerName.includes("FERIE")).length === 0 && (
           <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
@@ -606,7 +607,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               <span className="text-xs text-slate-500 font-bold">
                 {[
                   tenantServices.length > 0,
-                  !!tenant.phone,
+                  !!tenant?.phone,
                   staffList.length > 0,
                 ].filter(Boolean).length}/3 completati
               </span>
@@ -625,14 +626,14 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </div>
               </div>
 
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenant.phone ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenant.phone ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {tenant.phone ? '✓' : '2'}
+              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenant?.phone ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenant?.phone ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
+                  {tenant?.phone ? '✓' : '2'}
                 </span>
                 <div>
-                  <p className={`font-bold text-sm ${tenant.phone ? 'text-emerald-300' : 'text-white'}`}>WhatsApp collegato</p>
+                  <p className={`font-bold text-sm ${tenant?.phone ? 'text-emerald-300' : 'text-white'}`}>WhatsApp collegato</p>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    {tenant.phone ? `Ricevi notifiche al ${tenant.phone}` : 'Inserisci il numero per ricevere le prenotazioni'}
+                    {tenant?.phone ? `Ricevi notifiche al ${tenant?.phone}` : 'Inserisci il numero per ricevere le prenotazioni'}
                   </p>
                 </div>
               </div>
@@ -654,23 +655,43 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               <p className="text-sm font-bold text-white mb-2">📢 Il tuo link prenotazioni</p>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-cyan-400 text-sm font-medium truncate">neatx.store/t/{slug}</span>
-                <button
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(`https://neatx.store/t/${slug}`);
-                    const btn = document.activeElement as HTMLElement;
-                    if (btn) {
-                      btn.textContent = 'Copiato!';
-                      setTimeout(() => { btn.textContent = 'Copia'; }, 2000);
-                    }
-                  }}
+                <Link
+                  href={`/t/${slug}`}
                   className="shrink-0 bg-[#00b4ff]/10 text-[#00b4ff] text-xs font-bold px-4 py-2 rounded-lg hover:bg-[#00b4ff]/20 transition"
                 >
-                  Copia
-                </button>
+                  Apri
+                </Link>
               </div>
             </div>
           </div>
         )}
+
+        <TrialLaunchPanel
+          slug={slug}
+          tenantId={tenantId}
+          tenantName={tenantName}
+          category={tenant.category}
+          city={tenant.city}
+          description={tenant.description}
+          phone={tenant.phone}
+          address={tenant.address}
+          openTime={tenant.openTime}
+          closeTime={tenant.closeTime}
+          breakStart={tenant.breakStart}
+          breakEnd={tenant.breakEnd}
+          closedDays={tenant.closedDays}
+          trialStatus={tenant.trialStatus}
+          isDemoData={tenant.isDemoData}
+          trialEndsAt={tenant.trialEndsAt}
+          services={tenantServices.map((service) => ({
+            id: service.id,
+            name: service.name,
+            duration: service.duration,
+            price: Number(service.price || 0),
+          }))}
+          staffCount={staffList.length}
+          appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
+        />
 
         <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
 

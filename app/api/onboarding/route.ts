@@ -1,87 +1,168 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import {
+  addMinutes,
+  dateFromOffset,
+  getDemoShopTemplate,
+  sanitizeSlug,
+} from "@/lib/demoShopTemplates";
+
+function cleanPhone(value: unknown) {
+  if (typeof value !== "string") return null;
+  const cleaned = value.replace(/\D/g, "");
+  return cleaned.length >= 8 ? cleaned : null;
+}
+
+function cleanText(value: unknown, fallback = "") {
+  if (typeof value !== "string") return fallback;
+  return value.trim();
+}
+
+async function uniqueSlug(base: string) {
+  const root = sanitizeSlug(base);
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const suffix = Math.random().toString(36).substring(2, 6);
+    const slug = `${root}-${suffix}`;
+    const existing = await prisma.tenant.findUnique({ where: { slug } });
+    if (!existing) return slug;
+  }
+
+  return `${root}-${Date.now().toString(36)}`;
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, template, phone, address, instagramUrl, mapsLink, openTime, closeTime, breakStart, breakEnd, closedDays, customServices } = body;
+    const businessName = cleanText(body.businessName || body.name);
+    const category = cleanText(body.category || body.template, "barber");
+    const city = cleanText(body.city);
+    const ownerName = cleanText(body.ownerName);
+    const ownerEmail = cleanText(body.ownerEmail || body.email).toLowerCase();
+    const phone = cleanPhone(body.phone);
 
-    if (!name || !template) {
-      return NextResponse.json({ error: 'Campi mancanti' }, { status: 400 });
+    if (!businessName || !category || !city || !ownerName || !ownerEmail) {
+      return NextResponse.json(
+        { error: "Inserisci nome attivita, categoria, citta, nome ed email." },
+        { status: 400 }
+      );
     }
 
-    // Auto-genera uno slug basato sul nome, aggiungendo un suffisso random per unicità
-    const baseSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const randomSuffix = Math.random().toString(36).substring(2, 6);
-    const slug = `${baseSlug}-${randomSuffix}`;
-    
-    // Genera una password admin (es. parola random + 4 numeri)
-    const adminPassword = `${baseSlug.substring(0,4)}${Math.floor(1000 + Math.random() * 9000)}`;
-
-    // Controlla se per pura sfortuna lo slug esiste già
-    const existing = await prisma.tenant.findUnique({
-      where: { slug }
-    });
-
-    if (existing) {
-      return NextResponse.json({ error: 'Errore durante la generazione. Riprova.' }, { status: 400 });
+    if (!ownerEmail.includes("@") || !ownerEmail.includes(".")) {
+      return NextResponse.json({ error: "Inserisci una email valida." }, { status: 400 });
     }
 
-    // Usa i servizi personalizzati se forniti, altrimenti template default
-    const servicesToCreate = customServices && Array.isArray(customServices) && customServices.length > 0
-      ? customServices.map((s: { name: string; duration: number; price: number }) => ({
-          name: s.name,
-          duration: Math.max(5, Math.min(480, s.duration || 30)),
-          price: Math.max(0, s.price || 0),
-        }))
-      : (() => {
-          const defaults: Record<string, { name: string; duration: number; price: number }[]> = {
-            barbiere: [
-              { name: 'Taglio Capelli', duration: 30, price: 20 },
-              { name: 'Taglio e Barba', duration: 45, price: 30 },
-            ],
-            estetista: [
-              { name: 'Massaggio Relax', duration: 60, price: 50 },
-              { name: 'Pulizia Viso', duration: 45, price: 35 },
-              { name: 'Manicure', duration: 30, price: 20 },
-            ],
-            psicologo: [
-              { name: 'Prima Visita', duration: 60, price: 80 },
-              { name: 'Seduta di Supporto', duration: 60, price: 70 },
-            ],
-          };
-          return defaults[template] || [{ name: 'Appuntamento Standard', duration: 30, price: 0 }];
-        })();
+    const template = getDemoShopTemplate(category);
+    const slug = await uniqueSlug(`${businessName}-${city}`);
+    const adminPassword = `${sanitizeSlug(ownerName).slice(0, 4) || "demo"}${Math.floor(
+      1000 + Math.random() * 9000
+    )}`;
 
-    // Imposta la fine della trial a 7 giorni da oggi
     const trialEndsAt = new Date();
     trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
-    // Crea il Tenant con i servizi annessi
-    const newTenant = await prisma.tenant.create({
+    const tenant = await prisma.tenant.create({
       data: {
-        name,
+        name: businessName,
         slug,
-        phone: phone || null,
-        address: address || null,
-        instagramUrl: instagramUrl || null,
-        mapsLink: mapsLink || null,
-        openTime: openTime || "09:00",
-        closeTime: closeTime || "19:00",
-        breakStart: breakStart || null,
-        breakEnd: breakEnd || null,
-        closedDays: closedDays || "[0,1]",
+        category: template.id,
+        city,
+        ownerName,
+        ownerEmail,
+        description: `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
+        phone,
+        address: city,
+        openTime: template.openTime,
+        closeTime: template.closeTime,
+        breakStart: template.breakStart || null,
+        breakEnd: template.breakEnd || null,
+        closedDays: JSON.stringify(template.closedDays),
         adminPassword,
         trialEndsAt,
+        trialStatus: "trial_active",
+        isDemoData: true,
+        plan: "basic",
         services: {
-          create: servicesToCreate
-        }
-      }
+          create: template.services.map((service) => ({
+            name: service.name,
+            duration: service.duration,
+            price: service.price,
+          })),
+        },
+        storeSettings: {
+          create: {
+            smsCredits: 25,
+            maxConcurrentAppointments: Math.max(1, template.staff.length),
+          },
+        },
+      },
+      include: { services: true },
     });
 
-    return NextResponse.json({ success: true, slug: newTenant.slug, password: adminPassword });
+    const serviceByName = new Map(tenant.services.map((service) => [service.name, service]));
+    const staffByName = new Map<string, { id: string; name: string }>();
+
+    for (const member of template.staff) {
+      const allowedServices = member.services?.length
+        ? member.services
+            .map((serviceName) => serviceByName.get(serviceName))
+            .filter(Boolean)
+        : tenant.services;
+
+      const staff = await prisma.staff.create({
+        data: {
+          name: member.name,
+          tenantId: tenant.id,
+          services: {
+            connect: allowedServices.map((service) => ({ id: service!.id })),
+          },
+        },
+      });
+      staffByName.set(member.name, staff);
+    }
+
+    for (const seed of template.bookings) {
+      const service = serviceByName.get(seed.serviceName) || tenant.services[0];
+      if (!service) continue;
+
+      const staff = seed.staffName ? staffByName.get(seed.staffName) : undefined;
+      const date = dateFromOffset(seed.dayOffset, template.closedDays);
+
+      await prisma.appointment.create({
+        data: {
+          customerName: seed.customerName,
+          customerPhone: seed.customerPhone,
+          date,
+          time: seed.time,
+          endTime: addMinutes(seed.time, service.duration || 30),
+          source: "DEMO",
+          isPaid: Boolean(seed.isPaid),
+          tenantId: tenant.id,
+          serviceId: service.id,
+          staffId: staff?.id,
+        },
+      });
+    }
+
+    await prisma.activityLog.create({
+      data: {
+        tenantId: tenant.id,
+        action: "CREATE_DEMO_SHOP",
+        actor: "system",
+        message: `Negozio demo creato per ${businessName}: servizi, staff e prenotazioni sono gia pronti.`,
+        metadata: JSON.stringify({ category: template.id, ownerEmail }),
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      slug: tenant.slug,
+      password: adminPassword,
+      publicUrl: `/t/${tenant.slug}`,
+      adminUrl: `/t/${tenant.slug}/admin`,
+    });
   } catch (error) {
-    console.error('Errore Onboarding:', error);
-    return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
+    console.error("Errore Onboarding:", error);
+    return NextResponse.json({ error: "Errore interno durante la creazione." }, { status: 500 });
   }
 }

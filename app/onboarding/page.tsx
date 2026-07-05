@@ -1,540 +1,349 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useMemo, useState } from "react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Scissors,
+  Sparkles,
+  UserRound,
+} from "lucide-react";
+import { demoCategoryOptions } from "@/lib/demoShopTemplates";
 
-type EditableService = {
-  key: string;
-  name: string;
-  duration: number;
-  price: number;
+const categoryHints: Record<string, { services: string; staff: string; bookings: string }> = {
+  hair_women: {
+    services: "Piega, taglio, colore, balayage",
+    staff: "3 professionisti demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
+  barber: {
+    services: "Taglio, barba, sfumatura",
+    staff: "3 barbieri demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
+  beauty_center: {
+    services: "Viso, corpo, epilazione",
+    staff: "3 estetiste demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
+  nail_salon: {
+    services: "Semipermanente, refill, pedicure",
+    staff: "2 nail artist demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
+  massage: {
+    services: "Relax, sportivo, decontratturante",
+    staff: "2 operatori demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
+  personal_trainer: {
+    services: "Sessioni, valutazioni, check",
+    staff: "2 trainer demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
+  private_studio: {
+    services: "Consulenze, follow-up, sessioni",
+    staff: "2 professionisti demo",
+    bookings: "5 appuntamenti gia in agenda",
+  },
 };
-
-const TEMPLATES: Record<string, { icon: string; title: string; services: { name: string; duration: number; price: number }[] }> = {
-  barbiere: {
-    icon: "✂️",
-    title: "Barbiere / Parrucchiere",
-    services: [
-      { name: "Taglio Capelli", duration: 30, price: 20 },
-      { name: "Taglio e Barba", duration: 45, price: 30 },
-    ],
-  },
-  estetista: {
-    icon: "💅",
-    title: "Centro Beauty / SPA",
-    services: [
-      { name: "Massaggio Relax", duration: 60, price: 50 },
-      { name: "Pulizia Viso", duration: 45, price: 35 },
-      { name: "Manicure", duration: 30, price: 20 },
-    ],
-  },
-  psicologo: {
-    icon: "🛋️",
-    title: "Psicologo / Consulente",
-    services: [
-      { name: "Prima Visita", duration: 60, price: 80 },
-      { name: "Seduta di Supporto", duration: 60, price: 70 },
-    ],
-  },
-  generico: {
-    icon: "📅",
-    title: "Altro Professionista",
-    services: [
-      { name: "Appuntamento Standard", duration: 30, price: 0 },
-    ],
-  },
-};
-
-const DAYS = [
-  { value: "0", label: "Dom" },
-  { value: "1", label: "Lun" },
-  { value: "2", label: "Mar" },
-  { value: "3", label: "Mer" },
-  { value: "4", label: "Gio" },
-  { value: "5", label: "Ven" },
-  { value: "6", label: "Sab" },
-];
 
 export default function Onboarding() {
-  const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [template, setTemplate] = useState<string | null>(null);
-  const [name, setName] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [category, setCategory] = useState("barber");
+  const [city, setCity] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [instagramUrl, setInstagramUrl] = useState("");
-  const [mapsLink, setMapsLink] = useState("");
-  const [openTime, setOpenTime] = useState("09:00");
-  const [closeTime, setCloseTime] = useState("19:00");
-  const [breakStart, setBreakStart] = useState("");
-  const [breakEnd, setBreakEnd] = useState("");
-  const [closedDays, setClosedDays] = useState<string[]>(["0", "1"]);
-  const [services, setServices] = useState<EditableService[]>([]);
-  const [serviceKeyCounter, setServiceKeyCounter] = useState(100);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
-  const [successData, setSuccessData] = useState<{ slug: string; password: string } | null>(null);
+  const [successData, setSuccessData] = useState<{
+    slug: string;
+    password: string;
+    publicUrl: string;
+    adminUrl: string;
+  } | null>(null);
 
-  const loadTemplate = (id: string) => {
-    setTemplate(id);
-    const tpl = TEMPLATES[id];
-    if (tpl) {
-      setServices(tpl.services.map((s, i) => ({ key: `srv_${i}`, ...s })));
-    }
-    setStep(3);
-  };
-
-  const addService = () => {
-    const key = `srv_${serviceKeyCounter}`;
-    setServiceKeyCounter(prev => prev + 1);
-    setServices(prev => [...prev, { key, name: "", duration: 30, price: 0 }]);
-  };
-
-  const removeService = (key: string) => {
-    setServices(prev => prev.filter(s => s.key !== key));
-  };
-
-  const updateService = (key: string, field: keyof EditableService, value: string | number) => {
-    setServices(prev => prev.map(s => (s.key === key ? { ...s, [field]: value } : s)));
-  };
+  const selectedCategory = useMemo(
+    () => demoCategoryOptions.find((item) => item.value === category) || demoCategoryOptions[0],
+    [category]
+  );
+  const hint = categoryHints[category] || categoryHints.barber;
 
   const handleCreate = async () => {
-    if (!template) return;
-    setIsGenerating(true);
     setError("");
+
+    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !ownerEmail.trim()) {
+      setError("Compila nome attivita, categoria, citta, nome ed email.");
+      return;
+    }
+
+    setIsGenerating(true);
 
     try {
       const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name,
-            template,
-            phone,
-            address,
-            instagramUrl,
-            mapsLink,
-            openTime,
-            closeTime,
-            breakStart: breakStart || null,
-            breakEnd: breakEnd || null,
-            closedDays: JSON.stringify(closedDays.map(Number)),
-            customServices: services.map(s => ({ name: s.name, duration: s.duration, price: s.price })),
-          }),
+        body: JSON.stringify({
+          businessName,
+          category,
+          city,
+          ownerName,
+          ownerEmail,
+          phone,
+        }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
+      if (!res.ok) throw new Error(data.error || "Errore durante la creazione.");
 
-      setIsGenerating(false);
-      setSuccessData({ slug: data.slug, password: data.password });
-      setStep(4);
+      setSuccessData(data);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Errore durante la creazione.");
+    } finally {
       setIsGenerating(false);
     }
   };
 
-  const progress = useMemo(() => {
-    const total = 3;
-    const current = step === 4 ? total : step;
-    return Math.round((current / total) * 100);
-  }, [step]);
-
   if (isGenerating) {
     return (
-      <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-6 text-white text-center font-sans">
-        <div className="relative flex justify-center items-center mb-8">
-          <div className="absolute w-20 h-20 border-4 border-[#1a2642] border-t-[#00b4ff] rounded-full animate-spin" />
-          <span className="text-3xl">✂️</span>
+      <main className="min-h-screen bg-[#050814] px-6 py-10 text-white">
+        <div className="mx-auto flex min-h-[80vh] max-w-xl flex-col items-center justify-center text-center">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-500/30 bg-cyan-500/10">
+            <Loader2 className="h-9 w-9 animate-spin text-cyan-300" />
+          </div>
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-cyan-300">Creazione negozio</p>
+          <h1 className="text-3xl font-extrabold sm:text-5xl">Sto preparando la tua pagina online.</h1>
+          <p className="mt-4 text-sm font-medium leading-relaxed text-slate-400">
+            Genero servizi, prezzi, staff, orari, disponibilita e prenotazioni demo coerenti con {selectedCategory.label}.
+          </p>
         </div>
-        <h2 className="text-2xl font-extrabold mb-2">Creazione in corso...</h2>
-        <p className="text-slate-400 font-medium animate-pulse max-w-sm">
-          La pagina di {name} sarà pronta tra pochi secondi.
-        </p>
-      </div>
+      </main>
+    );
+  }
+
+  if (successData) {
+    return (
+      <main className="min-h-screen bg-[#050814] px-6 py-10 text-white">
+        <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col items-center justify-center text-center">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
+            <CheckCircle2 className="h-10 w-10 text-emerald-300" />
+          </div>
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-emerald-300">Trial attivo</p>
+          <h1 className="text-3xl font-extrabold sm:text-5xl">{businessName} e online.</h1>
+          <p className="mt-4 max-w-xl text-sm font-medium leading-relaxed text-slate-400">
+            La tua prova gratuita e pronta: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono gia configurati.
+          </p>
+
+          <div className="mt-8 w-full rounded-3xl border border-[#1a2642] bg-[#0b1221] p-5 text-left">
+            <p className="text-xs font-black uppercase tracking-widest text-slate-500">Password dashboard</p>
+            <p className="mt-2 select-all rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 font-mono text-xl font-extrabold text-amber-300">
+              {successData.password}
+            </p>
+          </div>
+
+          <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+            <Link
+              href={successData.adminUrl}
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-400 px-5 py-4 text-sm font-extrabold text-[#03111f] transition hover:bg-cyan-300"
+            >
+              Entra nella dashboard
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              href={successData.publicUrl}
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#1e2b4a] bg-[#0b1221] px-5 py-4 text-sm font-extrabold text-white transition hover:border-cyan-500/40"
+            >
+              Vedi pagina cliente
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#050814] flex flex-col p-6 text-slate-200 font-sans selection:bg-[#00b4ff]/30 relative overflow-hidden">
-      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#00b4ff]/10 blur-[150px] rounded-full pointer-events-none" />
-
-      <div className="flex items-center justify-between mb-8 relative z-10">
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-extrabold text-white">Neat</span>
-          <span className="text-[#00b4ff] text-xl font-extrabold">X</span>
-        </div>
-        {step > 1 && step < 4 && (
-          <button
-            onClick={() => setStep(prev => Math.max(1, prev - 1))}
-            className="text-sm text-slate-500 hover:text-white font-medium transition-colors"
-          >
-            ← Indietro
-          </button>
-        )}
+    <main className="min-h-screen bg-[#050814] px-5 py-6 text-slate-200">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
+        <Link href="/" className="text-2xl font-extrabold tracking-tight">
+          <span className="text-white">Neat</span>
+          <span className="text-[#00b4ff]">X</span>
+        </Link>
+        <Link href="/demo" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
+          Esplora demo
+        </Link>
       </div>
 
-      {step < 4 && (
-        <div className="w-full max-w-2xl mx-auto mb-8 relative z-10">
-          <div className="flex gap-1 mb-2">
-            {Array.from({ length: 3 }, (_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
-                  i + 1 < step ? "bg-[#00b4ff]" : i + 1 === step ? "bg-[#00b4ff] animate-pulse" : "bg-[#1a2642]"
-                }`}
-              />
+      <section className="mx-auto grid min-h-[calc(100vh-90px)] w-full max-w-6xl grid-cols-1 items-center gap-8 py-10 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-cyan-300">
+            <Sparkles size={15} />
+            Prova gratuita 7 giorni
+          </div>
+          <h1 className="max-w-xl text-4xl font-extrabold leading-tight text-white sm:text-6xl">
+            Crea il tuo negozio online in 60 secondi.
+          </h1>
+          <p className="mt-5 max-w-xl text-base font-medium leading-relaxed text-slate-400 sm:text-lg">
+            Inserisci pochi dati. NeatX genera subito una pagina prenotabile con servizi, staff, orari e appuntamenti demo.
+          </p>
+
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {[
+              "Pagina pubblica pronta",
+              "Agenda con prenotazioni demo",
+              "Dati modificabili dopo",
+            ].map((point) => (
+              <div key={point} className="rounded-2xl border border-[#1a2642] bg-[#0b1221] p-4">
+                <BadgeCheck className="mb-3 h-5 w-5 text-emerald-300" />
+                <p className="text-sm font-extrabold text-white">{point}</p>
+              </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-slate-500">
-            <span className={step === 1 ? "text-[#00b4ff] font-bold" : ""}>Attività</span>
-            <span className={step === 2 ? "text-[#00b4ff] font-bold" : ""}>Orari</span>
-            <span className={step === 3 ? "text-[#00b4ff] font-bold" : ""}>Servizi</span>
-          </div>
         </div>
-      )}
 
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-2xl mx-auto relative z-10">
-        {/* STEP 1: Tipo attività + Nome */}
-        {step === 1 && (
-          <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 leading-tight">
-              Di cosa ti occupi?
-            </h1>
-            <p className="text-slate-400 mb-8 text-lg">Scegli la tua categoria per iniziare.</p>
+        <div className="rounded-3xl border border-[#1a2642] bg-[#0b1221] p-5 shadow-2xl shadow-cyan-950/20 sm:p-6">
+          <div className="mb-5">
+            <p className="text-xs font-black uppercase tracking-widest text-cyan-300">Dati essenziali</p>
+            <h2 className="mt-1 text-2xl font-extrabold text-white">Genera il negozio demo</h2>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-8">
-              {Object.entries(TEMPLATES).map(([id, tpl]) => (
-                <button
-                  key={id}
-                  onClick={() => setTemplate(id)}
-                  className={`p-5 rounded-3xl border-2 transition-all text-left flex flex-col gap-2 ${
-                    template === id
-                      ? "bg-[#00b4ff]/10 border-[#00b4ff] shadow-[0_0_20px_rgba(0,180,255,0.15)]"
-                      : "bg-[#0b1221] border-[#1a2642] hover:border-[#00b4ff]/50 hover:bg-[#131c31]"
-                  }`}
-                >
-                  <span className="text-3xl">{tpl.icon}</span>
-                  <span className="text-white font-bold text-sm">{tpl.title}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-bold text-slate-300 mb-2">Nome attività</label>
+          <div className="space-y-4">
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <Building2 size={14} />
+                Nome attivita
+              </span>
               <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="es. BarberShop Milano"
-                className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 text-lg focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
+                value={businessName}
+                onChange={(event) => setBusinessName(event.target.value)}
+                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                placeholder="Es. Barber Lab Milano"
               />
-            </div>
+            </label>
 
-            <button
-              onClick={() => {
-                if (!template) { setError("Seleziona una categoria"); return; }
-                if (name.trim().length < 2) { setError("Inserisci il nome dell'attività"); return; }
-                setError("");
-                loadTemplate(template);
-              }}
-              className="w-full py-4 bg-white text-black hover:bg-[#00b4ff] hover:text-white font-extrabold rounded-full transition-all text-lg flex items-center justify-center gap-2"
-            >
-              Continua →
-            </button>
-
-            {error && (
-              <div className="mt-4 bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl font-bold text-center">
-                {error}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* STEP 2: Orari e contatti */}
-        {step === 2 && (
-          <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-              Orari e <br className="hidden md:block" /> contatti
-            </h1>
-            <p className="text-slate-400 mb-8 text-lg">Configura quando lavori e dove ricevere le prenotazioni.</p>
-
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-slate-300 mb-2">
-                  📱 WhatsApp
-                </label>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="es. 3912345678"
-                  className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-slate-300 mb-2">🔓 Apertura</label>
-                  <input
-                    type="time"
-                    value={openTime}
-                    onChange={(e) => setOpenTime(e.target.value)}
-                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-300 mb-2">🔒 Chiusura</label>
-                  <input
-                    type="time"
-                    value={closeTime}
-                    onChange={(e) => setCloseTime(e.target.value)}
-                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-300 mb-2">
-                  🍝 Pausa pranzo (opzionale)
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="time"
-                    value={breakStart}
-                    onChange={(e) => setBreakStart(e.target.value)}
-                    placeholder="Inizio"
-                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
-                  />
-                  <input
-                    type="time"
-                    value={breakEnd}
-                    onChange={(e) => setBreakEnd(e.target.value)}
-                    placeholder="Fine"
-                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-300 mb-2">📅 Giorni di chiusura</label>
-                <div className="flex flex-wrap gap-2">
-                  {DAYS.map((day) => (
-                    <button
-                      key={day.value}
-                      type="button"
-                      onClick={() =>
-                        setClosedDays((prev) =>
-                          prev.includes(day.value) ? prev.filter((d) => d !== day.value) : [...prev, day.value]
-                        )
-                      }
-                      className={`px-4 py-2 rounded-xl text-sm font-bold border transition ${
-                        closedDays.includes(day.value)
-                          ? "bg-red-500/20 border-red-500 text-red-300"
-                          : "bg-[#0b1221] border-[#1a2642] text-slate-400 hover:border-slate-500"
-                      }`}
-                    >
-                      {day.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <details className="group">
-                <summary className="text-sm font-bold text-slate-400 cursor-pointer hover:text-white transition-colors list-none flex items-center gap-2">
-                  <span className="text-xs opacity-50">▼</span> Altri dettagli (indirizzo, social)
-                </summary>
-                <div className="mt-4 space-y-4">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-300 mb-2">📍 Indirizzo</label>
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="es. Via Roma 1, Milano"
-                      className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-slate-300 mb-2">📸 Instagram</label>
-                      <input
-                        type="text"
-                        value={instagramUrl}
-                        onChange={(e) => setInstagramUrl(e.target.value)}
-                        placeholder="https://instagram.com/..."
-                        className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-300 mb-2">🗺️ Google Maps</label>
-                      <input
-                        type="text"
-                        value={mapsLink}
-                        onChange={(e) => setMapsLink(e.target.value)}
-                        placeholder="https://maps.app.goo.gl/..."
-                        className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </details>
-            </div>
-
-            <button
-              onClick={() => setStep(3)}
-              disabled={!phone}
-              className="mt-8 w-full py-4 bg-white text-black hover:bg-[#00b4ff] hover:text-white disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-black font-extrabold rounded-full transition-all text-lg flex items-center justify-center gap-2"
-            >
-              Continua →
-            </button>
-          </div>
-        )}
-
-        {/* STEP 3: Servizi */}
-        {step === 3 && template && (
-          <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 leading-tight">
-                  I tuoi servizi
-                </h1>
-                <p className="text-slate-400 text-lg">Modifica e personalizza.</p>
-              </div>
-            </div>
-
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 font-bold">
-                {error}
-              </div>
-            )}
-
-            <div className="space-y-3 mb-6">
-              {services.map((srv) => (
-                <div
-                  key={srv.key}
-                  className="bg-[#0b1221] border border-[#1a2642] rounded-2xl p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center"
-                >
-                  <div className="flex-1 w-full sm:w-auto">
-                    <input
-                      type="text"
-                      value={srv.name}
-                      onChange={(e) => updateService(srv.key, "name", e.target.value)}
-                      placeholder="Nome servizio"
-                      className="w-full bg-transparent border-b border-slate-700 text-white font-bold py-1 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
-                    />
-                  </div>
-                  <div className="flex gap-3 w-full sm:w-auto">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-500">⏱</span>
-                      <input
-                        type="number"
-                        value={srv.duration}
-                        onChange={(e) => updateService(srv.key, "duration", parseInt(e.target.value) || 30)}
-                        min={5}
-                        max={480}
-                        className="w-16 bg-[#050814] border border-[#1a2642] text-white rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:border-[#00b4ff]"
-                      />
-                      <span className="text-xs text-slate-500">min</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-500">€</span>
-                      <input
-                        type="number"
-                        value={srv.price}
-                        onChange={(e) => updateService(srv.key, "price", parseFloat(e.target.value) || 0)}
-                        min={0}
-                        step={1}
-                        className="w-16 bg-[#050814] border border-[#1a2642] text-white rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:border-[#00b4ff]"
-                      />
-                    </div>
-                    <button
-                      onClick={() => removeService(srv.key)}
-                      className="text-red-500 hover:text-red-400 text-lg px-2 transition"
-                      title="Rimuovi servizio"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={addService}
-              className="w-full py-3 border-2 border-dashed border-[#1a2642] hover:border-[#00b4ff]/50 text-slate-500 hover:text-[#00b4ff] rounded-2xl font-bold text-sm transition mb-8"
-            >
-              + Aggiungi servizio
-            </button>
-
-            <button
-              onClick={handleCreate}
-              className="w-full py-4 bg-gradient-to-r from-[#00b4ff] to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-extrabold rounded-full transition-all text-lg shadow-lg shadow-cyan-500/20"
-            >
-              Crea la tua pagina →
-            </button>
-          </div>
-        )}
-
-        {/* STEP 4: Successo */}
-        {step === 4 && successData && (
-          <div className="w-full animate-in fade-in zoom-in duration-700 max-w-lg mx-auto">
-            <div className="bg-[#0b1221] p-8 rounded-3xl border border-[#1a2642] shadow-2xl text-center mb-6">
-              <div className="w-20 h-20 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center text-4xl mb-6 border border-green-500/20 mx-auto">
-                ✓
-              </div>
-              <h1 className="text-3xl font-extrabold text-white mb-2">{name} è online! 🎉</h1>
-              <p className="text-slate-400 mb-6 font-medium">
-                Prova gratuita di 7 giorni attiva.
-              </p>
-
-              <div className="bg-[#050814] p-4 rounded-2xl border border-yellow-500/20 mb-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-yellow-500 text-xs font-bold uppercase tracking-widest">Password Admin</span>
-                  <span className="font-mono text-lg text-yellow-400 font-bold tracking-widest select-all">{successData.password}</span>
-                </div>
-              </div>
-
-              <div className="space-y-4 text-left mb-8">
-                <div className="bg-[#050814] p-4 rounded-2xl border border-[#1a2642] flex items-start gap-4">
-                  <span className="bg-[#00b4ff] text-black w-8 h-8 rounded-full flex items-center justify-center font-extrabold shrink-0 mt-0.5">1</span>
-                  <div>
-                    <p className="font-bold text-white text-sm">Condividi il link su Instagram</p>
-                    <p className="text-xs text-slate-500 mt-1">I clienti cliccano e prenotano in 30 secondi.</p>
-                    <div className="mt-2 bg-[#0b1221] border border-[#1a2642] rounded-xl p-3 flex items-center justify-between gap-2">
-                      <span className="text-cyan-400 text-sm font-medium truncate">neatx.store/t/{successData.slug}</span>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(`https://neatx.store/t/${successData.slug}`)}
-                        className="shrink-0 bg-[#00b4ff]/10 text-[#00b4ff] text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-[#00b4ff]/20 transition"
-                      >
-                        Copia
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-[#050814] p-4 rounded-2xl border border-emerald-500/30 flex items-start gap-4">
-                  <span className="bg-emerald-500 text-black w-8 h-8 rounded-full flex items-center justify-center font-extrabold shrink-0 mt-0.5">2</span>
-                  <div>
-                    <p className="font-bold text-white text-sm">Aggiungi lo staff</p>
-                    <p className="text-xs text-slate-500 mt-1">Dalla dashboard puoi aggiungere collaboratori e gestire l'agenda.</p>
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                href={`/t/${successData.slug}/admin`}
-                className="w-full py-5 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-400 hover:to-blue-500 text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25 hover:scale-[1.02]"
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <Scissors size={14} />
+                Categoria
+              </span>
+              <select
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
               >
-                Entra nella Dashboard →
-              </Link>
+                {demoCategoryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <MapPin size={14} />
+                  Citta
+                </span>
+                <input
+                  value={city}
+                  onChange={(event) => setCity(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="Milano"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <UserRound size={14} />
+                  Proprietario
+                </span>
+                <input
+                  value={ownerName}
+                  onChange={(event) => setOwnerName(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="Lorenzo"
+                />
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Mail size={14} />
+                  Email
+                </span>
+                <input
+                  type="email"
+                  value={ownerEmail}
+                  onChange={(event) => setOwnerEmail(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="nome@email.it"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Phone size={14} />
+                  Telefono opzionale
+                </span>
+                <input
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="WhatsApp"
+                />
+              </label>
             </div>
           </div>
-        )}
-      </div>
-    </div>
+
+          <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+            <p className="text-xs font-black uppercase tracking-widest text-cyan-300">Anteprima automatica</p>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-xl bg-[#050814] p-3">
+                <p className="text-xs text-slate-500">Servizi</p>
+                <p className="mt-1 text-sm font-extrabold text-white">{hint.services}</p>
+              </div>
+              <div className="rounded-xl bg-[#050814] p-3">
+                <p className="text-xs text-slate-500">Staff</p>
+                <p className="mt-1 text-sm font-extrabold text-white">{hint.staff}</p>
+              </div>
+              <div className="rounded-xl bg-[#050814] p-3">
+                <p className="text-xs text-slate-500">Agenda</p>
+                <p className="mt-1 text-sm font-extrabold text-white">{hint.bookings}</p>
+              </div>
+            </div>
+          </div>
+
+          {error && (
+            <div className="mt-4 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={handleCreate}
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-400 px-5 py-4 text-base font-extrabold text-[#03111f] shadow-xl shadow-cyan-950/40 transition hover:bg-cyan-300"
+          >
+            Crea la mia pagina prenotazioni
+            <ArrowRight size={19} />
+          </button>
+
+          <p className="mt-4 text-center text-xs font-medium text-slate-500">
+            Nessuna carta richiesta. Il negozio demo diventa reale quando lo pubblichi.
+          </p>
+        </div>
+      </section>
+    </main>
   );
 }

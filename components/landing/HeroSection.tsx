@@ -11,9 +11,9 @@ const HERO_METRICS = [
 ];
 
 const TRUST_POINTS = [
-  "Link brandizzato per ogni salone o studio",
-  "Promemoria automatici prima dell'appuntamento",
-  "Acconti e pagamenti integrati nella prenotazione",
+  "Pagina prenotazioni generata in automatico",
+  "Servizi, staff e orari gia precompilati",
+  "Il negozio demo diventa reale quando vuoi",
 ];
 
 export default function HeroSection() {
@@ -25,13 +25,13 @@ export default function HeroSection() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
         </span>
-        Prenotazioni, acconti e promemoria in automatico
+        Prova gratis con negozio demo funzionante
       </div>
 
       <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-        Trasforma Instagram in <br className="hidden md:block" />
+        Vedi il tuo negozio online <br className="hidden md:block" />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] to-purple-500 animate-pulse">
-          agenda piena
+          gia funzionante
         </span>
       </h1>
 
@@ -53,7 +53,7 @@ export default function HeroSection() {
           href="/onboarding"
           className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
         >
-          Prova Gratis 7 Giorni
+          Crea la tua pagina in 60 secondi
           <ArrowRight size={20} />
         </Link>
         <Link

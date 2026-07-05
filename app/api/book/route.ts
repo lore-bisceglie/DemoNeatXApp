@@ -39,7 +39,14 @@ export async function POST(request: Request) {
       paymentMethod,
       staffId: explicitStaffId,
     } = body;
-    const isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
+    let isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
+    if (tenantId) {
+      const bookingTenant = await prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { isDemoData: true },
+      });
+      isDemoTenant = isDemoTenant || Boolean(bookingTenant?.isDemoData);
+    }
 
     if (!isAdmin && !isDemoTenant) {
       try {
