@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Fisioterapisti",
-  "angle": "quanto ti costano i no-show ogni mese",
-  "pain": "sedute saltate e agenda piena di cambi manuali",
-  "promise": "prenotazioni ordinate e promemoria per ogni paziente",
-  "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
-  "hook_hint": "Se sei tra i fisioterapisti e sedute saltate e agenda piena di cambi manuali, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: quanto ti costano i no-show ogni mese con un'agenda automatica",
+  "niche": "Personal Trainer",
+  "angle": "costi dei no-show mensili",
+  "pain": "lezioni spostate e slot persi",
+  "promise": "sessioni automatizzate e confermate",
+  "cover_title": "NO-SHOW: PERDITA SOLDI",
+  "hook_hint": "Se sei un personal trainer e hai slot vuoti per no-show, perdi denaro.",
+  "blog_topic": "Cosa costano i no-show ai personal trainer con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
