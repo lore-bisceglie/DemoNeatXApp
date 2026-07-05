@@ -1,50 +1,50 @@
 # NeatX Content Calendar
 
-## 2026-07-05 - Personal Trainer
-- Angolo: costi dei no-show mensili
-- Dolore: lezioni spostate e slot persi
-- Promessa: sessioni automatizzate e confermate
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Cosa costano i no-show ai personal trainer con un'agenda automatica
+## 2026-07-05 - Tatuatori
+- Angolo: costi mensili dei no-show
+- Dolore: consulenze infinite e appuntamenti senza caparra
+- Promessa: richieste filtrate e acconto prima dello slot
+- Cover: TATUATORI: BASTA NO-SHOW
+- Blog: Tatuatori: costi dei no-show mensili con agenda automatica
 
-## 2026-07-06 - Coach e Consulenti
-- Angolo: costi dei no-show mensili
-- Dolore: call fissate manualmente e clienti che rimandano
-- Promessa: prenotazioni automatiche e follow-up semplificato
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Cosa costano i no-show ai coach e consulenti con un'agenda automatica
+## 2026-07-06 - Personal Trainer
+- Angolo: costi mensili dei no-show
+- Dolore: lezioni spostate in chat e slot persi
+- Promessa: sessioni prenotate, confermate e ricordate automaticamente
+- Cover: PERSONAL TRAINER: BASTA NO-SHOW
+- Blog: Personal Trainer: costi dei no-show mensili con agenda automatica
 
-## 2026-07-07 - Barbieri
-- Angolo: usare acconti senza aggressività
-- Dolore: no-show e appuntamenti presi al volo
-- Promessa: meno buchi in agenda e più clienti paganti
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Come usare acconti e promemoria senza sembrare aggressivo nei saloni di barbiere
+## 2026-07-07 - Parrucchieri
+- Angolo: usare acconti e promemoria senza aggressività
+- Dolore: clienti che scrivono su WhatsApp a qualsiasi ora
+- Promessa: agenda piena senza perdere tempo in chat
+- Cover: PARRUCCHIERI: BASTA NO-SHOW
+- Blog: Parrucchieri: usare acconti e promemoria senza aggressività con agenda automatica
 
-## 2026-07-08 - Centri Estetici
-- Angolo: tempo perso a rispondere ai messaggi
-- Dolore: cabine vuote e clienti dimentichi
-- Promessa: promemoria automatici e acconti prima del trattamento
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Quanto tempo perdi a rispondere ai messaggi nei centri estetici con un'agenda automatica
+## 2026-07-08 - Coach e Consulenti
+- Angolo: tempo perso rispondendo ai messaggi
+- Dolore: call fissate a mano e clienti che rimandano
+- Promessa: call prenotate da sole e follow-up più semplice
+- Cover: BASTA NO-SHOW
+- Blog: Coach e Consulenti: tempo perso rispondendo ai messaggi con agenda automatica
 
 ## 2026-07-09 - Fisioterapisti
-- Angolo: importanza del link in bio
-- Dolore: sedute saltate e cambi manuali
-- Promessa: prenotazioni ordinate e promemoria per pazienti
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Perché il link in bio deve prenotare da solo nel settore fisioterapico
+- Angolo: link in bio deve prenotare da solo
+- Dolore: sedute saltate e agenda piena di cambi manuali
+- Promessa: prenotazioni ordinate e promemoria per ogni paziente
+- Cover: FISIOTERAPISTI: BASTA NO-SHOW
+- Blog: Fisioterapisti: link in bio deve prenotare da solo con agenda automatica
 
-## 2026-07-10 - Parrucchieri
+## 2026-07-10 - Centri Estetici
 - Angolo: trasformare follower in appuntamenti
-- Dolore: clienti che scrivono a qualsiasi ora
-- Promessa: agenda piena senza perdere tempo in chat
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Come trasformare follower curiosi in appuntamenti veri nei saloni di parrucchieri
+- Dolore: cabine vuote e clienti che dimenticano l'appuntamento
+- Promessa: promemoria automatici e acconti prima del trattamento
+- Cover: CENTRI ESTETICI: BASTA NO-SHOW
+- Blog: Centri Estetici: trasformare follower in appuntamenti veri con agenda automatica
 
-## 2026-07-11 - Tatuatori
-- Angolo: costi dei no-show mensili
-- Dolore: consulenze infinite senza caparra
-- Promessa: richieste filtrate e acconti prima dello slot
-- Cover: NO-SHOW: PERDITA SOLDI
-- Blog: Cosa costano i no-show ai tatuatori con un'agenda automatica
+## 2026-07-11 - Barbieri
+- Angolo: costi mensili dei no-show
+- Dolore: no-show e appuntamenti presi in DM
+- Promessa: meno buchi in agenda e più clienti paganti
+- Cover: BARBIERI: BASTA NO-SHOW
+- Blog: Barbieri: costi dei no-show mensili con agenda automatica

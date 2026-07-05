@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Personal Trainer",
-  "angle": "costi dei no-show mensili",
-  "pain": "lezioni spostate e slot persi",
-  "promise": "sessioni automatizzate e confermate",
-  "cover_title": "NO-SHOW: PERDITA SOLDI",
-  "hook_hint": "Se sei un personal trainer e hai slot vuoti per no-show, perdi denaro.",
-  "blog_topic": "Cosa costano i no-show ai personal trainer con un'agenda automatica",
+  "niche": "Tatuatori",
+  "angle": "costi mensili dei no-show",
+  "pain": "consulenze infinite e appuntamenti senza caparra",
+  "promise": "richieste filtrate e acconto prima dello slot",
+  "cover_title": "TATUATORI: BASTA NO-SHOW",
+  "hook_hint": "Se sei un tatuatore e hai consulenze infinite senza caparra, perdi soldi.",
+  "blog_topic": "Tatuatori: costi dei no-show mensili con agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
