@@ -46,6 +46,42 @@ def load_today_brief():
         print(f"[!] Strategia del giorno non leggibile: {e}")
         return {}
 
+def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
+    strategy = strategy or {}
+    pain = strategy.get("pain") or "perdere tempo tra messaggi, telefonate e appuntamenti saltati"
+    promise = strategy.get("promise") or "prenotazioni automatiche e meno no-show"
+    cover_title = strategy.get("cover_title") or "BASTA NO-SHOW"
+    image_prompt = strategy.get("image_prompt") or f"photorealistic {target} professional working in a modern real workplace"
+
+    if reason:
+        print(f"[!] Uso contenuto fallback per il reel: {reason}")
+
+    script_text = (
+        f"Se sei tra i {target.lower()} e stai ancora gestendo appuntamenti su WhatsApp, "
+        f"stai perdendo tempo e soldi. Il problema e' {pain}. "
+        f"Con NeatX puoi avere {promise}, senza rincorrere clienti tutto il giorno. "
+        "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+    )
+
+    return {
+        "niche": target,
+        "script_text": script_text,
+        "hook_text": cover_title,
+        "cover_title": cover_title,
+        "image_prompt": image_prompt,
+        "gameplay_style": gameplay_style,
+        "caption": (
+            f"{target}: basta agenda gestita a mano. "
+            "Commenta AGENDA e ti mando la demo NeatX. "
+            "#NeatX #agendaonline #prenotazioni #automazione #business"
+        ),
+        "strategy_date": strategy.get("date"),
+        "strategy_angle": strategy.get("angle"),
+        "strategy_pain": pain,
+        "strategy_promise": promise,
+        "fallback_reason": reason,
+    }
+
 def generate_daily_content():
     strategy = load_today_brief()
     target = strategy.get("niche") or random.choice(TARGET_AUDIENCES)
@@ -55,12 +91,6 @@ def generate_daily_content():
     print(f"[*] Target di oggi selezionato: {target}")
     print(f"[*] Gameplay di oggi selezionato: {gameplay_style}")
 
-    if not GEMINI_API_KEY:
-        raise RuntimeError("GEMINI_API_KEY mancante. Impostalo nei GitHub Secrets o nel file .env locale.")
-    
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
-    
     history_context = ""
     if os.path.exists("history.json"):
         try:
@@ -123,12 +153,20 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
 }}
 """
 
-    print("[*] Contattando il cervello di Google Gemini 1.5 Pro...")
-    response = model.generate_content(prompt)
-    
-    content = response.text.strip()
-    
-    data = json.loads(content)
+    data = None
+    if not GEMINI_API_KEY:
+        data = build_fallback_content(target, gameplay_style, strategy, "GEMINI_API_KEY mancante")
+    else:
+        try:
+            genai.configure(api_key=GEMINI_API_KEY)
+            model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
+            print("[*] Contattando il cervello di Google Gemini 2.5 Flash...")
+            response = model.generate_content(prompt)
+            content = response.text.strip()
+            data = json.loads(content)
+        except Exception as e:
+            data = build_fallback_content(target, gameplay_style, strategy, f"Gemini non disponibile: {e}")
+
     data["niche"] = target
     data["gameplay_style"] = data.get("gameplay_style") or gameplay_style
     if data["gameplay_style"] not in GAMEPLAY_STYLES:
@@ -151,8 +189,9 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     # Salva il dato su file così gli altri script possono leggerlo
     with open("reel_data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-        
-    print("[+] Copione e testi creati con successo da Gemini e salvati in reel_data.json!")
+
+    source = "fallback locale" if data.get("fallback_reason") else "Gemini"
+    print(f"[+] Copione e testi creati con successo da {source} e salvati in reel_data.json!")
     return data
 
 def download_pexels_video(query):
