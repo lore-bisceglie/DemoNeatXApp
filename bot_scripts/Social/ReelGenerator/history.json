@@ -4,7 +4,7 @@
         "title": "AVVOCATI: PI\u00d9 TEMPO",
         "hook": "Avvocati, basta telefonate!",
         "date": "2026-07-03",
-        "views": 22,
+        "views": 37,
         "likes": 0
     },
     {
@@ -12,13 +12,23 @@
         "title": "PT: ZERO SPRECHI!",
         "hook": "Personal Trainer, basta email e WhatsApp!",
         "date": "2026-07-03",
-        "views": 0
+        "views": 27,
+        "likes": 0
     },
     {
         "youtube_id": "b4xPCRwx6cw",
         "title": "COMMERCIALISTA: BUTTI SOLDI?",
         "hook": "COMMERCIALISTA: BUTTI SOLDI?",
         "date": "2026-07-03",
-        "views": 0
+        "views": 16,
+        "likes": 0
+    },
+    {
+        "youtube_id": "CTup8TEtR2I",
+        "title": "FISIO: BASTA SEGRETERIA!",
+        "hook": "FISIO: BASTA SEGRETERIA!",
+        "date": "2026-07-04",
+        "views": 1,
+        "likes": 0
     }
 ]

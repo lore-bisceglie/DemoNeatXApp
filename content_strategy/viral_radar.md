@@ -1,24 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-05T08:55:34.687358+02:00
+Generato: 2026-07-05T09:12:49.542818
 
-## Idea 1: Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?
+## Idea 1: Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?
 - format: pain shock
-- niche: Coach e Consulenti
-- hook: Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero ore perse a gestire rinvii e call fissate a mano.
+- niche: Fisioterapisti
+- hook: Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero sedute saltate e agenda piena di cambi manuali.
 - cta: Commenta AGENDA e ti mando il link.
 
 ## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
 - format: before after
-- niche: Coach e Consulenti
+- niche: Fisioterapisti
 - hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
 - angle: Confronto diretto tra caos manuale e link NeatX.
 - cta: Scrivi DEMO se vuoi provarlo.
 
 ## Idea 3: Un no-show non è un fastidio, è fatturato perso.
 - format: calculator
-- niche: Coach e Consulenti
+- niche: Fisioterapisti
 - hook: Un no-show non è un fastidio, è fatturato perso.
 - angle: Stima soldi persi in un mese e collega promemoria/acconto.
 - cta: Commenta AGENDA.

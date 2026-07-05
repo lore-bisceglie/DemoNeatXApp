@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Barbieri",
-  "angle": "costo mensile dei no-show",
-  "pain": "perdita di entrate per appuntamenti non rispettati",
-  "promise": "più clienti paganti, meno buchi in agenda",
-  "cover_title": "BARBIERI: BASTA NO-SHOW",
-  "hook_hint": "Se sei un barbiere e stai affrontando no-show, stai perdendo soldi.",
-  "blog_topic": "Barbieri: costo mensile dei no-show con un'agenda automatica",
+  "niche": "Fisioterapisti",
+  "angle": "quanto ti costano i no-show ogni mese",
+  "pain": "sedute saltate e agenda piena di cambi manuali",
+  "promise": "prenotazioni ordinate e promemoria per ogni paziente",
+  "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
+  "hook_hint": "Se sei tra i fisioterapisti e sedute saltate e agenda piena di cambi manuali, stai perdendo soldi.",
+  "blog_topic": "Fisioterapisti: quanto ti costano i no-show ogni mese con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
+  "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }

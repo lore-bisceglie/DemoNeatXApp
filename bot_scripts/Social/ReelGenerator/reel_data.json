@@ -1,8 +1,14 @@
 {
-    "niche": "Meccanico",
-    "script_text": "Meccanico, perché perdi ore a comporre chiamate mentre i tuoi clienti si aspettano? È tempo di smettere di giocare con il telefono e passare a un'app di prenotazioni automatica 24/7 che ti fa guadagnare tempo e denaro. Con un solo clic, prenotazioni, pagamenti e promemoria sono in automatico; lascia che il lavoro faccia il lavoro per te.",
-    "hook_text": "MECCANICO: BUTTI SOLDI?",
-    "cover_title": "MECCANICO: BUTTI SOLDI?",
-    "pexels_query": "Meccanico",
-    "caption": "Sei un Meccanico e perdi la testa dietro le prenotazioni? Commenta AGENDA qui sotto 👇"
+    "niche": "Fisioterapisti",
+    "script_text": "Se sei tra i fisioterapisti e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' sedute saltate e agenda piena di cambi manuali. Con NeatX puoi avere prenotazioni ordinate e promemoria per ogni paziente, senza rincorrere clienti tutto il giorno. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "FISIOTERAPISTI: BASTA NO-SHOW",
+    "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
+    "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+    "gameplay_style": "neon_racer",
+    "caption": "Fisioterapisti: basta agenda gestita a mano. Commenta AGENDA e ti mando la demo NeatX. #NeatX #agendaonline #prenotazioni #automazione #business",
+    "strategy_date": "2026-07-05",
+    "strategy_angle": "quanto ti costano i no-show ogni mese",
+    "strategy_pain": "sedute saltate e agenda piena di cambi manuali",
+    "strategy_promise": "prenotazioni ordinate e promemoria per ogni paziente",
+    "fallback_reason": "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili"
 }
