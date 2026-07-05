@@ -42,10 +42,14 @@ export async function POST(request: Request) {
     const isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
 
     if (!isAdmin && !isDemoTenant) {
-      const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
-      const { success } = await ratelimit.limit(ip);
-      if (!success) {
-        return NextResponse.json({ error: "Hai raggiunto il limite massimo di prenotazioni." }, { status: 429 });
+      try {
+        const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
+        const { success } = await ratelimit.limit(ip);
+        if (!success) {
+          return NextResponse.json({ error: "Hai raggiunto il limite massimo di prenotazioni." }, { status: 429 });
+        }
+      } catch (e) {
+        console.warn("Rate limit non disponibile, salto controllo:", e);
       }
     }
 

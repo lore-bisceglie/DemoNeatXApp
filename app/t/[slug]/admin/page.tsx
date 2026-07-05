@@ -20,6 +20,7 @@ import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 
 import LoginScreen from "./LoginScreen";
+import crypto from "crypto";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -38,7 +39,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   if (!tenant) return <div className="p-10 text-white">Attività non trovata.</div>;
 
-  if (tenant.adminPassword && authCookie !== tenant.adminPassword) {
+  if (!tenant.adminPassword) {
+    const newPassword = crypto.randomUUID().substring(0, 8);
+    await prisma.tenant.update({ where: { slug }, data: { adminPassword: newPassword } });
+    return <LoginScreen slug={slug} correctPassword={newPassword} tenantName={tenant.name} showNewPassword />;
+  }
+
+  if (authCookie !== tenant.adminPassword) {
     return <LoginScreen slug={slug} correctPassword={tenant.adminPassword} tenantName={tenant.name} />;
   }
 

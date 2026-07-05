@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-export default function LoginScreen({ slug, correctPassword, tenantName }: { slug: string, correctPassword: string, tenantName: string }) {
+export default function LoginScreen({ slug, correctPassword, tenantName, showNewPassword }: { slug: string, correctPassword: string, tenantName: string, showNewPassword?: boolean }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -26,6 +26,14 @@ export default function LoginScreen({ slug, correctPassword, tenantName }: { slu
         
         <h1 className="text-2xl font-extrabold text-white text-center mb-2">Area Privata</h1>
         <p className="text-slate-400 text-center mb-8 font-medium">Gestione {tenantName}</p>
+
+        {showNewPassword && (
+          <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center">
+            <p className="text-emerald-300 text-xs font-extrabold uppercase tracking-widest mb-2">Password Generata</p>
+            <p className="text-white text-2xl font-extrabold tracking-widest select-all">{correctPassword}</p>
+            <p className="text-slate-400 text-xs mt-2">Conserva questa password. Dovrai usarla ogni volta che accedi.</p>
+          </div>
+        )}
         
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
