@@ -47,4 +47,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'Auto-strategy: aggiorna calendario contenuti'
-          file_pattern: 'bot_scripts/Content/daily_theme.json content/calendar/*.md content_strategy/*.json content_strategy/*.md'
+          file_pattern: 'content_strategy/*.json content_strategy/*.md'

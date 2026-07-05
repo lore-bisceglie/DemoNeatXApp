@@ -81,6 +81,14 @@ jobs:
       run: |
         cd bot_scripts/Social/GrowthHack
         python cacciatore_scontenti.py || true
+
+    - name: Prepara file dati Growth
+      run: |
+        cd bot_scripts/Social/GrowthHack
+        test -f viral_hits.json || echo "[]" > viral_hits.json
+        test -f commented_posts.txt || touch commented_posts.txt
+        test -f scontenti.txt || touch scontenti.txt
+        test -f cacciatore_seen.txt || touch cacciatore_seen.txt
         
     - name: Salva i dati dei nuovi video scoperti e dei clienti scontenti
       uses: stefanzweifel/git-auto-commit-action@v7

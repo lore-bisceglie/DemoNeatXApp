@@ -52,4 +52,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'Auto-radar: aggiorna idee virali'
-          file_pattern: 'bot_scripts/Social/ViralRadar/*.json bot_scripts/Social/ViralRadar/*.txt content_strategy/*.json content_strategy/*.md'
+          file_pattern: 'content_strategy/*.json content_strategy/*.md'
