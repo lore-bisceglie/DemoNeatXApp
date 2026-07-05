@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'NeatX SaaS - Agenda & Booking',
     short_name: 'NeatX',
     description: 'Il gestionale per il tuo tempo. Zero No-Show.',
-    start_url: '/onboarding',
+    start_url: '/registrazione',
     display: 'standalone',
     background_color: '#050814',
     theme_color: '#00b4ff',

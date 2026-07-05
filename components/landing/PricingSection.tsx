@@ -40,7 +40,7 @@ export default function PricingSection() {
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Acconti e pagamenti Stripe</li>
             </ul>
             <Link
-              href="/onboarding"
+              href="/registrazione"
               className="mt-8 w-full block py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl transition-all text-center shadow-lg shadow-cyan-500/25 hover:scale-105"
             >
               Inizia Prova Gratuita
@@ -61,7 +61,7 @@ export default function PricingSection() {
             </ul>
             <div className="mt-8 flex flex-col gap-3">
               <Link
-                href="/onboarding"
+                href="/registrazione"
                 className="w-full py-4 block bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-extrabold rounded-xl transition-all text-center shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-105"
               >
                 Inizia Prova Gratuita

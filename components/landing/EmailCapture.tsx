@@ -45,7 +45,7 @@ export default function EmailCapture() {
             Ti abbiamo inviato la guida per ridurre i no-show. Nel frattempo, perché non provi NeatX?
           </p>
           <Link
-            href="/onboarding"
+            href="/registrazione"
             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#00b4ff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-2xl transition-all text-lg shadow-lg shadow-cyan-500/30 hover:scale-105"
           >
             Prova Gratis 7 Giorni

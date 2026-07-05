@@ -31,7 +31,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (hostname === `app.${ROOT_DOMAIN}` && url.pathname === "/") {
-    return NextResponse.redirect(new URL("/onboarding", request.url));
+    return NextResponse.redirect(new URL("/registrazione", request.url));
   }
 
   if (tenantSlug) {
@@ -49,16 +49,11 @@ export function proxy(request: NextRequest) {
       !url.pathname.startsWith("/paywall") &&
       !url.pathname.startsWith("/cancel") &&
       !url.pathname.startsWith("/login") &&
-      !url.pathname.startsWith("/onboarding")
+      !url.pathname.startsWith("/onboarding") &&
+      !url.pathname.startsWith("/registrazione") &&
+      !url.pathname.startsWith("/register")
     ) {
       return NextResponse.rewrite(new URL(`/t/${tenantSlug}`, request.url));
-    }
-  }
-
-  if (url.pathname === "/login") {
-    const authCookie = request.cookies.get("neatx_auth");
-    if (authCookie?.value === "true") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 

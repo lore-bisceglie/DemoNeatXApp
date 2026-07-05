@@ -50,10 +50,10 @@ export default function HeroSection() {
 
       <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300 relative z-20">
         <Link 
-          href="/onboarding"
+          href="/registrazione"
           className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
         >
-          Crea la tua pagina in 60 secondi
+          Registrati gratis in 60 secondi
           <ArrowRight size={20} />
         </Link>
         <Link

@@ -59,6 +59,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "La password deve avere almeno 8 caratteri." }, { status: 400 });
     }
 
+    const existingAccount = await prisma.tenant.findFirst({
+      where: { ownerEmail },
+      select: { slug: true },
+    });
+
+    if (existingAccount) {
+      return NextResponse.json(
+        { error: "Esiste gia un account con questa email. Accedi dalla pagina login." },
+        { status: 409 }
+      );
+    }
+
     const template = getDemoShopTemplate(category);
     const slug = await uniqueSlug(`${businessName}-${city}`);
     const adminPassword = `${sanitizeSlug(ownerName).slice(0, 4) || "demo"}${Math.floor(

@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
+import { ROOT_DOMAIN } from "@/lib/domains";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+
+function cookieDomain(req: Request) {
+  const hostname = new URL(req.url).hostname;
+  if (process.env.NODE_ENV === "production" && hostname.endsWith(ROOT_DOMAIN)) {
+    return `.${ROOT_DOMAIN}`;
+  }
+  return undefined;
+}
 
 export async function POST(req: Request) {
   try {
@@ -36,6 +45,7 @@ export async function POST(req: Request) {
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 30,
       path: "/",
+      domain: cookieDomain(req),
     });
 
     return response;

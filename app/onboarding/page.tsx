@@ -143,10 +143,10 @@ export default function Onboarding() {
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
             <CheckCircle2 className="h-10 w-10 text-emerald-300" />
           </div>
-          <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-emerald-300">Trial attivo</p>
+          <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-emerald-300">Account creato</p>
           <h1 className="text-3xl font-extrabold sm:text-5xl">{businessName} e online.</h1>
           <p className="mt-4 max-w-xl text-sm font-medium leading-relaxed text-slate-400">
-            La tua prova gratuita e pronta: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono gia configurati.
+            La tua registrazione e completata: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono gia configurati.
           </p>
 
           <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
@@ -177,22 +177,27 @@ export default function Onboarding() {
           <span className="text-white">Neat</span>
           <span className="text-[#00b4ff]">X</span>
         </Link>
-        <Link href="/demo" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
-          Esplora demo
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/login" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
+            Accedi
+          </Link>
+          <Link href="/demo" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
+            Esplora demo
+          </Link>
+        </div>
       </div>
 
       <section className="mx-auto grid min-h-[calc(100vh-90px)] w-full max-w-6xl grid-cols-1 items-center gap-8 py-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-cyan-300">
             <Sparkles size={15} />
-            Prova gratuita 7 giorni
+            Registrazione + prova 7 giorni
           </div>
           <h1 className="max-w-xl text-4xl font-extrabold leading-tight text-white sm:text-6xl">
-            Crea il tuo negozio online in 60 secondi.
+            Registrati e crea il tuo negozio online in 60 secondi.
           </h1>
           <p className="mt-5 max-w-xl text-base font-medium leading-relaxed text-slate-400 sm:text-lg">
-            Inserisci pochi dati. NeatX genera subito una pagina prenotabile con servizi, staff, orari e appuntamenti demo.
+            Inserisci pochi dati. NeatX crea il tuo account e genera subito una pagina prenotabile con servizi, staff, orari e appuntamenti demo.
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -212,7 +217,7 @@ export default function Onboarding() {
         <div className="rounded-3xl border border-[#1a2642] bg-[#0b1221] p-5 shadow-2xl shadow-cyan-950/20 sm:p-6">
           <div className="mb-5">
             <p className="text-xs font-black uppercase tracking-widest text-cyan-300">Dati essenziali</p>
-            <h2 className="mt-1 text-2xl font-extrabold text-white">Genera il negozio demo</h2>
+            <h2 className="mt-1 text-2xl font-extrabold text-white">Crea il tuo account</h2>
           </div>
 
           <div className="space-y-4">
