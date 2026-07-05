@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Coach e Consulenti",
+  "niche": "Personal Trainer",
   "angle": "quanto ti costano i no-show ogni mese",
-  "pain": "ore perse a gestire rinvii e call fissate a mano",
-  "promise": "call prenotate da sole e follow-up più semplice",
-  "cover_title": "BASTA NO-SHOW",
-  "hook_hint": "Se sei un coach o consulente e perdi ore a fissare appuntamenti manualmente o i tuoi clienti spariscono senza preavviso, stai sprecando tempo e soldi preziosi.",
-  "blog_topic": "Coach e Consulenti: quanto ti costano i no-show ogni mese con un'agenda automatica",
+  "pain": "lezioni spostate in chat e slot persi",
+  "promise": "sessioni prenotate, confermate e ricordate automaticamente",
+  "cover_title": "PERSONAL TRAINER: BASTA NO-SHOW",
+  "hook_hint": "Se sei tra i personal trainer e lezioni spostate in chat e slot persi, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: quanto ti costano i no-show ogni mese con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
