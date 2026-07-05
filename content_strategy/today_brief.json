@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Parrucchieri",
+  "niche": "Centri Estetici",
   "angle": "quanto ti costano i no-show ogni mese",
-  "pain": "clienti che scrivono su WhatsApp a qualsiasi ora",
-  "promise": "agenda piena senza perdere tempo in chat",
-  "cover_title": "STOP CHAT, SALONE PIENO",
-  "hook_hint": "Ogni chat su WhatsApp per fissare un taglio è un'ora persa e un rischio no-show. Quanto ti costa?",
-  "blog_topic": "Parrucchieri: quanto ti costano i no-show ogni mese con un'agenda automatica",
+  "pain": "cabine vuote e clienti che dimenticano l'appuntamento",
+  "promise": "promemoria automatici e acconti prima del trattamento",
+  "cover_title": "CENTRI ESTETICI: BASTA NO-SHOW",
+  "hook_hint": "Se sei tra i centri estetici e cabine vuote e clienti che dimenticano l'appuntamento, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: quanto ti costano i no-show ogni mese con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
+  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
