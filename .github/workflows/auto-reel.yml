@@ -68,6 +68,7 @@ jobs:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
+          TIKTOK_COOKIES_JSON: ${{ secrets.TIKTOK_COOKIES_JSON }}
           TIKTOK_SESSION_ID: ${{ secrets.TIKTOK_SESSION_ID }}
           TIKTOK_HEADLESS: "true"
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}

@@ -5,15 +5,17 @@ from pathlib import Path
 
 from playwright.async_api import async_playwright
 
+from tiktok_cookies import load_tiktok_cookies
+
 
 ARTIFACT_DIR = Path("tiktok_health_artifacts")
 SCREENSHOT_PATH = ARTIFACT_DIR / "tiktok_upload_check.png"
 
 
 async def main():
-    session_id = os.environ.get("TIKTOK_SESSION_ID", "").strip()
-    if not session_id:
-        print("[TikTok Health] TIKTOK_SESSION_ID mancante.")
+    cookies = load_tiktok_cookies()
+    if not cookies:
+        print("[TikTok Health] TIKTOK_COOKIES_JSON/TIKTOK_SESSION_ID mancanti.")
         raise SystemExit(1)
 
     ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
@@ -36,19 +38,7 @@ async def main():
             ),
             locale="it-IT",
         )
-        await context.add_cookies(
-            [
-                {
-                    "name": "sessionid",
-                    "value": session_id,
-                    "domain": ".tiktok.com",
-                    "path": "/",
-                    "httpOnly": True,
-                    "secure": True,
-                    "sameSite": "Lax",
-                }
-            ]
-        )
+        await context.add_cookies(cookies)
 
         page = await context.new_page()
         await page.goto("https://www.tiktok.com/upload?lang=it", wait_until="domcontentloaded", timeout=60000)

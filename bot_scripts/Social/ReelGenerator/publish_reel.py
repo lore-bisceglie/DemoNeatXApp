@@ -3,6 +3,7 @@ import time
 import requests
 import json
 from dotenv import load_dotenv
+from tiktok_cookies import load_tiktok_cookies
 
 # ==========================================
 # CONFIGURAZIONE
@@ -116,8 +117,9 @@ def publish_to_instagram():
         return False
 
 def publish_to_tiktok():
-    if not TIKTOK_SESSION_ID:
-        print("[!] Errore: TIKTOK_SESSION_ID mancante!")
+    cookies = load_tiktok_cookies()
+    if not cookies:
+        print("[!] Errore: TIKTOK_COOKIES_JSON/TIKTOK_SESSION_ID mancanti!")
         return False
         
     if not os.path.exists(VIDEO_FILE):
@@ -132,7 +134,7 @@ def publish_to_tiktok():
         upload_video(
             VIDEO_FILE,
             description=caption,
-            cookies_list=[{"name": "sessionid", "value": TIKTOK_SESSION_ID, "domain": ".tiktok.com", "path": "/"}],
+            cookies_list=cookies,
             browser="chromium", # Usa la versione locale invece di quella globale
             headless=TIKTOK_HEADLESS
         )
