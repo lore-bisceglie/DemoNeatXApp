@@ -27,7 +27,7 @@ export async function GET(request: Request) {
   // Recupera orari personalizzati del tenant
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { openTime: true, closeTime: true, closedDays: true }
+    select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true }
   });
 
   const openTime = tenant?.openTime ? timeToMins(tenant.openTime) : 9 * 60;
@@ -97,12 +97,23 @@ export async function GET(request: Request) {
       }
     }
 
+    // Calcola intervallo pausa pranzo
+    const breakStartMins = tenant?.breakStart ? timeToMins(tenant.breakStart) : null;
+    const breakEndMins = tenant?.breakEnd ? timeToMins(tenant.breakEnd) : null;
+
     // 🌟 MOTORE DI COLLISIONE PER STAFF
     let availableSlots: string[] = [];
     
     for (let currentSlotMins = openTime; currentSlotMins <= closeTime - duration; currentSlotMins += interval) {
       const potentialStart = currentSlotMins;
       const potentialEnd = potentialStart + duration;
+
+      // Salta se in pausa pranzo
+      if (breakStartMins !== null && breakEndMins !== null) {
+        if (Math.max(potentialStart, breakStartMins) < Math.min(potentialEnd, breakEndMins)) {
+          continue;
+        }
+      }
 
       let isSlotAvailable = false;
 

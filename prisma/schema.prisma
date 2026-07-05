@@ -19,6 +19,8 @@ model Tenant {
   phone         String?       // Numero WhatsApp del salone per ricevere notifiche
   openTime      String?       // Orario apertura es. "09:00"
   closeTime     String?       // Orario chiusura es. "19:00"
+  breakStart    String?       // Inizio pausa pranzo es. "13:00" (null = nessuna pausa)
+  breakEnd      String?       // Fine pausa pranzo es. "14:00"
   closedDays    String?       // Giorni chiusura settimanali in JSON array es. "[0,1]" (dom=0, lun=1)
   adminPassword String?       // Password autogenerata per l'accesso alla dashboard privata
   trialEndsAt   DateTime?     // Scadenza del periodo di prova di 7 giorni

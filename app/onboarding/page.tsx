@@ -67,6 +67,8 @@ export default function Onboarding() {
   const [phone, setPhone] = useState("");
   const [openTime, setOpenTime] = useState("09:00");
   const [closeTime, setCloseTime] = useState("19:00");
+  const [breakStart, setBreakStart] = useState("");
+  const [breakEnd, setBreakEnd] = useState("");
   const [closedDays, setClosedDays] = useState<string[]>(["0", "1"]);
   const [template, setTemplate] = useState<string | null>(null);
   const [services, setServices] = useState<EditableService[]>([]);
@@ -110,15 +112,17 @@ export default function Onboarding() {
       const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          template,
-          phone,
-          openTime,
-          closeTime,
-          closedDays: JSON.stringify(closedDays.map(Number)),
-          customServices: services.map(s => ({ name: s.name, duration: s.duration, price: s.price })),
-        }),
+          body: JSON.stringify({
+            name,
+            template,
+            phone,
+            openTime,
+            closeTime,
+            breakStart: breakStart || null,
+            breakEnd: breakEnd || null,
+            closedDays: JSON.stringify(closedDays.map(Number)),
+            customServices: services.map(s => ({ name: s.name, duration: s.duration, price: s.price })),
+          }),
       });
 
       const data = await res.json();
@@ -267,6 +271,33 @@ export default function Onboarding() {
                     onChange={(e) => setCloseTime(e.target.value)}
                     className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
                   />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-2">
+                  🍝 Pausa pranzo (opzionale)
+                </label>
+                <p className="text-xs text-slate-500 mb-2">Se lavori in turno unico, lascia vuoto.</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Inizio pausa</label>
+                    <input
+                      type="time"
+                      value={breakStart}
+                      onChange={(e) => setBreakStart(e.target.value)}
+                      className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Fine pausa</label>
+                    <input
+                      type="time"
+                      value={breakEnd}
+                      onChange={(e) => setBreakEnd(e.target.value)}
+                      className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff]"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -447,7 +478,9 @@ export default function Onboarding() {
                 </div>
                 <h2 className="text-xl font-extrabold text-white">{name}</h2>
                 <p className="text-sm text-slate-500">
-                  {openTime} - {closeTime} {closedDays.length > 0 && `· Chiuso ${closedDays.map(d => DAYS.find(day => day.value === d)?.label).join(", ")}`}
+                  {openTime} - {closeTime}
+                  {breakStart && breakEnd ? ` · Pausa ${breakStart}-${breakEnd}` : ""}
+                  {closedDays.length > 0 && ` · Chiuso ${closedDays.map(d => DAYS.find(day => day.value === d)?.label).join(", ")}`}
                 </p>
               </div>
 
