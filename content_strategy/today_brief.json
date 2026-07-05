@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Centri Estetici",
+  "niche": "Coach e Consulenti",
   "angle": "quanto ti costano i no-show ogni mese",
-  "pain": "cabine vuote e clienti che dimenticano l'appuntamento",
-  "promise": "promemoria automatici e acconti prima del trattamento",
-  "cover_title": "CENTRI ESTETICI: BASTA NO-SHOW",
-  "hook_hint": "Se sei tra i centri estetici e cabine vuote e clienti che dimenticano l'appuntamento, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: quanto ti costano i no-show ogni mese con un'agenda automatica",
+  "pain": "ore perse a gestire rinvii e call fissate a mano",
+  "promise": "call prenotate da sole e follow-up più semplice",
+  "cover_title": "BASTA NO-SHOW",
+  "hook_hint": "Se sei un coach o consulente e perdi ore a fissare appuntamenti manualmente o i tuoi clienti spariscono senza preavviso, stai sprecando tempo e soldi preziosi.",
+  "blog_topic": "Coach e Consulenti: quanto ti costano i no-show ogni mese con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+  "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "agenda consulente",
+    "prenotazioni coach",
+    "booking consulenze"
   ]
 }
