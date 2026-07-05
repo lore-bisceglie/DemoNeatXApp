@@ -16,6 +16,7 @@ import {
   Scissors,
   Settings2,
 } from "lucide-react";
+import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 
 type ServiceDraft = {
   id: string;
@@ -87,7 +88,8 @@ export default function TrialLaunchPanel({
   appointmentCount,
 }: Props) {
   const router = useRouter();
-  const publicUrl = `https://www.neatx.store/t/${slug}`;
+  const publicUrl = getTenantPublicUrl(slug);
+  const adminUrl = getTenantAdminUrl(slug);
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -304,7 +306,7 @@ export default function TrialLaunchPanel({
 
         <div className="flex flex-col gap-2 sm:flex-row lg:flex-col xl:flex-row">
           <Link
-            href={`/t/${slug}`}
+            href={publicUrl}
             target="_blank"
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 text-sm font-extrabold text-cyan-200 transition hover:bg-cyan-500/20"
           >
@@ -561,7 +563,7 @@ export default function TrialLaunchPanel({
         </div>
         <a
           href={`https://wa.me/393333333333?text=${encodeURIComponent(
-            `Ciao, voglio attivare NeatX per ${tenantName}. Link: ${publicUrl}`
+            `Ciao, voglio attivare NeatX per ${tenantName}. Dashboard: ${adminUrl}`
           )}`}
           target="_blank"
           rel="noopener noreferrer"

@@ -43,11 +43,18 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   if (!tenant.adminPassword) {
     const newPassword = crypto.randomUUID().substring(0, 8);
     await prisma.tenant.update({ where: { slug }, data: { adminPassword: newPassword } });
-    return <LoginScreen slug={slug} correctPassword={newPassword} tenantName={tenant.name} showNewPassword />;
+    return <LoginScreen slug={slug} tenantName={tenant.name} showLegacyHint />;
   }
 
   if (authCookie !== tenant.adminPassword) {
-    return <LoginScreen slug={slug} correctPassword={tenant.adminPassword} tenantName={tenant.name} />;
+    return (
+      <LoginScreen
+        slug={slug}
+        tenantName={tenant.name}
+        ownerEmail={tenant.ownerEmail}
+        showLegacyHint={!tenant.ownerPasswordHash}
+      />
+    );
   }
 
   const tenantId = tenant.id;
@@ -63,7 +70,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
   const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
-  if (isTrialExpired) {
+  if (isTrialExpired && tenant.plan !== "premium" && tenant.trialStatus !== "converted") {
+    redirect(`/paywall/${slug}`);
+  }
+
+  if (false) {
     return (
       <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4 selection:bg-[#00b4ff]/30 text-center">
         <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-4xl mb-6 border border-red-500/20">⚠️</div>
@@ -654,9 +665,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             <div className="mt-4 bg-[#050814] rounded-2xl p-4 border border-[#1a2642]">
               <p className="text-sm font-bold text-white mb-2">📢 Il tuo link prenotazioni</p>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-cyan-400 text-sm font-medium truncate">neatx.store/t/{slug}</span>
+                <span className="text-cyan-400 text-sm font-medium truncate">{slug}.neatx.store</span>
                 <Link
-                  href={`/t/${slug}`}
+                  href={`https://${slug}.neatx.store`}
                   className="shrink-0 bg-[#00b4ff]/10 text-[#00b4ff] text-xs font-bold px-4 py-2 rounded-lg hover:bg-[#00b4ff]/20 transition"
                 >
                   Apri

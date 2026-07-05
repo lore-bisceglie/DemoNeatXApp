@@ -146,15 +146,16 @@ export default function SuperAdminPage() {
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Link Personalizzato (Slug)</label>
                 <div className="flex items-center">
-                  <span className="text-slate-500 bg-slate-950 border border-r-0 border-slate-800 rounded-l-lg p-3 text-sm">/t/</span>
+                  <span className="text-slate-500 bg-slate-950 border border-r-0 border-slate-800 rounded-l-lg p-3 text-sm">https://</span>
                   <input 
                     type="text" 
                     value={slug} 
                     onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} 
                     placeholder="studio-rossi" 
-                    className="w-full bg-slate-950 border border-slate-800 rounded-r-lg p-3 text-white focus:outline-none focus:border-indigo-500" 
+                    className="w-full bg-slate-950 border border-slate-800 p-3 text-white focus:outline-none focus:border-indigo-500"
                     required 
                   />
+                  <span className="text-slate-500 bg-slate-950 border border-l-0 border-slate-800 rounded-r-lg p-3 text-sm">.neatx.store</span>
                 </div>
               </div>
 
@@ -224,7 +225,7 @@ export default function SuperAdminPage() {
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       <a 
-                        href={`/t/${tenant.slug}`} 
+                        href={`https://${tenant.slug}.neatx.store`}
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 bg-indigo-500/10 px-3 py-1.5 rounded-full"

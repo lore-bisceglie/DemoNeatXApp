@@ -6,6 +6,8 @@ import {
   getDemoShopTemplate,
   sanitizeSlug,
 } from "@/lib/demoShopTemplates";
+import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
+import { hashPassword } from "@/lib/password";
 
 function cleanPhone(value: unknown) {
   if (typeof value !== "string") return null;
@@ -39,11 +41,12 @@ export async function POST(req: Request) {
     const city = cleanText(body.city);
     const ownerName = cleanText(body.ownerName);
     const ownerEmail = cleanText(body.ownerEmail || body.email).toLowerCase();
+    const password = cleanText(body.password);
     const phone = cleanPhone(body.phone);
 
-    if (!businessName || !category || !city || !ownerName || !ownerEmail) {
+    if (!businessName || !category || !city || !ownerName || !ownerEmail || !password) {
       return NextResponse.json(
-        { error: "Inserisci nome attivita, categoria, citta, nome ed email." },
+        { error: "Inserisci nome attivita, categoria, citta, nome, email e password." },
         { status: 400 }
       );
     }
@@ -52,11 +55,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Inserisci una email valida." }, { status: 400 });
     }
 
+    if (password.length < 8) {
+      return NextResponse.json({ error: "La password deve avere almeno 8 caratteri." }, { status: 400 });
+    }
+
     const template = getDemoShopTemplate(category);
     const slug = await uniqueSlug(`${businessName}-${city}`);
     const adminPassword = `${sanitizeSlug(ownerName).slice(0, 4) || "demo"}${Math.floor(
       1000 + Math.random() * 9000
     )}`;
+    const now = new Date();
 
     const trialEndsAt = new Date();
     trialEndsAt.setDate(trialEndsAt.getDate() + 7);
@@ -69,6 +77,7 @@ export async function POST(req: Request) {
         city,
         ownerName,
         ownerEmail,
+        ownerPasswordHash: hashPassword(password),
         description: `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
         phone,
         address: city,
@@ -78,6 +87,7 @@ export async function POST(req: Request) {
         breakEnd: template.breakEnd || null,
         closedDays: JSON.stringify(template.closedDays),
         adminPassword,
+        trialStartedAt: now,
         trialEndsAt,
         trialStatus: "trial_active",
         isDemoData: true,
@@ -157,9 +167,8 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       slug: tenant.slug,
-      password: adminPassword,
-      publicUrl: `/t/${tenant.slug}`,
-      adminUrl: `/t/${tenant.slug}/admin`,
+      publicUrl: getTenantPublicUrl(tenant.slug),
+      adminUrl: getTenantAdminUrl(tenant.slug),
     });
   } catch (error) {
     console.error("Errore Onboarding:", error);

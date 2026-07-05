@@ -62,12 +62,12 @@ export default function Onboarding() {
   const [city, setCity] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<{
     slug: string;
-    password: string;
     publicUrl: string;
     adminUrl: string;
   } | null>(null);
@@ -81,8 +81,13 @@ export default function Onboarding() {
   const handleCreate = async () => {
     setError("");
 
-    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !ownerEmail.trim()) {
-      setError("Compila nome attivita, categoria, citta, nome ed email.");
+    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !ownerEmail.trim() || !password.trim()) {
+      setError("Compila nome attivita, categoria, citta, nome, email e password.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("La password deve avere almeno 8 caratteri.");
       return;
     }
 
@@ -98,6 +103,7 @@ export default function Onboarding() {
           city,
           ownerName,
           ownerEmail,
+          password,
           phone,
         }),
       });
@@ -142,13 +148,6 @@ export default function Onboarding() {
           <p className="mt-4 max-w-xl text-sm font-medium leading-relaxed text-slate-400">
             La tua prova gratuita e pronta: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono gia configurati.
           </p>
-
-          <div className="mt-8 w-full rounded-3xl border border-[#1a2642] bg-[#0b1221] p-5 text-left">
-            <p className="text-xs font-black uppercase tracking-widest text-slate-500">Password dashboard</p>
-            <p className="mt-2 select-all rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 font-mono text-xl font-extrabold text-amber-300">
-              {successData.password}
-            </p>
-          </div>
 
           <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
             <Link
@@ -304,6 +303,20 @@ export default function Onboarding() {
                 />
               </label>
             </div>
+
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <UserRound size={14} />
+                Password dashboard
+              </span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                placeholder="Almeno 8 caratteri"
+              />
+            </label>
           </div>
 
           <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">

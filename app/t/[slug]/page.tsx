@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, use, type CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import WaitlistButton from "../../WaitlistButton";
+import { getTenantAdminUrl } from "@/lib/domains";
 
 type Service = {
   id: string;
@@ -755,8 +756,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               </p>
             </div>
             <div className="flex flex-col gap-2">
-              <Link
-                href="/dashboard"
+            <Link
+            href={getTenantAdminUrl(params.slug)}
                 className="w-full bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] font-bold py-3 rounded-xl transition shadow-lg"
               >
                 Vedi in dashboard
