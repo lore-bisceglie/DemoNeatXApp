@@ -68,7 +68,15 @@ jobs:
                   problems.append(f"Sito https://www.neatx.store non raggiungibile: {exc}")
 
           def check_workflows():
-              workflows = ["auto-seo.yml", "auto-reel.yml", "auto-growth.yml"]
+              workflows = [
+                  "auto-seo.yml",
+                  "auto-reel.yml",
+                  "auto-growth.yml",
+                  "auto-content-calendar.yml",
+                  "auto-viral-radar.yml",
+                  "auto-lead-pipeline.yml",
+                  "auto-build-health.yml",
+              ]
               bad_conclusions = {"failure", "cancelled", "timed_out", "action_required"}
               for workflow in workflows:
                   try:

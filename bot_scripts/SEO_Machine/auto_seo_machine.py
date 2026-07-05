@@ -3,24 +3,36 @@ import re
 import time
 import random
 import subprocess
+import json
 from datetime import datetime
 import google.generativeai as genai
 
 # Percorsi relativi (adatti sia per locale che per GitHub Actions)
 APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 BLOG_DIR = os.path.join(APP_DIR, "content", "blog")
+STRATEGY_BRIEF = os.path.join(APP_DIR, "content_strategy", "today_brief.json")
+
+def load_strategy_brief():
+    if not os.path.exists(STRATEGY_BRIEF):
+        return {}
+    try:
+        with open(STRATEGY_BRIEF, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[!] Strategia contenuti non leggibile: {e}")
+        return {}
 
 def setup_gemini():
     try:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if api_key:
+            genai.configure(api_key=api_key)
+            return True
+
         # Se siamo su GitHub Actions, la chiave è nelle Environment Variables
         if os.environ.get("GITHUB_ACTIONS"):
-            api_key = os.environ.get("GEMINI_API_KEY")
-            if api_key:
-                genai.configure(api_key=api_key)
-                return True
-            else:
-                print("[!] GEMINI_API_KEY non trovata nelle variabili d'ambiente.")
-                return False
+            print("[!] GEMINI_API_KEY non trovata nelle variabili d'ambiente.")
+            return False
                 
         # Fallback per l'esecuzione locale
         bot_script_path = os.path.join(APP_DIR, "bot_scripts", "Social", "ReelGenerator", "auto_bot.py")
@@ -35,6 +47,11 @@ def setup_gemini():
     return False
 
 def inventa_argomento():
+    brief = load_strategy_brief()
+    if brief.get("blog_topic"):
+        print(f"\n[*] Strategia: uso argomento blog del giorno: {brief['blog_topic']}")
+        return brief["blog_topic"]
+
     # Scegliamo un target random per avere varietà
     target = random.choice(["Barbieri", "Estetiste e Centri Estetici", "Tatuatori", "Studi Medici e Fisioterapisti", "Consulenti e Coach"])
     print(f"\n[*] IA: Sto inventando un argomento virale per il target: {target}...")

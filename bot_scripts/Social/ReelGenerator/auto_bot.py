@@ -11,6 +11,7 @@ load_dotenv()
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 TARGET_AUDIENCES = [
     "Parrucchieri",
@@ -31,9 +32,26 @@ GAMEPLAY_STYLES = [
     "neon_racer"
 ]
 
+def load_today_brief():
+    path = os.path.join(REPO_ROOT, "content_strategy", "today_brief.json")
+    if not os.path.exists(path):
+        return {}
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            brief = json.load(f)
+        print(f"[*] Strategia del giorno caricata: {brief.get('niche', 'tema non indicato')}")
+        return brief
+    except Exception as e:
+        print(f"[!] Strategia del giorno non leggibile: {e}")
+        return {}
+
 def generate_daily_content():
-    target = random.choice(TARGET_AUDIENCES)
-    gameplay_style = random.choice(GAMEPLAY_STYLES)
+    strategy = load_today_brief()
+    target = strategy.get("niche") or random.choice(TARGET_AUDIENCES)
+    gameplay_style = strategy.get("gameplay_style") or random.choice(GAMEPLAY_STYLES)
+    if gameplay_style not in GAMEPLAY_STYLES:
+        gameplay_style = random.choice(GAMEPLAY_STYLES)
     print(f"[*] Target di oggi selezionato: {target}")
     print(f"[*] Gameplay di oggi selezionato: {gameplay_style}")
 
@@ -58,6 +76,19 @@ def generate_daily_content():
         except:
             pass
 
+    strategy_context = ""
+    if strategy:
+        strategy_context = f"""
+[STRATEGIA DEL GIORNO]
+Target: {target}
+Angolo: {strategy.get("angle", "")}
+Dolore: {strategy.get("pain", "")}
+Promessa: {strategy.get("promise", "")}
+Titolo copertina suggerito: {strategy.get("cover_title", "")}
+Prompt immagine suggerito: {strategy.get("image_prompt", "")}
+Argomento blog collegato: {strategy.get("blog_topic", "")}
+"""
+
     prompt = f"""
 Sei un esperto di marketing virale su Instagram e TikTok (stile ADHD retention).
 Stai promuovendo 'NeatX', un'app geniale per prenotazioni automatiche online.
@@ -68,6 +99,7 @@ Non citare o descrivere altre professioni.
 Lo sfondo superiore sara un gameplay stile "{gameplay_style}", quindi il testo deve restare leggibile e veloce.
 
 {history_context}
+{strategy_context}
 Regole:
 - Il video dura circa 20-30 secondi.
 - Usa uno stile diretto, provocatorio ma professionale. Fai capire che stanno perdendo tempo a rispondere su WhatsApp o al telefono.
@@ -102,9 +134,16 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     if data["gameplay_style"] not in GAMEPLAY_STYLES:
         data["gameplay_style"] = gameplay_style
     if not data.get("image_prompt"):
-        data["image_prompt"] = f"photorealistic {target} professional working in a modern real workplace"
+        data["image_prompt"] = strategy.get("image_prompt") or f"photorealistic {target} professional working in a modern real workplace"
+    if strategy.get("cover_title") and not data.get("cover_title"):
+        data["cover_title"] = strategy["cover_title"]
     if data.get("cover_title"):
         data["hook_text"] = data["cover_title"]
+    if strategy:
+        data["strategy_date"] = strategy.get("date")
+        data["strategy_angle"] = strategy.get("angle")
+        data["strategy_pain"] = strategy.get("pain")
+        data["strategy_promise"] = strategy.get("promise")
     
     # Rimuovi forzatamente eventuali emoji dal testo parlato per evitare che l'audio le pronunci
     data["script_text"] = re.sub(r'[^\w\s,.\'!?àèìòùÀÈÌÒÙ-]', '', data["script_text"])

@@ -2,45 +2,51 @@ name: NeatX Viral Radar
 
 on:
   schedule:
+    # 10:00, 16:00 e 08:43 Europe/Rome in estate.
     - cron: '0 8 * * *'
     - cron: '0 14 * * *'
+    - cron: '43 6 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  scan-viral-trends:
+  scan-ideas:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          pip install google-generativeai instagrapi python-dotenv
+      - name: Install AI dependencies
+        run: pip install google-generativeai instagrapi python-dotenv
 
-      - name: Scan for viral trends and ideas
+      - name: Scan legacy viral radar
+        continue-on-error: true
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           INSTA_USER: ${{ secrets.INSTA_USER }}
           INSTA_PASS: ${{ secrets.INSTA_PASS }}
           GITHUB_ACTIONS: "true"
-        run: |
-          cd bot_scripts/Social/ViralRadar
-          python viral_radar.py
+        run: python bot_scripts/Social/ViralRadar/viral_radar.py
 
-      - name: Commit & Push changes
+      - name: Refresh unified strategy and radar
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python bot_scripts/Automation/generate_content_calendar.py
+          python bot_scripts/Automation/viral_radar.py
+
+      - name: Commit viral radar
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "Auto-Radar: Idee virali e trend scansionati 🔍"
-          file_pattern: "bot_scripts/Social/ViralRadar/*.json bot_scripts/Social/ViralRadar/*.txt"
+          commit_message: 'Auto-radar: aggiorna idee virali'
+          file_pattern: 'bot_scripts/Social/ViralRadar/*.json bot_scripts/Social/ViralRadar/*.txt content_strategy/*.json content_strategy/*.md'
