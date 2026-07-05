@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Personal Trainer",
-  "angle": "quanto ti costano i no-show ogni mese",
-  "pain": "lezioni spostate in chat e slot persi",
-  "promise": "sessioni prenotate, confermate e ricordate automaticamente",
-  "cover_title": "PERSONAL TRAINER: BASTA NO-SHOW",
-  "hook_hint": "Se sei tra i personal trainer e lezioni spostate in chat e slot persi, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: quanto ti costano i no-show ogni mese con un'agenda automatica",
+  "niche": "Barbieri",
+  "angle": "costo mensile dei no-show",
+  "pain": "perdita di entrate per appuntamenti non rispettati",
+  "promise": "più clienti paganti, meno buchi in agenda",
+  "cover_title": "BARBIERI: BASTA NO-SHOW",
+  "hook_hint": "Se sei un barbiere e stai affrontando no-show, stai perdendo soldi.",
+  "blog_topic": "Barbieri: costo mensile dei no-show con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+  "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
