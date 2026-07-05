@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, template, phone, openTime, closeTime, breakStart, breakEnd, closedDays, customServices } = body;
+    const { name, template, phone, address, instagramUrl, mapsLink, openTime, closeTime, breakStart, breakEnd, closedDays, customServices } = body;
 
     if (!name || !template) {
       return NextResponse.json({ error: 'Campi mancanti' }, { status: 400 });
@@ -63,6 +63,9 @@ export async function POST(req: Request) {
         name,
         slug,
         phone: phone || null,
+        address: address || null,
+        instagramUrl: instagramUrl || null,
+        mapsLink: mapsLink || null,
         openTime: openTime || "09:00",
         closeTime: closeTime || "19:00",
         breakStart: breakStart || null,

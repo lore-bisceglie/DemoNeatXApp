@@ -17,6 +17,9 @@ model Tenant {
   slug          String        @unique              // Es. "greenbeauty" per l'URL personalizzato
   name          String        // Nome dell'attività
   phone         String?       // Numero WhatsApp del salone per ricevere notifiche
+  address       String?       // Indirizzo dell'attività es. "Via Roma 1, Milano"
+  instagramUrl  String?       // Link profilo Instagram
+  mapsLink      String?       // Link Google Maps
   openTime      String?       // Orario apertura es. "09:00"
   closeTime     String?       // Orario chiusura es. "19:00"
   breakStart    String?       // Inizio pausa pranzo es. "13:00" (null = nessuna pausa)

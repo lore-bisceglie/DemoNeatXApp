@@ -65,6 +65,9 @@ export default function Onboarding() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [mapsLink, setMapsLink] = useState("");
   const [openTime, setOpenTime] = useState("09:00");
   const [closeTime, setCloseTime] = useState("19:00");
   const [breakStart, setBreakStart] = useState("");
@@ -116,6 +119,9 @@ export default function Onboarding() {
             name,
             template,
             phone,
+            address,
+            instagramUrl,
+            mapsLink,
             openTime,
             closeTime,
             breakStart: breakStart || null,
@@ -251,6 +257,43 @@ export default function Onboarding() {
                   placeholder="es. 3912345678"
                   className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
                 />
+                </div>
+
+              <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-2">
+                    📍 Indirizzo
+                  </label>
+                  <p className="text-xs text-slate-500 mb-2">I clienti ti troveranno più facilmente.</p>
+                  <input
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="es. Via Roma 1, Milano"
+                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
+                  />
+                </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-2">📸 Instagram</label>
+                  <input
+                    type="text"
+                    value={instagramUrl}
+                    onChange={(e) => setInstagramUrl(e.target.value)}
+                    placeholder="https://instagram.com/..."
+                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-2">🗺️ Google Maps</label>
+                  <input
+                    type="text"
+                    value={mapsLink}
+                    onChange={(e) => setMapsLink(e.target.value)}
+                    placeholder="https://maps.app.goo.gl/..."
+                    className="w-full bg-[#0b1221] border border-[#1a2642] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] placeholder-slate-600"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -477,11 +520,13 @@ export default function Onboarding() {
                   {name.charAt(0).toUpperCase()}
                 </div>
                 <h2 className="text-xl font-extrabold text-white">{name}</h2>
+                {address && <p className="text-xs text-slate-500">{address}</p>}
                 <p className="text-sm text-slate-500">
                   {openTime} - {closeTime}
                   {breakStart && breakEnd ? ` · Pausa ${breakStart}-${breakEnd}` : ""}
                   {closedDays.length > 0 && ` · Chiuso ${closedDays.map(d => DAYS.find(day => day.value === d)?.label).join(", ")}`}
                 </p>
+                {instagramUrl && <p className="text-xs text-slate-500">📸 Instagram</p>}
               </div>
 
               <div className="space-y-2 mb-6">

@@ -137,6 +137,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     breakEnd: "",
     closedDays: [0, 1] as number[],
     instagramUrl: "",
+    mapsLink: "",
     isDemo: false,
     trialExpired: false,
     isPremium: false,
@@ -162,14 +163,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         setTenantInfo({
           id: data.id,
           name: data.name,
-          address: "Prenotazione Ufficiale",
+          address: data.address || "",
           phone: data.phone || "",
           openTime: data.openTime || "09:00",
           closeTime: data.closeTime || "19:00",
           breakStart: data.breakStart || "",
           breakEnd: data.breakEnd || "",
           closedDays: parsedClosedDays,
-          instagramUrl: "",
+          instagramUrl: data.instagramUrl || "",
+          mapsLink: data.mapsLink || "",
           isDemo: false,
           trialExpired: data.trialExpired || false,
           isPremium: data.isPremium || false,
@@ -542,7 +544,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           `💆‍♀️ *Servizio:* ${selectedService.name} (${selectedService.price}€)\n\n` +
           `❌ *Per annullare in autonomia:*\n` +
           `Puoi usare questo link fino a 2 ore prima:\n${cancelUrl}\n\n` +
-          `_Prenotazione gestita tramite NeatX_ 🚀`
+          `_Prenotazione gestita da ${tenantInfo.name}._ 🚀`
       );
 
       const whatsappUrl = `https://wa.me/${shopPhone}?text=${text}`;
@@ -961,29 +963,44 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               ))}
             </div>
 
-            <a
-              href={tenantInfo.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 hover:from-orange-300 hover:via-pink-400 hover:to-purple-500 text-white px-7 py-3 rounded-full text-sm font-extrabold shadow-lg shadow-pink-500/30 transition transform hover:scale-105"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-              </svg>
-              Seguici su Instagram
-            </a>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {tenantInfo.instagramUrl && (
+                <a
+                  href={tenantInfo.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 hover:from-orange-300 hover:via-pink-400 hover:to-purple-500 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-pink-500/30 transition transform hover:scale-105"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                  </svg>
+                  Instagram
+                </a>
+              )}
+              {tenantInfo.mapsLink && (
+                <a
+                  href={tenantInfo.mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-emerald-900/30 transition transform hover:scale-105"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Google Maps
+                </a>
+              )}
+            </div>
           </div>
         </div>
 
