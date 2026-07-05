@@ -103,12 +103,13 @@ export async function POST(request: Request) {
         customerPhone: cleanPhone,
         date: date,
         time: time,
-        endTime: endTime, // 🌟 Salviamo l'impronta temporale
+        endTime: endTime,
         source: source || "ONLINE",
         cancelToken: newCancelToken,
         tenantId: tenantId,
         serviceId: serviceId,
         isPaid: isDemoTenant && paymentMethod === "online",
+        staffId: explicitStaffId || undefined,
       },
     });
 

@@ -31,6 +31,7 @@ export default async function Dashboard(props: {
     },
     include: {
       services: true,
+      staff: true,
     },
   });
 
@@ -45,6 +46,7 @@ export default async function Dashboard(props: {
   const tenantId = tenant.id;
   const tenantName = tenant.name;
   const tenantServices = tenant.services;
+  const staffList = tenant.staff || [];
 
   let storeSettings = await prisma.storeSettings.findUnique({
     where: {
@@ -182,6 +184,7 @@ export default async function Dashboard(props: {
     ],
     include: {
       service: true,
+      staff: true,
     },
   });
 
@@ -880,6 +883,7 @@ export default async function Dashboard(props: {
                               time={slot}
                               tenantId={tenantId}
                               services={tenantServices}
+                              staff={staffList}
                             />
                           </div>
                         );

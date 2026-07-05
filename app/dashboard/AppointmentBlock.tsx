@@ -155,6 +155,11 @@ export default function AppointmentBlock({
             <span className="truncate w-full whitespace-normal leading-tight">
               {appt.customerName}
             </span>
+            {appt.staff?.name && (
+              <span className="text-[8px] opacity-60 mt-0.5 truncate w-full">
+                {appt.staff.name}
+              </span>
+            )}
           </>
         )}
       </button>
@@ -192,11 +197,22 @@ export default function AppointmentBlock({
               )}
             </p>
 
-            {appt.service && !isSpecial && (
-              <div className="mb-4 bg-[#131c31] border border-[#1e2b4a] px-3 py-2 rounded-xl inline-block">
-                <span className="text-xs font-bold text-slate-300">
-                  {appt.service.name} ({appt.service.duration} min)
-                </span>
+            {(appt.service || appt.staff) && !isSpecial && (
+              <div className="mb-4 flex flex-wrap gap-2">
+                {appt.service && (
+                  <div className="bg-[#131c31] border border-[#1e2b4a] px-3 py-2 rounded-xl inline-block">
+                    <span className="text-xs font-bold text-slate-300">
+                      {appt.service.name} ({appt.service.duration} min)
+                    </span>
+                  </div>
+                )}
+                {appt.staff?.name && (
+                  <div className="bg-purple-500/10 border border-purple-500/20 px-3 py-2 rounded-xl inline-block">
+                    <span className="text-xs font-bold text-purple-300">
+                      {appt.staff.name}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 

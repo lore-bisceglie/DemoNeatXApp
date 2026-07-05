@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function WalkInButton({ date, time, tenantId, services }: { date: string; time: string; tenantId: string; services: any[] }) {
+export default function WalkInButton({ date, time, tenantId, services, staff = [] }: { date: string; time: string; tenantId: string; services: any[]; staff?: any[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState(""); 
   const [selectedServiceId, setSelectedServiceId] = useState(services.length > 0 ? services[0].id : "");
+  const [selectedStaffId, setSelectedStaffId] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -22,8 +23,6 @@ export default function WalkInButton({ date, time, tenantId, services }: { date:
     const serviceSelected = services.find(s => s.id === selectedServiceId);
 
     try {
-      // Ritorna a puntare all'API book, dato che ora l'abbiamo modificata 
-      // per accettare appuntamenti senza numero di telefono per gli admin.
       const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,13 +35,14 @@ export default function WalkInButton({ date, time, tenantId, services }: { date:
           honey: "",
           tenantId: tenantId,
           serviceId: selectedServiceId,
-          duration: serviceSelected?.duration || 15
+          duration: serviceSelected?.duration || 15,
+          staffId: selectedStaffId || undefined,
         }),
       });
 
       if (res.ok) {
         setIsOpen(false);
-        setName(""); setPhone("");
+        setName(""); setPhone(""); setSelectedStaffId("");
         router.refresh();
       } else {
         const data = await res.json();
@@ -84,6 +84,16 @@ export default function WalkInButton({ date, time, tenantId, services }: { date:
                   ))}
                 </select>
               </div>
+              {staff.length > 0 && (
+                <div>
+                  <select value={selectedStaffId} onChange={(e) => setSelectedStaffId(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition appearance-none">
+                    <option value="">-- Nessun staff --</option>
+                    {staff.map((s: any) => (
+                      <option key={s.id} value={s.id}>{s.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div>
                 <input type="tel" placeholder="Telefono (Opzionale per SMS)" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition" />
               </div>

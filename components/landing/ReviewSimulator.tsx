@@ -58,7 +58,7 @@ export default function ReviewSimulator() {
 
             {/* STEP 1: Fake SMS Notification */}
             {step === 1 && (
-              <div className="flex-1 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center flex items-start pt-16 px-4 w-full h-full">
+              <div className="flex-1 bg-gradient-to-br from-slate-100 to-slate-200 flex items-start pt-16 px-4 w-full h-full">
                 <div className="w-full bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg animate-in slide-in-from-top-10 duration-500 cursor-pointer" onClick={() => setStep(2)}>
                   <div className="flex gap-3">
                     <div className="w-10 h-10 bg-[#00b4ff] rounded-full flex items-center justify-center text-white">
@@ -105,7 +105,7 @@ export default function ReviewSimulator() {
             {/* STEP 3: Google Maps Success */}
             {step === 3 && (
               <div className="flex-1 bg-white flex flex-col items-center justify-center p-6 text-center animate-in slide-in-from-bottom-10 duration-500 w-full h-full">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png" alt="Google" className="w-16 mb-6" />
+                <svg viewBox="0 0 48 48" className="w-16 mb-6"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/></svg>
                 <h3 className="text-2xl font-bold text-slate-900 mb-4">Sei fantastico!</h3>
                 <p className="text-slate-600 mb-8">Siamo felici che ti sia piaciuto! Condividi questa tua recensione a 5 stelle su Google per aiutarci a crescere.</p>
                 <div className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2">

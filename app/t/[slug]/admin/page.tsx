@@ -181,7 +181,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       tenantId,
     },
     orderBy: [ { date: "asc" }, { time: "asc" } ],
-    include: { service: true },
+    include: { service: true, staff: true },
   });
 
   const columns = staffList.length > 0 ? staffList.map(s => s.id) : ["unassigned"];
@@ -885,6 +885,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                                 time={slot}
                                 tenantId={tenantId}
                                 services={tenantServices}
+                                staff={staffList}
                               />
                             </div>
                           );
