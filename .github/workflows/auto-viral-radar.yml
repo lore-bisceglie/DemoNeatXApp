@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: neatx-content-writes
+  cancel-in-progress: false
+
 jobs:
   scan-ideas:
     runs-on: ubuntu-latest
@@ -30,13 +34,12 @@ jobs:
         run: pip install google-generativeai instagrapi python-dotenv
 
       - name: Scan legacy viral radar
-        continue-on-error: true
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           INSTA_USER: ${{ secrets.INSTA_USER }}
           INSTA_PASS: ${{ secrets.INSTA_PASS }}
           GITHUB_ACTIONS: "true"
-        run: python bot_scripts/Social/ViralRadar/viral_radar.py
+        run: python bot_scripts/Social/ViralRadar/viral_radar.py || true
 
       - name: Refresh unified strategy and radar
         env:

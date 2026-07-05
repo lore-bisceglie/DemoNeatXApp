@@ -10,6 +10,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: neatx-content-writes
+  cancel-in-progress: false
+
 jobs:
   plan-content:
     runs-on: ubuntu-latest
@@ -29,11 +33,10 @@ jobs:
         run: pip install google-generativeai python-dotenv
 
       - name: Generate legacy daily theme
-        continue-on-error: true
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
-        run: python bot_scripts/Content/content_calendar.py
+        run: python bot_scripts/Content/content_calendar.py || true
 
       - name: Generate unified content strategy
         env:

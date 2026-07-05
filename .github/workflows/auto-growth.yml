@@ -11,13 +11,19 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: neatx-content-writes
+  cancel-in-progress: false
+
 jobs:
   run-growth-bots:
     runs-on: ubuntu-latest
     
     steps:
     - name: Controlla il codice sorgente
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
+      with:
+        persist-credentials: true
       
     - name: Installa Python
       uses: actions/setup-python@v5
@@ -30,13 +36,14 @@ jobs:
         pip install instagrapi google-generativeai python-dotenv
         
     - name: Avvia lo Sniper dei Commenti (Ogni 30 min)
+      continue-on-error: true
       env:
         INSTA_USER: ${{ secrets.INSTA_USER }}
         INSTA_PASS: ${{ secrets.INSTA_PASS }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         cd bot_scripts/Social/GrowthHack
-        python sniper_commenti.py
+        python sniper_commenti.py || true
 
     - name: Avvia il Cacciatore Silenzioso (Like + Storie)
       if: github.event_name == 'workflow_dispatch' || github.event.schedule == '15 9,17 * * *'
@@ -76,9 +83,7 @@ jobs:
         python cacciatore_scontenti.py || true
         
     - name: Salva i dati dei nuovi video scoperti e dei clienti scontenti
-      run: |
-        git config --global user.name "GitHub Actions - Growth Bot"
-        git config --global user.email "actions@github.com"
-        git add bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt bot_scripts/Social/GrowthHack/cacciatore_seen.txt || true
-        git commit -m "Auto-Update: Nuovi video virali trovati e commenti salvati" || true
-        git push
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: "Auto-growth: aggiorna dati social"
+        file_pattern: "bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt bot_scripts/Social/GrowthHack/cacciatore_seen.txt"
