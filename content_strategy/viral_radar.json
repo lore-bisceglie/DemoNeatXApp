@@ -1,70 +1,73 @@
 {
-  "generated_at": "2026-07-05T13:59:04.180073+02:00",
+  "generated_at": "2026-07-05T14:51:41.894300+02:00",
   "signals_used": {
     "reel_history_count": 4,
     "viral_hits_count": 0,
-    "blog_titles_count": 3,
-    "today_niche": "Tatuatori"
+    "blog_titles_count": 4,
+    "today_niche": "Centri Estetici"
   },
   "ideas": [
     {
-      "type": "short_video",
-      "title": "TATUATORI: BASTA NO-SHOW, SALVA I TUOI GUADAGNI!",
-      "hook": "Tatuatore, perdi centinaia di euro ogni mese con consulenze infinite e appuntamenti senza caparra? È finita.",
-      "description": "Scopri come eliminare i no-show e filtrare i clienti, garantendoti un acconto prima di ogni slot di tatuaggio, trasformando le tue perdite in profitti certi.",
+      "title": "CENTRI ESTETICI: BASTA NO-SHOW",
+      "hook": "Se gestisci un centro estetico e hai cabine vuote a causa di appuntamenti dimenticati, stai perdendo denaro ogni mese. Scopri come evitarlo.",
+      "topic": "Costi dei no-show mensili e soluzioni per centri estetici",
+      "format": "Video Breve",
       "keywords": [
-        "no-show tatuatori",
-        "guadagni tatuatori",
-        "caparra tatuaggio",
-        "prenotazioni tatuatore"
+        "gestionale centro estetico",
+        "prenotazioni estetista",
+        "agenda centro estetico",
+        "no-show centro estetico"
       ]
     },
     {
-      "type": "blog_post",
-      "title": "Tatuatori: Calcola i Costi Reali dei No-Show Mensili e Scopri Come Azzerarli con un'Agenda Automatica.",
-      "hook": "Tatuatore, se non sai quanto ti costano i no-show ogni mese, stai perdendo denaro prezioso. Ecco la verità e la soluzione.",
-      "description": "Un'analisi dettagliata di quanto ti costano effettivamente i no-show e come un'agenda automatica possa rivoluzionare la gestione delle tue prenotazioni, garantendoti acconti e clienti seri.",
+      "title": "Centri Estetici: I Costi Nascosti dei No-Show e Come Un'Agenda Automatica Può Salvare il Tuo Business",
+      "hook": "Ogni appuntamento mancato nel tuo centro estetico è un costo, non solo una cabina vuota. Approfondisci come un'agenda automatica può trasformare le tue perdite in guadagni certi.",
+      "topic": "Analisi dei costi dei no-show e benefici di un'agenda automatica",
+      "format": "Articolo Blog",
       "keywords": [
-        "agenda tatuatori",
-        "gestione appuntamenti tatuaggio",
-        "ottimizzazione studio tatuaggi",
-        "costi no-show"
+        "costi no-show centro estetico",
+        "gestione appuntamenti estetista",
+        "software gestione centro estetico",
+        "aumentare guadagni centro estetico"
       ]
     },
     {
-      "type": "short_video",
-      "title": "AGENDA TATUATORI: RICEVI ACCONTI E FILTRA CLIENTI INDECISI!",
-      "hook": "Tatuatore, vuoi lavorare solo con clienti seri che pagano un acconto e non ti fanno perdere tempo? Ecco il segreto.",
-      "description": "Impara a impostare un sistema di prenotazione che richiede un acconto automatico e filtra le richieste, lasciandoti libero di concentrarti sull'arte e sulla tua clientela più fedele.",
+      "title": "Centri Estetici: Mai Più No-Show, Raddoppia i Guadagni con l'Agenda Perfetta",
+      "hook": "Se il tuo centro estetico subisce perdite a causa di clienti che non si presentano, scopri la strategia per raddoppiare i tuoi guadagni eliminando i no-show con un'agenda ottimizzata.",
+      "topic": "Strategie per eliminare i no-show e massimizzare i guadagni",
+      "format": "Video Breve",
       "keywords": [
-        "prenotazioni tatuatore",
-        "acconto tatuaggio",
-        "clienti tatuaggio",
-        "efficienza tatuatore"
+        "agenda perfetta centro estetico",
+        "software per estetiste",
+        "ottimizzazione centro estetico",
+        "aumentare fatturato bellezza",
+        "zero no-show"
       ]
     },
     {
-      "type": "blog_post",
-      "title": "L'Agenda Perfetta per Tatuatori: Zero No-Show, Massimi Guadagni Garantiti.",
-      "hook": "Tatuatore, la tua agenda è una macchina per perdere soldi? Trasformala in uno strumento di guadagno con questa guida definitiva.",
-      "description": "Una guida pratica passo-passo per implementare un sistema di prenotazione che elimina i no-show, gestisce gli acconti in modo automatico e ottimizza il tuo tempo e le tue entrate come mai prima d'ora.",
+      "title": "Centro Estetico: I Promemoria Automatici Che Salvano i Tuoi Appuntamenti (e il Tuo Portafoglio)",
+      "hook": "Stanco di telefonare ai clienti per confermare gli appuntamenti? Scopri come i promemoria automatici possono ridurre drasticamente i no-show nel tuo centro estetico, lasciandoti più tempo e più guadagni.",
+      "topic": "L'efficacia dei promemoria automatici nella gestione degli appuntamenti",
+      "format": "Articolo Blog",
       "keywords": [
-        "gestione studio tatuaggi",
-        "agenda professionale tatuatori",
-        "zero no-show",
-        "software prenotazioni"
+        "promemoria automatici estetista",
+        "ridurre no-show estetica",
+        "gestione clienti centro estetico",
+        "efficienza salone bellezza",
+        "prevenzione no-show"
       ]
     },
     {
-      "type": "short_video",
-      "title": "BASTA CONSULENZE INFINITE: TATUATORI, OTTIMIZZA IL TUO TEMPO!",
-      "hook": "Tatuatore, stanco di infinite consulenze che non si concretizzano mai in un tatuaggio e ti prosciugano l'energia? C'è un modo più smart.",
-      "description": "Scopri come filtrare i potenziali clienti fin dalla prima interazione e richiedere un impegno (come un acconto) che valorizzi il tuo tempo e la tua professionalità, riducendo le chiacchiere inutili.",
+      "title": "CENTRO ESTETICO: BASTA CABINE VUOTE!",
+      "hook": "Se le tue cabine estetiche restano vuote per appuntamenti saltati, stai sprecando tempo e denaro. Scopri come un'agenda intelligente ti restituisce il controllo.",
+      "topic": "Ottimizzazione delle cabine estetiche e prevenzione degli appuntamenti mancati",
+      "format": "Video Breve",
       "keywords": [
-        "tempo tatuatore",
-        "consulenze tatuaggio",
-        "efficienza studio tatuaggi",
-        "gestione clienti"
+        "ottimizzare cabine estetica",
+        "prevenire appuntamenti mancati",
+        "software gestione salone",
+        "produttività centro estetico",
+        "agenda automatica estetista"
       ]
     }
   ]
