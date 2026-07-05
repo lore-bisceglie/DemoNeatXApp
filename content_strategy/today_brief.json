@@ -1,17 +1,17 @@
 {
   "date": "2026-07-05",
-  "niche": "Centri Estetici",
-  "angle": "costi dei no-show mensili",
-  "pain": "cabine vuote e appuntamenti dimenticati",
-  "promise": "promemoria automatici e acconti",
-  "cover_title": "CENTRI ESTETICI: BASTA NO-SHOW",
-  "hook_hint": "Se gestisci un centro estetico con cabine vuote, stai perdendo denaro ogni mese.",
-  "blog_topic": "Centri Estetici: costi dei no-show mensili con un'agenda automatica",
+  "niche": "Tatuatori",
+  "angle": "costo mensile dei no-show",
+  "pain": "consulenze infinite e appuntamenti senza caparra",
+  "promise": "richieste filtrate e acconto prima dell'appuntamento",
+  "cover_title": "TATUATORI: BASTA NO-SHOW",
+  "hook_hint": "Se sei un tatuatore e hai consulenze infinite e appuntamenti senza caparra, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: costo mensile dei no-show con un'agenda automatica",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
