@@ -476,14 +476,14 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       },
       body: JSON.stringify({
         customerName: name,
-        customerPhone: tenantInfo.isDemo && !phone ? "3330000000" : phone,
+        customerPhone: phone,
         date,
         time: selectedSlot,
         honey,
         tenantId: tenantInfo.id,
         serviceId: selectedService.id,
         duration: selectedService.duration,
-        paymentMethod,
+        ...(tenantInfo.isDemo ? { paymentMethod } : {}),
       }),
     });
 
@@ -1258,56 +1258,58 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               />
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-bold mb-3 text-slate-300 text-center">
-                Simula metodo di pagamento
-              </label>
+            {tenantInfo.isDemo && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold mb-3 text-slate-300 text-center">
+                  Simula metodo di pagamento
+                </label>
 
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("salon")}
-                  className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
-                    paymentMethod === "salon"
-                      ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.15)]"
-                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
-                  }`}
-                >
-                  <span className="text-xs font-bold">In sede</span>
-                  <span className="text-[9px] opacity-70">Pagamento dopo</span>
-                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("salon")}
+                    className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                      paymentMethod === "salon"
+                        ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.15)]"
+                        : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
+                    }`}
+                  >
+                    <span className="text-xs font-bold">In sede</span>
+                    <span className="text-[9px] opacity-70">Pagamento dopo</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("online")}
-                  className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
-                    paymentMethod === "online"
-                      ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
-                  }`}
-                >
-                  <span className="text-xs font-bold">Online demo</span>
-                  <span className="text-[9px] opacity-70">
-                    {selectedService?.price
-                      ? `${selectedService.price} EUR simulati`
-                      : "Simulazione"}
-                  </span>
-                </button>
-              </div>
-
-              {paymentMethod === "online" && (
-                <div className="mt-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-left">
-                  <p className="text-emerald-300 text-xs font-bold uppercase tracking-widest mb-1">
-                    Pagamento online simulato
-                  </p>
-                  <p className="text-slate-300 text-xs leading-relaxed">
-                    Nella demo non viene aperto Stripe e non ci sono addebiti:
-                    l'appuntamento viene salvato come gia pagato per mostrare
-                    la dashboard.
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("online")}
+                    className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
+                      paymentMethod === "online"
+                        ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                        : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
+                    }`}
+                  >
+                    <span className="text-xs font-bold">Online demo</span>
+                    <span className="text-[9px] opacity-70">
+                      {selectedService?.price
+                        ? `${selectedService.price} EUR simulati`
+                        : "Simulazione"}
+                    </span>
+                  </button>
                 </div>
-              )}
-            </div>
+
+                {paymentMethod === "online" && (
+                  <div className="mt-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-left">
+                    <p className="text-emerald-300 text-xs font-bold uppercase tracking-widest mb-1">
+                      Pagamento online simulato
+                    </p>
+                    <p className="text-slate-300 text-xs leading-relaxed">
+                      Nella demo non viene aperto Stripe e non ci sono addebiti:
+                      l'appuntamento viene salvato come gia pagato per mostrare
+                      la dashboard.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {formError && (
               <div className="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl flex items-start gap-3 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
@@ -1329,7 +1331,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             >
               {isBooking
                 ? "⏳ Elaborazione..."
-                : paymentMethod === "online"
+                : tenantInfo.isDemo && paymentMethod === "online"
                 ? "Prenota e simula pagamento"
                 : isSelectedLastMinute
                 ? "🔥 Prenota Subito!"
