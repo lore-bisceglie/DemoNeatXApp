@@ -1,18 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-
 export default function LoginScreen({ slug, correctPassword, tenantName }: { slug: string, correctPassword: string, tenantName: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === correctPassword) {
-      document.cookie = `admin_auth_${slug}=${password}; path=/; max-age=31536000`;
-      router.refresh();
+      document.cookie = `admin_auth_${slug}=${password}; path=/; max-age=31536000; SameSite=Lax`;
+      window.location.reload();
     } else {
       setError("Password errata.");
     }
