@@ -131,6 +131,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     name: "Caricamento...",
     address: "",
     phone: "",
+    openTime: "09:00",
+    closeTime: "19:00",
+    closedDays: [0, 1] as number[],
     instagramUrl: "",
     isDemo: false,
     trialExpired: false,
@@ -150,11 +153,18 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           setLoadingTenant(false);
           return;
         }
+        let parsedClosedDays = [0, 1];
+        try {
+          if (data.closedDays) parsedClosedDays = JSON.parse(data.closedDays);
+        } catch (e) {}
         setTenantInfo({
           id: data.id,
           name: data.name,
           address: "Prenotazione Ufficiale",
-          phone: "",
+          phone: data.phone || "",
+          openTime: data.openTime || "09:00",
+          closeTime: data.closeTime || "19:00",
+          closedDays: parsedClosedDays,
           instagramUrl: "",
           isDemo: false,
           trialExpired: data.trialExpired || false,
@@ -319,8 +329,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   return;
 }
 
-    if (day === 0 || day === 1) {
-  setDateError("La domenica e il lunedì sono chiuso! Scegli un altro giorno.");
+    if (tenantInfo.closedDays.includes(day)) {
+  setDateError("Oggi siamo chiusi! Scegli un altro giorno.");
   setSlots([]);
   setIsHoliday(false);
   setInitialLoad(false);
@@ -564,9 +574,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
   // ✅ Messaggio dinamico quando non ci sono orari disponibili
-  // Modifica qui l'orario di chiusura dell'attivita, se necessario.
-  const closingHour = 19;
-  const closingMinute = 0;
+  const [closingHourStr, closingMinuteStr] = (tenantInfo.closeTime || "19:00").split(":").map(Number);
+  const closingHour = closingHourStr;
+  const closingMinute = closingMinuteStr;
 
   const nowForMessage = new Date();
   const localTodayForMessage = new Date(

@@ -24,10 +24,29 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Mancano parametri essenziali" }, { status: 400 });
   }
 
-  // 🌟 ORARI CENTRO ESTETICO: Dalle 09:00 alle 19:00 con step di 15 min
-  const openTime = 9 * 60; // 09:00
-  const closeTime = 19 * 60; // 19:00
+  // Recupera orari personalizzati del tenant
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { openTime: true, closeTime: true, closedDays: true }
+  });
+
+  const openTime = tenant?.openTime ? timeToMins(tenant.openTime) : 9 * 60;
+  const closeTime = tenant?.closeTime ? timeToMins(tenant.closeTime) : 19 * 60;
   const interval = 15;
+
+  // Controlla se il giorno è un giorno di chiusura settimanale
+  if (tenant?.closedDays) {
+    try {
+      const closedDaysArray = JSON.parse(tenant.closedDays);
+      const dateObj = new Date(date + 'T12:00:00');
+      const dayOfWeek = dateObj.getDay();
+      if (closedDaysArray.includes(dayOfWeek)) {
+        return NextResponse.json({ slots: [], isHoliday: false, isClosedDay: true });
+      }
+    } catch (e) {
+      // Ignora JSON malformato
+    }
+  }
 
   try {
     const appointments = await prisma.appointment.findMany({

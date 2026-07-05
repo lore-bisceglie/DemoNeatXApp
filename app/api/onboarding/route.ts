@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, template } = body;
+    const { name, template, phone, openTime, closeTime, closedDays, customServices } = body;
 
     if (!name || !template) {
       return NextResponse.json({ error: 'Campi mancanti' }, { status: 400 });
@@ -27,29 +27,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Errore durante la generazione. Riprova.' }, { status: 400 });
     }
 
-    // Definisci i servizi in base al template scelto
-    let defaultServices = [];
-    if (template === 'barbiere') {
-      defaultServices = [
-        { name: 'Taglio Capelli', duration: 30, price: 20 },
-        { name: 'Taglio e Barba', duration: 45, price: 30 },
-      ];
-    } else if (template === 'estetista') {
-      defaultServices = [
-        { name: 'Massaggio Relax', duration: 60, price: 50 },
-        { name: 'Pulizia Viso', duration: 45, price: 35 },
-        { name: 'Manicure', duration: 30, price: 20 },
-      ];
-    } else if (template === 'psicologo') {
-      defaultServices = [
-        { name: 'Prima Visita', duration: 60, price: 80 },
-        { name: 'Seduta di Supporto', duration: 60, price: 70 },
-      ];
-    } else {
-      defaultServices = [
-        { name: 'Appuntamento Standard', duration: 30, price: 0 }
-      ];
-    }
+    // Usa i servizi personalizzati se forniti, altrimenti template default
+    const servicesToCreate = customServices && Array.isArray(customServices) && customServices.length > 0
+      ? customServices.map((s: { name: string; duration: number; price: number }) => ({
+          name: s.name,
+          duration: Math.max(5, Math.min(480, s.duration || 30)),
+          price: Math.max(0, s.price || 0),
+        }))
+      : (() => {
+          const defaults: Record<string, { name: string; duration: number; price: number }[]> = {
+            barbiere: [
+              { name: 'Taglio Capelli', duration: 30, price: 20 },
+              { name: 'Taglio e Barba', duration: 45, price: 30 },
+            ],
+            estetista: [
+              { name: 'Massaggio Relax', duration: 60, price: 50 },
+              { name: 'Pulizia Viso', duration: 45, price: 35 },
+              { name: 'Manicure', duration: 30, price: 20 },
+            ],
+            psicologo: [
+              { name: 'Prima Visita', duration: 60, price: 80 },
+              { name: 'Seduta di Supporto', duration: 60, price: 70 },
+            ],
+          };
+          return defaults[template] || [{ name: 'Appuntamento Standard', duration: 30, price: 0 }];
+        })();
 
     // Imposta la fine della trial a 7 giorni da oggi
     const trialEndsAt = new Date();
@@ -60,10 +62,14 @@ export async function POST(req: Request) {
       data: {
         name,
         slug,
+        phone: phone || null,
+        openTime: openTime || "09:00",
+        closeTime: closeTime || "19:00",
+        closedDays: closedDays || "[0,1]",
         adminPassword,
         trialEndsAt,
         services: {
-          create: defaultServices
+          create: servicesToCreate
         }
       }
     });
