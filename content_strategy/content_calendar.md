@@ -4,47 +4,47 @@
 - Angolo: quanto ti costano i no-show ogni mese
 - Dolore: clienti che scrivono su WhatsApp a qualsiasi ora
 - Promessa: agenda piena senza perdere tempo in chat
-- Cover: PARRUCCHIERI: BASTA NO-SHOW
+- Cover: STOP CHAT, SALONE PIENO
 - Blog: Parrucchieri: quanto ti costano i no-show ogni mese con un'agenda automatica
 
-## 2026-07-06 - Personal Trainer
+## 2026-07-06 - Tatuatori
 - Angolo: quanto ti costano i no-show ogni mese
-- Dolore: lezioni spostate in chat e slot persi
-- Promessa: sessioni prenotate, confermate e ricordate automaticamente
-- Cover: PERSONAL TRAINER: BASTA NO-SHOW
-- Blog: Personal Trainer: quanto ti costano i no-show ogni mese con un'agenda automatica
+- Dolore: consulenze infinite e appuntamenti senza caparra
+- Promessa: richieste filtrate e acconto prima dello slot
+- Cover: TATUATORI: ZERO NO-SHOW
+- Blog: Tatuatori: quanto ti costano i no-show ogni mese con un'agenda automatica
 
-## 2026-07-07 - Fisioterapisti
+## 2026-07-07 - Barbieri
 - Angolo: come usare acconti e promemoria senza sembrare aggressivo
-- Dolore: sedute saltate e agenda piena di cambi manuali
-- Promessa: prenotazioni ordinate e promemoria per ogni paziente
-- Cover: FISIOTERAPISTI: BASTA NO-SHOW
-- Blog: Fisioterapisti: come usare acconti e promemoria senza sembrare aggressivo con un'agenda automatica
-
-## 2026-07-08 - Barbieri
-- Angolo: quanto tempo perdi rispondendo ai messaggi
 - Dolore: no-show e appuntamenti presi al volo in DM
 - Promessa: meno buchi in agenda e più clienti paganti
-- Cover: BARBIERI: BASTA NO-SHOW
-- Blog: Barbieri: quanto tempo perdi rispondendo ai messaggi con un'agenda automatica
+- Cover: BARBIERI: ADDIO NO-SHOW
+- Blog: Barbieri: come usare acconti e promemoria senza sembrare aggressivo con un'agenda automatica
+
+## 2026-07-08 - Personal Trainer
+- Angolo: quanto tempo perdi rispondendo ai messaggi
+- Dolore: lezioni spostate in chat e slot persi
+- Promessa: sessioni prenotate, confermate e ricordate automaticamente
+- Cover: PT: STOP MESSAGGI
+- Blog: Personal Trainer: quanto tempo perdi rispondendo ai messaggi con un'agenda automatica
 
 ## 2026-07-09 - Coach e Consulenti
 - Angolo: perché il link in bio deve prenotare da solo
 - Dolore: call fissate a mano e clienti che rimandano
 - Promessa: call prenotate da sole e follow-up più semplice
-- Cover: BASTA NO-SHOW
+- Cover: COACH: CALL AUTOMATICHE
 - Blog: Coach e Consulenti: perché il link in bio deve prenotare da solo con un'agenda automatica
 
-## 2026-07-10 - Tatuatori
+## 2026-07-10 - Fisioterapisti
 - Angolo: come trasformare follower curiosi in appuntamenti veri
-- Dolore: consulenze infinite e appuntamenti senza caparra
-- Promessa: richieste filtrate e acconto prima dello slot
-- Cover: TATUATORI: BASTA NO-SHOW
-- Blog: Tatuatori: come trasformare follower curiosi in appuntamenti veri con un'agenda automatica
+- Dolore: sedute saltate e agenda piena di cambi manuali
+- Promessa: prenotazioni ordinate e promemoria per ogni paziente
+- Cover: FISIO: PAZIENTI REALI
+- Blog: Fisioterapisti: come trasformare follower curiosi in appuntamenti veri con un'agenda automatica
 
 ## 2026-07-11 - Centri Estetici
 - Angolo: quanto ti costano i no-show ogni mese
 - Dolore: cabine vuote e clienti che dimenticano l'appuntamento
 - Promessa: promemoria automatici e acconti prima del trattamento
-- Cover: CENTRI ESTETICI: BASTA NO-SHOW
+- Cover: ESTETISTA: ZERO CANCELLAZIONI
 - Blog: Centri Estetici: quanto ti costano i no-show ogni mese con un'agenda automatica
