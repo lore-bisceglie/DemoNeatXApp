@@ -160,7 +160,7 @@ export default function TeamDrawer({
       )}
 
       <div
-        className={`fixed inset-y-0 right-0 w-full max-w-xl bg-[#0b1221] shadow-2xl border-l border-[#1e2b4a] z-[101] transform transition-transform duration-300 flex flex-col \${
+        className={`fixed inset-y-0 right-0 w-full max-w-xl bg-[#0b1221] shadow-2xl border-l border-[#1e2b4a] z-[101] transform transition-transform duration-300 flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -221,7 +221,7 @@ export default function TeamDrawer({
                 staffList.map((staff) => (
                   <div
                     key={staff.id}
-                    className={`w-full bg-[#131c31] border rounded-xl p-3 flex items-center justify-between transition group \${
+                    className={`w-full bg-[#131c31] border rounded-xl p-3 flex items-center justify-between transition group ${
                       selectedStaff?.id === staff.id
                         ? "border-indigo-500/70 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
                         : "border-[#1e2b4a] hover:border-indigo-500/50"
@@ -289,19 +289,19 @@ export default function TeamDrawer({
                       return (
                         <label
                           key={service.id}
-                          className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition border \${
+                          className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition border ${
                             hasService
                               ? "bg-indigo-500/10 border-indigo-500/30"
                               : "bg-[#131c31] border-[#1e2b4a] hover:border-indigo-500/30 opacity-70 hover:opacity-100"
                           }`}
                         >
-                          <span className={`font-bold text-sm \${hasService ? "text-indigo-300" : "text-slate-300"}`}>
+                          <span className={`font-bold text-sm ${hasService ? "text-indigo-300" : "text-slate-300"}`}>
                             {service.name}
                           </span>
                           
                           {/* Toggle Switch */}
-                          <div className={`w-12 h-6 rounded-full relative transition-colors \${hasService ? "bg-indigo-500" : "bg-[#1e2b4a]"}`}>
-                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all \${hasService ? "left-7" : "left-1"}`} />
+                          <div className={`w-12 h-6 rounded-full relative transition-colors ${hasService ? "bg-indigo-500" : "bg-[#1e2b4a]"}`}>
+                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${hasService ? "left-7" : "left-1"}`} />
                           </div>
 
                           {/* Hidden input to make it accessible / handle click */}

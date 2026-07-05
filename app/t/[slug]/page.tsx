@@ -141,12 +141,27 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     mapsLink: "",
     isDemo: false,
     trialExpired: false,
+    trialStatus: "demo",
+    category: "",
+    description: "",
+    city: "",
     isPremium: false,
     staff: [] as any[],
   });
 
   const [loadingTenant, setLoadingTenant] = useState(true);
   const [tenantError, setTenantError] = useState("");
+  const isPlaygroundDemo = tenantInfo.isDemo && tenantInfo.trialStatus === "demo";
+  const shopInitials = tenantInfo.name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "NX";
+  const trustBadges = isPlaygroundDemo
+    ? ["Slot automatici", "Lista d'attesa", "Pagamento demo", "Dashboard titolare"]
+    : ["Prenotazione online", "Lista d'attesa", "Promemoria automatici", "Agenda aggiornata"];
 
   useEffect(() => {
     fetch(`/api/tenant/${params.slug}`)
@@ -175,6 +190,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           mapsLink: data.mapsLink || "",
           isDemo: Boolean(data.isDemoData),
           trialExpired: data.trialExpired || false,
+          trialStatus: data.trialStatus || "demo",
+          category: data.category || "",
+          description: data.description || "",
+          city: data.city || "",
           isPremium: data.isPremium || false,
           staff: data.staff || [],
         });
@@ -196,7 +215,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     activityProfiles[0];
 
   const visibleServices = useMemo(() => {
-    if (!activeProfile.matchWords.length) return services;
+    if (!isPlaygroundDemo || !activeProfile.matchWords.length) return services;
 
     const filtered = services.filter((service) =>
       activeProfile.matchWords.some((word) =>
@@ -205,7 +224,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     );
 
     return filtered.length > 0 ? filtered : services;
-  }, [activeProfile, services]);
+  }, [activeProfile, isPlaygroundDemo, services]);
 
   const demoCustomers = [
     { name: "Giulia Demo", phone: "3331234567" },
@@ -288,7 +307,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           setSelectedService(data.services[0]);
         } else {
           setInitialLoad(false);
-          setDateError("Nessun servizio configurato per questa demo.");
+          setDateError("Nessun servizio configurato per questo negozio.");
         }
       })
       .catch((err) => {
@@ -421,7 +440,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         title: isScarce ? "Sabato quasi pieno" : "Sabato molto richiesto",
         message: isScarce
           ? `Per sabato rimangono ${slots.length} incastri: ${slotSummary}.`
-          : "Il sabato si riempie prima: nella demo vedi come spingere il cliente a scegliere subito.",
+          : isPlaygroundDemo
+          ? "Il sabato si riempie prima: nella demo vedi come spingere il cliente a scegliere subito."
+          : "Il sabato si riempie prima: scegli subito un orario disponibile.",
         tone: "cyan" as const,
       }
     : isScarce
@@ -446,7 +467,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     if (!name || !selectedSlot || !selectedService || (!tenantInfo.isDemo && !phone)) {
       setFormError(
         tenantInfo.isDemo
-          ? "Per favore, seleziona un servizio, un orario e inserisci un nome demo."
+          ? "Per favore, seleziona un servizio, un orario e inserisci il tuo nome."
           : "Per favore, seleziona un servizio, un orario e inserisci Nome e Telefono."
       );
       return;
@@ -501,9 +522,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           time: selectedSlot,
           serviceName: selectedService.name,
           paymentLabel:
-            paymentMethod === "online"
+            isPlaygroundDemo && paymentMethod === "online"
               ? "Pagamento online simulato"
-              : "Pagamento in sede",
+              : isPlaygroundDemo
+              ? "Pagamento in sede"
+              : "Prenotazione test salvata",
           customerName: name,
           customerPhone: tenantInfo.isDemo && !phone ? "3330000000" : phone,
           cancelPath: `/cancel/${cancelToken}`,
@@ -615,8 +638,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         badge: "SABATO COMPLETO",
         badgeClass:
           "bg-red-500/10 text-red-300 border border-red-500/20",
-        title: "Il sabato della demo e gia pieno.",
-        text: "Questo mostra come NeatX comunica i giorni piu richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa.",
+        title: isPlaygroundDemo ? "Il sabato della demo e gia pieno." : "Il sabato e gia pieno.",
+        text: isPlaygroundDemo
+          ? "Questo mostra come NeatX comunica i giorni piu richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa."
+          : "Il sabato e molto richiesto: scegli un nuovo giorno o entra in lista d'attesa.",
       }
     : {
         icon: "📅",
@@ -669,7 +694,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
   return (
     <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-500">
-      {tenantInfo.isDemo && showActivityModal && (
+      {isPlaygroundDemo && showActivityModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-lg w-full text-center animate-in fade-in zoom-in duration-200">
             <div className="text-4xl mb-3">🚀</div>
@@ -715,7 +740,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
           <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-md w-full text-center transform scale-100 animate-in fade-in zoom-in duration-200">
             <div className="text-4xl mb-4">🚀</div>
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Prenotazione Demo Salvata</h3>
+            <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+              {isPlaygroundDemo ? "Prenotazione Demo Salvata" : "Prenotazione salvata"}
+            </h3>
             <p className="text-sm text-slate-400 mb-4 leading-relaxed">
               Hai prenotato <strong>{demoModal.serviceName}</strong> per il <strong>{demoModal.date.split("-").reverse().join("/")}</strong> alle <strong>{demoModal.time}</strong>.<br /><br />
               Metodo: <strong>{demoModal.paymentLabel}</strong>.
@@ -724,10 +751,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <div className="mb-4 rounded-2xl border border-emerald-500/25 bg-emerald-950/30 p-4 text-left">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <p className="text-[10px] uppercase tracking-widest font-extrabold text-emerald-300">
-                  Anteprima WhatsApp
+                  {isPlaygroundDemo ? "Anteprima WhatsApp" : "Conferma prenotazione"}
                 </p>
                 <span className="text-[10px] text-emerald-200 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">
-                  simulata
+                  {isPlaygroundDemo ? "simulata" : "test"}
                 </span>
               </div>
               <div className="bg-[#075e54] rounded-2xl p-3 text-white text-[12px] leading-relaxed shadow-lg">
@@ -752,7 +779,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 {demoModal.paymentLabel.includes("online")
                   ? `Nella dashboard lo vedrai gia come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
-                  : "Nella dashboard il titolare potra segnarlo pagato con un tocco."}
+                  : isPlaygroundDemo
+                  ? "Nella dashboard il titolare potra segnarlo pagato con un tocco."
+                  : "La prenotazione test ora appare nella dashboard del negozio."}
               </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -788,7 +817,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#00b4ff] opacity-[0.04] blur-[120px] pointer-events-none rounded-full"></div>
 
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl shadow-cyan-900/10 border border-[#1a2642] p-6 sm:p-8 relative z-10">
-        {tenantInfo.isDemo && (
+        {isPlaygroundDemo && (
           <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs p-3 rounded-xl font-semibold leading-relaxed">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <p className="text-center sm:text-left">
@@ -796,7 +825,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 salva nella dashboard titolare.
               </p>
               <Link
-                href="/dashboard"
+                href={getTenantAdminUrl(params.slug)}
                 className="shrink-0 bg-yellow-300 text-[#050814] hover:bg-yellow-200 px-3 py-2 rounded-lg font-extrabold text-center"
               >
                 Apri dashboard
@@ -845,7 +874,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <button
               type="button"
               onClick={handleLogoClick}
-              aria-label="Attiva effetto logo demo NeatX"
+              aria-label={isPlaygroundDemo ? "Attiva effetto logo demo NeatX" : `Attiva effetto logo ${tenantInfo.name}`}
               className="group relative w-32 h-32 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
               style={{
                 transition: "transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -890,11 +919,17 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               />
 
               <span className="relative w-24 h-24 rounded-full p-1 bg-[#0b1221] shadow-[0_20px_42px_rgba(0,180,255,.26)] overflow-hidden">
-                <img
-                  src="/apple-icon.png"
-                  alt="Logo Demo NeatX"
-                  className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
-                />
+                {isPlaygroundDemo ? (
+                  <img
+                    src="/apple-icon.png"
+                    alt="Logo Demo NeatX"
+                    className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
+                  />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center rounded-full border-4 border-[#0b1221] bg-gradient-to-br from-[#101a2d] to-[#07111f] text-3xl font-black tracking-tight text-cyan-200">
+                    {shopInitials}
+                  </span>
+                )}
 
                 <span
                   className={`absolute inset-y-[-20%] left-0 w-10 bg-white/35 blur-sm ${
@@ -930,7 +965,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
             {logoClicked && (
               <div className="absolute -bottom-8 text-sm font-bold text-[#00b4ff] animate-in fade-in slide-in-from-top-2 zoom-in duration-500 z-10 whitespace-nowrap">
-                Demo pronta da provare 🚀
+                {isPlaygroundDemo ? "Demo pronta da provare" : `${tenantInfo.name} online`}
               </div>
             )}
           </div>
@@ -949,12 +984,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             </p>
 
             <div className="grid grid-cols-2 gap-2 w-full">
-              {[
-                "Slot automatici",
-                "Lista d'attesa",
-                "Pagamento demo",
-                "Dashboard titolare",
-              ].map((badge) => (
+              {trustBadges.map((badge) => (
                 <span
                   key={badge}
                   className="bg-[#131c31] border border-[#1e2b4a] text-slate-300 rounded-xl px-3 py-2 text-[10px] font-extrabold uppercase tracking-wide"
@@ -1005,7 +1035,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           </div>
         </div>
 
-        {tenantInfo.isDemo && (
+        {isPlaygroundDemo && (
           <div className="mb-6">
             <div className="flex items-center justify-between gap-3 mb-3">
               <label className="block text-sm font-bold text-slate-300">
@@ -1256,7 +1286,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
               />
 
-              {tenantInfo.isDemo && (
+              {isPlaygroundDemo && (
                 <button
                   type="button"
                   onClick={fillDemoCustomer}
@@ -1276,7 +1306,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               />
             </div>
 
-            {tenantInfo.isDemo && (
+            {isPlaygroundDemo && (
               <div className="mb-6">
                 <label className="block text-sm font-bold mb-3 text-slate-300 text-center">
                   Simula metodo di pagamento
@@ -1349,7 +1379,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             >
               {isBooking
                 ? "⏳ Elaborazione..."
-                : tenantInfo.isDemo && paymentMethod === "online"
+                : isPlaygroundDemo && paymentMethod === "online"
                 ? "Prenota e simula pagamento"
                 : isSelectedLastMinute
                 ? "🔥 Prenota Subito!"
@@ -1358,7 +1388,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
             <p className="text-[10px] text-slate-500 mt-5 text-center mb-8">
               {tenantInfo.isDemo
-                ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
+                ? isPlaygroundDemo
+                  ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
+                  : "Prenotazione test: lo slot viene salvato nella dashboard del negozio."
                 : "Verrai reindirizzato a WhatsApp per confermare."}
             </p>
 
@@ -1381,7 +1413,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             </span>
           </p>
           <Link 
-            href="/dashboard"
+            href={getTenantAdminUrl(params.slug)}
             className="mt-1 inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 rounded-xl transition-all font-bold uppercase tracking-widest shadow-lg shadow-black/20"
           >
             ⚙️ Dashboard

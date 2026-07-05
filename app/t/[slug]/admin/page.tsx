@@ -600,7 +600,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </Link>
 
             <Link
-              href="/"
+              href={`/t/${slug}`}
               className="flex-shrink-0 bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-cyan-500/20 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
             >
               [+] Nuova Prenotazione
@@ -873,7 +873,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
               <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
                 <Link
-                  href={`/dashboard?weekOffset=${weekOffset - 1}`}
+                  href={`/t/${slug}/admin?weekOffset=${weekOffset - 1}`}
                   prefetch={false}
                   scroll={false}
                   className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
@@ -895,7 +895,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </Link>
 
                 <Link
-                  href={`/dashboard?weekOffset=${weekOffset + 1}`}
+                  href={`/t/${slug}/admin?weekOffset=${weekOffset + 1}`}
                   prefetch={false}
                   scroll={false}
                   className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
