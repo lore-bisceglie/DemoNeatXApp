@@ -12,7 +12,7 @@
         "title": "PT: ZERO SPRECHI!",
         "hook": "Personal Trainer, basta email e WhatsApp!",
         "date": "2026-07-03",
-        "views": 27,
+        "views": 28,
         "likes": 0
     },
     {
@@ -30,5 +30,19 @@
         "date": "2026-07-04",
         "views": 1,
         "likes": 0
+    },
+    {
+        "youtube_id": "mV27UAEFFNw",
+        "title": "FISIOTERAPISTI: BASTA NO-SHOW",
+        "hook": "FISIOTERAPISTI: BASTA NO-SHOW",
+        "date": "2026-07-05",
+        "views": 0
+    },
+    {
+        "youtube_id": "tsEmdvhqYW8",
+        "title": "CENTRI ESTETICI: BASTA NO-SHOW",
+        "hook": "CENTRI ESTETICI: BASTA NO-SHOW",
+        "date": "2026-07-05",
+        "views": 0
     }
 ]

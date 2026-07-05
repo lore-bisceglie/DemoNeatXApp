@@ -1,14 +1,14 @@
 {
-    "niche": "Fisioterapisti",
-    "script_text": "Se sei tra i fisioterapisti e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' sedute saltate e agenda piena di cambi manuali. Con NeatX puoi avere prenotazioni ordinate e promemoria per ogni paziente, senza rincorrere clienti tutto il giorno. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "FISIOTERAPISTI: BASTA NO-SHOW",
-    "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
-    "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+    "niche": "Centri Estetici",
+    "script_text": "Se sei tra i centri estetici e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' cabine vuote e appuntamenti dimenticati. Con NeatX puoi avere promemoria automatici e acconti, senza rincorrere clienti tutto il giorno. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "CENTRI ESTETICI: BASTA NO-SHOW",
+    "cover_title": "CENTRI ESTETICI: BASTA NO-SHOW",
+    "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
     "gameplay_style": "neon_racer",
-    "caption": "Fisioterapisti: basta agenda gestita a mano. Commenta AGENDA e ti mando la demo NeatX. #NeatX #agendaonline #prenotazioni #automazione #business",
+    "caption": "Centri Estetici: basta agenda gestita a mano. Commenta AGENDA e ti mando la demo NeatX. #NeatX #agendaonline #prenotazioni #automazione #business",
     "strategy_date": "2026-07-05",
-    "strategy_angle": "quanto ti costano i no-show ogni mese",
-    "strategy_pain": "sedute saltate e agenda piena di cambi manuali",
-    "strategy_promise": "prenotazioni ordinate e promemoria per ogni paziente",
+    "strategy_angle": "costi dei no-show mensili",
+    "strategy_pain": "cabine vuote e appuntamenti dimenticati",
+    "strategy_promise": "promemoria automatici e acconti",
     "fallback_reason": "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili"
 }
