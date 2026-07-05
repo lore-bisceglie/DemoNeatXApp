@@ -1,9 +1,9 @@
-export const dynamic = "force-dynamic";
-
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-// import { cookies } from "next/headers"; // Riattivare per la login admin
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
 import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
@@ -19,7 +19,6 @@ import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 
-import { cookies } from "next/headers";
 import LoginScreen from "./LoginScreen";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
@@ -111,8 +110,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     .map(Number);
   const currentTotalMinutes = currentHours * 60 + currentMinutes;
 
-  const urlDate = (await searchParams)?.date;
+  const urlDate = searchParams?.date;
   const targetDate = urlDate || todayItaly;
+  const weekOffset = parseInt(searchParams?.weekOffset || "0", 10);
 
   const timeToMinutes = (value: string) => {
     const [hours, minutes] = value.split(":").map(Number);
@@ -124,9 +124,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     const minutes = (value % 60).toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
-
-  const weekOffset = parseInt((await searchParams).weekOffset || "0", 10);
-
 
   const isPremium = tenant.plan === "premium" || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
   const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
