@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { MessageCircle, X, Send, Bot, Loader2, Sparkles } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -9,31 +9,102 @@ interface ChatMessage {
   content: string;
 }
 
+const STORAGE_KEY = 'neatx-chat-history';
+const QUICK_REPLIES = [
+  { label: '💰 Quanto costa?', message: 'Quanto costa NeatX?' },
+  { label: '📱 Come funziona?', message: 'Come funziona NeatX?' },
+  { label: '🎁 Prova gratis', message: 'Posso provarlo gratis?' },
+  { label: '🆚 Meglio di Treatwell?', message: 'Perché dovrei scegliere voi invece di Treatwell o Fresha?' },
+];
+
+function playNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.3);
+  } catch {
+    // Audio not supported
+  }
+}
+
+function TypingDots() {
+  return (
+    <div className="flex items-center gap-1 px-4 py-3">
+      <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+      <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+      <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+    </div>
+  );
+}
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [hasNewMessage, setHasNewMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  // Carica cronologia da localStorage
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          setShowQuickReplies(false);
+        }
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  // Salva cronologia su localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50)));
+      } catch { /* ignore */ }
+    }
   }, [messages]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  // Auto-scroll
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
+
+  // Focus input quando si apre
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+      setHasNewMessage(false);
+    }
+  }, [isOpen]);
+
+  const sendMessage = useCallback(async (text: string) => {
+    if (!text.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: text.trim(),
     };
 
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
+    setShowQuickReplies(false);
 
     try {
       const res = await fetch('/api/chat', {
@@ -51,6 +122,9 @@ export default function Chatbot() {
       };
 
       setMessages(prev => [...prev, botMessage]);
+      playNotificationSound();
+
+      if (!isOpen) setHasNewMessage(true);
     } catch {
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
@@ -60,103 +134,202 @@ export default function Chatbot() {
     } finally {
       setIsLoading(false);
     }
+  }, [messages, isLoading, isOpen]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    sendMessage(input);
   };
+
+  const handleQuickReply = (message: string) => {
+    sendMessage(message);
+  };
+
+  const messageCount = messages.filter(m => m.role === 'user').length;
+  const showCTA = messageCount >= 3;
 
   return (
     <>
-      {/* Tasto fluttuante per aprire la chat */}
+      {/* ═══════════ FLOATING BUTTON ═══════════ */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 p-4 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-transform z-50 ${
-          isOpen ? 'scale-0' : 'scale-100'
-        }`}
+        className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
-        <MessageCircle size={28} />
+        <div className="relative">
+          {/* Pulse ring */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 animate-ping opacity-20" />
+          {/* Main button */}
+          <div className="relative p-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300">
+            <MessageCircle size={28} />
+          </div>
+          {/* New message badge */}
+          {hasNewMessage && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-bounce">
+              1
+            </span>
+          )}
+        </div>
       </button>
 
-      {/* Finestra della Chat */}
+      {/* ═══════════ CHAT WINDOW ═══════════ */}
       <div
-        className={`fixed bottom-6 right-6 w-80 sm:w-96 h-[500px] max-h-[80vh] bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl flex flex-col z-50 transition-all duration-300 origin-bottom-right ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'
-        }`}
+        className={`fixed z-50 transition-all duration-500 ease-out origin-bottom-right
+          bottom-0 right-0 sm:bottom-6 sm:right-6
+          w-full h-full sm:w-[400px] sm:h-[600px] sm:max-h-[85vh] sm:rounded-2xl
+          ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}
+        `}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900 rounded-t-2xl">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
-              <Bot size={18} className="text-white" />
-            </div>
-            <div>
-              <h3 className="text-white font-medium text-sm">Assistente NeatX</h3>
-              <p className="text-green-400 text-xs flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span> Online
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Messaggi */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* Messaggio di benvenuto */}
-          <div className="flex justify-start">
-            <div className="bg-gray-800 text-gray-200 rounded-2xl rounded-tl-sm px-4 py-2 max-w-[85%] text-sm">
-              Ciao! 👋 Sono l&apos;assistente virtuale di NeatX. Come posso aiutarti a svoltare la gestione del tuo salone?
-            </div>
-          </div>
-
-          {messages.map((m) => (
-            <div
-              key={m.id}
-              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`rounded-2xl px-4 py-2 max-w-[85%] text-sm ${
-                  m.role === 'user'
-                    ? 'bg-blue-600 text-white rounded-tr-sm'
-                    : 'bg-gray-800 text-gray-200 rounded-tl-sm'
-                }`}
+        <div className="w-full h-full flex flex-col bg-[#0a0e1a] sm:rounded-2xl border border-gray-800/50 shadow-2xl shadow-blue-900/20 overflow-hidden backdrop-blur-xl">
+          
+          {/* ═══ HEADER ═══ */}
+          <div className="relative px-5 py-4 border-b border-gray-800/50">
+            {/* Background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20" />
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Animated avatar */}
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <Sparkles size={20} className="text-white" />
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#0a0e1a]" />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold text-sm tracking-wide">NeatBot</h3>
+                  <p className="text-green-400 text-xs font-medium">Online adesso</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
               >
-                {m.content}
-              </div>
+                <X size={20} />
+              </button>
             </div>
-          ))}
-
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-gray-800 text-gray-400 rounded-2xl rounded-tl-sm px-4 py-2 text-sm flex items-center gap-2">
-                <Loader2 size={14} className="animate-spin" /> Sto scrivendo...
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input */}
-        <form onSubmit={handleSubmit} className="p-3 border-t border-gray-800 bg-gray-900 rounded-b-2xl">
-          <div className="flex items-center gap-2 relative">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Scrivi un messaggio..."
-              className="flex-1 bg-gray-800 border border-gray-700 text-white text-sm rounded-full px-4 py-2.5 pr-10 focus:outline-none focus:border-blue-500"
-            />
-            <button
-              type="submit"
-              disabled={!input || isLoading}
-              className="absolute right-1.5 p-1.5 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 transition-colors"
-            >
-              <Send size={16} />
-            </button>
           </div>
-        </form>
+
+          {/* ═══ MESSAGES ═══ */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scroll-smooth" style={{ scrollbarWidth: 'thin', scrollbarColor: '#1e293b transparent' }}>
+            {/* Welcome message */}
+            <div className="flex justify-start animate-fade-in">
+              <div className="flex gap-2 max-w-[88%]">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-blue-500/20">
+                  <Bot size={14} className="text-white" />
+                </div>
+                <div className="bg-gray-800/60 backdrop-blur-sm text-gray-200 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed border border-gray-700/30">
+                  Ciao! 👋 Sono <strong>NeatBot</strong>, il consulente virtuale di NeatX. Sono qui per aiutarti a scoprire come automatizzare il tuo salone e dire addio ai no-show. Che tipo di attività gestisci?
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Replies */}
+            {showQuickReplies && messages.length === 0 && (
+              <div className="flex flex-wrap gap-2 pl-9 animate-fade-in">
+                {QUICK_REPLIES.map((qr) => (
+                  <button
+                    key={qr.label}
+                    onClick={() => handleQuickReply(qr.message)}
+                    className="px-3 py-1.5 text-xs font-medium rounded-full border border-blue-500/40 text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 hover:border-blue-400 transition-all duration-200 hover:scale-105 active:scale-95"
+                  >
+                    {qr.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Chat messages */}
+            {messages.map((m) => (
+              <div
+                key={m.id}
+                className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}
+              >
+                {m.role === 'assistant' ? (
+                  <div className="flex gap-2 max-w-[88%]">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-blue-500/20">
+                      <Bot size={14} className="text-white" />
+                    </div>
+                    <div className="bg-gray-800/60 backdrop-blur-sm text-gray-200 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed border border-gray-700/30">
+                      {m.content}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="max-w-[85%]">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-tr-md px-4 py-3 text-sm leading-relaxed shadow-md shadow-blue-500/20">
+                      {m.content}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* Typing indicator */}
+            {isLoading && (
+              <div className="flex justify-start animate-slide-up">
+                <div className="flex gap-2">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-blue-500/20">
+                    <Bot size={14} className="text-white" />
+                  </div>
+                  <div className="bg-gray-800/60 backdrop-blur-sm rounded-2xl rounded-tl-md border border-gray-700/30">
+                    <TypingDots />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CTA Button after 3+ user messages */}
+            {showCTA && !isLoading && (
+              <div className="flex justify-center animate-fade-in pt-2">
+                <a
+                  href="/registrazione"
+                  className="px-5 py-2.5 text-sm font-semibold rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                >
+                  🚀 Inizia la Prova Gratuita
+                </a>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* ═══ INPUT ═══ */}
+          <form onSubmit={handleSubmit} className="p-3 border-t border-gray-800/50 bg-[#0a0e1a]">
+            <div className="flex items-center gap-2 relative">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Scrivi un messaggio..."
+                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-sm rounded-full px-4 py-3 pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
+              />
+              <button
+                type="submit"
+                disabled={!input.trim() || isLoading}
+                className="absolute right-1.5 p-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 disabled:opacity-30 disabled:hover:shadow-none transition-all duration-300 active:scale-90"
+              >
+                <Send size={16} />
+              </button>
+            </div>
+            <p className="text-center text-gray-600 text-[10px] mt-2">
+              Powered by NeatX AI · Risponde 24/7
+            </p>
+          </form>
+        </div>
       </div>
+
+      {/* ═══ GLOBAL ANIMATIONS ═══ */}
+      <style jsx global>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.4s ease-out; }
+        .animate-slide-up { animation: slide-up 0.3s ease-out; }
+      `}</style>
     </>
   );
 }
