@@ -2,7 +2,38 @@
 
 import { useState } from "react";
 
-type ModalState = "NONE" | "DEMO_NOTICE" | "CONFIRM_NOSHOW";
+type ModalState = "NONE" | "CONFIRM_NOSHOW";
+
+function whatsappPhone(value: string) {
+  let digits = value.replace(/\D/g, "");
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  if (digits.length === 10 && digits.startsWith("3")) digits = `39${digits}`;
+  return digits.length >= 8 ? digits : "";
+}
+
+function getPublicBookingUrl() {
+  const adminPath = window.location.pathname;
+  const publicPath = adminPath.includes("/admin")
+    ? adminPath.split("/admin")[0]
+    : "/";
+
+  return `${window.location.origin}${publicPath}`;
+}
+
+function cancellationMessage({
+  customerName,
+  date,
+  time,
+}: {
+  customerName: string;
+  date: string;
+  time: string;
+}) {
+  return (
+    `Ciao ${customerName}, ti informiamo che il tuo appuntamento del ${date} alle ${time} e stato annullato.\n\n` +
+    `Puoi prenotare un nuovo orario da qui:\n${getPublicBookingUrl()}`
+  );
+}
 
 export default function DeleteButton({
   appointmentId,
@@ -21,7 +52,6 @@ export default function DeleteButton({
 }) {
   const [loading, setLoading] = useState(false);
   const [modalState, setModalState] = useState<ModalState>("NONE");
-  const [demoNotice, setDemoNotice] = useState("");
 
   const deleteAppointment = async () => {
     const noCache = Date.now();
@@ -39,16 +69,25 @@ export default function DeleteButton({
 
   const handleClick = async () => {
     setLoading(true);
+    const digits = whatsappPhone(phone || "");
+    const whatsappTab = !isSpecial && digits && phone !== "0000000000"
+      ? window.open("about:blank", "_blank")
+      : null;
 
     try {
       await deleteAppointment();
 
-      if (!isSpecial && phone && phone !== "0000000000") {
-        setDemoNotice(
-          `Demo: appuntamento di ${customerName} eliminato.\n\nNella versione reale si potrebbe aprire WhatsApp con questo testo:\n\nCiao ${customerName}, ti informiamo che il tuo appuntamento del ${date} alle ${time} e stato annullato. Puoi prenotare un nuovo orario dalla pagina prenotazioni.`
-        );
-        setModalState("DEMO_NOTICE");
-        setLoading(false);
+      if (digits && whatsappTab) {
+        whatsappTab.opener = null;
+        const message = cancellationMessage({ customerName, date, time });
+        whatsappTab.location.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+        setTimeout(() => window.location.reload(), 500);
+      } else if (digits && !isSpecial && phone && phone !== "0000000000") {
+        const message = cancellationMessage({ customerName, date, time });
+        window.location.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+      } else if (!isSpecial && phone && phone !== "0000000000") {
+        alert("Appuntamento eliminato, ma il numero WhatsApp del cliente non e valido.");
+        window.location.reload();
       } else {
         window.location.reload();
       }
@@ -57,11 +96,6 @@ export default function DeleteButton({
       alert("Errore durante l'eliminazione. Riprova.");
       setLoading(false);
     }
-  };
-
-  const closeDemoNotice = () => {
-    setModalState("NONE");
-    window.location.reload();
   };
 
   const triggerNoShow = () => {
@@ -100,37 +134,6 @@ export default function DeleteButton({
 
   return (
     <>
-      {modalState === "DEMO_NOTICE" && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center text-xl mb-4 border border-green-500/20">
-              OK
-            </div>
-
-            <h3 className="text-white font-extrabold text-lg mb-2">
-              Avviso simulato
-            </h3>
-
-            <p className="text-slate-400 text-[13px] mb-4 leading-relaxed">
-              Nella demo non apriamo WhatsApp dalla dashboard. Ti mostro solo
-              il messaggio che partirebbe nella versione reale.
-            </p>
-
-            <pre className="w-full text-left whitespace-pre-wrap bg-[#131c31] border border-[#1e2b4a] rounded-xl p-3 text-[11px] text-slate-300 mb-5">
-              {demoNotice}
-            </pre>
-
-            <button
-              type="button"
-              onClick={closeDemoNotice}
-              className="w-full bg-green-500/20 text-green-300 hover:bg-green-500 hover:text-[#050814] border border-green-500/50 py-3 rounded-xl text-sm font-bold transition"
-            >
-              Ho capito
-            </button>
-          </div>
-        </div>
-      )}
-
       {modalState === "CONFIRM_NOSHOW" && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 max-w-xs w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
