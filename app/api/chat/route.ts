@@ -76,8 +76,11 @@ export async function POST(req: Request) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-pro',
-      systemInstruction: systemPrompt
+      model: 'gemini-1.5-flash',
+      systemInstruction: {
+        role: "system",
+        parts: [{ text: systemPrompt }]
+      }
     });
 
     const chat = model.startChat({
