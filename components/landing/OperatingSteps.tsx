@@ -40,7 +40,7 @@ export default function OperatingSteps() {
               Zero telefonate. Più appuntamenti.
             </h2>
             <p className="text-slate-400 leading-relaxed text-lg mb-8">
-              NeatX trasforma il tuo link in una vera e propria segretaria virtuale attiva 24/7. I clienti si prenotano da soli e tu pensi solo a lavorare.
+              NeatX trasforma il tuo link in una vera e propria segretaria virtuale attiva 24/7. I clienti prenotano in totale autonomia e tu ti concentri solo sul tuo lavoro.
             </p>
             <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-4">
               {PROOF_ITEMS.map((item) => {

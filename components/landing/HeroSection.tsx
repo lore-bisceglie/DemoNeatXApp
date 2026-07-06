@@ -36,7 +36,7 @@ export default function HeroSection() {
       </h1>
 
       <p className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-        NeatX è la tua agenda online brandizzata: i clienti prenotano da soli, pagano l&apos;acconto se serve e ricevono promemoria senza farti perdere tempo al telefono.
+        NeatX è la tua agenda online brandizzata: i clienti prenotano in totale autonomia, pagano l&apos;acconto se serve e ricevono promemoria senza farti perdere tempo al telefono.
       </p>
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
