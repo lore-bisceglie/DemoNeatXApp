@@ -10,9 +10,17 @@ export default function TrustMarquee() {
     { text: "✦", highlight: "text-slate-600" },
     { text: "Studi Medici", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500" },
     { text: "✦", highlight: "text-slate-600" },
+    { text: "Personal Trainer", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500" },
+    { text: "✦", highlight: "text-slate-600" },
+    { text: "Parrucchieri", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-emerald-500" },
+    { text: "✦", highlight: "text-slate-600" },
     { text: "Consulenti", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500" },
     { text: "✦", highlight: "text-slate-600" },
+    { text: "Psicologi", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-500" },
+    { text: "✦", highlight: "text-slate-600" },
     { text: "Tattoo Studios", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-500" },
+    { text: "✦", highlight: "text-slate-600" },
+    { text: "Make-up Artist", highlight: "text-transparent bg-clip-text bg-gradient-to-r from-rose-300 to-pink-500" },
     { text: "✦", highlight: "text-slate-600" },
   ];
 
