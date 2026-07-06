@@ -75,15 +75,16 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use gemini-1.5-flash as string with the standard SDK
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ 
+      model: 'gemini-1.5-flash',
+      systemInstruction: systemPrompt
+    });
 
     const chat = model.startChat({
       history: messages.slice(0, -1).map((m: { role: string; content: string }) => ({
         role: m.role === 'user' ? 'user' : 'model',
         parts: [{ text: m.content }],
-      })),
-      systemInstruction: systemPrompt,
+      }))
     });
 
     const lastMessage = messages[messages.length - 1].content;
