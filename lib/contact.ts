@@ -32,24 +32,40 @@ export function normalizeOptionalUrl(value: unknown) {
   return `https://${trimmed.replace(/^\/+/, "")}`;
 }
 
-export function normalizeInstagramUrl(value: unknown) {
+function socialHandle(value: unknown, domain: string) {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
   if (!trimmed) return null;
 
   if (/^https?:\/\//i.test(trimmed)) {
-    return normalizeOptionalUrl(trimmed);
+    try {
+      const url = new URL(trimmed);
+      const pathHandle = url.pathname.replace(/^\/@?/, "").split(/[/?#\s]/)[0];
+      const cleanPathHandle = pathHandle.replace(/[^a-z0-9._]/gi, "");
+      return cleanPathHandle || null;
+    } catch {
+      return null;
+    }
   }
 
   const handle = trimmed
     .replace(/^@+/, "")
-    .replace(/^instagram\.com\//i, "")
-    .replace(/^www\.instagram\.com\//i, "")
+    .replace(new RegExp(`^(www\\.)?${domain.replace(".", "\\.")}/@?`, "i"), "")
     .replace(/^\/+/, "")
     .split(/[/?#\s]/)[0]
     .replace(/[^a-z0-9._]/gi, "");
 
+  return handle || null;
+}
+
+export function normalizeInstagramUrl(value: unknown) {
+  const handle = socialHandle(value, "instagram.com");
   return handle ? `https://instagram.com/${handle}` : null;
+}
+
+export function normalizeTikTokUrl(value: unknown) {
+  const handle = socialHandle(value, "tiktok.com");
+  return handle ? `https://www.tiktok.com/@${handle}` : null;
 }
 
 export function buildMapsLink(address: string | null | undefined, explicit?: string | null) {

@@ -9,17 +9,13 @@ import {
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
 
-import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeWhatsappPhone } from "@/lib/contact";
+import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
+
+const TRIAL_DAYS = 7;
 
 function cleanText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
   return value.trim();
-}
-
-function cleanTrialDays(value: unknown) {
-  const parsed = Number.parseInt(String(value || "7"), 10);
-  if (Number.isNaN(parsed)) return 7;
-  return Math.max(1, Math.min(parsed, 90));
 }
 
 async function uniqueSlug(base: string) {
@@ -42,43 +38,26 @@ export async function POST(req: Request) {
     const category = cleanText(body.category || body.template, "barber");
     const city = cleanText(body.city);
     const ownerName = cleanText(body.ownerName);
-    const ownerEmail = cleanText(body.ownerEmail || body.email).toLowerCase();
     const password = cleanText(body.password);
     const phone = normalizeWhatsappPhone(body.phone);
     const address = cleanText(body.address, city) || city;
     const description = cleanText(body.description);
-    const trialDays = cleanTrialDays(body.trialDays);
+    const trialDays = TRIAL_DAYS;
     const instagramUrl = normalizeInstagramUrl(body.instagramUrl);
-    const tiktokUrl = normalizeOptionalUrl(body.tiktokUrl);
-    const websiteUrl = normalizeOptionalUrl(body.websiteUrl);
+    const tiktokUrl = normalizeTikTokUrl(body.tiktokUrl);
+    const websiteUrl = null;
     const bookingUrl = null;
     const mapsLink = normalizeOptionalUrl(body.mapsLink) || buildMapsLink(address);
 
-    if (!businessName || !category || !city || !ownerName || !ownerEmail || !password || !phone) {
+    if (!businessName || !category || !city || !ownerName || !password || !phone) {
       return NextResponse.json(
-        { error: "Inserisci nome attivita, categoria, citta, nome, email, password e numero WhatsApp." },
+        { error: "Inserisci nome attivita, categoria, citta, nome, password e numero WhatsApp." },
         { status: 400 }
       );
     }
 
-    if (!ownerEmail.includes("@") || !ownerEmail.includes(".")) {
-      return NextResponse.json({ error: "Inserisci una email valida." }, { status: 400 });
-    }
-
     if (password.length < 8) {
       return NextResponse.json({ error: "La password deve avere almeno 8 caratteri." }, { status: 400 });
-    }
-
-    const existingAccount = await prisma.tenant.findFirst({
-      where: { ownerEmail },
-      select: { slug: true },
-    });
-
-    if (existingAccount) {
-      return NextResponse.json(
-        { error: "Esiste gia un account con questa email. Accedi dalla pagina login." },
-        { status: 409 }
-      );
     }
 
     const template = getDemoShopTemplate(category);
@@ -98,7 +77,7 @@ export async function POST(req: Request) {
         category: template.id,
         city,
         ownerName,
-        ownerEmail,
+        ownerEmail: null,
         ownerPasswordHash: hashPassword(password),
         description: description || `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
         phone,
@@ -188,7 +167,7 @@ export async function POST(req: Request) {
         action: "CREATE_DEMO_SHOP",
         actor: "system",
         message: `Negozio demo creato per ${businessName}: servizi, staff e prenotazioni sono gia pronti.`,
-        metadata: JSON.stringify({ category: template.id, ownerEmail, trialDays }),
+        metadata: JSON.stringify({ category: template.id, trialDays }),
       },
     });
 

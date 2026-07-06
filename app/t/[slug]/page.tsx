@@ -140,7 +140,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     instagramUrl: "",
     mapsLink: "",
     tiktokUrl: "",
-    websiteUrl: "",
     bookingUrl: "",
     trialEndsAt: "",
     isDemo: false,
@@ -193,7 +192,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           instagramUrl: data.instagramUrl || "",
           mapsLink: data.mapsLink || (data.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address)}` : ""),
           tiktokUrl: data.tiktokUrl || "",
-          websiteUrl: data.websiteUrl || "",
           bookingUrl: data.bookingUrl || "",
           trialEndsAt: data.trialEndsAt || "",
           isDemo: Boolean(data.isDemoData),
@@ -1063,16 +1061,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-[#050814] px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-black/30 transition transform hover:scale-105"
                 >
                   TikTok
-                </a>
-              )}
-              {tenantInfo.websiteUrl && (
-                <a
-                  href={tenantInfo.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-black/30 transition transform hover:scale-105"
-                >
-                  Sito
                 </a>
               )}
             </div>

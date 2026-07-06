@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from "next/headers";
-import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeWhatsappPhone } from "@/lib/contact";
+import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
 export async function GET(req: Request, context: { params: Promise<{ slug: string }> }) {
   try {
@@ -103,7 +103,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
         phone: cleanPhone || null,
         address: nextAddress,
         instagramUrl: typeof body.instagramUrl === "string" ? normalizeInstagramUrl(body.instagramUrl) : tenant.instagramUrl,
-        tiktokUrl: cleanUrl(body.tiktokUrl, tenant.tiktokUrl),
+        tiktokUrl: typeof body.tiktokUrl === "string" ? normalizeTikTokUrl(body.tiktokUrl) : tenant.tiktokUrl,
         websiteUrl: cleanUrl(body.websiteUrl, tenant.websiteUrl),
         mapsLink: cleanUrl(body.mapsLink, tenant.mapsLink) || buildMapsLink(nextAddress),
         bookingUrl: cleanUrl(body.bookingUrl, tenant.bookingUrl),

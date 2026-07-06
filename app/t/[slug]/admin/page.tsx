@@ -689,7 +689,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           openTime={tenant.openTime}
           instagramUrl={tenant.instagramUrl}
           tiktokUrl={tenant.tiktokUrl}
-          websiteUrl={tenant.websiteUrl}
           mapsLink={tenant.mapsLink}
           closeTime={tenant.closeTime}
           breakStart={tenant.breakStart}

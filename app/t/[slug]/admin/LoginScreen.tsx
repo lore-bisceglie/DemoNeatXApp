@@ -18,6 +18,7 @@ export default function LoginScreen({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const needsEmail = Boolean(ownerEmail);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -62,19 +63,21 @@ export default function LoginScreen({
         )}
 
         <form onSubmit={handleLogin} className="space-y-5">
-          <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-              Email proprietario
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="w-full bg-[#131c31] border border-[#1e2b4a] text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#00b4ff] transition-colors"
-              placeholder="nome@email.it"
-              autoFocus={!ownerEmail}
-            />
-          </div>
+          {needsEmail && (
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                Email proprietario
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="w-full bg-[#131c31] border border-[#1e2b4a] text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#00b4ff] transition-colors"
+                placeholder="nome@email.it"
+                autoFocus
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
@@ -84,7 +87,7 @@ export default function LoginScreen({
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              autoFocus={Boolean(ownerEmail)}
+              autoFocus={!needsEmail}
               className="w-full bg-[#131c31] border border-[#1e2b4a] text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#00b4ff] transition-colors"
               placeholder="La password scelta in registrazione"
             />

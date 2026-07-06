@@ -38,7 +38,6 @@ type Props = {
   openTime?: string | null;
   instagramUrl?: string | null;
   tiktokUrl?: string | null;
-  websiteUrl?: string | null;
   mapsLink?: string | null;
   closeTime?: string | null;
   breakStart?: string | null;
@@ -71,11 +70,12 @@ function parseClosedDays(value?: string | null) {
   }
 }
 
-function instagramHandleValue(value?: string | null) {
+function socialHandleValue(value: string | null | undefined, domain: string) {
   const raw = value?.trim();
   if (!raw) return "";
 
-  const match = raw.match(/instagram\.com\/([^/?#\s]+)/i);
+  const pattern = new RegExp(`${domain.replace(".", "\\.")}/@?([^/?#\\s]+)`, "i");
+  const match = raw.match(pattern);
   if (match?.[1]) return `@${match[1].replace(/^@+/, "")}`;
 
   return raw.startsWith("@") ? raw : `@${raw}`;
@@ -93,7 +93,6 @@ export default function TrialLaunchPanel({
   openTime,
   instagramUrl,
   tiktokUrl,
-  websiteUrl,
   mapsLink,
   closeTime,
   breakStart,
@@ -122,9 +121,8 @@ export default function TrialLaunchPanel({
     phone: phone || "",
     address: address || "",
     openTime: openTime || "09:00",
-    instagramUrl: instagramHandleValue(instagramUrl),
-    tiktokUrl: tiktokUrl || "",
-    websiteUrl: websiteUrl || "",
+    instagramUrl: socialHandleValue(instagramUrl, "instagram.com"),
+    tiktokUrl: socialHandleValue(tiktokUrl, "tiktok.com"),
     mapsLink: mapsLink || "",
     closeTime: closeTime || "19:00",
     breakStart: breakStart || "",
@@ -452,19 +450,13 @@ export default function TrialLaunchPanel({
                 value={shopDraft.instagramUrl}
                 onChange={(event) => setShopDraft((current) => ({ ...current, instagramUrl: event.target.value }))}
                 className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="Instagram, es. @nomeattivita"
+                placeholder="Instagram, es. @neatx_agenda"
               />
               <input
                 value={shopDraft.tiktokUrl}
                 onChange={(event) => setShopDraft((current) => ({ ...current, tiktokUrl: event.target.value }))}
                 className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="TikTok"
-              />
-              <input
-                value={shopDraft.websiteUrl}
-                onChange={(event) => setShopDraft((current) => ({ ...current, websiteUrl: event.target.value }))}
-                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="Sito esterno"
+                placeholder="TikTok, es. @neatx_agenda"
               />
             </div>
 
