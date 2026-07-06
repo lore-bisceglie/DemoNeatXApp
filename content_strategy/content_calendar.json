@@ -1,33 +1,16 @@
 {
-  "generated_at": "2026-07-06T17:31:16.601488",
+  "generated_at": "2026-07-06T17:56:16.504932",
   "days": [
     {
       "date": "2026-07-06",
-      "niche": "Centri Estetici",
-      "angle": "tempo sprecato con messaggi",
-      "pain": "cabine vuote e clienti smemorati",
-      "promise": "promemoria automatici e acconti",
-      "cover_title": "CENTRI ESTETICI: NO-SHOW",
-      "hook_hint": "Se hai cabine vuote e clienti che dimenticano gli appuntamenti, stai perdendo soldi.",
-      "blog_topic": "Centri Estetici: quanto tempo perdi con un'agenda automatica",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
-      "keywords": [
-        "gestionale centro estetico",
-        "prenotazioni estetista",
-        "agenda centro estetico"
-      ]
-    },
-    {
-      "date": "2026-07-07",
       "niche": "Parrucchieri",
-      "angle": "link in bio deve prenotare",
+      "angle": "tempo perso su WhatsApp",
       "pain": "clienti che scrivono a qualsiasi ora",
-      "promise": "agenda piena senza chat",
-      "cover_title": "PARRUCCHIERI: NO-SHOW",
-      "hook_hint": "Se ricevi messaggi a qualsiasi ora, stai perdendo soldi.",
-      "blog_topic": "Parrucchieri: perché il link in bio deve prenotare da solo",
-      "gameplay_style": "neon_racer",
+      "promise": "agenda piena, zero chat",
+      "cover_title": "PARRUCCHIERI: BASTA NO-SHOW",
+      "hook_hint": "Se sei parrucchiere e perdi soldi rispondendo a messaggi, agisci ora.",
+      "blog_topic": "Parrucchieri: ottimizza il tempo con un'agenda automatica",
+      "gameplay_style": "runner",
       "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
       "keywords": [
         "gestionale parrucchieri",
@@ -36,15 +19,49 @@
       ]
     },
     {
+      "date": "2026-07-07",
+      "niche": "Centri Estetici",
+      "angle": "link in bio deve prenotare",
+      "pain": "clienti dimenticano appuntamenti",
+      "promise": "promemoria automatici e pagamenti anticipati",
+      "cover_title": "CENTRI ESTETICI: BASTA NO-SHOW",
+      "hook_hint": "Se gestisci un centro estetico e hai cabine vuote, è tempo di cambiare.",
+      "blog_topic": "Centri Estetici: come automatizzare le prenotazioni",
+      "gameplay_style": "neon_racer",
+      "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+      "keywords": [
+        "gestionale centro estetico",
+        "prenotazioni estetista",
+        "agenda centro estetico"
+      ]
+    },
+    {
       "date": "2026-07-08",
-      "niche": "Fisioterapisti",
-      "angle": "trasformare follower in appuntamenti",
-      "pain": "sedute saltate e cambi manuali",
-      "promise": "prenotazioni ordinate e promemoria",
-      "cover_title": "FISIOTERAPISTI: NO-SHOW",
-      "hook_hint": "Se hai sedute saltate, stai perdendo soldi.",
-      "blog_topic": "Fisioterapisti: come trasformare follower in appuntamenti veri",
+      "niche": "Tatuatori",
+      "angle": "trasformare follower in clienti",
+      "pain": "consulenze infinite senza caparra",
+      "promise": "richieste filtrate e acconti garantiti",
+      "cover_title": "TATUATORI: BASTA NO-SHOW",
+      "hook_hint": "Se sei tatuatore e perdi tempo con consulenze, leggi questo.",
+      "blog_topic": "Tatuatori: come convertire follower in appuntamenti",
       "gameplay_style": "block_miner",
+      "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
+      "keywords": [
+        "prenotazioni tatuatore",
+        "agenda tatuatori",
+        "caparra tatuaggio"
+      ]
+    },
+    {
+      "date": "2026-07-09",
+      "niche": "Fisioterapisti",
+      "angle": "costo dei no-show mensili",
+      "pain": "sedute saltate e modifiche continue",
+      "promise": "prenotazioni organizzate e promemoria per ogni paziente",
+      "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
+      "hook_hint": "Se sei fisioterapista e perdi soldi per no-show, agisci subito.",
+      "blog_topic": "Fisioterapisti: come evitare le sedute saltate",
+      "gameplay_style": "runner",
       "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
       "keywords": [
         "agenda fisioterapista",
@@ -53,15 +70,15 @@
       ]
     },
     {
-      "date": "2026-07-09",
+      "date": "2026-07-10",
       "niche": "Coach e Consulenti",
-      "angle": "costo dei no-show mensili",
-      "pain": "call manuali e clienti che rimandano",
-      "promise": "call prenotate automaticamente",
-      "cover_title": "NO-SHOW: COSTI REALI",
-      "hook_hint": "Se hai call manuali e clienti che rimandano, stai perdendo soldi.",
-      "blog_topic": "Coach e Consulenti: quanto ti costano i no-show",
-      "gameplay_style": "runner",
+      "angle": "gestire acconti con delicatezza",
+      "pain": "clienti che rimandano continuamente",
+      "promise": "call prenotate senza sforzo",
+      "cover_title": "BASTA NO-SHOW",
+      "hook_hint": "Se sei coach e perdi tempo con clienti indecisi, leggi questo.",
+      "blog_topic": "Coach e Consulenti: come gestire le prenotazioni efficacemente",
+      "gameplay_style": "neon_racer",
       "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
       "keywords": [
         "agenda consulente",
@@ -70,31 +87,14 @@
       ]
     },
     {
-      "date": "2026-07-10",
-      "niche": "Personal Trainer",
-      "angle": "acconti e promemoria efficaci",
-      "pain": "lezioni spostate e slot persi",
-      "promise": "sessioni prenotate e ricordate",
-      "cover_title": "PERSONAL TRAINER: NO-SHOW",
-      "hook_hint": "Se hai lezioni spostate, stai perdendo soldi.",
-      "blog_topic": "Personal Trainer: come usare acconti e promemoria",
-      "gameplay_style": "neon_racer",
-      "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
-      "keywords": [
-        "agenda personal trainer",
-        "prenotazioni palestra",
-        "gestionale personal trainer"
-      ]
-    },
-    {
       "date": "2026-07-11",
       "niche": "Barbieri",
-      "angle": "tempo perso con messaggi",
-      "pain": "no-show e appuntamenti veloci",
-      "promise": "meno buchi in agenda",
-      "cover_title": "BARBIERI: NO-SHOW",
-      "hook_hint": "Se hai no-show e appuntamenti presi al volo, stai perdendo soldi.",
-      "blog_topic": "Barbieri: quanto tempo perdi rispondendo ai messaggi",
+      "angle": "messaggi che rubano tempo",
+      "pain": "no-show e appuntamenti in DM",
+      "promise": "meno buchi in agenda e più clienti paganti",
+      "cover_title": "BARBIERI: BASTA NO-SHOW",
+      "hook_hint": "Se sei barbiere e perdi clienti per messaggi, cambia strategia.",
+      "blog_topic": "Barbieri: ottimizza le tue prenotazioni",
       "gameplay_style": "block_miner",
       "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
       "keywords": [
@@ -105,19 +105,19 @@
     },
     {
       "date": "2026-07-12",
-      "niche": "Tatuatori",
-      "angle": "link in bio per prenotazioni",
-      "pain": "consulenze infinite e senza caparra",
-      "promise": "richieste filtrate con acconto",
-      "cover_title": "TATUATORI: NO-SHOW",
-      "hook_hint": "Se hai consulenze infinite e appuntamenti senza caparra, stai perdendo soldi.",
-      "blog_topic": "Tatuatori: perché il link in bio deve prenotare",
+      "niche": "Personal Trainer",
+      "angle": "link in bio deve funzionare",
+      "pain": "lezioni spostate e slot persi",
+      "promise": "sessioni prenotate e confermate automaticamente",
+      "cover_title": "PERSONAL TRAINER: BASTA NO-SHOW",
+      "hook_hint": "Se sei personal trainer e hai problemi con le prenotazioni, questa è la soluzione.",
+      "blog_topic": "Personal Trainer: come automatizzare le tue lezioni",
       "gameplay_style": "runner",
-      "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
+      "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
       "keywords": [
-        "prenotazioni tatuatore",
-        "agenda tatuatori",
-        "caparra tatuaggio"
+        "agenda personal trainer",
+        "prenotazioni palestra",
+        "gestionale personal trainer"
       ]
     }
   ]
