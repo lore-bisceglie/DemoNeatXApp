@@ -1,71 +1,76 @@
 {
-  "generated_at": "2026-07-06T19:56:32.842424+02:00",
+  "generated_at": "2026-07-06T22:59:36.937900+02:00",
   "signals_used": {
-    "reel_history_count": 6,
+    "reel_history_count": 9,
     "viral_hits_count": 0,
-    "blog_titles_count": 5,
-    "today_niche": "Parrucchieri"
+    "blog_titles_count": 7,
+    "today_niche": "Centri Estetici"
   },
   "ideas": [
     {
-      "type": "short-form video",
-      "title": "PARRUCCHIERI: LIBERI DAL CAOS WHATSAPP",
-      "hook": "Parrucchiere, se perdi ore a rispondere ai clienti su WhatsApp e ti ritrovi l'agenda a pezzi, questa è la tua soluzione.",
-      "description": "Un video rapido che illustra la frustrazione di un parrucchiere sommerso dalle chat WhatsApp, mostrando poi la serenità di un'agenda automatizzata che gestisce tutto, promettendo più tempo e zero interruzioni.",
+      "type": "video",
+      "title": "CENTRI ESTETICI: BASTA CABINE VUOTE E APPUNTAMENTI DIMENTICATI!",
+      "hook": "Gestisci un centro estetico e hai cabine vuote per clienti che non si presentano? Non buttare più via soldi, c'è una soluzione!",
+      "description": "Scopri come un sistema di promemoria automatici e la gestione degli acconti possono riempire le tue cabine e aumentare il fatturato del tuo centro estetico. Basta no-show!",
       "keywords": [
-        "gestionale parrucchieri",
-        "agenda salone",
-        "tempo perso parrucchiere",
-        "prenotazioni parrucchiere"
-      ]
+        "gestionale centro estetico",
+        "prenotazioni estetista",
+        "no-show centri estetici",
+        "cabine vuote"
+      ],
+      "niche": "Centri Estetici"
     },
     {
-      "type": "blog post",
-      "title": "PARRUCCHIERI: OTTIMIZZA IL TEMPO E AZZERA LE CHAT CON UN'AGENDA AUTOMATICA",
-      "hook": "Se il tuo salone è ostaggio delle chat WhatsApp e la tua agenda è un campo di battaglia, scopri come trasformare il caos in un'opportunità di guadagno e serenità.",
-      "description": "Un articolo dettagliato su come i parrucchieri possono recuperare tempo prezioso e aumentare l'efficienza del proprio salone implementando un sistema di gestione appuntamenti automatico, eliminando la dipendenza dalle comunicazioni manuali via WhatsApp e riducendo i no-show.",
+      "type": "blog",
+      "title": "Centri Estetici: Come un'Agenda Automatica Sconfigge i No-Show e Aumenta i Tuoi Guadagni",
+      "hook": "Stanco di perdere clienti e tempo prezioso a causa di appuntamenti dimenticati? Un'agenda automatica è la chiave per la tua tranquillità finanziaria.",
+      "description": "Analizziamo il costo reale dei no-show per il tuo centro estetico e ti mostriamo come un gestionale smart con promemoria e acconti può trasformare la tua attività. Recupera il tempo e il denaro persi!",
       "keywords": [
-        "gestionale parrucchieri",
-        "prenotazioni parrucchiere",
-        "agenda salone",
-        "ottimizzazione tempo parrucchiere"
-      ]
+        "agenda centro estetico",
+        "ridurre no-show estetista",
+        "gestionale salone bellezza",
+        "guadagni centro estetico"
+      ],
+      "niche": "Centri Estetici"
     },
     {
-      "type": "short-form video",
-      "title": "PARRUCCHIERI: BASTA NO-SHOW E MESSAGGI INFINITI",
-      "hook": "Parrucchiere, se i tuoi clienti non si presentano agli appuntamenti e ti scrivono a qualsiasi ora, stai buttando via soldi e la tua pace mentale.",
-      "description": "Video dinamico che evidenzia il doppio problema dei no-show e delle interruzioni costanti via WhatsApp, proponendo una soluzione automatizzata per avere un'agenda sempre piena e sotto controllo, con zero chiamate o messaggi inattesi.",
+      "type": "video",
+      "title": "ESTETISTE: RECUPERA ORE DI TEMPO, BASTA TELEFONATE INFINITE!",
+      "hook": "Quante ore al giorno sprechi al telefono per fissare o confermare appuntamenti nel tuo centro estetico? Il tuo tempo vale oro!",
+      "description": "Immagina di non dover più rispondere a ogni singola chiamata per le prenotazioni. Scopri come automatizzare la gestione degli appuntamenti e dedicarti solo a ciò che ami: prenderti cura dei tuoi clienti.",
       "keywords": [
-        "no-show parrucchiere",
-        "gestionale parrucchieri",
-        "agenda online salone",
-        "clienti parrucchiere"
-      ]
+        "ottimizzare tempo estetista",
+        "prenotazioni online centro estetico",
+        "segreteria automatica",
+        "gestionale estetista"
+      ],
+      "niche": "Centri Estetici"
     },
     {
-      "type": "blog post",
-      "title": "QUANTO COSTA AI PARRUCCHIERI IL TEMPO PERSO SU WHATSAPP E I NO-SHOW? Calcola i tuoi guadagni mancati.",
-      "hook": "Non hai idea di quanto ti stiano costando le chat infinite su WhatsApp e i clienti che non si presentano. Scopri il vero impatto sul tuo salone.",
-      "description": "Un'analisi approfondita sui costi nascosti della gestione manuale degli appuntamenti e dei no-show per i saloni di parrucchieri. L'articolo proporrà un calcolo approssimativo dei guadagni persi e presenterà l'agenda automatica come la soluzione definitiva per trasformare queste perdite in profitti.",
+      "type": "blog",
+      "title": "Il Vero Costo dei No-Show nei Centri Estetici: Acconti e Soluzioni Efficaci",
+      "hook": "Moltiplichi i mancati guadagni ogni volta che un cliente dimentica un appuntamento. Scopri come gli acconti possono blindare il tuo incasso e la tua agenda.",
+      "description": "Non sottovalutare l'impatto economico e organizzativo dei no-show. Questa guida ti svelerà come calcolare le tue perdite e implementare strategie vincenti come gli acconti per proteggere il tuo business.",
       "keywords": [
-        "costi no-show parrucchiere",
-        "guadagni salone",
-        "ottimizzazione parrucchieri",
-        "gestionale parrucchieri"
-      ]
+        "costo no-show centro estetico",
+        "acconti appuntamenti estetista",
+        "gestionale con acconti",
+        "strategie centro estetico"
+      ],
+      "niche": "Centri Estetici"
     },
     {
-      "type": "short-form video",
-      "title": "AGENDA PIENA, ZERO CHAT: IL SOGNO DI OGNI PARRUCCHIERE ORA È REALTA'",
-      "hook": "Se sei un parrucchiere e sogni un'agenda sempre piena senza perdere tempo su WhatsApp, questo video ti aprirà gli occhi sulla soluzione.",
-      "description": "Un video che contrappone la vita frenetica e disorganizzata di un parrucchiere senza un sistema adeguato alla tranquillità e all'efficienza ottenute con un gestionale. Focus sulla facilità d'uso e i benefici immediati di un'agenda completamente automatica.",
+      "type": "video",
+      "title": "LA SOLUZIONE DEFINITIVA ANTI-NO-SHOW PER IL TUO CENTRO ESTETICO!",
+      "hook": "Vuoi dire addio per sempre ai clienti che non si presentano e alle cabine vuote? C'è un modo semplice per farli tornare sempre!",
+      "description": "Ti mostriamo come una soluzione integrata per la gestione degli appuntamenti, con promemoria intelligenti e possibilità di acconto, può trasformare la tua routine e i tuoi guadagni. Guarda ora!",
       "keywords": [
-        "agenda piena parrucchiere",
-        "zero chat parrucchiere",
-        "gestionale per parrucchieri",
-        "efficienza salone"
-      ]
+        "NeatX centri estetici",
+        "software prenotazioni estetiste",
+        "appuntamento sicuro estetista",
+        "soluzione no-show"
+      ],
+      "niche": "Centri Estetici"
     }
   ]
 }
