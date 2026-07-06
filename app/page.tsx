@@ -40,7 +40,6 @@ export default function Home() {
           amount={10.00} 
           onSuccess={() => {
             setShowStripe(false);
-            window.location.href = "/demo";
           }}
           onCancel={() => setShowStripe(false)}
         />

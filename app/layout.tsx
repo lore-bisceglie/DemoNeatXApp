@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Mail } from "lucide-react";
 import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
+import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
 import Chatbot from "@/components/Chatbot";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
@@ -46,14 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Gruppo Pulsanti Contatto (Spostati a Sinistra) */}
         <div className="fixed bottom-6 left-6 z-40 hidden sm:flex flex-col items-start gap-3">
-          {/* Pulsante Fluttuante Email */}
-          <a 
-            href="mailto:neatx.info@gmail.com?subject=Richiesta%20App%20Personalizzata&body=Ciao,%20ho%20provato%20la%20demo%20e%20vorrei%20avere%20informazioni%20per%20creare%20la%20mia%20app%20NeatX%20personalizzata." 
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-5 py-3 rounded-full font-bold shadow-lg shadow-blue-500/30 hover:scale-105 transition-transform"
-          >
-            <Mail size={20} />
-            Invia Email
-          </a>
+          {/* Pulsante Fluttuante WhatsApp */}
+          <WhatsAppFloatingBtn />
 
           {/* Pulsante Fluttuante Instagram (Apre App Nativa) */}
           <InstagramFloatingBtn />
