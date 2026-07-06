@@ -1,70 +1,65 @@
 {
-  "generated_at": "2026-07-05T19:45:29.455681+02:00",
+  "generated_at": "2026-07-06T19:24:21.076329+02:00",
   "signals_used": {
-    "reel_history_count": 4,
+    "reel_history_count": 6,
     "viral_hits_count": 0,
     "blog_titles_count": 4,
     "today_niche": "Tatuatori"
   },
   "ideas": [
     {
-      "type": "video",
-      "title": "TATUATORI: BASTA NO-SHOW! NON BUTTARE PIÙ SOLDI",
-      "hook": "Tatuatore, sei stanco di consulenze infinite e appuntamenti senza caparra?",
-      "description": "Scopri come eliminare il costo mensile dei no-show e filtrare le richieste, garantendoti un acconto prima di ogni appuntamento. Smetti di perdere tempo e denaro.",
+      "title": "TATUATORI: BASTA NO-SHOW E CONSULENZE INUTILI",
+      "hook": "Tatuatore, se perdi tempo in consulenze infinite e appuntamenti senza caparra, stai buttando via soldi e ore preziose.",
+      "description": "Scopri come un sistema di prenotazione automatico può filtrare le richieste e assicurarti un acconto, eliminando i no-show e le perdite di tempo nel tuo studio.",
+      "type": "short-form video",
       "keywords": [
-        "prenotazioni tatuatore",
+        "no-show tatuatori",
+        "agenda tatuaggi",
+        "gestione appuntamenti tatuatori"
+      ]
+    },
+    {
+      "title": "Tatuatori: Quanto Tempo Perdi Rispondendo Ai Messaggi? L'Agenda Automatica Che Ti Salva.",
+      "hook": "Sei un tatuatore e ti senti sommerso da messaggi infiniti per preventivi e disponibilità? Calcola il tempo e il denaro che stai perdendo ogni giorno.",
+      "description": "Analisi di quanto tempo i tatuatori sprecano in comunicazioni inefficaci e come un'agenda automatica può rivoluzionare la gestione delle prenotazioni, permettendoti di concentrarti solo sul tuo lavoro.",
+      "type": "blog post",
+      "keywords": [
+        "tempo perso tatuatori",
+        "agenda automatica tatuaggi",
+        "gestione messaggi tatuatori"
+      ]
+    },
+    {
+      "title": "TATUATORI: RICHIESTE FILTRATE E ACCONTO GARANTITO!",
+      "hook": "Stanco di richieste generiche e clienti che non si presentano? Ecco come avere richieste filtrate e acconti sicuri prima di ogni appuntamento.",
+      "description": "Video che illustra i benefici di un sistema che pre-seleziona i clienti e assicura un acconto, riducendo le sorprese e garantendo un flusso di lavoro più efficiente per i tatuatori.",
+      "type": "short-form video",
+      "keywords": [
+        "acconto tatuaggio",
+        "clienti filtrati tatuatori",
+        "prenotazione sicura tatuaggi"
+      ]
+    },
+    {
+      "title": "Prenotazioni Tatuatore: La Guida Definitiva per un'Agenda Senza Sprechi",
+      "hook": "Sei un tatuatore e la tua agenda è un caos di cancellazioni e mancati pagamenti? Scopri come ottimizzare ogni slot e guadagnare di più.",
+      "description": "Una guida completa su come i tatuatori possono implementare un sistema di prenotazione efficiente, gestire le caparre e trasformare la propria agenda in una macchina da soldi, eliminando gli sprechi di tempo e risorse.",
+      "type": "blog post",
+      "keywords": [
         "agenda tatuatori",
         "caparra tatuaggio",
-        "no-show tatuatori"
+        "prenotazioni efficienti"
       ]
     },
     {
-      "type": "blog",
-      "title": "Il Costo Nascosto: Quanto Perdi Ogni Mese per i No-Show nel Tuo Studio di Tatuaggi?",
-      "hook": "Ogni appuntamento mancato senza caparra è un buco nelle tue entrate. Calcola il tuo costo mensile e scopri la soluzione.",
-      "description": "Analizziamo il vero impatto finanziario dei no-show e delle consulenze non produttive per i tatuatori. Scopri come un sistema di prenotazione con acconto può trasformare i tuoi guadagni e la gestione del tuo tempo.",
+      "title": "NEL TUO STUDIO DI TATUAGGI: MENO BUROCRAZIA, PIÙ ARTE",
+      "hook": "Tatuatore, immagina il tuo studio: concentrato solo sull'arte, senza distrazioni da telefonate infinite o appuntamenti fantasma. È possibile.",
+      "description": "Mostra come l'automazione della gestione appuntamenti e acconti permetta ai tatuatori di dedicare più tempo alla loro arte e ai clienti reali, migliorando l'immagine professionale dello studio e la qualità del servizio.",
+      "type": "short-form video",
       "keywords": [
-        "costo no-show tatuatori",
-        "gestione studio tatuaggi",
-        "aumentare guadagni tatuatore",
-        "agenda automatica tatuaggi"
-      ]
-    },
-    {
-      "type": "video",
-      "title": "AGENDA TATUATORI: Il Segreto per Zero Appuntamenti a Vuoto!",
-      "hook": "Vuoi richieste filtrate e acconti sicuri prima di ogni tatuaggio, senza più sprechi?",
-      "description": "Ti mostriamo come un'agenda automatica può rivoluzionare la gestione del tuo studio, eliminando i no-show e le consulenze improduttive, per concentrarti solo sul tuo lavoro e i tuoi clienti veri.",
-      "keywords": [
-        "agenda tatuatori",
-        "prenotazione online tatuaggi",
-        "acconto tatuaggio",
-        "ottimizzare tempo tatuatore"
-      ]
-    },
-    {
-      "type": "blog",
-      "title": "Tatuatori: La Guida Definitiva per Eliminare i No-Show e Massimizzare i Tuoi Appuntamenti",
-      "hook": "Stanco di dedicare tempo a consulenze che non portano a nulla e di appuntamenti disattesi che ti costano soldi?",
-      "description": "Una guida passo-passo su come implementare un sistema di prenotazione che richieda un acconto, filtri le richieste e ti permetta di lavorare solo con clienti seriamente interessati, riducendo drasticamente il costo mensile dei no-show.",
-      "keywords": [
-        "strategie no-show tatuaggi",
-        "clienti seri tatuaggi",
-        "software gestione tatuaggi",
-        "migliorare profitto tatuatore"
-      ]
-    },
-    {
-      "type": "video",
-      "title": "Da Consulenze Infinite a Guadagni Reali: Il Metodo per Tatuatori Smart",
-      "hook": "Se le tue giornate sono piene di telefonate ma la cassa è vuota, è ora di cambiare strategia.",
-      "description": "Vediamo come passare da una gestione caotica con consulenze infinite e appuntamenti senza caparra, a un sistema organizzato che garantisce richieste filtrate e acconti, massimizzando il tuo tempo e i tuoi guadagni, proprio come i tatuatori di successo.",
-      "keywords": [
-        "ottimizzazione tatuatore",
-        "meno no-show tatuaggi",
-        "guadagnare di più tatuaggi",
-        "gestione clienti tatuaggi"
+        "studio tatuaggi professionale",
+        "ottimizzazione tempo tatuatore",
+        "focus sull'arte tatuaggio"
       ]
     }
   ]
