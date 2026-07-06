@@ -60,9 +60,7 @@ export default function FloatingPhone() {
           </div>
 
           {/* Chat Body */}
-          <div className="flex-1 p-3 overflow-hidden flex flex-col justify-end gap-3 relative" style={{ backgroundColor: '#efeae2' }}>
-            
-            <div className="absolute inset-0 bg-white/60 pointer-events-none"></div>
+          <div className="flex-1 p-3 overflow-hidden flex flex-col justify-end gap-3 relative" style={{ backgroundColor: '#E5DDD5' }}>
 
             {messages.map((msg, idx) => (
               <div key={idx} className="relative z-10 animate-in slide-in-from-bottom-2 fade-in duration-300">
