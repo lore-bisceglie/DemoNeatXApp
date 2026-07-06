@@ -29,10 +29,10 @@ export default function IPhone17Pro({ children, className = "" }: IPhone17ProPro
           }
         `}</style>
         
-        {/* iPhone 17 Pro Chassis (Orange Titanium Rim) */}
-        <div className="absolute inset-0 rounded-[48px] shadow-2xl p-[4px] bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 flex flex-col z-10"
+        {/* iPhone 17 Pro Chassis (Titanium Rim) */}
+        <div className="absolute inset-0 rounded-[48px] shadow-2xl p-[4px] bg-gradient-to-br from-slate-600 via-slate-700 to-slate-900 flex flex-col z-10"
           style={{
-            boxShadow: '0 25px 50px -12px rgba(249, 115, 22, 0.4), inset 0 0 0 1px rgba(255,255,255,0.3)'
+            boxShadow: '0 25px 50px -12px rgba(0, 180, 255, 0.25), inset 0 0 0 1px rgba(255,255,255,0.2)'
           }}
         >
           {/* Inner Black Border & Screen */}

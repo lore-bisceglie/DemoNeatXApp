@@ -4,7 +4,7 @@ import React from "react";
 import { MessageCircle } from "lucide-react";
 
 export default function WhatsAppFloatingBtn() {
-  const phoneNumber = "393510000000"; // Sostituisci con il numero reale
+  const phoneNumber = "393480480942";
   const message = "Ciao! Vorrei avere maggiori informazioni su NeatX per la mia attività.";
   const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
