@@ -5,25 +5,25 @@ import { Sparkles, CalendarCheck2, LineChart, LockKeyhole, Clock3, ShieldCheck, 
 const OPERATING_STEPS = [
   {
     icon: Sparkles,
-    title: "Ti configuriamo la vetrina",
-    text: "Servizi, prezzi, orari, pause, staff e regole del tuo business diventano una pagina pronta a vendere.",
+    title: "Crea il tuo profilo in 60 secondi",
+    text: "Inserisci i tuoi orari e i tuoi servizi. NeatX genera all'istante la tua pagina di prenotazione personalizzata senza bisogno di programmatori.",
   },
   {
     icon: CalendarCheck2,
-    title: "I clienti prenotano da soli",
-    text: "Da Instagram, Google o WhatsApp entrano nel tuo link e trovano subito lo slot giusto.",
+    title: "Condividi il tuo nuovo link",
+    text: "Mettilo nella bio di Instagram, su Google o mandalo su WhatsApp. I clienti vedranno solo gli orari che tu decidi di lasciare liberi.",
   },
   {
     icon: LineChart,
-    title: "Tu controlli tutto dalla dashboard",
-    text: "Agenda, incassi, appuntamenti, clienti e promemoria restano ordinati in un unico posto.",
+    title: "L'agenda si riempie da sola",
+    text: "I clienti scelgono il servizio, pagano l'acconto e ricevono il promemoria. Tu ti ritrovi l'agenda piena senza aver mai risposto al telefono.",
   },
 ];
 
 const PROOF_ITEMS = [
-  { icon: Clock3, title: "Meno telefono", text: "Le richieste ripetitive diventano prenotazioni automatiche." },
-  { icon: ShieldCheck, title: "Più controllo", text: "Ogni appuntamento ha regole chiare, conferme e storico." },
-  { icon: Star, title: "Più reputazione", text: "Il cliente soddisfatto viene guidato verso la recensione giusta." },
+  { icon: Clock3, title: "Basta squilli a vuoto", text: "Il telefono smette di suonare di continuo. Le richieste diventano appuntamenti in automatico." },
+  { icon: ShieldCheck, title: "Zero accavallamenti", text: "Nessun errore umano. NeatX incastra gli appuntamenti al posto tuo seguendo le tue regole." },
+  { icon: Star, title: "Incassi garantiti", text: "Con gli acconti automatici e i promemoria intelligenti, dici addio ai clienti che non si presentano." },
 ];
 
 export default function OperatingSteps() {
@@ -34,13 +34,13 @@ export default function OperatingSteps() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-purple-300 mb-6">
               <LockKeyhole size={14} />
-              Processo chiuso, clienti liberi di prenotare
+              LA TUA AGENDA IN AUTOPILOTA
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
-              Il tuo link diventa un venditore sempre acceso.
+              Zero telefonate. Più appuntamenti.
             </h2>
             <p className="text-slate-400 leading-relaxed text-lg mb-8">
-              NeatX prende il lavoro ripetitivo della segreteria e lo trasforma in un flusso ordinato: prenotazione, conferma, acconto, promemoria e dashboard.
+              NeatX trasforma il tuo link in una vera e propria segretaria virtuale attiva 24/7. I clienti si prenotano da soli e tu pensi solo a lavorare.
             </p>
             <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-4">
               {PROOF_ITEMS.map((item) => {
