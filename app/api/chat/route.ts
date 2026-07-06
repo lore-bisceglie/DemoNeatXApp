@@ -112,6 +112,11 @@ export async function POST(req: Request) {
       }
     }
 
-    return Response.json({ reply: `ERRORE TECNICO: ${errorMessage}` }, { status: 200 });
+    if (errorMessage.includes("503") || errorMessage.includes("high demand") || errorMessage.includes("overloaded")) {
+      return Response.json({ reply: "In questo momento sto aiutando tantissimi saloni e i miei server sono temporaneamente sovraccarichi. Potresti scrivermi di nuovo tra qualche minuto? ⚙️" }, { status: 200 });
+    }
+
+    // Per altri errori tecnici, mostriamo un messaggio generico ma professionale
+    return Response.json({ reply: "Ops, si è verificato un piccolo errore di connessione ai miei circuiti. Riprova tra un attimo o contattaci su WhatsApp se il problema persiste! 🙏" }, { status: 200 });
   }
 }
