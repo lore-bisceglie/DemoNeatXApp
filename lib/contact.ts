@@ -32,6 +32,26 @@ export function normalizeOptionalUrl(value: unknown) {
   return `https://${trimmed.replace(/^\/+/, "")}`;
 }
 
+export function normalizeInstagramUrl(value: unknown) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return normalizeOptionalUrl(trimmed);
+  }
+
+  const handle = trimmed
+    .replace(/^@+/, "")
+    .replace(/^instagram\.com\//i, "")
+    .replace(/^www\.instagram\.com\//i, "")
+    .replace(/^\/+/, "")
+    .split(/[/?#\s]/)[0]
+    .replace(/[^a-z0-9._]/gi, "");
+
+  return handle ? `https://instagram.com/${handle}` : null;
+}
+
 export function buildMapsLink(address: string | null | undefined, explicit?: string | null) {
   const direct = normalizeOptionalUrl(explicit);
   if (direct) return direct;

@@ -37,11 +37,9 @@ type Props = {
   address?: string | null;
   openTime?: string | null;
   instagramUrl?: string | null;
-  facebookUrl?: string | null;
   tiktokUrl?: string | null;
   websiteUrl?: string | null;
   mapsLink?: string | null;
-  bookingUrl?: string | null;
   closeTime?: string | null;
   breakStart?: string | null;
   breakEnd?: string | null;
@@ -73,6 +71,16 @@ function parseClosedDays(value?: string | null) {
   }
 }
 
+function instagramHandleValue(value?: string | null) {
+  const raw = value?.trim();
+  if (!raw) return "";
+
+  const match = raw.match(/instagram\.com\/([^/?#\s]+)/i);
+  if (match?.[1]) return `@${match[1].replace(/^@+/, "")}`;
+
+  return raw.startsWith("@") ? raw : `@${raw}`;
+}
+
 export default function TrialLaunchPanel({
   slug,
   tenantId,
@@ -84,11 +92,9 @@ export default function TrialLaunchPanel({
   address,
   openTime,
   instagramUrl,
-  facebookUrl,
   tiktokUrl,
   websiteUrl,
   mapsLink,
-  bookingUrl,
   closeTime,
   breakStart,
   breakEnd,
@@ -116,12 +122,10 @@ export default function TrialLaunchPanel({
     phone: phone || "",
     address: address || "",
     openTime: openTime || "09:00",
-    instagramUrl: instagramUrl || "",
-    facebookUrl: facebookUrl || "",
+    instagramUrl: instagramHandleValue(instagramUrl),
     tiktokUrl: tiktokUrl || "",
     websiteUrl: websiteUrl || "",
     mapsLink: mapsLink || "",
-    bookingUrl: bookingUrl || "",
     closeTime: closeTime || "19:00",
     breakStart: breakStart || "",
     breakEnd: breakEnd || "",
@@ -439,12 +443,6 @@ export default function TrialLaunchPanel({
             />
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input
-                value={shopDraft.bookingUrl}
-                onChange={(event) => setShopDraft((current) => ({ ...current, bookingUrl: event.target.value }))}
-                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="Link prenotazione esterno (vuoto = WhatsApp)"
-              />
-              <input
                 value={shopDraft.mapsLink}
                 onChange={(event) => setShopDraft((current) => ({ ...current, mapsLink: event.target.value }))}
                 className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
@@ -454,13 +452,7 @@ export default function TrialLaunchPanel({
                 value={shopDraft.instagramUrl}
                 onChange={(event) => setShopDraft((current) => ({ ...current, instagramUrl: event.target.value }))}
                 className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="Instagram"
-              />
-              <input
-                value={shopDraft.facebookUrl}
-                onChange={(event) => setShopDraft((current) => ({ ...current, facebookUrl: event.target.value }))}
-                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="Facebook"
+                placeholder="Instagram, es. @nomeattivita"
               />
               <input
                 value={shopDraft.tiktokUrl}

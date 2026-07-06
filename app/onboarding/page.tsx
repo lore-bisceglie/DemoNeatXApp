@@ -67,9 +67,7 @@ export default function Onboarding() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [trialDays, setTrialDays] = useState("7");
-  const [bookingUrl, setBookingUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
-  const [facebookUrl, setFacebookUrl] = useState("");
   const [tiktokUrl, setTiktokUrl] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -115,9 +113,7 @@ export default function Onboarding() {
           phone,
           address,
           trialDays,
-          bookingUrl,
           instagramUrl,
-          facebookUrl,
           tiktokUrl,
           websiteUrl,
         }),
@@ -338,36 +334,21 @@ export default function Onboarding() {
               />
             </label>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <label className="block">
-                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                  <CalendarDays size={14} />
-                  Durata prova
-                </span>
-                <select
-                  value={trialDays}
-                  onChange={(event) => setTrialDays(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                >
-                  <option value="7">7 giorni</option>
-                  <option value="14">14 giorni</option>
-                  <option value="30">30 giorni</option>
-                </select>
-              </label>
-
-              <label className="block">
-                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                  <Globe2 size={14} />
-                  Link prenotazione esterno
-                </span>
-                <input
-                  value={bookingUrl}
-                  onChange={(event) => setBookingUrl(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                  placeholder="Vuoto = WhatsApp automatico"
-                />
-              </label>
-            </div>
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <CalendarDays size={14} />
+                Durata prova
+              </span>
+              <select
+                value={trialDays}
+                onChange={(event) => setTrialDays(event.target.value)}
+                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+              >
+                <option value="7">7 giorni</option>
+                <option value="14">14 giorni</option>
+                <option value="30">30 giorni</option>
+              </select>
+            </label>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="block">
@@ -379,19 +360,7 @@ export default function Onboarding() {
                   value={instagramUrl}
                   onChange={(event) => setInstagramUrl(event.target.value)}
                   className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                  placeholder="https://instagram.com/attivita"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                  <Globe2 size={14} />
-                  Facebook
-                </span>
-                <input
-                  value={facebookUrl}
-                  onChange={(event) => setFacebookUrl(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                  placeholder="https://facebook.com/attivita"
+                  placeholder="@nomeattivita"
                 />
               </label>
               <label className="block">

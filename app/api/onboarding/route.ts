@@ -9,7 +9,7 @@ import {
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
 
-import { buildMapsLink, normalizeOptionalUrl, normalizeWhatsappPhone } from "@/lib/contact";
+import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
 function cleanText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
@@ -48,11 +48,10 @@ export async function POST(req: Request) {
     const address = cleanText(body.address, city) || city;
     const description = cleanText(body.description);
     const trialDays = cleanTrialDays(body.trialDays);
-    const instagramUrl = normalizeOptionalUrl(body.instagramUrl);
-    const facebookUrl = normalizeOptionalUrl(body.facebookUrl);
+    const instagramUrl = normalizeInstagramUrl(body.instagramUrl);
     const tiktokUrl = normalizeOptionalUrl(body.tiktokUrl);
     const websiteUrl = normalizeOptionalUrl(body.websiteUrl);
-    const bookingUrl = normalizeOptionalUrl(body.bookingUrl);
+    const bookingUrl = null;
     const mapsLink = normalizeOptionalUrl(body.mapsLink) || buildMapsLink(address);
 
     if (!businessName || !category || !city || !ownerName || !ownerEmail || !password || !phone) {
@@ -105,7 +104,7 @@ export async function POST(req: Request) {
         phone,
         address,
         instagramUrl,
-        facebookUrl,
+        facebookUrl: null,
         tiktokUrl,
         websiteUrl,
         mapsLink,
