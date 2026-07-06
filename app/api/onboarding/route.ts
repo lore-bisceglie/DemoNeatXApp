@@ -31,6 +31,35 @@ async function uniqueSlug(base: string) {
   return `${root}-${Date.now().toString(36)}`;
 }
 
+async function sendTelegramNotification(tenant: any, ownerName: string, category: string) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+
+  const text = `🚨 *NUOVO LEAD NEATX* 🚨\n\n` +
+    `👤 *Proprietario:* ${ownerName}\n` +
+    `🏢 *Attività:* ${tenant.name}\n` +
+    `📍 *Città:* ${tenant.city}\n` +
+    `🏷️ *Categoria:* ${category}\n` +
+    `📞 *Telefono:* ${tenant.phone}\n\n` +
+    `📱 *WhatsApp:* [Clicca qui per scrivergli](https://wa.me/${tenant.phone.replace(/[^0-9]/g, '')})`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: "Markdown",
+        disable_web_page_preview: true
+      })
+    });
+  } catch (e) {
+    console.error("Telegram notification failed", e);
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -170,6 +199,9 @@ export async function POST(req: Request) {
         metadata: JSON.stringify({ category: template.id, trialDays }),
       },
     });
+
+    // 🚀 Invia notifica Telegram al founder
+    await sendTelegramNotification(tenant, ownerName, template.id);
 
     return NextResponse.json({
       success: true,
