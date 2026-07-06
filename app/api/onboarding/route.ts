@@ -9,15 +9,17 @@ import {
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
 
-function cleanPhone(value: unknown) {
-  if (typeof value !== "string") return null;
-  const cleaned = value.replace(/\D/g, "");
-  return cleaned.length >= 8 ? cleaned : null;
-}
+import { buildMapsLink, normalizeOptionalUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
 function cleanText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;
   return value.trim();
+}
+
+function cleanTrialDays(value: unknown) {
+  const parsed = Number.parseInt(String(value || "7"), 10);
+  if (Number.isNaN(parsed)) return 7;
+  return Math.max(1, Math.min(parsed, 90));
 }
 
 async function uniqueSlug(base: string) {
@@ -42,11 +44,20 @@ export async function POST(req: Request) {
     const ownerName = cleanText(body.ownerName);
     const ownerEmail = cleanText(body.ownerEmail || body.email).toLowerCase();
     const password = cleanText(body.password);
-    const phone = cleanPhone(body.phone);
+    const phone = normalizeWhatsappPhone(body.phone);
+    const address = cleanText(body.address, city) || city;
+    const description = cleanText(body.description);
+    const trialDays = cleanTrialDays(body.trialDays);
+    const instagramUrl = normalizeOptionalUrl(body.instagramUrl);
+    const facebookUrl = normalizeOptionalUrl(body.facebookUrl);
+    const tiktokUrl = normalizeOptionalUrl(body.tiktokUrl);
+    const websiteUrl = normalizeOptionalUrl(body.websiteUrl);
+    const bookingUrl = normalizeOptionalUrl(body.bookingUrl);
+    const mapsLink = normalizeOptionalUrl(body.mapsLink) || buildMapsLink(address);
 
-    if (!businessName || !category || !city || !ownerName || !ownerEmail || !password) {
+    if (!businessName || !category || !city || !ownerName || !ownerEmail || !password || !phone) {
       return NextResponse.json(
-        { error: "Inserisci nome attivita, categoria, citta, nome, email e password." },
+        { error: "Inserisci nome attivita, categoria, citta, nome, email, password e numero WhatsApp." },
         { status: 400 }
       );
     }
@@ -79,7 +90,7 @@ export async function POST(req: Request) {
     const now = new Date();
 
     const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+    trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
 
     const tenant = await prisma.tenant.create({
       data: {
@@ -90,9 +101,15 @@ export async function POST(req: Request) {
         ownerName,
         ownerEmail,
         ownerPasswordHash: hashPassword(password),
-        description: `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
+        description: description || `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
         phone,
-        address: city,
+        address,
+        instagramUrl,
+        facebookUrl,
+        tiktokUrl,
+        websiteUrl,
+        mapsLink,
+        bookingUrl,
         openTime: template.openTime,
         closeTime: template.closeTime,
         breakStart: template.breakStart || null,
@@ -172,7 +189,7 @@ export async function POST(req: Request) {
         action: "CREATE_DEMO_SHOP",
         actor: "system",
         message: `Negozio demo creato per ${businessName}: servizi, staff e prenotazioni sono gia pronti.`,
-        metadata: JSON.stringify({ category: template.id, ownerEmail }),
+        metadata: JSON.stringify({ category: template.id, ownerEmail, trialDays }),
       },
     });
 

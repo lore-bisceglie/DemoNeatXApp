@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Loader2,
   Mail,
+  Globe2,
   MapPin,
   Phone,
   Scissors,
@@ -64,6 +65,13 @@ export default function Onboarding() {
   const [ownerEmail, setOwnerEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [trialDays, setTrialDays] = useState("7");
+  const [bookingUrl, setBookingUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [facebookUrl, setFacebookUrl] = useState("");
+  const [tiktokUrl, setTiktokUrl] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<{
@@ -81,8 +89,8 @@ export default function Onboarding() {
   const handleCreate = async () => {
     setError("");
 
-    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !ownerEmail.trim() || !password.trim()) {
-      setError("Compila nome attivita, categoria, citta, nome, email e password.");
+    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !ownerEmail.trim() || !password.trim() || !phone.trim()) {
+      setError("Compila nome attivita, categoria, citta, nome, email, password e WhatsApp prenotazioni.");
       return;
     }
 
@@ -105,6 +113,13 @@ export default function Onboarding() {
           ownerEmail,
           password,
           phone,
+          address,
+          trialDays,
+          bookingUrl,
+          instagramUrl,
+          facebookUrl,
+          tiktokUrl,
+          websiteUrl,
         }),
       });
 
@@ -191,7 +206,7 @@ export default function Onboarding() {
         <div>
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-cyan-300">
             <Sparkles size={15} />
-            Registrazione + prova 7 giorni
+            Registrazione + prova {trialDays} giorni
           </div>
           <h1 className="max-w-xl text-4xl font-extrabold leading-tight text-white sm:text-6xl">
             Registrati e crea il tuo negozio online in 60 secondi.
@@ -298,7 +313,7 @@ export default function Onboarding() {
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                   <Phone size={14} />
-                  Telefono opzionale
+                  WhatsApp prenotazioni
                 </span>
                 <input
                   value={phone}
@@ -309,6 +324,101 @@ export default function Onboarding() {
               </label>
             </div>
 
+
+            <label className="block">
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <MapPin size={14} />
+                Indirizzo completo
+              </span>
+              <input
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
+                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                placeholder="Via Roma 10, Milano"
+              />
+            </label>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <CalendarDays size={14} />
+                  Durata prova
+                </span>
+                <select
+                  value={trialDays}
+                  onChange={(event) => setTrialDays(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                >
+                  <option value="7">7 giorni</option>
+                  <option value="14">14 giorni</option>
+                  <option value="30">30 giorni</option>
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Globe2 size={14} />
+                  Link prenotazione esterno
+                </span>
+                <input
+                  value={bookingUrl}
+                  onChange={(event) => setBookingUrl(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="Vuoto = WhatsApp automatico"
+                />
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Globe2 size={14} />
+                  Instagram
+                </span>
+                <input
+                  value={instagramUrl}
+                  onChange={(event) => setInstagramUrl(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="https://instagram.com/attivita"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Globe2 size={14} />
+                  Facebook
+                </span>
+                <input
+                  value={facebookUrl}
+                  onChange={(event) => setFacebookUrl(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="https://facebook.com/attivita"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Globe2 size={14} />
+                  TikTok
+                </span>
+                <input
+                  value={tiktokUrl}
+                  onChange={(event) => setTiktokUrl(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="https://tiktok.com/@attivita"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Globe2 size={14} />
+                  Sito esterno
+                </span>
+                <input
+                  value={websiteUrl}
+                  onChange={(event) => setWebsiteUrl(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="https://sito-cliente.it"
+                />
+              </label>
+            </div>
             <label className="block">
               <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                 <UserRound size={14} />

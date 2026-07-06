@@ -39,16 +39,29 @@ export async function POST(request: Request) {
       paymentMethod,
       staffId: explicitStaffId,
     } = body;
-    let isDemoTenant = tenantId === "cmqtds1840000yyqbd23x1jdj";
+    let isPlaygroundDemo = tenantId === "cmqtds1840000yyqbd23x1jdj";
+    let isTrialExpired = false;
     if (tenantId) {
       const bookingTenant = await prisma.tenant.findUnique({
         where: { id: tenantId },
-        select: { isDemoData: true },
+        select: { isDemoData: true, trialStatus: true, trialEndsAt: true, plan: true },
       });
-      isDemoTenant = isDemoTenant || Boolean(bookingTenant?.isDemoData);
+      isPlaygroundDemo =
+        isPlaygroundDemo ||
+        Boolean(bookingTenant?.isDemoData && bookingTenant.trialStatus === "demo");
+      isTrialExpired = Boolean(
+        bookingTenant?.trialEndsAt &&
+          new Date(bookingTenant.trialEndsAt) < new Date() &&
+          bookingTenant.plan !== "premium" &&
+          bookingTenant.trialStatus !== "converted"
+      );
     }
 
-    if (!isAdmin && !isDemoTenant) {
+    if (!isAdmin && isTrialExpired) {
+      return NextResponse.json({ error: "La prova gratuita e scaduta." }, { status: 402 });
+    }
+
+    if (!isAdmin && !isPlaygroundDemo) {
       try {
         const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
         const { success } = await ratelimit.limit(ip);
@@ -68,18 +81,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Per favore, compila tutti i campi obbligatori." }, { status: 400 });
     }
 
-    if (!isDemoTenant && customerName.trim().length < 3) {
-      return NextResponse.json({ error: "Il nome inserito è troppo corto." }, { status: 400 });
-    }
-
-    const cleanPhone = customerPhone ? customerPhone.replace(/\s+/g, '') : "0000000000";
-    const phoneRegex = /^[0-9]{8,15}$/;
-
-    if (!isDemoTenant && !isAdmin && customerPhone && !phoneRegex.test(cleanPhone) && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
+    if (!isAdmin && !isPlaygroundDemo && !customerPhone) {
       return NextResponse.json({ error: "Inserisci un numero di telefono valido." }, { status: 400 });
     }
 
-    if (!isDemoTenant && !isAdmin && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
+    if (!isPlaygroundDemo && customerName.trim().length < 3) {
+      return NextResponse.json({ error: "Il nome inserito è troppo corto." }, { status: 400 });
+    }
+
+    const cleanPhone = customerPhone ? customerPhone.replace(/\D/g, '') : "0000000000";
+    const phoneRegex = /^[0-9]{8,15}$/;
+
+    if (!isPlaygroundDemo && !isAdmin && customerPhone && !phoneRegex.test(cleanPhone) && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
+      return NextResponse.json({ error: "Inserisci un numero di telefono valido." }, { status: 400 });
+    }
+
+    if (!isPlaygroundDemo && !isAdmin && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
       const noShowCount = await prisma.noShow.count({ where: { customerPhone: cleanPhone, tenantId } });
       if (noShowCount >= 3) {
         return NextResponse.json({ error: "Hai mancato troppi appuntamenti. Contatta direttamente l'attivita." }, { status: 403 });
@@ -119,7 +136,7 @@ export async function POST(request: Request) {
         cancelToken: newCancelToken,
         tenantId: tenantId,
         serviceId: serviceId,
-        isPaid: isDemoTenant && paymentMethod === "online",
+        isPaid: isPlaygroundDemo && paymentMethod === "online",
         staffId: explicitStaffId || undefined,
       },
     });

@@ -139,6 +139,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     closedDays: [0, 1] as number[],
     instagramUrl: "",
     mapsLink: "",
+    facebookUrl: "",
+    tiktokUrl: "",
+    websiteUrl: "",
+    bookingUrl: "",
+    trialEndsAt: "",
     isDemo: false,
     trialExpired: false,
     trialStatus: "demo",
@@ -187,7 +192,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           breakEnd: data.breakEnd || "",
           closedDays: parsedClosedDays,
           instagramUrl: data.instagramUrl || "",
-          mapsLink: data.mapsLink || "",
+          mapsLink: data.mapsLink || (data.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.address)}` : ""),
+          facebookUrl: data.facebookUrl || "",
+          tiktokUrl: data.tiktokUrl || "",
+          websiteUrl: data.websiteUrl || "",
+          bookingUrl: data.bookingUrl || "",
+          trialEndsAt: data.trialEndsAt || "",
           isDemo: Boolean(data.isDemoData),
           trialExpired: data.trialExpired || false,
           trialStatus: data.trialStatus || "demo",
@@ -464,16 +474,16 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const handleBook = async () => {
     setFormError("");
 
-    if (!name || !selectedSlot || !selectedService || (!tenantInfo.isDemo && !phone)) {
+    if (!name || !selectedSlot || !selectedService || (!isPlaygroundDemo && !phone)) {
       setFormError(
-        tenantInfo.isDemo
+        isPlaygroundDemo
           ? "Per favore, seleziona un servizio, un orario e inserisci il tuo nome."
           : "Per favore, seleziona un servizio, un orario e inserisci Nome e Telefono."
       );
       return;
     }
 
-    if (!tenantInfo.isDemo && phone !== "0000") {
+    if (!isPlaygroundDemo && phone !== "0000") {
       const cifre = phone.replace(/\D/g, "");
       let isValid = false;
 
@@ -507,7 +517,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         tenantId: tenantInfo.id,
         serviceId: selectedService.id,
         duration: selectedService.duration,
-        ...(tenantInfo.isDemo ? { paymentMethod } : {}),
+        ...(isPlaygroundDemo ? { paymentMethod } : {}),
       }),
     });
 
@@ -515,7 +525,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       const data = await res.json();
       const cancelToken = data.cancelToken;
 
-      if (tenantInfo.isDemo) {
+      if (isPlaygroundDemo) {
         setDemoModal({
           show: true,
           date,
@@ -528,7 +538,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               ? "Pagamento in sede"
               : "Prenotazione test salvata",
           customerName: name,
-          customerPhone: tenantInfo.isDemo && !phone ? "3330000000" : phone,
+          customerPhone: isPlaygroundDemo && !phone ? "3330000000" : phone,
           cancelPath: `/cancel/${cancelToken}`,
           price: selectedService.price || 0,
         });
@@ -571,7 +581,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           `_Prenotazione gestita da ${tenantInfo.name}._ 🚀`
       );
 
-      const whatsappUrl = `https://wa.me/${shopPhone}?text=${text}`;
+      if (!tenantInfo.bookingUrl && !shopPhone) {
+        setFormError("Numero WhatsApp del negozio non configurato.");
+        setIsBooking(false);
+        return;
+      }
+      const whatsappUrl = tenantInfo.bookingUrl || `https://wa.me/${shopPhone}?text=${text}`;
       const link = document.createElement("a");
       link.href = whatsappUrl;
       link.target = "_top";
@@ -599,7 +614,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     isBooking ||
     selectedSlot === "" ||
     name === "" ||
-    (!tenantInfo.isDemo && phone === "");
+    (!isPlaygroundDemo && phone === "");
 
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
@@ -694,6 +709,17 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
   return (
     <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-500">
+      {tenantInfo.isDemo && !isPlaygroundDemo && tenantInfo.trialEndsAt && (
+        <div className="mb-5 w-full max-w-md rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center text-xs font-extrabold uppercase tracking-widest text-emerald-300">
+          Prova gratuita attiva fino al{" "}
+          {new Date(tenantInfo.trialEndsAt).toLocaleDateString("it-IT", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
+        </div>
+      )}
+
       {isPlaygroundDemo && showActivityModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-lg w-full text-center animate-in fade-in zoom-in duration-200">
@@ -1029,6 +1055,36 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                   Google Maps
+                </a>
+              )}
+              {tenantInfo.facebookUrl && (
+                <a
+                  href={tenantInfo.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-blue-900/30 transition transform hover:scale-105"
+                >
+                  Facebook
+                </a>
+              )}
+              {tenantInfo.tiktokUrl && (
+                <a
+                  href={tenantInfo.tiktokUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-[#050814] px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-black/30 transition transform hover:scale-105"
+                >
+                  TikTok
+                </a>
+              )}
+              {tenantInfo.websiteUrl && (
+                <a
+                  href={tenantInfo.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-black/30 transition transform hover:scale-105"
+                >
+                  Sito
                 </a>
               )}
             </div>
@@ -1387,10 +1443,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             </button>
 
             <p className="text-[10px] text-slate-500 mt-5 text-center mb-8">
-              {tenantInfo.isDemo
-                ? isPlaygroundDemo
-                  ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
-                  : "Prenotazione test: lo slot viene salvato nella dashboard del negozio."
+              {isPlaygroundDemo
+                ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
                 : "Verrai reindirizzato a WhatsApp per confermare."}
             </p>
 

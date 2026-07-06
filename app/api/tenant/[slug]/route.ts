@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from "next/headers";
+import { buildMapsLink, normalizeOptionalUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
 export async function GET(req: Request, context: { params: Promise<{ slug: string }> }) {
   try {
@@ -86,8 +87,12 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
 
     const cleanString = (value: unknown, fallback?: string | null) =>
       typeof value === "string" ? value.trim() : fallback;
+    const cleanUrl = (value: unknown, fallback?: string | null) =>
+      typeof value === "string" ? normalizeOptionalUrl(value) : fallback;
 
-    const cleanPhone = typeof body.phone === "string" ? body.phone.replace(/\D/g, "") : tenant.phone;
+
+    const cleanPhone = typeof body.phone === "string" ? normalizeWhatsappPhone(body.phone) : tenant.phone;
+    const nextAddress = cleanString(body.address, tenant.address);
 
     const updated = await prisma.tenant.update({
       where: { slug },
@@ -96,9 +101,13 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
         city: cleanString(body.city, tenant.city),
         description: cleanString(body.description, tenant.description),
         phone: cleanPhone || null,
-        address: cleanString(body.address, tenant.address),
-        instagramUrl: cleanString(body.instagramUrl, tenant.instagramUrl),
-        mapsLink: cleanString(body.mapsLink, tenant.mapsLink),
+        address: nextAddress,
+        instagramUrl: cleanUrl(body.instagramUrl, tenant.instagramUrl),
+        facebookUrl: cleanUrl(body.facebookUrl, tenant.facebookUrl),
+        tiktokUrl: cleanUrl(body.tiktokUrl, tenant.tiktokUrl),
+        websiteUrl: cleanUrl(body.websiteUrl, tenant.websiteUrl),
+        mapsLink: cleanUrl(body.mapsLink, tenant.mapsLink) || buildMapsLink(nextAddress),
+        bookingUrl: cleanUrl(body.bookingUrl, tenant.bookingUrl),
         openTime: cleanString(body.openTime, tenant.openTime) || "09:00",
         closeTime: cleanString(body.closeTime, tenant.closeTime) || "19:00",
         breakStart: cleanString(body.breakStart, tenant.breakStart) || null,

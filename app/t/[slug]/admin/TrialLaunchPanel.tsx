@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 
+import { getSalesWhatsappUrl } from "@/lib/contact";
 type ServiceDraft = {
   id: string;
   name: string;
@@ -35,6 +36,12 @@ type Props = {
   phone?: string | null;
   address?: string | null;
   openTime?: string | null;
+  instagramUrl?: string | null;
+  facebookUrl?: string | null;
+  tiktokUrl?: string | null;
+  websiteUrl?: string | null;
+  mapsLink?: string | null;
+  bookingUrl?: string | null;
   closeTime?: string | null;
   breakStart?: string | null;
   breakEnd?: string | null;
@@ -76,6 +83,12 @@ export default function TrialLaunchPanel({
   phone,
   address,
   openTime,
+  instagramUrl,
+  facebookUrl,
+  tiktokUrl,
+  websiteUrl,
+  mapsLink,
+  bookingUrl,
   closeTime,
   breakStart,
   breakEnd,
@@ -103,6 +116,12 @@ export default function TrialLaunchPanel({
     phone: phone || "",
     address: address || "",
     openTime: openTime || "09:00",
+    instagramUrl: instagramUrl || "",
+    facebookUrl: facebookUrl || "",
+    tiktokUrl: tiktokUrl || "",
+    websiteUrl: websiteUrl || "",
+    mapsLink: mapsLink || "",
+    bookingUrl: bookingUrl || "",
     closeTime: closeTime || "19:00",
     breakStart: breakStart || "",
     breakEnd: breakEnd || "",
@@ -282,7 +301,7 @@ export default function TrialLaunchPanel({
         <div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-cyan-300">
-              Trial 7 giorni
+              Prova gratuita
             </span>
             {category && (
               <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-slate-400">
@@ -418,6 +437,45 @@ export default function TrialLaunchPanel({
               className="w-full rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
               placeholder="Indirizzo"
             />
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <input
+                value={shopDraft.bookingUrl}
+                onChange={(event) => setShopDraft((current) => ({ ...current, bookingUrl: event.target.value }))}
+                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="Link prenotazione esterno (vuoto = WhatsApp)"
+              />
+              <input
+                value={shopDraft.mapsLink}
+                onChange={(event) => setShopDraft((current) => ({ ...current, mapsLink: event.target.value }))}
+                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="Google Maps (vuoto = automatico)"
+              />
+              <input
+                value={shopDraft.instagramUrl}
+                onChange={(event) => setShopDraft((current) => ({ ...current, instagramUrl: event.target.value }))}
+                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="Instagram"
+              />
+              <input
+                value={shopDraft.facebookUrl}
+                onChange={(event) => setShopDraft((current) => ({ ...current, facebookUrl: event.target.value }))}
+                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="Facebook"
+              />
+              <input
+                value={shopDraft.tiktokUrl}
+                onChange={(event) => setShopDraft((current) => ({ ...current, tiktokUrl: event.target.value }))}
+                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="TikTok"
+              />
+              <input
+                value={shopDraft.websiteUrl}
+                onChange={(event) => setShopDraft((current) => ({ ...current, websiteUrl: event.target.value }))}
+                className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
+                placeholder="Sito esterno"
+              />
+            </div>
+
             <textarea
               value={shopDraft.description}
               onChange={(event) => setShopDraft((current) => ({ ...current, description: event.target.value }))}
@@ -562,9 +620,9 @@ export default function TrialLaunchPanel({
           </p>
         </div>
         <a
-          href={`https://wa.me/393333333333?text=${encodeURIComponent(
+          href={getSalesWhatsappUrl(
             `Ciao, voglio attivare NeatX per ${tenantName}. Dashboard: ${adminUrl}`
-          )}`}
+          )}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-extrabold text-black transition hover:bg-purple-200"
