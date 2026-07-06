@@ -9,7 +9,6 @@ interface ChatMessage {
   content: string;
 }
 
-const STORAGE_KEY = 'neatx-chat-history';
 const QUICK_REPLIES = [
   { label: '💰 Quanto costa?', message: 'Quanto costa NeatX?' },
   { label: '📱 Come funziona?', message: 'Come funziona NeatX?' },
@@ -54,29 +53,6 @@ export default function Chatbot() {
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Carica cronologia da localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(parsed);
-          setShowQuickReplies(false);
-        }
-      }
-    } catch { /* ignore */ }
-  }, []);
-
-  // Salva cronologia su localStorage
-  useEffect(() => {
-    if (messages.length > 0) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50)));
-      } catch { /* ignore */ }
-    }
-  }, [messages]);
 
   // Auto-scroll
   useEffect(() => {
