@@ -276,7 +276,7 @@ export default function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Scrivi un messaggio..."
-                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-sm rounded-full px-4 py-3 pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
+                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[16px] sm:text-sm rounded-full px-4 py-3 pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
               />
               <button
                 type="submit"
