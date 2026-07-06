@@ -68,6 +68,11 @@ STRATEGIA
 
 export async function POST(req: Request) {
   try {
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("ERRORE: La variabile GEMINI_API_KEY non è presente nelle variabili d'ambiente di Vercel!");
+      return Response.json({ reply: "Sistema in manutenzione. Chiave API non configurata." }, { status: 200 });
+    }
+
     const { messages } = await req.json();
 
     const formattedMessages = messages.map((m: { role: string; content: string }) => ({
