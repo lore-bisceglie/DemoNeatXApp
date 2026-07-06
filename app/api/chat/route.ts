@@ -1,11 +1,6 @@
-import { streamText } from 'ai';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export const maxDuration = 30;
-
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
 
 const systemPrompt = `Sei l'assistente virtuale ufficiale del sito NeatX (neatx.store). 
 Sei un venditore esperto, simpatico e rassicurante. 
@@ -26,15 +21,24 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    const result = await streamText({
-      model: google('gemini-1.5-flash'),
-      system: systemPrompt,
-      messages,
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const chat = model.startChat({
+      history: messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }],
+      })),
+      systemInstruction: systemPrompt,
     });
 
-    return result.toTextStreamResponse();
+    const lastMessage = messages[messages.length - 1].content;
+    const result = await chat.sendMessage(lastMessage);
+    const response = result.response.text();
+
+    return Response.json({ reply: response });
   } catch (error) {
     console.error("Chat API Error:", error);
-    return new Response("Errore del server", { status: 500 });
+    return Response.json({ reply: "Mi dispiace, c'è stato un problema tecnico. Riprova tra qualche secondo! 🔧" }, { status: 200 });
   }
 }

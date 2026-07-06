@@ -1,30 +1,66 @@
 "use client";
 
-import { useChat } from '@ai-sdk/react';
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, User, Bot, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Loader2 } from 'lucide-react';
+
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
-  const { messages, append, isLoading } = useChat();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-    append({ role: 'user', content: input });
-    setInput('');
-  };
-
-  // Auto-scroll all'ultimo messaggio
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: input.trim(),
+    };
+
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: updatedMessages }),
+      });
+
+      const data = await res.json();
+
+      const botMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.reply || "Ops, qualcosa è andato storto. Riprova!",
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+    } catch {
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "Mi dispiace, c'è stato un errore di connessione. Riprova tra un attimo! 🔧",
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -70,7 +106,7 @@ export default function Chatbot() {
           {/* Messaggio di benvenuto */}
           <div className="flex justify-start">
             <div className="bg-gray-800 text-gray-200 rounded-2xl rounded-tl-sm px-4 py-2 max-w-[85%] text-sm">
-              Ciao! 👋 Sono l'assistente virtuale di NeatX. Come posso aiutarti a svoltare la gestione del tuo salone?
+              Ciao! 👋 Sono l&apos;assistente virtuale di NeatX. Come posso aiutarti a svoltare la gestione del tuo salone?
             </div>
           </div>
 
@@ -90,7 +126,7 @@ export default function Chatbot() {
               </div>
             </div>
           ))}
-          
+
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-gray-800 text-gray-400 rounded-2xl rounded-tl-sm px-4 py-2 text-sm flex items-center gap-2">
@@ -107,7 +143,7 @@ export default function Chatbot() {
             <input
               type="text"
               value={input}
-              onChange={handleInputChange}
+              onChange={(e) => setInput(e.target.value)}
               placeholder="Scrivi un messaggio..."
               className="flex-1 bg-gray-800 border border-gray-700 text-white text-sm rounded-full px-4 py-2.5 pr-10 focus:outline-none focus:border-blue-500"
             />
