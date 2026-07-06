@@ -1,0 +1,9 @@
+node_modules
+.next
+bot_scripts
+content_strategy
+leads
+*.mp4
+*.avi
+*.mov
+assets/gameplay
