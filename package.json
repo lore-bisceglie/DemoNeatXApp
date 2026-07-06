@@ -12,9 +12,11 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.8",
     "@prisma/client": "^5.22.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "ai": "^7.0.16",
     "gray-matter": "^4.0.3",
     "lucide-react": "^1.23.0",
     "next": "16.2.7",

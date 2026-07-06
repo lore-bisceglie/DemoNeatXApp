@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Mail } from "lucide-react";
 import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
+import Chatbot from "@/components/Chatbot";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
 export const viewport: Viewport = {
@@ -40,8 +41,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-[#050814] text-slate-200 antialiased relative">
         {children}
         
-        {/* Gruppo Pulsanti Contatto */}
-        <div className="fixed bottom-6 right-6 z-50 hidden sm:flex flex-col items-end gap-3">
+        {/* Chatbot AI */}
+        <Chatbot />
+
+        {/* Gruppo Pulsanti Contatto (Spostati a Sinistra) */}
+        <div className="fixed bottom-6 left-6 z-40 hidden sm:flex flex-col items-start gap-3">
           {/* Pulsante Fluttuante Email */}
           <a 
             href="mailto:neatx.info@gmail.com?subject=Richiesta%20App%20Personalizzata&body=Ciao,%20ho%20provato%20la%20demo%20e%20vorrei%20avere%20informazioni%20per%20creare%20la%20mia%20app%20NeatX%20personalizzata." 
@@ -55,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <InstagramFloatingBtn />
         </div>
 
-        <div className="fixed bottom-4 right-4 z-50 sm:hidden">
+        <div className="fixed bottom-4 left-4 z-40 sm:hidden">
           <InstagramFloatingBtn compact />
         </div>
       </body>
