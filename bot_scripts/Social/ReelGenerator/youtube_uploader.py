@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
@@ -75,6 +76,27 @@ def upload_short(video_path, title, description):
         return False
         
     print(f"[*] Avvio caricamento su YouTube Shorts: {video_path}")
+    
+    # Blocco anti-spam: se abbiamo già pubblicato questo video oggi, saltiamo.
+    history_file = "history.json"
+    if os.path.exists(history_file):
+        try:
+            with open(history_file, "r", encoding="utf-8") as f:
+                history = json.load(f)
+                today = time.strftime("%Y-%m-%d")
+                metadata = {}
+                if os.path.exists("reel_data.json"):
+                    with open("reel_data.json", "r", encoding="utf-8") as meta_f:
+                        metadata = json.load(meta_f)
+                check_title = metadata.get("cover_title", title)
+                
+                # Controlla se c'è un video con lo stesso titolo caricato oggi
+                for record in history:
+                    if record.get("date") == today and record.get("title") == check_title:
+                        print(f"[*] ATTENZIONE: Un video con titolo '{check_title}' è già stato pubblicato oggi su YouTube. Salto la pubblicazione per evitare doppioni!")
+                        return True # Ritorna True per non far fallire lo script, ma non pubblica nulla.
+        except Exception as e:
+            print(f"[!] Errore lettura storico per anti-spam: {e}")
     
     # Crea la richiesta inserendo nel titolo anche #Shorts
     request = youtube.videos().insert(

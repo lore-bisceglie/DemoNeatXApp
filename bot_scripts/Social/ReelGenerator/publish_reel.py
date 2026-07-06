@@ -2,6 +2,8 @@ import os
 import time
 import requests
 import json
+import sys
+from datetime import datetime
 from dotenv import load_dotenv
 from tiktok_cookies import load_tiktok_cookies
 
@@ -18,7 +20,60 @@ TIKTOK_HEADLESS = os.environ.get(
     "true" if os.environ.get("GITHUB_ACTIONS") else "false",
 ).lower() in ("1", "true", "yes", "y")
 VIDEO_FILE = "reel_splitscreen_subbed.mp4"
+STRICT_PUBLISH = os.environ.get("STRICT_PUBLISH", "").lower() in ("1", "true", "yes", "y")
+REPORT_FILE = os.environ.get("PUBLISH_REPORT_FILE", "publish_report.json")
 # ==========================================
+
+def platform_result(ok, message="", extra=None):
+    result = {
+        "ok": bool(ok),
+        "message": message,
+    }
+    if extra:
+        result.update(extra)
+    return result
+
+def write_report(results, preflight=None):
+    report = {
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "strict_publish": STRICT_PUBLISH,
+        "video_file": VIDEO_FILE,
+        "preflight": preflight or {},
+        "results": results,
+    }
+    with open(REPORT_FILE, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+    print(f"[*] Report pubblicazione salvato in {REPORT_FILE}")
+
+def has_youtube_auth():
+    return bool(os.environ.get("YOUTUBE_TOKEN_JSON")) or os.path.exists("token.json")
+
+def run_preflight():
+    checks = {
+        "video_file": platform_result(os.path.exists(VIDEO_FILE), f"File video richiesto: {VIDEO_FILE}"),
+        "instagram": platform_result(
+            bool(META_ACCESS_TOKEN and IG_ACCOUNT_ID and not META_ACCESS_TOKEN.startswith("EAxxxx")),
+            "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID.",
+        ),
+        "tiktok": platform_result(
+            bool(load_tiktok_cookies()),
+            "Richiede TIKTOK_COOKIES_JSON valido o TIKTOK_SESSION_ID valido.",
+        ),
+        "youtube": platform_result(
+            has_youtube_auth(),
+            "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido.",
+        ),
+    }
+
+    failed = [name for name, result in checks.items() if not result["ok"]]
+    if failed:
+        print("[!] Preflight pubblicazione: problemi trovati.")
+        for name in failed:
+            print(f"    - {name}: {checks[name]['message']}")
+    else:
+        print("[+] Preflight pubblicazione: tutto pronto.")
+
+    return checks, failed
 
 def get_caption():
     if os.path.exists("reel_data.json"):
@@ -29,28 +84,33 @@ def get_caption():
 
 def publish_to_instagram():
     if not META_ACCESS_TOKEN or not IG_ACCOUNT_ID:
-        print("[!] Errore: META_ACCESS_TOKEN o IG_ACCOUNT_ID mancanti. Impostali nei GitHub Secrets o nel file .env locale.")
-        return False
+        message = "META_ACCESS_TOKEN o IG_ACCOUNT_ID mancanti."
+        print(f"[!] Errore: {message} Impostali nei GitHub Secrets o nel file .env locale.")
+        return platform_result(False, message)
 
     if META_ACCESS_TOKEN.startswith("EAxxxx"):
-        print("[!] Errore: META_ACCESS_TOKEN non valido.")
-        return False
+        message = "META_ACCESS_TOKEN non valido."
+        print(f"[!] Errore: {message}")
+        return platform_result(False, message)
 
     if not os.path.exists(VIDEO_FILE):
-        print(f"[!] Errore: Il video {VIDEO_FILE} non esiste. Generalo prima con generate_reel.py")
-        return False
+        message = f"Il video {VIDEO_FILE} non esiste."
+        print(f"[!] Errore: {message} Generalo prima con generate_reel.py")
+        return platform_result(False, message)
 
     caption = get_caption()
     
     # 1. Caricamento temporaneo del video (per permettere a Meta di scaricarlo)
     print(f"[*] Caricamento del video {VIDEO_FILE} su server temporaneo per Meta...")
     try:
-        r_upload = requests.post("https://uguu.se/upload", files={"files[]": open(VIDEO_FILE, "rb")})
-        video_url = r_upload.json()["files"][0]["url"]
+        r_upload = requests.post("https://tmpfiles.org/api/v1/upload", files={"file": open(VIDEO_FILE, "rb")})
+        url_resp = r_upload.json()['data']['url']
+        video_url = url_resp.replace("tmpfiles.org/", "tmpfiles.org/dl/")
         print(f"[+] URL temporaneo generato: {video_url}")
     except Exception as e:
-        print("[!] Errore durante il caricamento temporaneo:", e)
-        return False
+        message = f"Errore durante il caricamento temporaneo: {e}"
+        print("[!]", message)
+        return platform_result(False, message)
         
     # 2. Caricamento temporaneo della copertina
     cover_url = ""
@@ -58,8 +118,9 @@ def publish_to_instagram():
     if os.path.exists(path_cover):
         print(f"[*] Caricamento della copertina {path_cover} su server temporaneo...")
         try:
-            r_cover = requests.post("https://uguu.se/upload", files={"files[]": open(path_cover, "rb")})
-            cover_url = r_cover.json()["files"][0]["url"]
+            r_cover = requests.post("https://tmpfiles.org/api/v1/upload", files={"file": open(path_cover, "rb")})
+            url_cover_resp = r_cover.json()['data']['url']
+            cover_url = url_cover_resp.replace("tmpfiles.org/", "tmpfiles.org/dl/")
             print(f"[+] URL copertina generato: {cover_url}")
         except Exception as e:
             print("[!] Errore durante il caricamento della copertina:", e)
@@ -78,8 +139,9 @@ def publish_to_instagram():
     
     r = requests.post(url_media, data=payload)
     if r.status_code != 200:
-        print("[!] Errore creazione container:", r.json())
-        return False
+        message = f"Errore creazione container: {r.text}"
+        print("[!]", message)
+        return platform_result(False, message)
         
     container_id = r.json().get("id")
     print(f"[+] Container creato con ID: {container_id}")
@@ -95,8 +157,9 @@ def publish_to_instagram():
         if status == "FINISHED":
             break
         elif status == "ERROR":
-            print("[!] Errore durante l'elaborazione del video su Meta.")
-            return False
+            message = "Errore durante l'elaborazione del video su Meta."
+            print("[!]", message)
+            return platform_result(False, message, {"container_id": container_id})
         time.sleep(5)
         
     # 5. Pubblicazione
@@ -109,22 +172,26 @@ def publish_to_instagram():
     
     r_pub = requests.post(url_publish, data=pub_payload)
     if r_pub.status_code == 200:
+        post_id = r_pub.json().get("id")
         print("[+] REEL PUBBLICATO CON SUCCESSO SU INSTAGRAM!")
-        print("ID Post:", r_pub.json().get("id"))
-        return True
+        print("ID Post:", post_id)
+        return platform_result(True, "Pubblicato su Instagram.", {"post_id": post_id})
     else:
-        print("[!] Errore in fase di pubblicazione:", r_pub.json())
-        return False
+        message = f"Errore in fase di pubblicazione: {r_pub.text}"
+        print("[!]", message)
+        return platform_result(False, message)
 
 def publish_to_tiktok():
     cookies = load_tiktok_cookies()
     if not cookies:
-        print("[!] Errore: TIKTOK_COOKIES_JSON/TIKTOK_SESSION_ID mancanti!")
-        return False
+        message = "TIKTOK_COOKIES_JSON/TIKTOK_SESSION_ID mancanti o non validi."
+        print(f"[!] Errore: {message}")
+        return platform_result(False, message)
         
     if not os.path.exists(VIDEO_FILE):
-        print(f"[!] Errore: Il video {VIDEO_FILE} non esiste.")
-        return False
+        message = f"Il video {VIDEO_FILE} non esiste."
+        print(f"[!] Errore: {message}")
+        return platform_result(False, message)
         
     caption = get_caption()
     
@@ -139,15 +206,17 @@ def publish_to_tiktok():
             headless=TIKTOK_HEADLESS
         )
         print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
-        return True
+        return platform_result(True, "Pubblicato su TikTok.")
     except Exception as e:
-        print(f"[!] Errore durante la pubblicazione su TikTok: {e}")
-        return False
+        message = f"Errore durante la pubblicazione su TikTok: {e}"
+        print(f"[!] {message}")
+        return platform_result(False, message)
 
 def publish_to_youtube():
     if not os.path.exists(VIDEO_FILE):
-        print(f"[!] Errore: Il video {VIDEO_FILE} non esiste.")
-        return False
+        message = f"Il video {VIDEO_FILE} non esiste."
+        print(f"[!] Errore: {message}")
+        return platform_result(False, message)
         
     caption = get_caption()
     title = caption.split("#")[0][:60] # Prende la prima frase prima degli hashtag come titolo
@@ -188,14 +257,37 @@ def publish_to_youtube():
                 json.dump(history, f, indent=4)
                 
             print(f"[*] Aggiunto {video_id} a history.json per auto-apprendimento.")
-            return True
+            return platform_result(True, "Pubblicato su YouTube Shorts.", {"youtube_id": video_id})
             
     except Exception as e:
-        print(f"[!] Errore durante la pubblicazione su YouTube: {e}")
-    return False
+        message = f"Errore durante la pubblicazione su YouTube: {e}"
+        print(f"[!] {message}")
+        return platform_result(False, message)
+    return platform_result(False, "YouTube non ha restituito un ID video.")
 
 if __name__ == "__main__":
     print("=== INIZIO PUBBLICAZIONE MULTI-PIATTAFORMA ===")
+    preflight, preflight_failed = run_preflight()
+    if "--preflight" in sys.argv:
+        results = {
+            "instagram": platform_result(not bool("instagram" in preflight_failed), preflight["instagram"]["message"]),
+            "tiktok": platform_result(not bool("tiktok" in preflight_failed), preflight["tiktok"]["message"]),
+            "youtube": platform_result(not bool("youtube" in preflight_failed), preflight["youtube"]["message"]),
+        }
+        write_report(results, preflight)
+        if preflight_failed:
+            raise SystemExit(f"Preflight fallito per: {', '.join(preflight_failed)}")
+        raise SystemExit(0)
+
+    if STRICT_PUBLISH and preflight_failed:
+        results = {
+            "instagram": platform_result(False, "Non tentato: preflight fallito."),
+            "tiktok": platform_result(False, "Non tentato: preflight fallito."),
+            "youtube": platform_result(False, "Non tentato: preflight fallito."),
+        }
+        write_report(results, preflight)
+        raise SystemExit(f"Preflight fallito per: {', '.join(preflight_failed)}")
+
     results = {
         "instagram": publish_to_instagram(),
     }
@@ -205,8 +297,9 @@ if __name__ == "__main__":
     results["youtube"] = publish_to_youtube()
     print("=== PUBBLICAZIONE COMPLETATA ===")
     print("[*] Esito piattaforme:", results)
+    write_report(results, preflight)
 
-    if os.environ.get("STRICT_PUBLISH", "").lower() in ("1", "true", "yes", "y"):
-        failed = [name for name, ok in results.items() if not ok]
+    if STRICT_PUBLISH:
+        failed = [name for name, result in results.items() if not result.get("ok")]
         if failed:
             raise SystemExit(f"Pubblicazione fallita per: {', '.join(failed)}")
