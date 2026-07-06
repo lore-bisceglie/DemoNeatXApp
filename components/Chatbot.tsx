@@ -6,8 +6,20 @@ import { MessageCircle, X, Send, User, Bot, Loader2 } from 'lucide-react';
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+  const [input, setInput] = useState('');
+  const { messages, append, isLoading } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    append({ role: 'user', content: input });
+    setInput('');
+  };
 
   // Auto-scroll all'ultimo messaggio
   useEffect(() => {
