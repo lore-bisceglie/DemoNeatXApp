@@ -89,8 +89,9 @@ export async function POST(req: Request) {
     });
 
     return Response.json({ reply: text });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Chat API Error:", error);
-    return Response.json({ reply: "Mi dispiace, c'è stato un problema tecnico. Riprova tra qualche secondo! 🔧" }, { status: 200 });
+    const errorMessage = error?.message || String(error);
+    return Response.json({ reply: `ERRORE TECNICO: ${errorMessage}` }, { status: 200 });
   }
 }
