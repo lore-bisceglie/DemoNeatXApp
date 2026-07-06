@@ -1,17 +1,17 @@
 {
   "date": "2026-07-06",
-  "niche": "Tatuatori",
-  "angle": "risposte infinite ai messaggi",
-  "pain": "consulenze senza caparra e appuntamenti persi",
-  "promise": "richieste filtrate e acconto obbligatorio",
-  "cover_title": "TATUATORI: BASTA NO-SHOW",
-  "hook_hint": "Se sei un tatuatore e perdi tempo con consulenze senza mai un acconto, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: quanto tempo perdi con un'agenda automatica",
+  "niche": "Personal Trainer",
+  "angle": "tempo perso a rispondere",
+  "pain": "lezioni cancellate e slot non sfruttati",
+  "promise": "sessioni confermate automaticamente",
+  "cover_title": "PERSONAL TRAINER: BASTA NO-SHOW",
+  "hook_hint": "Se sei un personal trainer e perdi soldi con lezioni cancellate e slot non sfruttati, è ora di cambiare.",
+  "blog_topic": "Personal Trainer: quanto tempo perdi a rispondere con un'agenda automatica",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic tattoo studio, tattoo artist focusing intently on a client, modern professional setup",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "prenotazioni tatuatore",
-    "gestione appuntamenti tatuatori",
-    "caparra tatuaggio"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
