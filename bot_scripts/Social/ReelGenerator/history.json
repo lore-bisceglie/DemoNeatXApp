@@ -28,7 +28,7 @@
         "title": "FISIO: BASTA SEGRETERIA!",
         "hook": "FISIO: BASTA SEGRETERIA!",
         "date": "2026-07-04",
-        "views": 1,
+        "views": 3,
         "likes": 0
     },
     {
@@ -36,13 +36,37 @@
         "title": "FISIOTERAPISTI: BASTA NO-SHOW",
         "hook": "FISIOTERAPISTI: BASTA NO-SHOW",
         "date": "2026-07-05",
-        "views": 0
+        "views": 2,
+        "likes": 0
     },
     {
         "youtube_id": "tsEmdvhqYW8",
         "title": "CENTRI ESTETICI: BASTA NO-SHOW",
         "hook": "CENTRI ESTETICI: BASTA NO-SHOW",
         "date": "2026-07-05",
+        "views": 1,
+        "likes": 0
+    },
+    {
+        "youtube_id": "fIS0xyrYmm0",
+        "title": "TATUATORI: BASTA NO-SHOW!",
+        "hook": "TATUATORI: BASTA NO-SHOW!",
+        "date": "2026-07-06",
+        "views": 1820,
+        "likes": 5
+    },
+    {
+        "youtube_id": true,
+        "title": "TATUATORI: BASTA NO-SHOW!",
+        "hook": "TATUATORI: BASTA NO-SHOW!",
+        "date": "2026-07-06",
+        "views": 0
+    },
+    {
+        "youtube_id": true,
+        "title": "TATUATORI: BASTA NO-SHOW!",
+        "hook": "TATUATORI: BASTA NO-SHOW!",
+        "date": "2026-07-06",
         "views": 0
     }
 ]

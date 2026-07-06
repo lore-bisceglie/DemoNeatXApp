@@ -1,14 +1,13 @@
 {
-    "niche": "Centri Estetici",
-    "script_text": "Se sei tra i centri estetici e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' cabine vuote e appuntamenti dimenticati. Con NeatX puoi avere promemoria automatici e acconti, senza rincorrere clienti tutto il giorno. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "CENTRI ESTETICI: BASTA NO-SHOW",
-    "cover_title": "CENTRI ESTETICI: BASTA NO-SHOW",
-    "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
-    "gameplay_style": "neon_racer",
-    "caption": "Centri Estetici: basta agenda gestita a mano. Commenta AGENDA e ti mando la demo NeatX. #NeatX #agendaonline #prenotazioni #automazione #business",
-    "strategy_date": "2026-07-05",
-    "strategy_angle": "costi dei no-show mensili",
-    "strategy_pain": "cabine vuote e appuntamenti dimenticati",
-    "strategy_promise": "promemoria automatici e acconti",
-    "fallback_reason": "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili"
+    "niche": "Tatuatori",
+    "script_text": "Sei un tatuatore e continui a prendere appuntamenti su WhatsApp? Stai perdendo soldi. Ogni messaggio che rispondi è tempo sprecato. Le consulenze senza caparra ti fanno solo perdere clienti. Con NeatX, ogni richiesta è filtrata e gli acconti sono obbligatori. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "TATUATORI: BASTA NO-SHOW!",
+    "cover_title": "TATUATORI: BASTA NO-SHOW!",
+    "image_prompt": "photorealistic tattoo studio with a tattoo artist focusing intently on a client in a modern professional setup",
+    "gameplay_style": "runner",
+    "caption": "Stai sprecando tempo e soldi? Scopri come NeatX può aiutarti! Commenta AGENDA per saperne di più! #Tatuatori #NoShow #Automazione #PrenotazioniFacili",
+    "strategy_date": "2026-07-06",
+    "strategy_angle": "risposte infinite ai messaggi",
+    "strategy_pain": "consulenze senza caparra e appuntamenti persi",
+    "strategy_promise": "richieste filtrate e acconto obbligatorio"
 }
