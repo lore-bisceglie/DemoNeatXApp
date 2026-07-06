@@ -1,10 +1,12 @@
 import { generateText } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
 const systemPrompt = `Sei NeatBot, l'assistente virtuale premium del sito NeatX (neatx.store).
