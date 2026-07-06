@@ -1,17 +1,17 @@
 {
-  "date": "2026-07-05",
+  "date": "2026-07-06",
   "niche": "Tatuatori",
-  "angle": "costo mensile dei no-show",
-  "pain": "consulenze infinite e appuntamenti senza caparra",
-  "promise": "richieste filtrate e acconto prima dell'appuntamento",
+  "angle": "risposte infinite ai messaggi",
+  "pain": "consulenze senza caparra e appuntamenti persi",
+  "promise": "richieste filtrate e acconto obbligatorio",
   "cover_title": "TATUATORI: BASTA NO-SHOW",
-  "hook_hint": "Se sei un tatuatore e hai consulenze infinite e appuntamenti senza caparra, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: costo mensile dei no-show con un'agenda automatica",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
+  "hook_hint": "Se sei un tatuatore e perdi tempo con consulenze senza mai un acconto, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: quanto tempo perdi con un'agenda automatica",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic tattoo studio, tattoo artist focusing intently on a client, modern professional setup",
   "keywords": [
     "prenotazioni tatuatore",
-    "agenda tatuatori",
+    "gestione appuntamenti tatuatori",
     "caparra tatuaggio"
   ]
 }

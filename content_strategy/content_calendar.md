@@ -1,50 +1,50 @@
 # NeatX Content Calendar
 
-## 2026-07-05 - Tatuatori
-- Angolo: costo mensile dei no-show
-- Dolore: consulenze infinite e appuntamenti senza caparra
-- Promessa: richieste filtrate e acconto prima dell'appuntamento
+## 2026-07-06 - Tatuatori
+- Angolo: risposte infinite ai messaggi
+- Dolore: consulenze senza caparra e appuntamenti persi
+- Promessa: richieste filtrate e acconto obbligatorio
 - Cover: TATUATORI: BASTA NO-SHOW
-- Blog: Tatuatori: costo mensile dei no-show con un'agenda automatica
+- Blog: Tatuatori: quanto tempo perdi con un'agenda automatica
 
-## 2026-07-06 - Fisioterapisti
-- Angolo: costo mensile dei no-show
-- Dolore: sedute saltate e cambi manuali
-- Promessa: prenotazioni ordinate e promemoria automatici
+## 2026-07-07 - Coach e Consulenti
+- Angolo: prenotazioni automatiche link bio
+- Dolore: clienti che rinviano e chiamate fissate manualmente
+- Promessa: prenotazioni automatiche e follow-up facile
+- Cover: BASTA NO-SHOW
+- Blog: Coach e Consulenti: come avere prenotazioni automatiche
+
+## 2026-07-08 - Parrucchieri
+- Angolo: trasforma follower in appuntamenti
+- Dolore: clienti che scrivono a tutte le ore senza prenotare
+- Promessa: agenda piena senza chat inutili
+- Cover: PARRUCCHIERI: BASTA NO-SHOW
+- Blog: Parrucchieri: come convertire follower in appuntamenti
+
+## 2026-07-09 - Personal Trainer
+- Angolo: costo dei no-show mensili
+- Dolore: lezioni spostate e slot persi
+- Promessa: sessioni confermate e ricordate automaticamente
+- Cover: PERSONAL TRAINER: BASTA NO-SHOW
+- Blog: Personal Trainer: quanto ti costano i no-show al mese
+
+## 2026-07-10 - Fisioterapisti
+- Angolo: acconti e promemoria efficaci
+- Dolore: sedute saltate e cambi di agenda costanti
+- Promessa: prenotazioni organizzate e promemoria per i pazienti
 - Cover: FISIOTERAPISTI: BASTA NO-SHOW
-- Blog: Fisioterapisti: costo mensile dei no-show con un'agenda automatica
+- Blog: Fisioterapisti: come gestire acconti e promemoria
 
-## 2026-07-07 - Barbieri
-- Angolo: usare acconti e promemoria efficaci
-- Dolore: no-show e appuntamenti presi al volo
+## 2026-07-11 - Centri Estetici
+- Angolo: risposte ai messaggi inutili
+- Dolore: cabine vuote e clienti dimentichi
+- Promessa: promemoria automatici e acconti garantiti
+- Cover: CENTRI ESTETICI: BASTA NO-SHOW
+- Blog: Centri Estetici: quanto tempo perdi con un'agenda automatica
+
+## 2026-07-12 - Barbieri
+- Angolo: prenotazioni automatiche link bio
+- Dolore: no-show e appuntamenti confusi via DM
 - Promessa: meno buchi in agenda e più clienti paganti
 - Cover: BARBIERI: BASTA NO-SHOW
-- Blog: Barbieri: usare acconti e promemoria efficaci con un'agenda automatica
-
-## 2026-07-08 - Personal Trainer
-- Angolo: tempo perso nei messaggi
-- Dolore: lezioni spostate e slot persi
-- Promessa: sessioni prenotate e confermate automaticamente
-- Cover: PERSONAL TRAINER: BASTA NO-SHOW
-- Blog: Personal Trainer: tempo perso nei messaggi con un'agenda automatica
-
-## 2026-07-09 - Centri Estetici
-- Angolo: link in bio deve prenotare
-- Dolore: cabine vuote e appuntamenti dimenticati
-- Promessa: promemoria automatici e acconti prima del trattamento
-- Cover: CENTRI ESTETICI: BASTA NO-SHOW
-- Blog: Centri Estetici: link in bio deve prenotare da solo con un'agenda automatica
-
-## 2026-07-10 - Parrucchieri
-- Angolo: trasformare follower in appuntamenti
-- Dolore: clienti su WhatsApp a qualsiasi ora
-- Promessa: agenda piena senza perdere tempo
-- Cover: PARRUCCHIERI: BASTA NO-SHOW
-- Blog: Parrucchieri: trasformare follower in appuntamenti con un'agenda automatica
-
-## 2026-07-11 - Coach e Consulenti
-- Angolo: costo mensile dei no-show
-- Dolore: call fissate manualmente e clienti che rimandano
-- Promessa: call prenotate automaticamente e follow-up più semplici
-- Cover: BASTA NO-SHOW
-- Blog: Coach e Consulenti: costo mensile dei no-show con un'agenda automatica
+- Blog: Barbieri: perché il link in bio deve prenotare da solo
