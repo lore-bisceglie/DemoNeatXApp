@@ -95,6 +95,20 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Chat API Error:", error);
     const errorMessage = error?.message || String(error);
+    
+    // Se c'è un errore 404 sui modelli, interroga l'API per scoprire quali modelli sono sbloccati per questa chiave
+    if (errorMessage.includes("404 Not Found") || errorMessage.includes("not found for API version")) {
+      try {
+        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        const data = await res.json();
+        const modelNames = data.models?.map((m: any) => m.name).join(", ") || "Nessun modello trovato";
+        return Response.json({ reply: `ERRORE MODELLO. Modelli disponibili per questa tua chiave: ${modelNames}` }, { status: 200 });
+      } catch (listError) {
+        // ignore
+      }
+    }
+
     return Response.json({ reply: `ERRORE TECNICO: ${errorMessage}` }, { status: 200 });
   }
 }
