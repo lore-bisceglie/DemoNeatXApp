@@ -16,6 +16,7 @@
     "@ai-sdk/react": "^4.0.17",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.110.1",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "ai": "^7.0.16",

@@ -283,8 +283,46 @@ export default function SuperAdminPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-4">
                     <div>
-                      <label className="block text-xs text-slate-400 mb-1">Link Logo / Foto (URL)</label>
-                      <input type="url" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                      <label className="block text-xs text-slate-400 mb-1">Link Logo / Foto (o Carica dal PC)</label>
+                      <div className="flex gap-2">
+                        <input type="url" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://... o clicca l'icona 👉" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                        <label className="bg-slate-800 hover:bg-slate-700 cursor-pointer border border-slate-700 rounded-md px-3 flex items-center justify-center transition-colors" title="Carica foto dal PC">
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const img = new Image();
+                                img.onload = () => {
+                                  const canvas = document.createElement('canvas');
+                                  const MAX_WIDTH = 500;
+                                  const MAX_HEIGHT = 500;
+                                  let width = img.width;
+                                  let height = img.height;
+                                  if (width > height) {
+                                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                                  } else {
+                                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                                  }
+                                  canvas.width = width;
+                                  canvas.height = height;
+                                  const ctx = canvas.getContext('2d');
+                                  ctx?.drawImage(img, 0, 0, width, height);
+                                  const base64Url = canvas.toDataURL('image/webp', 0.8);
+                                  setLogoUrl(base64Url);
+                                };
+                                img.src = event.target?.result as string;
+                              };
+                              reader.readAsDataURL(file);
+                            }} 
+                          />
+                          <span className="text-lg">📁</span>
+                        </label>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-xs text-slate-400 mb-1">Tema Colore</label>
