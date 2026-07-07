@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { 
       name, slug, template, adminPassword,
-      phone, address, instagramUrl, mapsLink, description, openTime, closeTime
+      phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
+      logoUrl, themeColor
     } = body;
 
     if (!name || !slug || !template) {
@@ -103,6 +104,8 @@ export async function POST(req: Request) {
         description: description || null,
         openTime: openTime || null,
         closeTime: closeTime || null,
+        logoUrl: logoUrl || null,
+        themeColor: themeColor || 'cyan',
         services: {
           create: defaultServices
         }

@@ -124,6 +124,64 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   
   const router = useRouter();
 
+  const themeMap: Record<string, any> = {
+    cyan: {
+      mainHex: '00b4ff',
+      btnBg: 'bg-[#00b4ff] hover:bg-cyan-400 text-[#050814]',
+      textMain: 'text-[#00b4ff]',
+      textHover: 'hover:text-cyan-400',
+      borderMain: 'border-[#00b4ff]/30',
+      shadowMain: 'shadow-cyan-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(0,180,255,.26)]',
+      badgeBg: 'bg-cyan-950/40',
+      selection: 'selection:bg-cyan-500/30'
+    },
+    rose: {
+      mainHex: 'f43f5e',
+      btnBg: 'bg-rose-500 hover:bg-rose-400 text-white',
+      textMain: 'text-rose-500',
+      textHover: 'hover:text-rose-400',
+      borderMain: 'border-rose-500/30',
+      shadowMain: 'shadow-rose-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(244,63,94,.26)]',
+      badgeBg: 'bg-rose-950/40',
+      selection: 'selection:bg-rose-500/30'
+    },
+    emerald: {
+      mainHex: '10b981',
+      btnBg: 'bg-emerald-500 hover:bg-emerald-400 text-white',
+      textMain: 'text-emerald-500',
+      textHover: 'hover:text-emerald-400',
+      borderMain: 'border-emerald-500/30',
+      shadowMain: 'shadow-emerald-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(16,185,129,.26)]',
+      badgeBg: 'bg-emerald-950/40',
+      selection: 'selection:bg-emerald-500/30'
+    },
+    amber: {
+      mainHex: 'f59e0b',
+      btnBg: 'bg-amber-500 hover:bg-amber-400 text-white',
+      textMain: 'text-amber-500',
+      textHover: 'hover:text-amber-400',
+      borderMain: 'border-amber-500/30',
+      shadowMain: 'shadow-amber-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(245,158,11,.26)]',
+      badgeBg: 'bg-amber-950/40',
+      selection: 'selection:bg-amber-500/30'
+    },
+    purple: {
+      mainHex: 'a855f7',
+      btnBg: 'bg-purple-500 hover:bg-purple-400 text-white',
+      textMain: 'text-purple-500',
+      textHover: 'hover:text-purple-400',
+      borderMain: 'border-purple-500/30',
+      shadowMain: 'shadow-purple-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(168,85,247,.26)]',
+      badgeBg: 'bg-purple-950/40',
+      selection: 'selection:bg-purple-500/30'
+    }
+  };
+
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<string>("any");
@@ -151,11 +209,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     city: "",
     isPremium: false,
     staff: [] as any[],
+    logoUrl: "",
+    themeColor: "cyan"
   });
 
   const [loadingTenant, setLoadingTenant] = useState(true);
   const [tenantError, setTenantError] = useState("");
   const isPlaygroundDemo = tenantInfo.isDemo && tenantInfo.trialStatus === "demo";
+  const th = themeMap[tenantInfo.themeColor] || themeMap.cyan;
+
   const shopInitials = tenantInfo.name
     .split(" ")
     .filter(Boolean)
@@ -203,6 +265,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           city: data.city || "",
           isPremium: data.isPremium || false,
           staff: data.staff || [],
+          logoUrl: data.logoUrl || "",
+          themeColor: data.themeColor || "cyan",
         });
         setServices(data.services || []);
         if (data.services && data.services.length > 0) {
@@ -724,8 +788,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       )}
 
       {isPlaygroundDemo && showActivityModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-lg w-full text-center animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className={`bg-[#0b1221] border p-6 rounded-3xl shadow-2xl max-w-lg w-full text-center animate-in fade-in zoom-in duration-200 ${th.borderMain} ${th.shadowMain}`}>
             <div className="text-4xl mb-3">🚀</div>
             <h3 className="text-xl font-extrabold text-white mb-2">
               Scegli che demo vuoi provare
@@ -816,7 +880,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <div className="flex flex-col gap-2">
             <Link
             href={getTenantAdminUrl(params.slug)}
-                className="w-full bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] font-bold py-3 rounded-xl transition shadow-lg"
+                className={`w-full font-bold py-3 rounded-xl transition shadow-lg ${th.btnBg}`}
               >
                 Vedi in dashboard
               </Link>
@@ -845,7 +909,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#00b4ff] opacity-[0.04] blur-[120px] pointer-events-none rounded-full"></div>
 
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl shadow-cyan-900/10 border border-[#1a2642] p-6 sm:p-8 relative z-10">
+      <div className={`bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl border border-[#1a2642] p-6 sm:p-8 relative z-10 ${th.shadowMain}`}>
         {isPlaygroundDemo && (
           <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs p-3 rounded-xl font-semibold leading-relaxed">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -947,8 +1011,16 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 }}
               />
 
-              <span className="relative w-24 h-24 rounded-full p-1 bg-[#0b1221] shadow-[0_20px_42px_rgba(0,180,255,.26)] overflow-hidden">
-                {isPlaygroundDemo ? (
+              <span className={`relative w-24 h-24 rounded-full p-1 bg-[#0b1221] overflow-hidden ${th.avatarShadow}`}>
+                {tenantInfo.logoUrl ? (
+                  <img
+                    src={tenantInfo.logoUrl}
+                    alt={tenantInfo.name}
+                    draggable={false}
+                    className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative"
+                    style={{ zIndex: 52 }}
+                  />
+                ) : isPlaygroundDemo ? (
                   <img
                     src="/apple-icon.png"
                     alt="Logo Demo NeatX"
@@ -1006,7 +1078,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
             <span className="text-slate-100">{tenantInfo.name}</span>
             {selectedService && selectedService.price > 0 && (
-              <span className="bg-cyan-950/40 text-[#00b4ff] px-3 py-1 rounded-full border border-[#00b4ff]/30 text-sm align-middle animate-in zoom-in duration-300">
+              <span className={`px-3 py-1 rounded-full border text-sm align-middle animate-in zoom-in duration-300 ${th.badgeBg} ${th.textMain} ${th.borderMain}`}>
                 {selectedService.price}€
               </span>
             )}
@@ -1092,7 +1164,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               <button
                 type="button"
                 onClick={() => setShowActivityModal(true)}
-                className="text-[10px] font-bold text-cyan-300 hover:text-cyan-100 underline underline-offset-4"
+                className={`text-[10px] font-bold underline underline-offset-4 ${th.textMain} ${th.textHover}`}
               >
                 Guida rapida
               </button>
@@ -1106,7 +1178,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   onClick={() => chooseActivity(profile.id)}
                   className={`rounded-xl border px-2 py-2 text-xs font-extrabold transition flex items-center justify-center gap-1.5 ${
                     selectedActivityId === profile.id
-                      ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff]"
+                      ? `bg-[#00b4ff]/10 border-[#00b4ff] ${th.textMain}`
                       : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500 hover:text-white"
                   }`}
                 >
@@ -1134,7 +1206,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 setSelectedSlot("");
                 setFormError("");
               }}
-              className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer"
+              className={`w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer`}
             >
               {visibleServices.map((srv) => (
                 <option key={srv.id} value={srv.id}>
@@ -1157,7 +1229,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 onClick={() => { setSelectedStaffId("any"); setSlots([]); setSelectedSlot(""); }}
                 className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition snap-center ${
                   selectedStaffId === "any"
-                    ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff]"
+                    ? `bg-[#00b4ff] text-[#050814] border-[#00b4ff]`
                     : "bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500"
                 }`}
               >
@@ -1173,7 +1245,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                     onClick={() => { setSelectedStaffId(staff.id); setSlots([]); setSelectedSlot(""); }}
                     className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition snap-center ${
                       selectedStaffId === staff.id
-                        ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff]"
+                        ? `bg-[#00b4ff] text-[#050814] border-[#00b4ff]`
                         : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-slate-500"
                     }`}
                   >
@@ -1303,8 +1375,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 </select>
 
                 <button
-                  onClick={handleFirstAvailable}
-                  className="w-full text-xs font-semibold text-[#00b4ff] hover:text-cyan-400 transition"
+                  onClick={() => setSelectedService(null)}
+                  className={`w-full text-xs font-semibold transition ${th.textMain} ${th.textHover}`}
                 >
                   [+] Primo disponibile
                 </button>
@@ -1365,7 +1437,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   className="w-5 h-5 rounded border-[#1e2b4a] bg-[#131c31] text-[#00b4ff] focus:ring-[#00b4ff] focus:ring-offset-[#0b1221]"
                 />
                 <label htmlFor="privacy" className="text-xs text-slate-400 leading-tight">
-                  Ho letto e accetto la <Link href="/privacy" className="text-[#00b4ff] underline hover:text-cyan-400">Privacy Policy</Link> per la gestione dell'appuntamento.
+                  Ho letto e accetto la <Link href="/privacy" className={`underline ${th.textMain} ${th.textHover}`}>Privacy Policy</Link> per la gestione dell'appuntamento.
                 </label>
               </div>
             </div>
@@ -1382,7 +1454,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                     onClick={() => setPaymentMethod("salon")}
                     className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
                       paymentMethod === "salon"
-                        ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.15)]"
+                        ? `bg-[#00b4ff]/10 border-[#00b4ff] ${th.textMain} shadow-[0_0_15px_rgba(0,180,255,0.15)]`
                         : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
                     }`}
                   >
@@ -1438,7 +1510,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   ? "bg-[#131c31] text-slate-500 cursor-not-allowed shadow-none border border-[#1e2b4a]"
                   : isSelectedLastMinute
                   ? "bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white shadow-red-500/30"
-                  : "bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] shadow-cyan-500/20"
+                  : `${th.btnBg} shadow-cyan-500/20`
               }`}
             >
               {isBooking

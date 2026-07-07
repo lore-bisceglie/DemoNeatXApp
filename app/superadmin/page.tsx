@@ -19,6 +19,8 @@ export default function SuperAdminPage() {
   const [description, setDescription] = useState("");
   const [openTime, setOpenTime] = useState("");
   const [closeTime, setCloseTime] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [themeColor, setThemeColor] = useState("cyan");
 
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -71,7 +73,8 @@ export default function SuperAdminPage() {
         },
         body: JSON.stringify({ 
           name, slug, template, adminPassword: tenantPassword,
-          phone, address, instagramUrl, mapsLink, description, openTime, closeTime
+          phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
+          logoUrl, themeColor
         })
       });
 
@@ -90,6 +93,8 @@ export default function SuperAdminPage() {
       setDescription("");
       setOpenTime("");
       setCloseTime("");
+      setLogoUrl("");
+      setThemeColor("cyan");
       fetchTenants(password); // Aggiorna la lista
     } catch (e: any) {
       setError(e.message);
@@ -267,6 +272,22 @@ export default function SuperAdminPage() {
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Descrizione Negozio (Sotto il titolo)</label>
                     <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Es. Il tuo stile impeccabile, a portata di click." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-4">
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Link Logo / Foto (URL)</label>
+                      <input type="url" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Tema Colore</label>
+                      <select value={themeColor} onChange={e => setThemeColor(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <option value="cyan">🔵 Cyan (Default)</option>
+                        <option value="rose">🌸 Rosa Cipria</option>
+                        <option value="emerald">🌿 Smeraldo</option>
+                        <option value="amber">💛 Ambra</option>
+                        <option value="purple">💜 Viola</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </details>

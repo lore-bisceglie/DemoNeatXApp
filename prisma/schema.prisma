@@ -21,6 +21,8 @@ model Tenant {
   ownerName     String?       // Nome del proprietario
   ownerEmail    String?       // Email del proprietario
   ownerPasswordHash String?    // Password proprietario salvata in modo sicuro
+  logoUrl       String?       // URL immagine logo del negozio
+  themeColor    String        @default("cyan") // Tema colore del negozio es. "cyan", "rose", "emerald"
   description   String?       // Descrizione pubblica generata dal template
   phone         String?       // Numero WhatsApp del salone per ricevere notifiche
   address       String?       // Indirizzo dell'attività es. "Via Roma 1, Milano"
