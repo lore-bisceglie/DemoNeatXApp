@@ -64,7 +64,7 @@ export default function CancelPage() {
       const displayDate = `${day}/${month}/${year}`;
 
       setFinishedMessage(
-        `Demo: appuntamento annullato e slot del ${displayDate} alle ${appointment.time} liberato. Nella versione reale il cliente puo avvisare il negozio con WhatsApp.`
+        `Appuntamento annullato con successo. Lo slot del ${displayDate} alle ${appointment.time} è stato liberato.`
       );
       setCanceling(false);
     } else {
@@ -108,7 +108,7 @@ export default function CancelPage() {
     const [newYear, newMonth, newDay] = data.appointment.date.split("-");
     const newDisplayDate = `${newDay}/${newMonth}/${newYear}`;
     setMoveMessage(
-      `Demo: appuntamento spostato al ${newDisplayDate} alle ${data.appointment.time}. Nella versione reale il negozio riceve l'avviso.`
+      `Appuntamento spostato con successo al ${newDisplayDate} alle ${data.appointment.time}.`
     );
   };
 
@@ -140,7 +140,7 @@ export default function CancelPage() {
             href="/"
             className="bg-[#131c31] border border-[#1e2b4a] text-white font-bold py-3 px-6 rounded-xl transition hover:bg-[#1e2b4a] block w-full"
           >
-            Torna alla demo
+            Torna alla home
           </Link>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function CancelPage() {
             href="/"
             className="bg-[#131c31] border border-[#1e2b4a] text-white font-bold py-3 px-6 rounded-xl transition hover:bg-[#1e2b4a] block w-full"
           >
-            Torna alla demo
+            Torna alla home
           </Link>
         </div>
       </div>
@@ -180,15 +180,8 @@ export default function CancelPage() {
         </div>
 
         <h2 className="text-white font-extrabold text-xl mb-2">
-          Gestisci appuntamento demo
+          Gestisci appuntamento
         </h2>
-
-        <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-3 my-5 text-left">
-          <p className="text-cyan-200 text-xs leading-relaxed">
-            Questa pagina mostra il link privato che il cliente riceve dopo la
-            prenotazione. In demo non parte nessun messaggio esterno.
-          </p>
-        </div>
 
         <div className="bg-[#131c31] border border-[#1e2b4a] rounded-xl p-4 my-6 text-left shadow-inner">
           <p className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">
