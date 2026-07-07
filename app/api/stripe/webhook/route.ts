@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
+import { sendTelegramMessage } from '@/lib/telegram';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
 
         if (tenantId) {
           console.log(`Abbonamento completato per il tenant ${tenantId}`);
-          await prisma.tenant.update({
+          const updatedTenant = await prisma.tenant.update({
             where: { id: tenantId },
             data: {
               plan: 'premium',
@@ -43,6 +44,13 @@ export async function POST(req: Request) {
               trialEndsAt: null, // Rimuove la scadenza della prova
             }
           });
+
+          // Notifica God-Eye su Telegram
+          await sendTelegramMessage(
+            `💰 <b>KA-CHING! INCASSO SAAS!</b>\n\n` +
+            `Il negozio <b>${updatedTenant.name}</b> ha appena pagato l'abbonamento tramite Stripe!\n` +
+            `MRR (Ricavo Mensile Ricorrente) in aumento. 📈`
+          );
         }
         break;
       }

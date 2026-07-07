@@ -14,9 +14,8 @@ export default function EmailCapture() {
     e.preventDefault();
     if (!email || !name) return;
     setLoading(true);
-    // Store in localStorage for now — could integrate with a mailing list later
     try {
-      const res = await fetch("/api/waitlist", {
+      const res = await fetch("/api/marketing/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, source: "lead_magnet" }),
@@ -102,8 +101,9 @@ export default function EmailCapture() {
             )}
           </button>
         </form>
-
-        <p className="text-xs text-slate-600 mt-4">Niente spam. Cancellati quando vuoi.</p>
+        <p className="text-slate-500 text-xs mt-4">
+          Niente spam. Cancellati quando vuoi.
+        </p>
       </div>
     </section>
   );

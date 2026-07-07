@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendWelcomeEmail } from '@/lib/email';
+import { sendTelegramMessage } from '@/lib/telegram';
 
 export async function POST(req: Request) {
   const auth = req.headers.get('x-admin-password');
@@ -118,6 +119,14 @@ export async function POST(req: Request) {
       const tenantUrl = `https://${slug}.neatx.store`;
       await sendWelcomeEmail(ownerEmail, name, finalPassword, tenantUrl);
     }
+
+    // Notifica Telegram al SuperAdmin
+    await sendTelegramMessage(
+      `🎉 <b>NUOVO NEGOZIO CREATO!</b>\n\n` +
+      `Hai appena generato un gestionale per: <b>${name}</b>\n` +
+      `Categoria: ${template}\n` +
+      `Link: https://${slug}.neatx.store`
+    );
 
     return NextResponse.json({ success: true, tenant: newTenant });
   } catch (error) {
