@@ -28,7 +28,12 @@ export default function GoogleTranslateWidget() {
         top: 0 !important;
       }
       #google_translate_element {
-        display: none !important;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
       }
     `;
     document.head.appendChild(style);
@@ -38,7 +43,7 @@ export default function GoogleTranslateWidget() {
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
     if (select) {
       select.value = langCode;
-      select.dispatchEvent(new Event("change"));
+      select.dispatchEvent(new Event("change", { bubbles: true }));
       setCurrentLang(langCode);
       setIsOpen(false);
     }
