@@ -4,6 +4,7 @@ import "./globals.css";
 import { Mail } from "lucide-react";
 import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
 import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
+import EmailFloatingBtn from "@/components/EmailFloatingBtn";
 import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";
 import PublicWidgetsWrapper from "@/components/landing/PublicWidgetsWrapper";
@@ -56,25 +57,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Chatbot AI */}
           <Chatbot />
 
-          {/* Gruppo Pulsanti Contatto (Spostati a Sinistra) */}
-          <div className="fixed bottom-6 left-6 z-40 hidden sm:flex flex-col items-start gap-3">
-            {/* Pulsante Fluttuante WhatsApp */}
-            <WhatsAppFloatingBtn />
+          {/* Nuova Pila di Bottoni (In Basso a Sinistra) */}
+          <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[9999] flex flex-col items-start gap-3 pointer-events-none">
+            {/* I bottoni devono avere pointer-events-auto per essere cliccabili */}
+            
+            <div className="pointer-events-auto">
+              {/* Traduttore Universale di Google (in cima alla pila) */}
+              <GoogleTranslateWidget />
+            </div>
 
-            {/* Pulsante Fluttuante Instagram (Apre App Nativa) */}
-            <InstagramFloatingBtn />
-          </div>
+            <div className="pointer-events-auto">
+              {/* Pulsante Fluttuante Email (al centro) */}
+              <div className="sm:hidden"><EmailFloatingBtn compact /></div>
+              <div className="hidden sm:block"><EmailFloatingBtn /></div>
+            </div>
 
-          <div className="fixed bottom-4 left-4 z-40 sm:hidden">
-            <InstagramFloatingBtn compact />
+            <div className="pointer-events-auto">
+              {/* Pulsante Fluttuante Instagram (in basso) */}
+              <div className="sm:hidden"><InstagramFloatingBtn compact /></div>
+              <div className="hidden sm:block"><InstagramFloatingBtn /></div>
+            </div>
+
+            <div className="hidden sm:block pointer-events-auto">
+              {/* Pulsante Fluttuante WhatsApp (solo desktop, in coda) */}
+              <WhatsAppFloatingBtn />
+            </div>
           </div>
         </PublicWidgetsWrapper>
 
         {/* Menu Segreto per il Proprietario del SaaS (visibile solo a te) */}
         <GodmodeHub />
-
-        {/* Traduttore Universale di Google */}
-        <GoogleTranslateWidget />
       </body>
     </html>
   );
