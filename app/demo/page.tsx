@@ -592,6 +592,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-500">
+      <Link href="/" className="fixed top-4 left-4 z-40 bg-slate-800/80 hover:bg-slate-700 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 border border-slate-700/50 shadow-lg transition-all">
+        <span className="text-lg">🏠</span> Home
+      </Link>
       {tenantInfo.isDemo && showActivityModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-[#0b1221] border border-[#00b4ff]/30 p-6 rounded-3xl shadow-2xl shadow-cyan-900/20 max-w-lg w-full text-center animate-in fade-in zoom-in duration-200">
