@@ -75,11 +75,11 @@ export default function GoogleTranslateWidget() {
               <button
                 key={lang.code}
                 onClick={() => changeLanguage(lang.code)}
-                className={\`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors \${
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                   currentLang === lang.code 
                     ? "bg-cyan-500/20 text-cyan-400 font-medium" 
                     : "text-slate-300 hover:bg-[#1e2b4a] hover:text-white"
-                }\`}
+                }`}
               >
                 <span className="mr-2">{lang.flag}</span>
                 {lang.name}
