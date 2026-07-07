@@ -25,8 +25,13 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050814] py-20 px-4">
+    <div className="min-h-screen bg-[#050814] py-12 px-4">
       <div className="max-w-5xl mx-auto">
+        <div className="mb-12">
+          <Link href="/" className="inline-flex items-center text-slate-400 hover:text-[#00b4ff] transition-colors font-semibold">
+            <span className="mr-2">←</span> Torna a NeatX
+          </Link>
+        </div>
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-4">
             Il Blog di <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] to-purple-500">NeatX</span>

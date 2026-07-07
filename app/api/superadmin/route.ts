@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   const auth = req.headers.get('x-admin-password');
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { 
-      name, slug, template, adminPassword,
+      name, slug, template, adminPassword, ownerEmail,
       phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
       logoUrl, themeColor
     } = body;
@@ -106,11 +107,17 @@ export async function POST(req: Request) {
         closeTime: closeTime || null,
         logoUrl: logoUrl || null,
         themeColor: themeColor || 'cyan',
+        ownerEmail: ownerEmail || null,
         services: {
           create: defaultServices
         }
       }
     });
+
+    if (ownerEmail) {
+      const tenantUrl = `https://${slug}.neatx.store`;
+      await sendWelcomeEmail(ownerEmail, name, finalPassword, tenantUrl);
+    }
 
     return NextResponse.json({ success: true, tenant: newTenant });
   } catch (error) {

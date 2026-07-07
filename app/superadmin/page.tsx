@@ -11,6 +11,7 @@ export default function SuperAdminPage() {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
   const [tenantPassword, setTenantPassword] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
 
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -83,7 +84,7 @@ export default function SuperAdminPage() {
           'x-admin-password': password 
         },
         body: JSON.stringify({ 
-          name, slug, template, adminPassword: tenantPassword,
+          name, slug, template, adminPassword: tenantPassword, ownerEmail,
           phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
           logoUrl, themeColor
         })
@@ -249,6 +250,18 @@ export default function SuperAdminPage() {
                   className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500" 
                   required 
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Email Proprietario</label>
+                <input 
+                  type="email" 
+                  value={ownerEmail} 
+                  onChange={e => setOwnerEmail(e.target.value)} 
+                  placeholder="Es. mario.rossi@email.com" 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500"
+                />
+                <p className="text-xs text-slate-500 mt-1">Se inserita, invieremo in automatico l'email di Benvenuto con le credenziali.</p>
               </div>
 
               <div>

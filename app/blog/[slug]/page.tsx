@@ -37,9 +37,14 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       {/* Header Articolo */}
       <header className="bg-[#0b1221] text-white py-24 px-4 text-center border-b border-[#1a2642]">
         <div className="max-w-4xl mx-auto">
-          <Link href="/blog" className="text-[#00b4ff] font-semibold uppercase tracking-widest text-sm hover:text-white transition-colors mb-8 inline-block">
-            ← Torna al Blog
-          </Link>
+          <div className="flex justify-center gap-6 mb-8 text-sm font-semibold uppercase tracking-widest">
+            <Link href="/" className="text-slate-400 hover:text-[#00b4ff] transition-colors">
+              ← NeatX Home
+            </Link>
+            <Link href="/blog" className="text-[#00b4ff] hover:text-white transition-colors">
+              ← Torna al Blog
+            </Link>
+          </div>
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
             {data.title || "Articolo Senza Titolo"}
           </h1>
