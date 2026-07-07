@@ -167,6 +167,8 @@ export async function POST(req: Request) {
       staffByName.set(member.name, staff);
     }
 
+    // IL CICLO SOTTOSTANTE È STATO RIMOSSO PER MANTENERE L'AGENDA VUOTA SUI NUOVI NEGOZI
+    /*
     for (const seed of template.bookings) {
       const service = serviceByName.get(seed.serviceName) || tenant.services[0];
       if (!service) continue;
@@ -189,6 +191,7 @@ export async function POST(req: Request) {
         },
       });
     }
+    */
 
     await prisma.activityLog.create({
       data: {
