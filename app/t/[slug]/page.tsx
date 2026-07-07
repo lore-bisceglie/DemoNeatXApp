@@ -117,6 +117,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   
   // ✅ NUOVO STATO PER L'EASTER EGG DELL'IMMAGINE
   const [logoClicked, setLogoClicked] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"salon" | "online">("salon");
   const [selectedActivityId, setSelectedActivityId] = useState("all");
   const [showActivityModal, setShowActivityModal] = useState(true);
@@ -479,6 +480,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       return;
     }
 
+    if (!privacyAccepted) {
+      setFormError("Per prenotare devi accettare il trattamento dati.");
+      return;
+    }
+
     if (!isPlaygroundDemo && phone !== "0000") {
       const cifre = phone.replace(/\D/g, "");
       let isValid = false;
@@ -610,7 +616,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     isBooking ||
     selectedSlot === "" ||
     name === "" ||
-    (!isPlaygroundDemo && phone === "");
+    (!isPlaygroundDemo && phone === "") ||
+    !privacyAccepted;
 
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
@@ -948,9 +955,13 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                     className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
                   />
                 ) : (
-                  <span className="flex h-full w-full items-center justify-center rounded-full border-4 border-[#0b1221] bg-gradient-to-br from-[#101a2d] to-[#07111f] text-3xl font-black tracking-tight text-cyan-200">
-                    {shopInitials}
-                  </span>
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(tenantInfo.name)}&background=0b1221&color=00b4ff&size=150&bold=true`}
+                    alt={tenantInfo.name}
+                    draggable={false}
+                    className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative"
+                    style={{ zIndex: 52 }}
+                  />
                 )}
 
                 <span
@@ -994,10 +1005,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
           <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
             <span className="text-slate-100">{tenantInfo.name}</span>
+            {selectedService && selectedService.price > 0 && (
+              <span className="bg-cyan-950/40 text-[#00b4ff] px-3 py-1 rounded-full border border-[#00b4ff]/30 text-sm align-middle animate-in zoom-in duration-300">
+                {selectedService.price}€
+              </span>
+            )}
           </h1>
 
           <p className="text-slate-400 text-[13px] font-medium mb-5 leading-relaxed">
-            Prenota il tuo appuntamento in pochi secondi.
+            {tenantInfo.description || "Il tuo stile impeccabile, a portata di click. ✂️"}
           </p>
 
           <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
@@ -1336,6 +1352,22 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 tabIndex={-1}
                 autoComplete="off"
               />
+              
+              <div className="flex items-center gap-3 py-2 animate-in fade-in duration-300">
+                <input
+                  type="checkbox"
+                  id="privacy"
+                  checked={privacyAccepted}
+                  onChange={(e) => {
+                    setPrivacyAccepted(e.target.checked);
+                    setFormError("");
+                  }}
+                  className="w-5 h-5 rounded border-[#1e2b4a] bg-[#131c31] text-[#00b4ff] focus:ring-[#00b4ff] focus:ring-offset-[#0b1221]"
+                />
+                <label htmlFor="privacy" className="text-xs text-slate-400 leading-tight">
+                  Ho letto e accetto la <Link href="/privacy" className="text-[#00b4ff] underline hover:text-cyan-400">Privacy Policy</Link> per la gestione dell'appuntamento.
+                </label>
+              </div>
             </div>
 
             {isPlaygroundDemo && (
