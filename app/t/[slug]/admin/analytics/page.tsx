@@ -4,10 +4,11 @@ import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import AnalyticsCharts from "./AnalyticsCharts";
 
-export default async function AnalyticsPage({ params }: { params: { slug: string } }) {
+export default async function AnalyticsPage(props: { params: Promise<{ slug: string }> }) {
   noStore();
   
-  const tenant = await prisma.tenant.findUnique({ where: { slug: params.slug } });
+  const { slug } = await props.params;
+  const tenant = await prisma.tenant.findUnique({ where: { slug } });
   if (!tenant) return <div className="p-10 text-white">Negozio non trovato.</div>;
   const TENANT_ID = tenant.id;
 
@@ -216,7 +217,7 @@ export default async function AnalyticsPage({ params }: { params: { slug: string
             </p>
           </div>
           <Link
-            href={`/t/${params.slug}/admin`}
+            href={`/t/${slug}/admin`}
             className="bg-[#131c31] hover:bg-[#1e2b4a] text-slate-300 text-sm font-bold px-5 py-2.5 rounded-xl border border-[#1e2b4a] transition flex items-center gap-2"
           >
             ← Torna alla Dashboard
