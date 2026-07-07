@@ -16,7 +16,22 @@ export async function GET(req: Request) {
         services: true
       }
     });
-    return NextResponse.json(tenants);
+
+    const totalAppointments = await prisma.appointment.count();
+    const allAppointments = await prisma.appointment.findMany({
+      select: { service: { select: { price: true } } }
+    });
+    const totalRevenue = allAppointments.reduce((acc: number, curr: any) => acc + (curr.service?.price || 0), 0);
+    const totalNoShows = await prisma.noShow.count();
+
+    return NextResponse.json({
+      tenants,
+      stats: {
+        totalAppointments,
+        totalRevenue,
+        totalNoShows
+      }
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Errore interno' }, { status: 500 });
   }

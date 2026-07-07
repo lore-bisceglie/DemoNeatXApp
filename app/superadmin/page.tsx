@@ -22,6 +22,8 @@ export default function SuperAdminPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
 
+  const [stats, setStats] = useState({ totalAppointments: 0, totalRevenue: 0, totalNoShows: 0 });
+
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
@@ -45,7 +47,8 @@ export default function SuperAdminPage() {
         return;
       }
       const data = await res.json();
-      setTenants(Array.isArray(data) ? data : []);
+      setTenants(data.tenants || (Array.isArray(data) ? data : []));
+      if (data.stats) setStats(data.stats);
       setIsAuthenticated(true);
       setAuthError("");
     } catch (e: any) {
@@ -149,6 +152,38 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleMakePremium = async (tenantId: string) => {
+    if (!confirm('Vuoi forzare questo cliente al piano Premium a vita (Godmode)?')) return;
+    try {
+      const res = await fetch('/api/superadmin/premium', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore');
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
+  const handleImpersonate = (slug: string, adminPassword: string | null) => {
+    if (!adminPassword) {
+      alert("Questo tenant non ha ancora una password admin generata.");
+      return;
+    }
+    const isLocal = window.location.hostname.includes('localhost');
+    const domainStr = isLocal ? '' : `; domain=.neatx.store`;
+    document.cookie = `admin_auth_${slug}=${adminPassword}; path=/; max-age=86400${domainStr}`;
+    
+    const baseUrl = isLocal ? `http://${slug}.localhost:3000` : `https://${slug}.neatx.store`;
+    window.open(`${baseUrl}/admin`, '_blank');
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
@@ -177,10 +212,30 @@ export default function SuperAdminPage() {
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
             Pannello Super Admin (NeatX SaaS)
           </h1>
-        </div>
+           <p className="text-slate-400">Pannello di controllo globale (Godmode)</p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Form Creazione */}
+      {/* GOD-EYE STATS */}
+      <div className="max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
+          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Appuntamenti Globali</h3>
+          <div className="text-4xl font-extrabold text-white relative">{stats.totalAppointments}</div>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
+          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Valore Mosso (Teorico)</h3>
+          <div className="text-4xl font-extrabold text-emerald-400 relative">€ {stats.totalRevenue.toLocaleString('it-IT')}</div>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
+          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">No-Show Sventati</h3>
+          <div className="text-4xl font-extrabold text-rose-400 relative">{stats.totalNoShows}</div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Colonna Creazione */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
             <h2 className="text-xl font-semibold mb-4 text-white">Crea Nuovo Cliente</h2>
             <form onSubmit={handleCreate} className="space-y-4">
@@ -401,8 +456,15 @@ export default function SuperAdminPage() {
                           rel="noopener noreferrer"
                           className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 bg-indigo-500/10 px-3 py-1.5 rounded-full"
                         >
-                          Vedi App ↗
+                          Sito Pubblico ↗
                         </a>
+                        <button 
+                          onClick={() => handleImpersonate(tenant.slug, tenant.adminPassword)}
+                          title="Entra come Admin (Impersonate)"
+                          className="text-sm text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1 bg-amber-500/10 px-3 py-1.5 rounded-full transition-all border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                        >
+                          🕵️‍♂️ Entra in App
+                        </button>
                         <button 
                           onClick={() => handleDelete(tenant.id, tenant.name)}
                           title="Elimina negozio"
@@ -411,12 +473,22 @@ export default function SuperAdminPage() {
                           Elimina
                         </button>
                       </div>
-                      <button 
-                        onClick={() => handleUnlock(tenant.id)}
-                        className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all"
-                      >
-                        SBLOCCA +30 GG
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleUnlock(tenant.id)}
+                          className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all"
+                        >
+                          SBLOCCA +30 GG
+                        </button>
+                        {tenant.plan !== 'premium' && (
+                          <button 
+                            onClick={() => handleMakePremium(tenant.id)}
+                            className="text-xs font-bold px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 transition-all"
+                          >
+                            👑 LIFETIME PREMIUM
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )})}
