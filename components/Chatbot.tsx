@@ -129,7 +129,7 @@ export default function Chatbot() {
       {/* ═══════════ FLOATING BUTTON ═══════════ */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-6 right-6 z-[9999999] group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
         <div className="relative">
           {/* Pulse ring */}
@@ -149,7 +149,7 @@ export default function Chatbot() {
 
       {/* ═══════════ CHAT WINDOW ═══════════ */}
       <div
-        className={`fixed z-50 transition-all duration-500 ease-out origin-bottom-right
+        className={`fixed z-[9999999] transition-all duration-500 ease-out origin-bottom-right
           bottom-0 right-0 sm:bottom-6 sm:right-6
           w-full h-full sm:w-[400px] sm:h-[600px] sm:max-h-[85vh] sm:rounded-2xl
           ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}

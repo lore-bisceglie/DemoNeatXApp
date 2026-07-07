@@ -1,11 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Script from "next/script";
+import { Globe } from "lucide-react";
+
+const LANGUAGES = [
+  { code: "it", name: "Italiano", flag: "🇮🇹" },
+  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "es", name: "Español", flag: "🇪🇸" },
+  { code: "fr", name: "Français", flag: "🇫🇷" },
+  { code: "de", name: "Deutsch", flag: "🇩🇪" },
+  { code: "no", name: "Norsk", flag: "🇳🇴" },
+];
 
 export default function GoogleTranslateWidget() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState("it");
+
   useEffect(() => {
-    // Aggiungiamo un po' di CSS per nascondere il banner brutto di Google in alto
+    // Nascondiamo COMPLETAMENTE il widget originale di Google
     const style = document.createElement("style");
     style.innerHTML = `
       .skiptranslate iframe {
@@ -14,28 +27,27 @@ export default function GoogleTranslateWidget() {
       body {
         top: 0 !important;
       }
-      .goog-te-gadget {
-        color: transparent !important;
-      }
-      .goog-te-gadget .goog-te-combo {
-        color: white;
-        background: #0b1221;
-        border: 1px solid #1e2b4a;
-        padding: 5px;
-        border-radius: 8px;
-        font-size: 12px;
-        outline: none;
+      #google_translate_element {
+        display: none !important;
       }
     `;
     document.head.appendChild(style);
   }, []);
 
+  const changeLanguage = (langCode: string) => {
+    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event("change"));
+      setCurrentLang(langCode);
+      setIsOpen(false);
+    }
+  };
+
   return (
     <>
-      <div 
-        id="google_translate_element" 
-        className="fixed bottom-24 right-4 z-[9999] opacity-80 hover:opacity-100 transition-opacity drop-shadow-xl"
-      ></div>
+      {/* Contenitore invisibile per Google */}
+      <div id="google_translate_element"></div>
 
       <Script 
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" 
@@ -47,12 +59,43 @@ export default function GoogleTranslateWidget() {
           window.googleTranslateElementInit = function() {
             new window.google.translate.TranslateElement({
               pageLanguage: 'it',
+              includedLanguages: 'it,en,es,fr,de,no',
               layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
               autoDisplay: false,
             }, 'google_translate_element');
           }
         `}
       </Script>
+
+      {/* Il nostro Widget Custom Bello */}
+      <div className="fixed bottom-24 right-4 z-[9999] flex flex-col items-end">
+        {isOpen && (
+          <div className="mb-2 bg-[#0b1221] border border-[#1e2b4a] rounded-xl shadow-2xl p-2 w-40 animate-in fade-in slide-in-from-bottom-2">
+            {LANGUAGES.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => changeLanguage(lang.code)}
+                className={\`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors \${
+                  currentLang === lang.code 
+                    ? "bg-cyan-500/20 text-cyan-400 font-medium" 
+                    : "text-slate-300 hover:bg-[#1e2b4a] hover:text-white"
+                }\`}
+              >
+                <span className="mr-2">{lang.flag}</span>
+                {lang.name}
+              </button>
+            ))}
+          </div>
+        )}
+        
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-[#0b1221] border border-[#1e2b4a] text-slate-300 hover:text-white p-3 rounded-full shadow-lg hover:shadow-cyan-500/20 transition-all flex items-center justify-center group"
+          aria-label="Cambia Lingua"
+        >
+          <Globe className="w-5 h-5 group-hover:scale-110 transition-transform" />
+        </button>
+      </div>
     </>
   );
 }

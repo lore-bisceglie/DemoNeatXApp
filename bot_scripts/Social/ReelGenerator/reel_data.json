@@ -1,13 +1,13 @@
 {
-    "niche": "Parrucchieri",
-    "script_text": "Sei un parrucchiere e continui a rispondere ai clienti su WhatsApp? Ogni messaggio che ignori è denaro che perdi! Non lasciare che i no-show ti rovinino il mese. Immagina una settimana con l'agenda piena, senza più chat invadenti. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "PARRUCCHIERI: NO-SHOW",
-    "cover_title": "PARRUCCHIERI: NO-SHOW",
-    "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
+    "niche": "Tatuatori",
+    "script_text": "Sei un tatuatore e continui a prendere appuntamenti su WhatsApp? Stai perdendo soldi. Ogni no-show è un colpo al tuo guadagno! Sei stanco di rispondere a messaggi infiniti? Con NeatX, gestisci tutto in automatico. Richieste filtrate e acconto prima dello slot. Non lasciare che il tuo talento venga sprecato! Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "TATUATORI: BASTA NO-SHOW!",
+    "cover_title": "TATUATORI: BASTA NO-SHOW!",
+    "image_prompt": "photorealistic tattoo studio, tattoo artist focused on a detailed tattoo on a client's arm, modern and clean workspace",
     "gameplay_style": "block_miner",
-    "caption": "Basta no-show e messaggi invadenti! Scopri come avere un'agenda piena con NeatX. Commenta AGENDA per il link! #Parrucchieri #NoShow #NeatX #Automazione",
+    "caption": "Sei un tatuatore e stai perdendo tempo e soldi? È ora di passare all'automazione! Commenta AGENDA per scoprire come. #tattooartist #tattoos #businessautomation #NeatX",
     "strategy_date": "2026-07-07",
-    "strategy_angle": "costo dei no-show mensili",
-    "strategy_pain": "clienti invadenti su WhatsApp",
-    "strategy_promise": "agenda piena, zero chat"
+    "strategy_angle": "costo mensile dei no-show",
+    "strategy_pain": "consulenze infinite e appuntamenti senza caparra",
+    "strategy_promise": "richieste filtrate e acconto prima dello slot"
 }

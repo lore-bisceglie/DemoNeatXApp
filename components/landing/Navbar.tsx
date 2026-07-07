@@ -11,7 +11,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps) {
   return (
     <nav className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="w-full md:w-auto flex items-center justify-between">
-        <Link href="/" className="text-2xl font-extrabold tracking-tight">
+        <Link href="/" className="text-2xl font-extrabold tracking-tight notranslate">
           <span className="text-white">Neat</span>
           <span className="text-[#00b4ff]">X</span>
         </Link>
