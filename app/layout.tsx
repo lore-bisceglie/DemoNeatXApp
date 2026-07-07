@@ -6,6 +6,7 @@ import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
 import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
 import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";
+import PublicWidgetsWrapper from "@/components/landing/PublicWidgetsWrapper";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
 export const viewport: Viewport = {
@@ -50,21 +51,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         
         {children}
         
-        {/* Chatbot AI */}
-        <Chatbot />
+        <PublicWidgetsWrapper>
+          {/* Chatbot AI */}
+          <Chatbot />
 
-        {/* Gruppo Pulsanti Contatto (Spostati a Sinistra) */}
-        <div className="fixed bottom-6 left-6 z-40 hidden sm:flex flex-col items-start gap-3">
-          {/* Pulsante Fluttuante WhatsApp */}
-          <WhatsAppFloatingBtn />
+          {/* Gruppo Pulsanti Contatto (Spostati a Sinistra) */}
+          <div className="fixed bottom-6 left-6 z-40 hidden sm:flex flex-col items-start gap-3">
+            {/* Pulsante Fluttuante WhatsApp */}
+            <WhatsAppFloatingBtn />
 
-          {/* Pulsante Fluttuante Instagram (Apre App Nativa) */}
-          <InstagramFloatingBtn />
-        </div>
+            {/* Pulsante Fluttuante Instagram (Apre App Nativa) */}
+            <InstagramFloatingBtn />
+          </div>
 
-        <div className="fixed bottom-4 left-4 z-40 sm:hidden">
-          <InstagramFloatingBtn compact />
-        </div>
+          <div className="fixed bottom-4 left-4 z-40 sm:hidden">
+            <InstagramFloatingBtn compact />
+          </div>
+        </PublicWidgetsWrapper>
 
         {/* Menu Segreto per il Proprietario del SaaS (visibile solo a te) */}
         <GodmodeHub />

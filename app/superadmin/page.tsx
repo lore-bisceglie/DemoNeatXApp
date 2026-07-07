@@ -22,6 +22,7 @@ export default function SuperAdminPage() {
   const [closeTime, setCloseTime] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [stats, setStats] = useState({ totalAppointments: 0, totalRevenue: 0, totalNoShows: 0 });
 
@@ -212,8 +213,8 @@ export default function SuperAdminPage() {
 
   return (
     <div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-[1600px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
             Pannello Super Admin (NeatX SaaS)
           </h1>
@@ -239,8 +240,8 @@ export default function SuperAdminPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Colonna Creazione */}
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Colonna Creazione (1/4) */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
             <h2 className="text-xl font-semibold mb-4 text-white">Crea Nuovo Cliente</h2>
             <form onSubmit={handleCreate} className="space-y-4">
@@ -428,8 +429,17 @@ export default function SuperAdminPage() {
           </div>
 
           {/* Lista Clienti */}
-          <div className="md:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
-            <h2 className="text-xl font-semibold mb-4 text-white">Clienti Attivi ({tenants.length})</h2>
+          <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <h2 className="text-xl font-semibold text-white">Clienti Attivi ({tenants.length})</h2>
+              <input 
+                type="text" 
+                placeholder="Cerca negozio o email..." 
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                className="w-full sm:w-64 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+              />
+            </div>
             
             {loading ? (
               <div className="animate-pulse flex space-x-4">
@@ -442,67 +452,77 @@ export default function SuperAdminPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                {tenants.map((tenant) => {
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {tenants.filter(t => 
+                  t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                  (t.ownerEmail && t.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                  t.slug.toLowerCase().includes(searchTerm.toLowerCase())
+                ).map((tenant) => {
                   const now = new Date();
                   const trialEndsAt = tenant.trialEndsAt ? new Date(tenant.trialEndsAt) : null;
                   const isTrialExpired = trialEndsAt && now > trialEndsAt;
                   const daysLeft = trialEndsAt ? Math.ceil((trialEndsAt.getTime() - now.getTime()) / (1000 * 3600 * 24)) : 0;
                   
                   return (
-                  <div key={tenant.id} className="bg-slate-950 border border-slate-800 p-4 rounded-lg flex items-center justify-between group">
+                  <div key={tenant.id} className="bg-slate-950 border border-slate-800 p-5 rounded-xl flex flex-col justify-between group hover:border-indigo-500/50 transition-colors gap-4">
                     <div>
-                      <h3 className="font-bold text-white text-lg">{tenant.name}</h3>
-                      <div className="text-sm text-slate-400 mt-1 flex flex-col gap-1">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-bold text-white text-lg leading-tight truncate mr-2" title={tenant.name}>{tenant.name}</h3>
+                        {tenant.plan === 'premium' && <span className="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Premium</span>}
+                      </div>
+                      <div className="text-sm text-slate-400 flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
                           <span className="bg-slate-800 px-2 py-1 rounded text-xs">{tenant.services?.length || 0} servizi</span>
-                          <span>Creato il {new Date(tenant.createdAt).toLocaleDateString('it-IT')}</span>
+                          <span className="text-xs">Creato il {new Date(tenant.createdAt).toLocaleDateString('it-IT')}</span>
                         </div>
-                        {trialEndsAt && (
+                        {trialEndsAt && tenant.plan !== 'premium' && (
                           <div className={`flex items-center gap-2 text-xs font-bold ${isTrialExpired ? 'text-red-400' : 'text-orange-400'}`}>
-                            {isTrialExpired ? '🔒 ABBONAMENTO SCADUTO' : `⏳ ${daysLeft} giorni rimanenti`}
+                            {isTrialExpired ? '🔒 ABBONAMENTO SCADUTO' : `⏳ ${daysLeft} gg di prova`}
                           </div>
                         )}
+                        {tenant.ownerEmail && <div className="text-xs truncate text-slate-500 mt-1" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
                       </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex gap-2">
+                    
+                    <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-slate-800/50">
+                      <div className="flex gap-2 w-full">
                         <a 
                           href={`https://${tenant.slug}.neatx.store`}
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 bg-indigo-500/10 px-3 py-1.5 rounded-full"
+                          className="flex-1 text-center text-xs text-indigo-400 hover:text-indigo-300 font-medium bg-indigo-500/10 px-2 py-2 rounded-lg transition-colors flex items-center justify-center"
                         >
-                          Sito Pubblico ↗
+                          Sito Pubblico
                         </a>
                         <button 
                           onClick={() => handleImpersonate(tenant.slug, tenant.adminPassword)}
                           title="Entra come Admin (Impersonate)"
-                          className="text-sm text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1 bg-amber-500/10 px-3 py-1.5 rounded-full transition-all border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                          className="flex-1 text-center text-xs text-amber-400 hover:text-amber-300 font-medium bg-amber-500/10 px-2 py-2 rounded-lg transition-all border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)] flex items-center justify-center"
                         >
-                          🕵️‍♂️ Entra in App
+                          🕵️‍♂️ Entra
                         </button>
                         <button 
                           onClick={() => handleDelete(tenant.id, tenant.name)}
                           title="Elimina negozio"
-                          className="text-sm font-medium flex items-center gap-1 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 px-3 py-1.5 rounded-full transition-all"
+                          className="text-xs font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 px-3 py-2 rounded-lg transition-all"
                         >
-                          Elimina
+                          🗑️
                         </button>
                       </div>
-                      <div className="flex gap-2">
+                      
+                      <div className="flex gap-2 w-full">
                         <button 
                           onClick={() => handleUnlock(tenant.id)}
-                          className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all"
+                          className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all text-center"
                         >
-                          SBLOCCA +30 GG
+                          SBLOCCA 30 GG
                         </button>
                         {tenant.plan !== 'premium' && (
                           <button 
                             onClick={() => handleMakePremium(tenant.id)}
-                            className="text-xs font-bold px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 transition-all"
+                            className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 transition-all text-center"
                           >
-                            👑 LIFETIME PREMIUM
+                            👑 LIFETIME
                           </button>
                         )}
                       </div>
@@ -510,10 +530,14 @@ export default function SuperAdminPage() {
                   </div>
                 )})}
                 
-                {tenants.length === 0 && (
-                  <div className="text-center py-12 text-slate-500">
+                {tenants.filter(t => 
+                  t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                  (t.ownerEmail && t.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                  t.slug.toLowerCase().includes(searchTerm.toLowerCase())
+                ).length === 0 && (
+                  <div className="text-center py-12 text-slate-500 lg:col-span-3">
                     <div className="text-4xl mb-2">👻</div>
-                    Nessun cliente ancora. Creane uno qui a sinistra!
+                    Nessun cliente trovato.
                   </div>
                 )}
               </div>
