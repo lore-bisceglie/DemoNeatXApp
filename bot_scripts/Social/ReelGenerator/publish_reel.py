@@ -103,9 +103,12 @@ def publish_to_instagram():
     # 1. Caricamento temporaneo del video (per permettere a Meta di scaricarlo)
     print(f"[*] Caricamento del video {VIDEO_FILE} su server temporaneo per Meta...")
     try:
-        r_upload = requests.post("https://tmpfiles.org/api/v1/upload", files={"file": open(VIDEO_FILE, "rb")})
-        url_resp = r_upload.json()['data']['url']
-        video_url = url_resp.replace("tmpfiles.org/", "tmpfiles.org/dl/")
+        r_upload = requests.post(
+            "https://catbox.moe/user/api.php", 
+            data={"reqtype": "fileupload"}, 
+            files={"fileToUpload": open(VIDEO_FILE, "rb")}
+        )
+        video_url = r_upload.text.strip()
         print(f"[+] URL temporaneo generato: {video_url}")
     except Exception as e:
         message = f"Errore durante il caricamento temporaneo: {e}"
@@ -118,9 +121,12 @@ def publish_to_instagram():
     if os.path.exists(path_cover):
         print(f"[*] Caricamento della copertina {path_cover} su server temporaneo...")
         try:
-            r_cover = requests.post("https://tmpfiles.org/api/v1/upload", files={"file": open(path_cover, "rb")})
-            url_cover_resp = r_cover.json()['data']['url']
-            cover_url = url_cover_resp.replace("tmpfiles.org/", "tmpfiles.org/dl/")
+            r_cover = requests.post(
+                "https://catbox.moe/user/api.php", 
+                data={"reqtype": "fileupload"}, 
+                files={"fileToUpload": open(path_cover, "rb")}
+            )
+            cover_url = r_cover.text.strip()
             print(f"[+] URL copertina generato: {cover_url}")
         except Exception as e:
             print("[!] Errore durante il caricamento della copertina:", e)
