@@ -4,6 +4,23 @@
   .animate-marquee {
     animation: marquee 50s linear infinite;
   }
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+/* ===== FIX IUBENDA COOKIE BADGE ===== */
+#iubenda-cs-badge {
+  left: 16px !important;
+  right: auto !important;
+  bottom: 80px !important;
+  z-index: 40 !important;
+}
+
+@media (max-width: 640px) {
+  #iubenda-cs-badge {
+    bottom: 90px !important;
+  }
 }
 
 @keyframes marquee {

@@ -28,27 +28,37 @@ export default function GoogleTranslateWidget() {
         top: 0 !important;
       }
       #google_translate_element {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        opacity: 0;
-        pointer-events: none;
+        position: fixed;
+        top: -9999px;
+        left: -9999px;
+        opacity: 0.01;
+        z-index: -1;
       }
     `;
     document.head.appendChild(style);
   }, []);
 
   const changeLanguage = (langCode: string) => {
-    // Il modo più sicuro e compatibile per forzare Google Translate è impostare i suoi cookie
+    // 1. Fallback tramite Cookie
     document.cookie = `googtrans=/it/${langCode}; path=/;`;
     document.cookie = `googtrans=/it/${langCode}; path=/; domain=${window.location.hostname}`;
+    
+    // 2. Metodo primario: Combo Box (se Google è riuscito a renderizzarla)
+    let reloadRequired = true;
+    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
+      reloadRequired = false; // Ha funzionato, non serve ricaricare
+    }
     
     setCurrentLang(langCode);
     setIsOpen(false);
     
-    // Ricarichiamo la pagina per applicare la magia istantaneamente
-    window.location.reload();
+    // 3. Se la Combo Box non c'era, forziamo il ricaricamento per far leggere i Cookie
+    if (reloadRequired) {
+      window.location.reload();
+    }
   };
 
   return (
