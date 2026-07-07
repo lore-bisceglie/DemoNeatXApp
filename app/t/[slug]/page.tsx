@@ -1590,26 +1590,24 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         )}
       </div>
 
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-6 mt-6 text-center flex flex-col items-center gap-3 relative z-10">
-        <h3 className="text-white font-extrabold text-lg">Sei un professionista?</h3>
-        <p className="text-slate-400 text-sm font-medium leading-relaxed">
-          Azzera i no-show e riempi la tua agenda in automatico. Scopri il software che usa questo salone.
-        </p>
-        <Link 
-          href="https://www.neatx.store"
-          className="mt-2 inline-flex items-center justify-center w-full px-5 py-3 bg-[#007aff] hover:bg-[#0066cc] text-white rounded-xl transition-all font-bold shadow-lg"
-        >
-          🚀 Scopri NeatX
-        </Link>
-      </div>
-
-      <div className="mt-8 mb-4 text-center relative z-10">
-        <Link
-          href={getTenantAdminUrl(params.slug)}
-          className="text-[10px] text-slate-700 hover:text-slate-500 uppercase tracking-widest transition-colors font-bold"
-        >
-          Accesso Staff
-        </Link>
+      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-5 mt-6 text-center flex flex-col items-center gap-4 relative z-10">
+        <div className="text-[10px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
+          <p>
+            Powered by{" "}
+            <span className="font-bold text-slate-300">Neat</span><span className="font-bold text-[#00b4ff]">X</span>
+            <br />
+            Developed by{" "}
+            <span className="text-[#00b4ff]/90 font-semibold">
+              NeatX Team
+            </span>
+          </p>
+          <Link 
+            href={getTenantAdminUrl(params.slug)}
+            className="mt-1 inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 rounded-xl transition-all font-bold uppercase tracking-widest shadow-lg shadow-black/20"
+          >
+            ⚙️ Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   );
