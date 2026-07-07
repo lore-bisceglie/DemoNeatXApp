@@ -1,0 +1,40 @@
+name: NeatX Build Health
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  health-check:
+    name: Code Quality & Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Installazione Dipendenze
+        run: npm ci
+
+      - name: 🧹 Controllo Lint (Code Style)
+        run: npm run lint
+
+      - name: 🔨 Controllo Compilazione (Build)
+        run: npm run build
+        env:
+          # Variabili fittizie per permettere alla build Next.js di passare
+          # anche se le vere chiavi sono su Vercel
+          DATABASE_URL: "postgresql://fake:fake@fake:5432/fake"
+          TELEGRAM_BOT_TOKEN: "fake"
+          TELEGRAM_CHAT_ID: "fake"
+          GOOGLE_GENERATIVE_AI_API_KEY: "fake"
