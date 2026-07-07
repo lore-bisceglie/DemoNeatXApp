@@ -1,61 +1,95 @@
 {
-  "generated_at": "2026-07-07T18:12:27.503653+02:00",
+  "generated_at": "2026-07-07T22:33:00.006989+02:00",
   "signals_used": {
-    "reel_history_count": 10,
+    "reel_history_count": 11,
     "viral_hits_count": 0,
     "blog_titles_count": 7,
-    "today_niche": "Tatuatori"
+    "today_niche": "Coach e Consulenti"
   },
   "ideas": [
     {
-      "title": "Tatuatori: basta no-show e consulenze infinite",
-      "hook": "Se sei un tatuatore e perdi soldi a causa di appuntamenti senza caparra, scopri come automatizzare le tue prenotazioni.",
-      "type": "video",
-      "format": "short-form",
+      "title": "COACH E CONSULENTI: BASTA NO-SHOW!",
+      "hook": "Se sei un coach o consulente e ogni mese perdi denaro per i no-show, è ora di cambiare.",
+      "pain_point": "La frustrazione e la perdita economica derivante dai clienti che rimandano o non si presentano alle call.",
+      "solution": "Implementazione di un sistema di prenotazioni automatiche e follow-up semplici.",
+      "call_to_action": "Scopri come azzerare i no-show e recuperare i tuoi guadagni mensili.",
+      "format": "Short-form Video",
       "keywords": [
-        "prenotazioni tatuatore",
-        "caparra tatuaggio"
-      ]
+        "agenda consulente",
+        "prenotazioni coach",
+        "booking consulenze",
+        "no-show coach"
+      ],
+      "VFX_style": "block_miner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, showing a visual representation of money being lost and then recovered."
     },
     {
-      "title": "Il costo mensile dei no-show per i tatuatori",
-      "hook": "Sai quanto stai perdendo ogni mese a causa dei no-show? Ecco come un'agenda automatica può cambiarti la vita.",
-      "type": "blog",
-      "format": "articolo",
+      "title": "Coach e Consulenti: il costo mensile dei no-show e come un'agenda automatica può aiutarti",
+      "hook": "Sai esattamente quanto ti costano i no-show ogni mese? Questo articolo rivela le cifre e la soluzione definitiva.",
+      "pain_point": "Ignoranza o sottovalutazione del vero impatto economico e operativo dei no-show.",
+      "solution": "Analisi dettagliata del costo dei no-show e dimostrazione di come un'agenda automatica sia la soluzione più efficace.",
+      "call_to_action": "Leggi per quantificare le tue perdite e implementare un sistema che le elimini.",
+      "format": "Blog Post",
       "keywords": [
-        "costo no-show",
-        "agenda tatuatori"
-      ]
+        "costo no-show consulente",
+        "agenda automatica coach",
+        "strategia anti no-show",
+        "agenda consulente",
+        "prenotazioni coach"
+      ],
+      "VFX_style": "block_miner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, with charts illustrating financial losses due to no-shows."
     },
     {
-      "title": "Filtra le richieste e ricevi acconti",
-      "hook": "Non lasciare che i clienti perdano tempo: scopri come raccogliere acconti prima del tuo lavoro.",
-      "type": "video",
-      "format": "short-form",
+      "title": "Coach e Consulenti: Prenotazioni Automatiche, Zero Stress!",
+      "hook": "Immagina di non dover più inseguire i clienti per le prenotazioni. Con un'agenda automatica, è tutta automazione e zero pensieri.",
+      "pain_point": "La complessità e lo stress della gestione manuale delle prenotazioni e dei promemoria.",
+      "solution": "Un sistema intuitivo per prenotazioni e follow-up automatici, garantendo la presenza dei clienti.",
+      "call_to_action": "Semplifica la tua vita professionale. Scopri come un'agenda automatica gestisce tutto per te.",
+      "format": "Short-form Video",
       "keywords": [
-        "richieste filtrate",
-        "acconto tatuaggio"
-      ]
+        "prenotazioni automatiche coach",
+        "gestione agenda consulente facile",
+        "booking semplice",
+        "agenda consulente",
+        "booking consulenze"
+      ],
+      "VFX_style": "block_miner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, showing a serene consultant with a seamlessly organized digital calendar."
     },
     {
-      "title": "Ottimizza il tuo studio: agenda automatica per tatuatori",
-      "hook": "Migliora la tua organizzazione e guadagna di più con un sistema di prenotazione automatizzato.",
-      "type": "blog",
-      "format": "articolo",
+      "title": "Coach e Consulenti: Recupera Ore Preziose con la Tua Agenda Smart",
+      "hook": "Quante ore al mese perdi gestendo la tua agenda? È ora di riappropriarti del tuo tempo per ciò che conta davvero.",
+      "pain_point": "Spreco di tempo ed energia nella gestione amministrativa anziché focalizzarsi sul coaching o consulenza.",
+      "solution": "Una panoramica sui benefici in termini di tempo di un'agenda smart che automatizza ogni fase del booking.",
+      "call_to_action": "Scopri il segreto dei coach di successo per massimizzare il tempo e minimizzare le scocciature.",
+      "format": "Blog Post",
       "keywords": [
-        "agenda automatica",
-        "tatuatori"
-      ]
+        "ottimizzazione tempo coach",
+        "efficienza consulente",
+        "agenda smart professionisti",
+        "agenda consulente",
+        "prenotazioni coach"
+      ],
+      "VFX_style": "block_miner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, showing a clock with accelerated hands then hands frozen, emphasizing time saved."
     },
     {
-      "title": "Il tuo studio di tatuaggi senza no-show",
-      "hook": "Scopri come eliminare i no-show e massimizzare i guadagni nella tua attività di tatuaggio.",
-      "type": "video",
-      "format": "short-form",
+      "title": "Coach e Consulenti: Non Permettere Più Ai Clienti Di Rimandare!",
+      "hook": "Stanco di clienti che rimandano le call all'ultimo? Ecco come garantire la loro presenza ad ogni appuntamento.",
+      "pain_point": "Clienti che posticipano frequentemente o non si presentano, causando interruzioni nel flusso di lavoro e entrate.",
+      "solution": "Strategie e strumenti per rendere le prenotazioni ferme e i follow-up irresistibili, riducendo i rinvii.",
+      "call_to_action": "Applica queste tecniche e vedi la tua percentuale di presenza salire alle stelle.",
+      "format": "Short-form Video",
       "keywords": [
-        "zero no-show",
-        "massimi guadagni"
-      ]
+        "clienti puntuali coach",
+        "ridurre rinvii consulenze",
+        "follow-up efficaci",
+        "prenotazioni coach",
+        "booking consulenze"
+      ],
+      "VFX_style": "block_miner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, with visual elements representing a client confirming an appointment steadfastly."
     }
   ]
 }
