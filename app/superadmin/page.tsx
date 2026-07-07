@@ -294,6 +294,11 @@ export default function SuperAdminPage() {
                         <option value="emerald">🌿 Smeraldo</option>
                         <option value="amber">💛 Ambra</option>
                         <option value="purple">💜 Viola</option>
+                        <option value="slate">🪨 Grigio Ardesia (Elegante)</option>
+                        <option value="red">🔴 Rosso Acceso</option>
+                        <option value="indigo">🌌 Blu Indaco</option>
+                        <option value="teal">🌊 Verde Acqua</option>
+                        <option value="fuchsia">🌺 Fucsia Vibrante</option>
                       </select>
                     </div>
                   </div>

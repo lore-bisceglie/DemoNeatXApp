@@ -179,6 +179,61 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       avatarShadow: 'shadow-[0_20px_42px_rgba(168,85,247,.26)]',
       badgeBg: 'bg-purple-950/40',
       selection: 'selection:bg-purple-500/30'
+    },
+    slate: {
+      mainHex: '94a3b8',
+      btnBg: 'bg-slate-500 hover:bg-slate-400 text-slate-950',
+      textMain: 'text-slate-400',
+      textHover: 'hover:text-slate-300',
+      borderMain: 'border-slate-500/30',
+      shadowMain: 'shadow-slate-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(148,163,184,.26)]',
+      badgeBg: 'bg-slate-800/40',
+      selection: 'selection:bg-slate-500/30'
+    },
+    red: {
+      mainHex: 'ef4444',
+      btnBg: 'bg-red-500 hover:bg-red-400 text-white',
+      textMain: 'text-red-500',
+      textHover: 'hover:text-red-400',
+      borderMain: 'border-red-500/30',
+      shadowMain: 'shadow-red-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(239,68,68,.26)]',
+      badgeBg: 'bg-red-950/40',
+      selection: 'selection:bg-red-500/30'
+    },
+    indigo: {
+      mainHex: '6366f1',
+      btnBg: 'bg-indigo-500 hover:bg-indigo-400 text-white',
+      textMain: 'text-indigo-400',
+      textHover: 'hover:text-indigo-300',
+      borderMain: 'border-indigo-500/30',
+      shadowMain: 'shadow-indigo-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(99,102,241,.26)]',
+      badgeBg: 'bg-indigo-950/40',
+      selection: 'selection:bg-indigo-500/30'
+    },
+    teal: {
+      mainHex: '14b8a6',
+      btnBg: 'bg-teal-500 hover:bg-teal-400 text-white',
+      textMain: 'text-teal-400',
+      textHover: 'hover:text-teal-300',
+      borderMain: 'border-teal-500/30',
+      shadowMain: 'shadow-teal-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(20,184,166,.26)]',
+      badgeBg: 'bg-teal-950/40',
+      selection: 'selection:bg-teal-500/30'
+    },
+    fuchsia: {
+      mainHex: 'd946ef',
+      btnBg: 'bg-fuchsia-500 hover:bg-fuchsia-400 text-white',
+      textMain: 'text-fuchsia-400',
+      textHover: 'hover:text-fuchsia-300',
+      borderMain: 'border-fuchsia-500/30',
+      shadowMain: 'shadow-fuchsia-900/20',
+      avatarShadow: 'shadow-[0_20px_42px_rgba(217,70,239,.26)]',
+      badgeBg: 'bg-fuchsia-950/40',
+      selection: 'selection:bg-fuchsia-500/30'
     }
   };
 
