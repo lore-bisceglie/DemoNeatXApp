@@ -28,7 +28,7 @@ export default function LiveNotification() {
 
   return (
     <div 
-      className={`fixed bottom-40 left-6 z-50 bg-[#131c31]/95 backdrop-blur-md border border-[#1e2b4a] shadow-2xl shadow-cyan-900/20 p-4 rounded-2xl flex items-center gap-4 transform transition-all duration-500 ease-out ${
+      className={`hidden md:flex fixed bottom-40 left-6 z-50 bg-[#131c31]/95 backdrop-blur-md border border-[#1e2b4a] shadow-2xl shadow-cyan-900/20 p-4 rounded-2xl items-center gap-4 transform transition-all duration-500 ease-out ${
         showNotification ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'
       }`}
     >

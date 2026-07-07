@@ -39,20 +39,20 @@ export default function GoogleTranslateWidget() {
   }, []);
 
   const changeLanguage = (langCode: string) => {
-    // Il metodo più robusto in assoluto: forzare i Cookie di Google e ricaricare la pagina.
-    // Puliamo eventuali cookie vecchi prima di impostare il nuovo
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + window.location.hostname;
-
-    // Impostiamo il nuovo cookie
-    document.cookie = `googtrans=/it/${langCode}; path=/;`;
-    document.cookie = `googtrans=/it/${langCode}; path=/; domain=${window.location.hostname}`;
+    // Usa l'approccio URL Hash che è l'unico nativamente supportato da Google Translate e bypassa i blocchi cookie di iPhone/Safari
+    window.location.hash = "#googtrans(it|" + langCode + ")";
+    
+    // Tenta anche l'approccio classico con la select in caso l'hash fallisca in single-page apps
+    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
+    }
     
     setCurrentLang(langCode);
     setIsOpen(false);
     
-    // Ricaricamento forzato dal server per iniettare i nuovi cookie nel motore di Google
+    // Ricaricamento forzato per attivare l'hash
     window.location.reload();
   };
 
@@ -79,8 +79,8 @@ export default function GoogleTranslateWidget() {
         `}
       </Script>
 
-      {/* Il nostro Widget Custom Bello - Spostato a sinistra su mobile per non accavallarsi */}
-      <div className="fixed bottom-24 left-4 sm:bottom-6 sm:right-24 sm:left-auto z-[9999] flex flex-col sm:items-end">
+      {/* Il nostro Widget Custom Bello - Spostato in basso a sinistra su mobile (di fianco a IG) per non accavallarsi */}
+      <div className="fixed bottom-4 left-20 sm:bottom-6 sm:right-24 sm:left-auto z-[9999] flex flex-col items-start sm:items-end">
         {isOpen && (
           <div className="mb-2 bg-[#0b1221] border border-[#1e2b4a] rounded-xl shadow-2xl p-2 w-40 animate-in fade-in slide-in-from-bottom-2">
             {LANGUAGES.map((lang) => (
