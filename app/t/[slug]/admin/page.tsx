@@ -9,6 +9,17 @@ import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
 import { unstable_noStore as noStore } from "next/cache";
 
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
+import DeleteButton from "../../../dashboard/DeleteButton";
+import WalkInButton from "../../../dashboard/WalkInButton";
+import AppointmentBlock from "../../../dashboard/AppointmentBlock";
+import { unstable_noStore as noStore } from "next/cache";
+
 import AutoRefreshMonitor from "../../../dashboard/AutoRefreshMonitor";
 import SwipeableAgenda from "../../../dashboard/SwipeableAgenda";
 import CustomerDrawer from "../../../dashboard/CustomerDrawer";
@@ -18,6 +29,7 @@ import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
 import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
+import GoogleSheetsSync from "../../../dashboard/GoogleSheetsSync";
 
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
@@ -1297,6 +1309,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               )}
             </div>
           </div>
+
+          {/* Sincronizzazione Orari via Google Sheets */}
+          <GoogleSheetsSync tenantId={tenant.id} initialUrl={tenant.staffSheetUrl} />
+
         </div>
       </div>
     </div>
