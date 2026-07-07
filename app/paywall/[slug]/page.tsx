@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getTenantPublicUrl } from "@/lib/domains";
+import StripeCheckoutButton from "./StripeCheckoutButton";
 
-import { getSalesWhatsappUrl } from "@/lib/contact";
 export const dynamic = "force-dynamic";
 
 export default async function PaywallPage(props: { params: Promise<{ slug: string }> }) {
@@ -23,9 +23,6 @@ export default async function PaywallPage(props: { params: Promise<{ slug: strin
   }
 
   const publicUrl = getTenantPublicUrl(tenant.slug);
-  const message =
-    `Ciao, voglio attivare NeatX per ${tenant.name}. Link negozio: ${publicUrl}`
-;
 
   return (
     <main className="min-h-screen bg-[#050814] flex items-center justify-center p-6 text-white">
@@ -53,14 +50,7 @@ export default async function PaywallPage(props: { params: Promise<{ slug: strin
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <a
-            href={getSalesWhatsappUrl(message)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-extrabold text-[#03110a] transition hover:bg-emerald-400"
-          >
-            Attiva abbonamento
-          </a>
+          <StripeCheckoutButton tenantId={tenant.id} slug={tenant.slug} />
           <Link
             href={publicUrl}
             className="rounded-2xl border border-[#1e2b4a] bg-[#050814] px-5 py-4 text-sm font-extrabold text-white transition hover:border-cyan-500/40"
