@@ -34,7 +34,7 @@ export default function GoogleTranslateWidget() {
     <>
       <div 
         id="google_translate_element" 
-        className="fixed bottom-4 right-4 z-[9999] opacity-80 hover:opacity-100 transition-opacity drop-shadow-xl"
+        className="fixed bottom-24 right-4 z-[9999] opacity-80 hover:opacity-100 transition-opacity drop-shadow-xl"
       ></div>
 
       <Script 
@@ -44,10 +44,10 @@ export default function GoogleTranslateWidget() {
 
       <Script id="google-translate-init" strategy="afterInteractive">
         {`
-          function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
+          window.googleTranslateElementInit = function() {
+            new window.google.translate.TranslateElement({
               pageLanguage: 'it',
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
               autoDisplay: false,
             }, 'google_translate_element');
           }
