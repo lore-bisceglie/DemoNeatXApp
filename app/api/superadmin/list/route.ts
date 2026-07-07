@@ -17,7 +17,7 @@ export async function GET(req: Request) {
       }
     });
     return NextResponse.json(tenants);
-  } catch (error) {
-    return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Errore interno' }, { status: 500 });
   }
 }
