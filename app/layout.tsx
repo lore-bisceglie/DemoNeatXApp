@@ -7,6 +7,7 @@ import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
 import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";
 import PublicWidgetsWrapper from "@/components/landing/PublicWidgetsWrapper";
+import GoogleTranslateWidget from "@/components/GoogleTranslateWidget";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
 export const viewport: Viewport = {
@@ -71,6 +72,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Menu Segreto per il Proprietario del SaaS (visibile solo a te) */}
         <GodmodeHub />
+
+        {/* Traduttore Universale di Google */}
+        <GoogleTranslateWidget />
       </body>
     </html>
   );
