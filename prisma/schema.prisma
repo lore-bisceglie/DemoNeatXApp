@@ -46,6 +46,7 @@ model Tenant {
   convertedAt   DateTime?
   plan          String        @default("basic") // "basic" o "premium"
   createdAt     DateTime      @default(now())
+  staffSheetUrl String?       // Link al Google Sheet per gli orari dei dipendenti
 
   // Relazioni: Tutto l'universo del salone è agganciato qui
   appointments  Appointment[]
