@@ -191,13 +191,13 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
                       <div
                         className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border transition ${
                           customer.noShows > 0
-                            ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/30"
+                            ? "bg-red-500/10 text-red-500 border-red-500/30"
                             : "bg-[#1e2b4a] text-slate-500 border-transparent"
                         }`}
                         title="Assenze"
                       >
                         <span className="font-bold text-xs">
-                          {customer.noShows}
+                          {customer.noShows > 0 ? `⚠️ ${customer.noShows}` : customer.noShows}
                         </span>
                       </div>
                     </div>
@@ -233,6 +233,14 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
+                  {selectedCustomer.noShows > 0 && (
+                    <div className="col-span-2 bg-red-500/10 border border-red-500/30 rounded-xl p-3 flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2 text-red-400">
+                        <span className="font-extrabold uppercase text-xs tracking-widest">⚠️ Allerta No-Show</span>
+                      </div>
+                      <span className="text-red-400 font-bold text-sm">{selectedCustomer.noShows} assenze registrate</span>
+                    </div>
+                  )}
                   <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-3">
                     <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">
                       Visite

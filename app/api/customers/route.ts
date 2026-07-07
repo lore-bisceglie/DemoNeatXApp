@@ -30,7 +30,7 @@ export async function GET(request: Request) {
 
     const rawNoShows = await prisma.noShow.findMany({
       where: { tenantId },
-      select: { customerPhone: true },
+      select: { customerPhone: true, customerName: true },
     });
 
     const rawNotes = await prisma.customerNote.findMany({
@@ -92,8 +92,17 @@ export async function GET(request: Request) {
     });
 
     rawNoShows.forEach((noShow) => {
-      const existing = customersMap.get(noShow.customerPhone);
-      if (!existing) return;
+      const existing = customersMap.get(noShow.customerPhone) || {
+        phone: noShow.customerPhone,
+        name: noShow.customerName || "Sconosciuto (No-Show)",
+        visits: 0,
+        noShows: 0,
+        totalSpent: 0,
+        lastVisit: null,
+        favoriteService: null,
+        note: "",
+        preference: null,
+      };
       existing.noShows += 1;
       customersMap.set(noShow.customerPhone, existing);
     });
