@@ -25,6 +25,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Account non trovato." }, { status: 404 });
     }
 
+    // 1. Controllo Lockout (Anti-Bruteforce)
+    if (tenant.lockoutUntil && tenant.lockoutUntil > new Date()) {
+      const remainingMinutes = Math.ceil((tenant.lockoutUntil.getTime() - Date.now()) / 60000);
+      return NextResponse.json(
+        { error: `Troppi tentativi falliti. Sicurezza attivata: riprova tra ${remainingMinutes} minuti.` },
+        { status: 429 }
+      );
+    }
+
     const emailMatches =
       !tenant.ownerEmail ||
       !email ||
@@ -34,9 +43,41 @@ export async function POST(req: Request) {
       ? verifyPassword(password, tenant.ownerPasswordHash)
       : password === tenant.adminPassword;
 
+    // 2. Se credenziali sbagliate: incrementa errori e blocca
     if (!emailMatches || !passwordMatches) {
+      const newAttempts = tenant.failedLoginAttempts + 1;
+      const willLock = newAttempts >= 5;
+      const newLockout = willLock ? new Date(Date.now() + 15 * 60000) : null; // 15 min lock
+
+      await prisma.tenant.update({
+        where: { id: tenant.id },
+        data: {
+          failedLoginAttempts: newAttempts,
+          lockoutUntil: newLockout,
+        },
+      });
+
+      // Segnala il tentativo sospetto nel registro attività del proprietario
+      await prisma.activityLog.create({
+        data: {
+          tenantId: tenant.id,
+          action: "SECURITY_ALERT",
+          message: `⚠️ Tentativo di accesso fallito (password errata). IP o Bot bloccato.`,
+          actor: "system",
+        },
+      });
+
       return NextResponse.json({ error: "Email o password non valide." }, { status: 401 });
     }
+
+    // 3. Login VERO: resetta errori e fai entrare
+    await prisma.tenant.update({
+      where: { id: tenant.id },
+      data: {
+        failedLoginAttempts: 0,
+        lockoutUntil: null,
+      },
+    });
 
     const response = NextResponse.json({ success: true });
     response.cookies.set(`admin_auth_${tenant.slug}`, tenant.adminPassword, {

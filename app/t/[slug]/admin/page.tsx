@@ -1261,6 +1261,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     bgColor = "bg-orange-500/10 border-orange-500/20";
                     dotColor = "bg-orange-400";
                     icon = "👻";
+                  } else if (log.action === "SECURITY_ALERT") {
+                    bgColor = "bg-red-500/20 border-red-500/40 animate-pulse";
+                    dotColor = "bg-red-500";
+                    icon = "🚨";
                   }
 
                   return (

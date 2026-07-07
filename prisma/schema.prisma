@@ -48,6 +48,10 @@ model Tenant {
   createdAt     DateTime      @default(now())
   staffSheetUrl String?       // Link al Google Sheet per gli orari dei dipendenti
 
+  // Sicurezza & Anti-Bruteforce
+  failedLoginAttempts Int     @default(0)
+  lockoutUntil        DateTime?
+
   // Relazioni: Tutto l'universo del salone è agganciato qui
   appointments  Appointment[]
   blockedSlots  BlockedSlot[]
