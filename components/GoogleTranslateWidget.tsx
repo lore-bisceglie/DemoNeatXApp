@@ -39,26 +39,21 @@ export default function GoogleTranslateWidget() {
   }, []);
 
   const changeLanguage = (langCode: string) => {
-    // 1. Fallback tramite Cookie
+    // Il metodo più robusto in assoluto: forzare i Cookie di Google e ricaricare la pagina.
+    // Puliamo eventuali cookie vecchi prima di impostare il nuovo
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + window.location.hostname;
+
+    // Impostiamo il nuovo cookie
     document.cookie = `googtrans=/it/${langCode}; path=/;`;
     document.cookie = `googtrans=/it/${langCode}; path=/; domain=${window.location.hostname}`;
-    
-    // 2. Metodo primario: Combo Box (se Google è riuscito a renderizzarla)
-    let reloadRequired = true;
-    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
-    if (select) {
-      select.value = langCode;
-      select.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
-      reloadRequired = false; // Ha funzionato, non serve ricaricare
-    }
     
     setCurrentLang(langCode);
     setIsOpen(false);
     
-    // 3. Se la Combo Box non c'era, forziamo il ricaricamento per far leggere i Cookie
-    if (reloadRequired) {
-      window.location.reload();
-    }
+    // Ricaricamento forzato dal server per iniettare i nuovi cookie nel motore di Google
+    window.location.reload();
   };
 
   return (
