@@ -1605,7 +1605,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             href={getTenantAdminUrl(params.slug)}
             className="mt-1 inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 rounded-xl transition-all font-bold uppercase tracking-widest shadow-lg shadow-black/20"
           >
-            ⚙️ Dashboard
+            ⚙️ Accesso Staff
           </Link>
         </div>
       </div>
