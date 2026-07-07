@@ -4,6 +4,7 @@ import { Mail } from "lucide-react";
 import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
 import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
 import Chatbot from "@/components/Chatbot";
+import GodmodeHub from "@/components/landing/GodmodeHub";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
 export const viewport: Viewport = {
@@ -57,6 +58,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="fixed bottom-4 left-4 z-40 sm:hidden">
           <InstagramFloatingBtn compact />
         </div>
+
+        {/* Menu Segreto per il Proprietario del SaaS (visibile solo a te) */}
+        <GodmodeHub />
       </body>
     </html>
   );

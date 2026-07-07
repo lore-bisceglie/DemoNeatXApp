@@ -50,6 +50,10 @@ export default function SuperAdminPage() {
       const data = await res.json();
       setTenants(data.tenants || (Array.isArray(data) ? data : []));
       if (data.stats) setStats(data.stats);
+      
+      // Imposta il cookie per far apparire il Godmode Hub in tutto il sito
+      document.cookie = "superadmin_god_eye=true; path=/; max-age=86400";
+      
       setIsAuthenticated(true);
       setAuthError("");
     } catch (e: any) {
