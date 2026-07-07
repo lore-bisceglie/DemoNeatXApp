@@ -48,13 +48,27 @@ export default function GoogleTranslateWidget() {
 
     // Funzione interna per piallare i cookie di Google in ogni combinazione di dominio
     const setGoogCookie = (value: string, expires: string) => {
-      document.cookie = `googtrans=${value}; path=/; expires=${expires}; SameSite=Lax`;
-      document.cookie = `googtrans=${value}; path=/; domain=${host}; expires=${expires}; SameSite=Lax`;
-      document.cookie = `googtrans=${value}; path=/; domain=.${host}; expires=${expires}; SameSite=Lax`;
+      const paths = ["/", "/admin"];
+      const domainsToClear = [host, `.${host}`];
+      
       if (host !== domain) {
-        document.cookie = `googtrans=${value}; path=/; domain=${domain}; expires=${expires}; SameSite=Lax`;
-        document.cookie = `googtrans=${value}; path=/; domain=.${domain}; expires=${expires}; SameSite=Lax`;
+        domainsToClear.push(domain, `.${domain}`);
       }
+      
+      // Aggiungiamo sempre il root domain (es. neatx.store)
+      const hostParts = host.split(".");
+      if (hostParts.length >= 2) {
+        const rootDomain = hostParts.slice(-2).join(".");
+        if (!domainsToClear.includes(rootDomain)) domainsToClear.push(rootDomain);
+        if (!domainsToClear.includes(`.${rootDomain}`)) domainsToClear.push(`.${rootDomain}`);
+      }
+
+      paths.forEach(p => {
+        document.cookie = `googtrans=${value}; path=${p}; expires=${expires}; SameSite=Lax`;
+        domainsToClear.forEach(d => {
+          document.cookie = `googtrans=${value}; path=${p}; domain=${d}; expires=${expires}; SameSite=Lax`;
+        });
+      });
     };
 
     if (isOriginal) {
