@@ -39,13 +39,36 @@ export default function GoogleTranslateWidget() {
   }, []);
 
   const changeLanguage = (langCode: string) => {
-    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
-    if (select) {
-      select.value = langCode;
-      select.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
-    }
     setCurrentLang(langCode);
     setIsOpen(false);
+
+    const isOriginal = langCode === "it";
+    const host = window.location.hostname;
+    const domain = host.startsWith("www.") ? host.substring(4) : host;
+
+    // Funzione interna per piallare i cookie di Google in ogni combinazione di dominio
+    const setGoogCookie = (value: string, expires: string) => {
+      document.cookie = `googtrans=${value}; path=/; expires=${expires}; SameSite=Lax`;
+      document.cookie = `googtrans=${value}; path=/; domain=${host}; expires=${expires}; SameSite=Lax`;
+      document.cookie = `googtrans=${value}; path=/; domain=.${host}; expires=${expires}; SameSite=Lax`;
+      if (host !== domain) {
+        document.cookie = `googtrans=${value}; path=/; domain=${domain}; expires=${expires}; SameSite=Lax`;
+        document.cookie = `googtrans=${value}; path=/; domain=.${domain}; expires=${expires}; SameSite=Lax`;
+      }
+    };
+
+    if (isOriginal) {
+      // Se si torna in Italiano (lingua originale), eliminiamo tutti i cookie di traduzione
+      setGoogCookie("", "Thu, 01 Jan 1970 00:00:00 UTC");
+    } else {
+      // Impostiamo la nuova lingua con scadenza lontana
+      setGoogCookie(`/it/${langCode}`, "Tue, 19 Jan 2038 03:14:07 UTC");
+    }
+    
+    // Piccolo delay per dare tempo all'iPhone di salvare i cookie prima del refresh
+    setTimeout(() => {
+      window.location.reload();
+    }, 150);
   };
 
   return (
