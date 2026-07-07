@@ -187,8 +187,15 @@ export default function SuperAdminPage() {
                   className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500"
                 >
                   <option value="barbiere">💈 Barbiere (Taglio, Barba)</option>
-                  <option value="estetista">💆‍♀️ Estetica (Massaggio, Pulizia Viso)</option>
+                  <option value="parrucchiere">✂️ Parrucchiere (Taglio Donna, Colore)</option>
+                  <option value="estetista">💅 Centro Estetico / Nails (Massaggi, Unghie)</option>
+                  <option value="medico">🩺 Medico / Fisioterapista (Visite, Controlli)</option>
+                  <option value="nutrizionista">🥗 Nutrizionista (Prima Visita, Dieta)</option>
                   <option value="psicologo">🛋️ Psicologo (Seduta, Prima Visita)</option>
+                  <option value="personaltrainer">🏋️ Personal Trainer (Lezioni Singole)</option>
+                  <option value="tatuatore">🖋️ Tatuatore / Piercer (Tatuaggi, Consulenze)</option>
+                  <option value="consulente">💼 Consulente / Avvocato (Consulenze 30/60m)</option>
+                  <option value="toelettatura">🐕 Dog Sitter / Toelettatura (Bagno, Taglio)</option>
                   <option value="vuoto">Vuoto (Solo Standard)</option>
                 </select>
               </div>

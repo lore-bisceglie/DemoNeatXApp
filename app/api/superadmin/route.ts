@@ -31,11 +31,47 @@ export async function POST(req: Request) {
         { name: 'Taglio Capelli', duration: 30, price: 20 },
         { name: 'Taglio e Barba', duration: 45, price: 30 },
       ];
+    } else if (template === 'parrucchiere') {
+      defaultServices = [
+        { name: 'Taglio Donna', duration: 45, price: 35 },
+        { name: 'Colore e Piega', duration: 90, price: 80 },
+        { name: 'Piega', duration: 30, price: 20 },
+      ];
     } else if (template === 'estetista') {
       defaultServices = [
         { name: 'Massaggio Relax', duration: 60, price: 50 },
         { name: 'Pulizia Viso', duration: 45, price: 35 },
-        { name: 'Manicure', duration: 30, price: 20 },
+        { name: 'Semipermanente Mani', duration: 45, price: 25 },
+      ];
+    } else if (template === 'medico') {
+      defaultServices = [
+        { name: 'Prima Visita', duration: 45, price: 100 },
+        { name: 'Visita di Controllo', duration: 20, price: 60 },
+      ];
+    } else if (template === 'nutrizionista') {
+      defaultServices = [
+        { name: 'Prima Visita e Dieta', duration: 60, price: 90 },
+        { name: 'Controllo Mensile', duration: 30, price: 50 },
+      ];
+    } else if (template === 'personaltrainer') {
+      defaultServices = [
+        { name: 'Lezione Individuale', duration: 60, price: 40 },
+        { name: 'Valutazione Fisica', duration: 30, price: 25 },
+      ];
+    } else if (template === 'tatuatore') {
+      defaultServices = [
+        { name: 'Consulenza Gratuita', duration: 30, price: 0 },
+        { name: 'Tatuaggio Piccolo/Medio', duration: 120, price: 150 },
+      ];
+    } else if (template === 'consulente') {
+      defaultServices = [
+        { name: 'Consulenza 30 min', duration: 30, price: 50 },
+        { name: 'Consulenza 60 min', duration: 60, price: 90 },
+      ];
+    } else if (template === 'toelettatura') {
+      defaultServices = [
+        { name: 'Bagno e Taglio (Taglia Piccola)', duration: 60, price: 40 },
+        { name: 'Bagno e Taglio (Taglia Grande)', duration: 90, price: 60 },
       ];
     } else if (template === 'psicologo') {
       defaultServices = [
