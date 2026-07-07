@@ -230,6 +230,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     take: 20,
   });
 
+  const waitlistItems = await prisma.waitlist.findMany({
+    where: { tenantId, date: { gte: todayItaly } },
+    orderBy: { createdAt: "desc" },
+  });
+
   radarAppointments.forEach((app) => {
     let durationMins = 15;
     if (app.time === "ALL_DAY") {
@@ -1301,6 +1306,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
           {/* Sincronizzazione Orari via Google Sheets */}
           <GoogleSheetsSync tenantId={tenant.id} initialUrl={tenant.staffSheetUrl} />
+
+          {/* LISTA ATTESA */}
+          <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
 
         </div>
       </div>

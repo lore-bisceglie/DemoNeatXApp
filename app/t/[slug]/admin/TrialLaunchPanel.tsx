@@ -164,7 +164,7 @@ export default function TrialLaunchPanel({
     },
     {
       label: "Negozio pubblicato",
-      detail: isDemoData ? "Ancora in modalita demo" : "Dati demo trasformati in reale",
+      detail: isDemoData ? "Ancora in modalità demo" : "Dati demo trasformati in reale",
       done: !isDemoData,
       icon: Rocket,
     },
@@ -318,7 +318,7 @@ export default function TrialLaunchPanel({
           </div>
 
           <h2 className="max-w-2xl text-2xl font-extrabold text-white sm:text-3xl">
-            Questa e la tua pagina prenotazioni, gia pronta.
+            Questa è la tua pagina prenotazioni, già pronta.
           </h2>
           <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-400">
             Controlla servizi, orari e agenda. Quando ti convince, pubblichi il negozio reale senza ripartire da zero.
