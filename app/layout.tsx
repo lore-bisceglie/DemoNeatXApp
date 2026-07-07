@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { Mail } from "lucide-react";
 import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
@@ -41,6 +42,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="it">
       <body className="bg-[#050814] text-slate-200 antialiased relative">
+        {/* Iubenda Cookie Banner Script */}
+        <Script 
+          src="https://embeds.iubenda.com/widgets/490bbed2-0c2c-47c4-9e1e-80f16c5f0787.js" 
+          strategy="beforeInteractive" 
+        />
+        
         {children}
         
         {/* Chatbot AI */}
