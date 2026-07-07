@@ -96,6 +96,26 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleDelete = async (tenantId: string, tenantName: string) => {
+    if (!confirm(`Sei sicuro di voler ELIMINARE DEFINITIVAMENTE il negozio "${tenantName}"? Questa operazione è irreversibile e cancellerà anche tutti gli appuntamenti e i servizi.`)) return;
+    
+    try {
+      const res = await fetch('/api/superadmin/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore durante la cancellazione');
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
@@ -224,14 +244,23 @@ export default function SuperAdminPage() {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <a 
-                        href={`https://${tenant.slug}.neatx.store`}
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 bg-indigo-500/10 px-3 py-1.5 rounded-full"
-                      >
-                        Vedi App ↗
-                      </a>
+                      <div className="flex gap-2">
+                        <a 
+                          href={`https://${tenant.slug}.neatx.store`}
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 bg-indigo-500/10 px-3 py-1.5 rounded-full"
+                        >
+                          Vedi App ↗
+                        </a>
+                        <button 
+                          onClick={() => handleDelete(tenant.id, tenant.name)}
+                          title="Elimina negozio"
+                          className="text-sm font-medium flex items-center gap-1 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 px-3 py-1.5 rounded-full transition-all"
+                        >
+                          Elimina
+                        </button>
+                      </div>
                       <button 
                         onClick={() => handleUnlock(tenant.id)}
                         className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all"

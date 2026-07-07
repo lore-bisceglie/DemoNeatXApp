@@ -222,8 +222,7 @@ export default function AppointmentBlock({
                   Sposta appuntamento
                 </p>
                 <p className="text-[11px] text-cyan-200 mb-3">
-                  Demo: cambia data e ora. Il sistema salva solo se lo slot e
-                  libero.
+                  Scegli la nuova data e il nuovo orario. Il sistema verificherà la disponibilità dello slot.
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <input
