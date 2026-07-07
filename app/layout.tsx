@@ -53,27 +53,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         
         {children}
         
+        {/* Traduttore Universale di Google (Sempre Visibile) */}
+        <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[9999] pointer-events-auto">
+          <GoogleTranslateWidget />
+        </div>
+
         <PublicWidgetsWrapper>
           {/* Chatbot AI */}
           <Chatbot />
 
           {/* Nuova Pila di Bottoni (In Basso a Sinistra) */}
-          <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[9999] flex flex-col items-start gap-3 pointer-events-none">
+          <div className="fixed bottom-16 left-4 sm:bottom-20 sm:left-6 z-[9998] flex flex-col items-start gap-3 pointer-events-none">
             {/* I bottoni devono avere pointer-events-auto per essere cliccabili */}
-            
-            <div className="pointer-events-auto">
-              {/* Traduttore Universale di Google (in cima alla pila) */}
-              <GoogleTranslateWidget />
-            </div>
 
             <div className="pointer-events-auto">
-              {/* Pulsante Fluttuante Email (al centro) */}
+              {/* Pulsante Fluttuante Email */}
               <div className="sm:hidden"><EmailFloatingBtn compact /></div>
               <div className="hidden sm:block"><EmailFloatingBtn /></div>
             </div>
 
             <div className="pointer-events-auto">
-              {/* Pulsante Fluttuante Instagram (in basso) */}
+              {/* Pulsante Fluttuante Instagram */}
               <div className="sm:hidden"><InstagramFloatingBtn compact /></div>
               <div className="hidden sm:block"><InstagramFloatingBtn /></div>
             </div>
