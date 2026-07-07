@@ -33,11 +33,11 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const contentWithoutH1 = content.replace(/^#\s+.+\n/, '');
 
   return (
-    <article className="min-h-screen bg-white">
+    <article className="min-h-screen bg-[#050814]">
       {/* Header Articolo */}
-      <header className="bg-slate-900 text-white py-24 px-4 text-center">
+      <header className="bg-[#0b1221] text-white py-24 px-4 text-center border-b border-[#1a2642]">
         <div className="max-w-4xl mx-auto">
-          <Link href="/blog" className="text-indigo-400 font-semibold uppercase tracking-widest text-sm hover:text-white transition-colors mb-8 inline-block">
+          <Link href="/blog" className="text-[#00b4ff] font-semibold uppercase tracking-widest text-sm hover:text-white transition-colors mb-8 inline-block">
             ← Torna al Blog
           </Link>
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
@@ -50,28 +50,28 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       </header>
 
       {/* Corpo dell'Articolo (Markdown Renderizzato con Stili Tailwind personalizzati) */}
-      <main className="max-w-3xl mx-auto py-16 px-6 text-slate-800 text-lg leading-relaxed">
+      <main className="max-w-3xl mx-auto py-16 px-6 text-slate-300 text-lg leading-relaxed font-medium">
         <ReactMarkdown
           components={{
-            h2: ({node, ...props}) => <h2 className="text-3xl font-bold text-slate-900 mt-12 mb-6" {...props} />,
-            h3: ({node, ...props}) => <h3 className="text-2xl font-semibold text-slate-800 mt-8 mb-4" {...props} />,
+            h2: ({node, ...props}) => <h2 className="text-3xl font-extrabold text-white mt-12 mb-6" {...props} />,
+            h3: ({node, ...props}) => <h3 className="text-2xl font-bold text-slate-100 mt-8 mb-4" {...props} />,
             p: ({node, ...props}) => <p className="mb-6" {...props} />,
-            ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-6 space-y-2" {...props} />,
+            ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-400" {...props} />,
             li: ({node, ...props}) => <li className="" {...props} />,
-            strong: ({node, ...props}) => <strong className="font-semibold text-slate-900" {...props} />,
-            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-indigo-500 pl-4 italic text-slate-600 my-6 bg-slate-50 py-2 pr-4 rounded-r-lg" {...props} />,
+            strong: ({node, ...props}) => <strong className="font-bold text-white" {...props} />,
+            blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-[#00b4ff] pl-4 italic text-slate-400 my-6 bg-[#0b1221] py-3 pr-4 rounded-r-lg" {...props} />,
           }}
         >
           {contentWithoutH1}
         </ReactMarkdown>
 
         {/* Call to Action Finale */}
-        <div className="mt-20 bg-indigo-50 border border-indigo-100 rounded-3xl p-10 text-center shadow-lg">
-          <h3 className="text-3xl font-bold text-slate-900 mb-4">Sei pronto a trasformare il tuo lavoro?</h3>
-          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+        <div className="mt-20 bg-[#0b1221] border border-[#1a2642] rounded-3xl p-10 text-center shadow-2xl">
+          <h3 className="text-3xl font-extrabold text-white mb-4">Sei pronto a trasformare il tuo lavoro?</h3>
+          <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto font-medium">
             L'appuntamento mancato costa caro. Il tempo speso al telefono pure. Fai come i migliori professionisti, automatizza tutto con NeatX.
           </p>
-          <Link href="/" className="inline-block bg-indigo-600 text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-indigo-700 hover:scale-105 transition-all shadow-md">
+          <Link href="/" className="inline-block bg-[#00b4ff] text-[#050814] font-extrabold text-lg px-8 py-4 rounded-2xl hover:bg-cyan-400 hover:scale-105 transition-all shadow-[0_0_30px_-5px_rgba(0,180,255,0.4)]">
             Scopri NeatX Gratis
           </Link>
         </div>
