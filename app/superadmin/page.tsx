@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function SuperAdminPage() {
   const [tenants, setTenants] = useState<any[]>([]);
@@ -138,6 +139,24 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleUnlockAnnual = async (tenantId: string) => {
+    try {
+      const res = await fetch('/api/superadmin/unlock', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId, days: 365, plan: 'annual' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore durante lo sblocco');
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
   const handleDelete = async (tenantId: string, tenantName: string) => {
     if (!confirm(`Sei sicuro di voler ELIMINARE DEFINITIVAMENTE il negozio "${tenantName}"? Questa operazione è irreversibile e cancellerà anche tutti gli appuntamenti e i servizi.`)) return;
     
@@ -215,10 +234,17 @@ export default function SuperAdminPage() {
     <div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans">
       <div className="max-w-[1600px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-            Pannello Super Admin (NeatX SaaS)
-          </h1>
-           <p className="text-slate-400">Pannello di controllo globale (Godmode)</p>
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <Link href="/" className="text-sm font-medium flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">
+                🏠 Torna al Sito Pubblico
+              </Link>
+            </div>
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
+              Pannello Super Admin (NeatX SaaS)
+            </h1>
+            <p className="text-slate-400">Pannello di controllo globale (Godmode)</p>
+          </div>
       </div>
 
       {/* GOD-EYE STATS */}
@@ -510,12 +536,18 @@ export default function SuperAdminPage() {
                         </button>
                       </div>
                       
-                      <div className="flex gap-2 w-full">
+                      <div className="flex gap-2 w-full flex-wrap xl:flex-nowrap">
                         <button 
                           onClick={() => handleUnlock(tenant.id)}
                           className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all text-center"
                         >
                           SBLOCCA 30 GG
+                        </button>
+                        <button 
+                          onClick={() => handleUnlockAnnual(tenant.id)}
+                          className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-all text-center whitespace-nowrap"
+                        >
+                          📅 SBLOCCA 1 ANNO
                         </button>
                         {tenant.plan !== 'premium' && (
                           <button 

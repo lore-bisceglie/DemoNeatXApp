@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { tenantId, days = 30 } = await req.json();
+    const { tenantId, days = 30, plan } = await req.json();
 
     if (!tenantId) {
       return NextResponse.json({ error: 'tenantId mancante' }, { status: 400 });
@@ -26,7 +26,8 @@ export async function POST(req: Request) {
     const updated = await prisma.tenant.update({
       where: { id: tenantId },
       data: {
-        trialEndsAt: newTrialEndsAt
+        trialEndsAt: newTrialEndsAt,
+        ...(plan && { plan })
       }
     });
 

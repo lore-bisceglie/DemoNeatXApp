@@ -33,7 +33,7 @@ export async function GET(req: Request) {
 
   const now = new Date();
   const soon = new Date(now);
-  soon.setDate(soon.getDate() + 2);
+  soon.setDate(soon.getDate() + 7);
 
   const expiringSoon = await prisma.tenant.findMany({
     where: {
@@ -50,16 +50,27 @@ export async function GET(req: Request) {
       slug: true,
       ownerEmail: true,
       trialEndsAt: true,
+      plan: true,
     },
   });
 
   let reminderEmails = 0;
   for (const tenant of expiringSoon) {
     if (!tenant.ownerEmail) continue;
+
+    const isAnnual = tenant.plan === "annual";
+    const subject = isAnnual 
+      ? `Il tuo abbonamento NeatX sta per scadere` 
+      : `La prova NeatX di ${tenant.name} sta per scadere`;
+    
+    const html = isAnnual 
+      ? `<p>Ciao, il tuo abbonamento annuale per <strong>${tenant.name}</strong> scade tra pochi giorni.</p><p>Per rinnovare o per accedere al gestionale clicca qui: <a href="${getTenantAdminUrl(tenant.slug)}">${getTenantAdminUrl(tenant.slug)}</a></p>`
+      : `<p>Ciao, la prova gratuita di <strong>${tenant.name}</strong> scade a breve.</p><p>Puoi rientrare qui: <a href="${getTenantAdminUrl(tenant.slug)}">${getTenantAdminUrl(tenant.slug)}</a></p>`;
+
     await sendEmail(
       tenant.ownerEmail,
-      `La prova NeatX di ${tenant.name} sta per scadere`,
-      `<p>Ciao, la prova gratuita di <strong>${tenant.name}</strong> scade a breve.</p><p>Puoi rientrare qui: <a href="${getTenantAdminUrl(tenant.slug)}">${getTenantAdminUrl(tenant.slug)}</a></p>`
+      subject,
+      html
     );
     reminderEmails += 1;
   }
