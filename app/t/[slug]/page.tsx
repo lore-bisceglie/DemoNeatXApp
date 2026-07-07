@@ -1602,6 +1602,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           🚀 Scopri NeatX
         </Link>
       </div>
+
+      <div className="mt-8 mb-4 text-center relative z-10">
+        <Link
+          href={getTenantAdminUrl(params.slug)}
+          className="text-[10px] text-slate-700 hover:text-slate-500 uppercase tracking-widest transition-colors font-bold"
+        >
+          Accesso Staff
+        </Link>
+      </div>
     </div>
   );
 }
