@@ -1,13 +1,13 @@
 {
-    "niche": "Tatuatori",
-    "script_text": "Sei un tatuatore e continui a prendere appuntamenti su WhatsApp? Stai perdendo soldi. Ogni messaggio che rispondi è tempo sprecato. Le consulenze senza caparra ti fanno solo perdere clienti. Con NeatX, ogni richiesta è filtrata e gli acconti sono obbligatori. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "TATUATORI: BASTA NO-SHOW!",
-    "cover_title": "TATUATORI: BASTA NO-SHOW!",
-    "image_prompt": "photorealistic tattoo studio with a tattoo artist focusing intently on a client in a modern professional setup",
-    "gameplay_style": "runner",
-    "caption": "Stai sprecando tempo e soldi? Scopri come NeatX può aiutarti! Commenta AGENDA per saperne di più! #Tatuatori #NoShow #Automazione #PrenotazioniFacili",
-    "strategy_date": "2026-07-06",
-    "strategy_angle": "risposte infinite ai messaggi",
-    "strategy_pain": "consulenze senza caparra e appuntamenti persi",
-    "strategy_promise": "richieste filtrate e acconto obbligatorio"
+    "niche": "Parrucchieri",
+    "script_text": "Sei un parrucchiere e continui a rispondere ai clienti su WhatsApp? Ogni messaggio che ignori è denaro che perdi! Non lasciare che i no-show ti rovinino il mese. Immagina una settimana con l'agenda piena, senza più chat invadenti. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "PARRUCCHIERI: NO-SHOW",
+    "cover_title": "PARRUCCHIERI: NO-SHOW",
+    "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
+    "gameplay_style": "block_miner",
+    "caption": "Basta no-show e messaggi invadenti! Scopri come avere un'agenda piena con NeatX. Commenta AGENDA per il link! #Parrucchieri #NoShow #NeatX #Automazione",
+    "strategy_date": "2026-07-07",
+    "strategy_angle": "costo dei no-show mensili",
+    "strategy_pain": "clienti invadenti su WhatsApp",
+    "strategy_promise": "agenda piena, zero chat"
 }

@@ -37,12 +37,20 @@ export default function SuperAdminPage() {
         setLoading(false);
         return;
       }
+      if (!res.ok) {
+        const errData = await res.json();
+        setAuthError("Errore API: " + (errData.error || res.statusText));
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
-      setTenants(data);
+      setTenants(Array.isArray(data) ? data : []);
       setIsAuthenticated(true);
       setAuthError("");
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setAuthError(e.message);
     } finally {
       setLoading(false);
     }
