@@ -12,6 +12,14 @@ export default function SuperAdminPage() {
   const [error, setError] = useState("");
   const [tenantPassword, setTenantPassword] = useState("");
 
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [mapsLink, setMapsLink] = useState("");
+  const [description, setDescription] = useState("");
+  const [openTime, setOpenTime] = useState("");
+  const [closeTime, setCloseTime] = useState("");
+
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
@@ -61,7 +69,10 @@ export default function SuperAdminPage() {
           'Content-Type': 'application/json',
           'x-admin-password': password 
         },
-        body: JSON.stringify({ name, slug, template, adminPassword: tenantPassword })
+        body: JSON.stringify({ 
+          name, slug, template, adminPassword: tenantPassword,
+          phone, address, instagramUrl, mapsLink, description, openTime, closeTime
+        })
       });
 
       const data = await res.json();
@@ -72,6 +83,13 @@ export default function SuperAdminPage() {
       setName("");
       setSlug("");
       setTenantPassword("");
+      setPhone("");
+      setAddress("");
+      setInstagramUrl("");
+      setMapsLink("");
+      setDescription("");
+      setOpenTime("");
+      setCloseTime("");
       fetchTenants(password); // Aggiorna la lista
     } catch (e: any) {
       setError(e.message);
@@ -214,6 +232,44 @@ export default function SuperAdminPage() {
                   <option value="vuoto">Vuoto (Solo Standard)</option>
                 </select>
               </div>
+
+              <details className="group border border-slate-800 rounded-lg bg-slate-950 overflow-hidden">
+                <summary className="cursor-pointer p-4 font-medium text-slate-300 hover:text-white hover:bg-slate-900 transition-all focus:outline-none">
+                  ⚙️ Impostazioni Avanzate (Opzionali)
+                </summary>
+                <div className="p-4 pt-0 space-y-4 border-t border-slate-800 mt-2">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Telefono (WhatsApp)</label>
+                      <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Indirizzo Fisico</label>
+                      <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="Es. Via Roma 1, Milano" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Link Instagram</label>
+                      <input type="url" value={instagramUrl} onChange={e => setInstagramUrl(e.target.value)} placeholder="https://instagram.com/tuoprofilo" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Link Google Maps</label>
+                      <input type="url" value={mapsLink} onChange={e => setMapsLink(e.target.value)} placeholder="https://maps.google.com/..." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Orario Apertura</label>
+                      <input type="time" value={openTime} onChange={e => setOpenTime(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Orario Chiusura</label>
+                      <input type="time" value={closeTime} onChange={e => setCloseTime(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Descrizione Negozio (Sotto il titolo)</label>
+                    <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Es. Il tuo stile impeccabile, a portata di click." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" />
+                  </div>
+                </div>
+              </details>
 
               {error && <div className="p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg">{error}</div>}
 

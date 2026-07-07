@@ -9,7 +9,10 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name, slug, template, adminPassword } = body;
+    const { 
+      name, slug, template, adminPassword,
+      phone, address, instagramUrl, mapsLink, description, openTime, closeTime
+    } = body;
 
     if (!name || !slug || !template) {
       return NextResponse.json({ error: 'Campi mancanti' }, { status: 400 });
@@ -93,6 +96,13 @@ export async function POST(req: Request) {
         name,
         slug,
         adminPassword: finalPassword,
+        phone: phone || null,
+        address: address || null,
+        instagramUrl: instagramUrl || null,
+        mapsLink: mapsLink || null,
+        description: description || null,
+        openTime: openTime || null,
+        closeTime: closeTime || null,
         services: {
           create: defaultServices
         }
