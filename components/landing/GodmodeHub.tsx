@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShieldAlert, LayoutDashboard, Crown, LogOut } from "lucide-react";
+import { ShieldAlert, LayoutDashboard, Crown, LogOut, Bot } from "lucide-react";
 
 export default function GodmodeHub() {
   const [isVisible, setIsVisible] = useState(false);
@@ -41,6 +41,14 @@ export default function GodmodeHub() {
             >
               <Crown size={16} className="text-indigo-400" />
               Pannello SuperAdmin
+            </Link>
+            <Link 
+              href="/superadmin/ai" 
+              className="px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-3 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              <Bot size={16} className="text-blue-400" />
+              Cervello AI (Chatbot)
             </Link>
             <Link 
               href="/demo" 
