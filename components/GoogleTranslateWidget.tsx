@@ -40,13 +40,15 @@ export default function GoogleTranslateWidget() {
   }, []);
 
   const changeLanguage = (langCode: string) => {
-    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
-    if (select) {
-      select.value = langCode;
-      select.dispatchEvent(new Event("change", { bubbles: true }));
-      setCurrentLang(langCode);
-      setIsOpen(false);
-    }
+    // Il modo più sicuro e compatibile per forzare Google Translate è impostare i suoi cookie
+    document.cookie = `googtrans=/it/${langCode}; path=/;`;
+    document.cookie = `googtrans=/it/${langCode}; path=/; domain=${window.location.hostname}`;
+    
+    setCurrentLang(langCode);
+    setIsOpen(false);
+    
+    // Ricarichiamo la pagina per applicare la magia istantaneamente
+    window.location.reload();
   };
 
   return (
@@ -72,8 +74,8 @@ export default function GoogleTranslateWidget() {
         `}
       </Script>
 
-      {/* Il nostro Widget Custom Bello */}
-      <div className="fixed bottom-24 right-4 z-[9999] flex flex-col items-end">
+      {/* Il nostro Widget Custom Bello - Spostato a sinistra su mobile per non accavallarsi */}
+      <div className="fixed bottom-24 left-4 sm:bottom-6 sm:right-24 sm:left-auto z-[9999] flex flex-col sm:items-end">
         {isOpen && (
           <div className="mb-2 bg-[#0b1221] border border-[#1e2b4a] rounded-xl shadow-2xl p-2 w-40 animate-in fade-in slide-in-from-bottom-2">
             {LANGUAGES.map((lang) => (
