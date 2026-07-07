@@ -1,0 +1,39 @@
+name: NeatX Competitor Spy
+
+on:
+  schedule:
+    # Esegue ogni Venerdì alle 18:00 UTC
+    - cron: '0 18 * * 5'
+  workflow_dispatch: # Permette l'avvio manuale
+
+permissions:
+  contents: write
+
+jobs:
+  spy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Installazione Dipendenze
+        run: |
+          pip install google-generativeai
+          
+      - name: 🕵️ Esecuzione Script Spia
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python bot_scripts/Competitor_Spy/spy.py
+
+      - name: 💾 Commit & Push Report
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Spy: Nuovo report di spionaggio generato 🕵️"
+          file_pattern: "competitor_reports/*.md"

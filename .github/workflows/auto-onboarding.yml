@@ -1,0 +1,39 @@
+name: NeatX Onboarding Concierge
+
+on:
+  schedule:
+    # Esegue ogni giorno alle 23:00 UTC (così la mattina dopo hai le bozze pronte)
+    - cron: '0 23 * * *'
+  workflow_dispatch: # Permette l'avvio manuale
+
+permissions:
+  contents: write
+
+jobs:
+  concierge:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Installazione Dipendenze
+        run: |
+          pip install google-generativeai
+          
+      - name: 🚀 Esecuzione Concierge Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python bot_scripts/Onboarding/concierge.py
+
+      - name: 💾 Commit & Push Bozze
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Concierge: Nuove email di benvenuto pronte per i clienti di oggi! 🚀"
+          file_pattern: "onboarding_drafts/*.md"
