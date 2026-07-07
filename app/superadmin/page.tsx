@@ -10,6 +10,7 @@ export default function SuperAdminPage() {
   const [template, setTemplate] = useState("barbiere");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
+  const [tenantPassword, setTenantPassword] = useState("");
 
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -60,7 +61,7 @@ export default function SuperAdminPage() {
           'Content-Type': 'application/json',
           'x-admin-password': password 
         },
-        body: JSON.stringify({ name, slug, template })
+        body: JSON.stringify({ name, slug, template, adminPassword: tenantPassword })
       });
 
       const data = await res.json();
@@ -70,6 +71,7 @@ export default function SuperAdminPage() {
 
       setName("");
       setSlug("");
+      setTenantPassword("");
       fetchTenants(password); // Aggiorna la lista
     } catch (e: any) {
       setError(e.message);
@@ -177,6 +179,19 @@ export default function SuperAdminPage() {
                   />
                   <span className="text-slate-500 bg-slate-950 border border-l-0 border-slate-800 rounded-r-lg p-3 text-sm">.neatx.store</span>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Password d'Accesso Iniziale</label>
+                <input 
+                  type="text" 
+                  value={tenantPassword} 
+                  onChange={e => setTenantPassword(e.target.value)} 
+                  placeholder="Es. Segreta2026!" 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500"
+                  required 
+                />
+                <p className="text-xs text-slate-500 mt-1">La password che il cliente userà per accedere a admin.</p>
               </div>
 
               <div>

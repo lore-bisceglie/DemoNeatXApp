@@ -9,11 +9,14 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name, slug, template } = body;
+    const { name, slug, template, adminPassword } = body;
 
     if (!name || !slug || !template) {
       return NextResponse.json({ error: 'Campi mancanti' }, { status: 400 });
     }
+
+    // Genera una password casuale se l'admin non la fornisce
+    const finalPassword = adminPassword || Math.random().toString(36).slice(-8);
 
     // Controlla se lo slug esiste già
     const existing = await prisma.tenant.findUnique({
@@ -84,11 +87,12 @@ export async function POST(req: Request) {
       ];
     }
 
-    // Crea il Tenant con i servizi annessi
+    // Crea il Tenant con i servizi annessi e la password
     const newTenant = await prisma.tenant.create({
       data: {
         name,
         slug,
+        adminPassword: finalPassword,
         services: {
           create: defaultServices
         }
