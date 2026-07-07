@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { Send, Target, Dumbbell, Shield, Lock, Bot, User, Trash2 } from "lucide-react";
@@ -151,25 +151,28 @@ export default function SuperadminAISuite() {
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-          {BOTS.map(bot => (
+          {BOTS.map(bot => {
+            const BotIcon = bot.icon;
+            return (
             <button
               key={bot.id}
               onClick={() => setActiveBot(bot)}
-              className={\`w-full text-left p-4 rounded-2xl border transition-all \${
+              className={`w-full text-left p-4 rounded-2xl border transition-all ${
                 activeBot.id === bot.id 
                   ? 'bg-[#131c31] border-[#00b4ff]/50 shadow-[0_0_15px_-3px_rgba(0,180,255,0.2)]' 
                   : 'bg-transparent border-transparent hover:bg-[#131c31]/50'
-              }\`}
+              }`}
             >
               <div className="flex items-center gap-3 mb-2">
-                <div className={\`p-2 rounded-xl \${bot.bg}\`}>
-                  <bot.icon className={bot.color} size={20} />
+                <div className={`p-2 rounded-xl ${bot.bg}`}>
+                  <BotIcon className={bot.color} size={20} />
                 </div>
                 <div className="font-bold text-white text-sm">{bot.name}</div>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">{bot.desc}</p>
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -178,8 +181,8 @@ export default function SuperadminAISuite() {
         {/* Header Chat */}
         <div className="h-20 border-b border-[#1a2642] flex items-center justify-between px-6 bg-[#050814]/80 backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center gap-4">
-            <div className={\`p-2.5 rounded-xl \${activeBot.bg}\`}>
-              <activeBot.icon className={activeBot.color} size={24} />
+            <div className={`p-2.5 rounded-xl ${activeBot.bg}`}>
+              {(() => { const ActiveIcon = activeBot.icon; return <ActiveIcon className={activeBot.color} size={24} />; })()}
             </div>
             <div>
               <h2 className="text-lg font-extrabold text-white">{activeBot.name}</h2>
@@ -200,25 +203,25 @@ export default function SuperadminAISuite() {
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
           {activeMessages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-              <activeBot.icon size={64} className={\`mb-6 \${activeBot.color}\`} />
+              {(() => { const ActiveIcon = activeBot.icon; return <ActiveIcon size={64} className={`mb-6 ${activeBot.color}`} />; })()}
               <h3 className="text-2xl font-bold text-white mb-2">Inizia la sessione</h3>
               <p className="text-slate-400 max-w-md">Digita il tuo primo messaggio in basso per attivare l'agente {activeBot.name}.</p>
             </div>
           ) : (
             activeMessages.map((msg, idx) => (
-              <div key={idx} className={\`flex gap-4 \${msg.role === 'user' ? 'justify-end' : 'justify-start'}\`}>
+              <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.role === 'model' && (
-                  <div className={\`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center \${activeBot.bg} border \${activeBot.border}\`}>
-                    <activeBot.icon className={activeBot.color} size={20} />
+                  <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${activeBot.bg} border ${activeBot.border}`}>
+                    {(() => { const ActiveIcon = activeBot.icon; return <ActiveIcon className={activeBot.color} size={20} />; })()}
                   </div>
                 )}
                 
-                <div className={\`max-w-[75%] rounded-2xl p-5 text-sm md:text-base leading-relaxed \${
+                <div className={`max-w-[75%] rounded-2xl p-5 text-sm md:text-base leading-relaxed ${
                   msg.role === 'user' 
                     ? 'bg-[#00b4ff] text-[#050814] font-medium rounded-tr-sm' 
                     : 'bg-[#131c31] border border-[#1a2642] text-slate-200 rounded-tl-sm shadow-xl'
-                }\`}>
-                  {msg.content.split('\\n').map((line, i) => (
+                }`}>
+                  {msg.content.split('\n').map((line, i) => (
                     <span key={i}>
                       {line}
                       <br />
@@ -236,8 +239,8 @@ export default function SuperadminAISuite() {
           )}
           {isLoading && (
             <div className="flex gap-4 justify-start">
-              <div className={\`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center \${activeBot.bg} border \${activeBot.border}\`}>
-                <activeBot.icon className={activeBot.color} size={20} />
+              <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${activeBot.bg} border ${activeBot.border}`}>
+                {(() => { const ActiveIcon = activeBot.icon; return <ActiveIcon className={activeBot.color} size={20} />; })()}
               </div>
               <div className="bg-[#131c31] border border-[#1a2642] rounded-2xl rounded-tl-sm p-5 shadow-xl flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#00b4ff] animate-bounce"></div>
@@ -261,7 +264,7 @@ export default function SuperadminAISuite() {
                   sendMessage(e as any);
                 }
               }}
-              placeholder={\`Scrivi un messaggio a \${activeBot.name}...\`}
+              placeholder={`Scrivi un messaggio a ${activeBot.name}...`}
               className="w-full bg-[#0b1221] border border-[#1a2642] rounded-2xl px-5 py-4 pr-16 text-white text-sm md:text-base focus:outline-none focus:border-[#00b4ff] resize-none custom-scrollbar min-h-[60px] max-h-[200px]"
               rows={1}
             />
