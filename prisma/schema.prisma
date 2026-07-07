@@ -220,6 +220,11 @@ model Staff {
   // Servizi che questo dipendente può svolgere
   services     Service[]
 
+  // Turni e Orari
+  baseSchedule    String? @default("{}") // JSON: Orari fissi settimanali
+  shiftExceptions String? @default("[]") // JSON: Ferie, malattie, cambi turno
+  commissionRate  Int     @default(0)    // Provvigione fissa in percentuale (es. 20)
+
   // Appuntamenti assegnati a questo dipendente
   appointments Appointment[]
 }
