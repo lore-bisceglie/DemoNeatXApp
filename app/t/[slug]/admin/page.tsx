@@ -9,17 +9,6 @@ import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
 import { unstable_noStore as noStore } from "next/cache";
 
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-
-export const dynamic = "force-dynamic";
-import DeleteButton from "../../../dashboard/DeleteButton";
-import WalkInButton from "../../../dashboard/WalkInButton";
-import AppointmentBlock from "../../../dashboard/AppointmentBlock";
-import { unstable_noStore as noStore } from "next/cache";
-
 import AutoRefreshMonitor from "../../../dashboard/AutoRefreshMonitor";
 import SwipeableAgenda from "../../../dashboard/SwipeableAgenda";
 import CustomerDrawer from "../../../dashboard/CustomerDrawer";
