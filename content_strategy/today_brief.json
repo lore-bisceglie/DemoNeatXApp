@@ -1,17 +1,17 @@
 {
-  "date": "2026-07-06",
-  "niche": "Centri Estetici",
-  "angle": "tempo perso a rispondere",
-  "pain": "cabine vuote e appuntamenti dimenticati",
-  "promise": "promemoria automatici e acconti",
-  "cover_title": "BASTA NO-SHOW",
-  "hook_hint": "Se gestisci un centro estetico e hai cabine vuote a causa di clienti che dimenticano gli appuntamenti, stai perdendo denaro.",
-  "blog_topic": "Centri Estetici: come un'agenda automatica può ridurre i no-show",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+  "date": "2026-07-07",
+  "niche": "Parrucchieri",
+  "angle": "costo dei no-show mensili",
+  "pain": "clienti invadenti su WhatsApp",
+  "promise": "agenda piena, zero chat",
+  "cover_title": "PARRUCCHIERI: NO-SHOW",
+  "hook_hint": "Se sei parrucchiere e ricevi messaggi a tutte le ore, stai perdendo soldi.",
+  "blog_topic": "Parrucchieri: il costo dei no-show mensili con un'agenda automatica",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "gestionale parrucchieri",
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }
