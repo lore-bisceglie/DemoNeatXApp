@@ -141,6 +141,11 @@ model StoreSettings {
   stripeAccountId           String?  // ID dell'account Stripe Connect collegato
   stripeOnboardingComplete  Boolean  @default(false) // Indica se l'onboarding Stripe è completato
 
+  // Stripe Checkout Rules
+  paymentStrategy           String   @default("OFF") // "OFF", "FIXED", "PERCENTAGE", "FULL"
+  paymentFixedAmount        Float?   @default(5.0)   // Es. 5.0 euro
+  paymentPercentage         Int?     @default(20)    // Es. 20%
+
   updatedAt                 DateTime @updatedAt
 
   // Relazione 1-a-1 col Tenant

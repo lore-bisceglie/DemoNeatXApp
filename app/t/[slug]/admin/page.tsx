@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
+import StripeSettingsForm from "./StripeSettingsForm";
 import { unstable_noStore as noStore } from "next/cache";
 
 import AutoRefreshMonitor from "../../../dashboard/AutoRefreshMonitor";
@@ -843,8 +844,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             
             <div>
               {storeSettings?.stripeOnboardingComplete ? (
-                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
-                  <span>✅</span> Conto Collegato
+                <div className="flex flex-col items-end gap-2">
+                  <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                    <span>✅</span> Conto Collegato
+                  </div>
                 </div>
               ) : (
                 <a
@@ -856,6 +859,15 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               )}
             </div>
           </div>
+          
+          {storeSettings?.stripeOnboardingComplete && (
+            <StripeSettingsForm 
+              tenantId={tenantId}
+              initialStrategy={storeSettings.paymentStrategy}
+              initialFixed={storeSettings.paymentFixedAmount}
+              initialPercentage={storeSettings.paymentPercentage}
+            />
+          )}
         </div>
 
         <WaitlistDashboard initialData={waitlistData} tenantId={tenantId} />
