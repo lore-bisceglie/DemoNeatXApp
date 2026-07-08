@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const publicBotToken = process.env.TELEGRAM_PUBLIC_BOT_TOKEN;
   
   if (!botToken) {
     return NextResponse.json({ error: "Token non configurato" }, { status: 500 });
@@ -36,11 +37,35 @@ export async function GET(req: Request) {
     });
     const commandsData = await commandsResponse.json();
 
+    let publicWebhookData = null;
+    let publicMenuData = null;
+
+    if (publicBotToken) {
+      const publicWebhookUrl = `${protocol}://${host}/api/telegram/public-bot`;
+      const publicUrl = `https://api.telegram.org/bot${publicBotToken}/setWebhook?url=${encodeURIComponent(publicWebhookUrl)}`;
+      const publicRes = await fetch(publicUrl);
+      publicWebhookData = await publicRes.json();
+
+      const publicCommandsUrl = `https://api.telegram.org/bot${publicBotToken}/setMyCommands`;
+      const publicCommandsRes = await fetch(publicCommandsUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          commands: [
+            { command: "start", description: "Avvia il calcolatore perdite" }
+          ]
+        })
+      });
+      publicMenuData = await publicCommandsRes.json();
+    }
+
     return NextResponse.json({ 
       success: true, 
       webhook_url: webhookUrl,
       telegram_webhook: data,
-      telegram_menu: commandsData
+      telegram_menu: commandsData,
+      public_webhook: publicWebhookData,
+      public_menu: publicMenuData
     });
   } catch (error) {
     return NextResponse.json({ error: "Impossibile impostare il webhook" }, { status: 500 });
