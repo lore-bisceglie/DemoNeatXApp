@@ -26,7 +26,7 @@ def genera_messaggio_vendita(nome_salone, settore):
     """
     Usa Gemini per scrivere un messaggio a freddo irresistibile
     """
-    model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "text/plain"})
+    model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
     
     prompt = f"""
 Sei un venditore esperto e spietato, ma molto amichevole e naturale.

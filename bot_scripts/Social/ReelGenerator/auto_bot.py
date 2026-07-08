@@ -166,7 +166,7 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     else:
         try:
             genai.configure(api_key=GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "application/json"})
+            model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "application/json"})
             print("[*] Contattando il cervello di Google Gemini 2.5 Flash...")
             response = model.generate_content(prompt)
             content = response.text.strip()

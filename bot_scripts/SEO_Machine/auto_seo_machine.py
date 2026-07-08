@@ -80,7 +80,7 @@ def inventa_argomento():
     try:
         if not setup_gemini():
             return f"Come gestire al meglio gli appuntamenti per {target}"
-        model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "text/plain"})
+        model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
         response = model.generate_content(prompt)
         titolo = response.text.strip().replace('"', '')
         print(f"[+] L'IA ha scelto l'argomento: '{titolo}'")
@@ -122,7 +122,7 @@ Regole:
     try:
         if not setup_gemini():
             return None
-        model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "text/plain"})
+        model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:

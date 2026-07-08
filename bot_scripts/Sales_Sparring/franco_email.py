@@ -14,7 +14,7 @@ Rispondi in questo formato:
 """
 
 def generate_challenge():
-    model = genai.GenerativeModel('gemini-1.5-flash-latest', system_instruction=SYSTEM_PROMPT)
+    model = genai.GenerativeModel('gemini-pro', system_instruction=SYSTEM_PROMPT)
     response = model.generate_content("Genera la sfida di vendita di oggi in italiano.")
     return response.text
 

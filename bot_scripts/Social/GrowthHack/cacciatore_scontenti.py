@@ -52,7 +52,7 @@ def login_instagram():
         return None
 
 def is_commento_negativo(testo):
-    model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "text/plain"})
+    model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
     prompt = f"""
     Questo è un commento lasciato da un utente sotto il post di un software gestionale per parrucchieri (es. Treatwell, Uala).
     Testo del commento: "{testo}"

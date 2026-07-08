@@ -44,7 +44,7 @@ def setup_gemini():
         return None
     genai.configure(api_key=api_key)
     return genai.GenerativeModel(
-        "gemini-1.5-flash-latest",
+        "gemini-pro",
         generation_config={"response_mime_type": "application/json"},
     )
 
