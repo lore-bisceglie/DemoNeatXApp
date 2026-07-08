@@ -52,7 +52,15 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
         chat_id: chatId,
         text,
         parse_mode: "Markdown",
-        disable_web_page_preview: true
+        disable_web_page_preview: true,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "✅ Approva (PRO)", callback_data: `approve_${tenant.id}` },
+              { text: "🔴 Elimina (Spam)", callback_data: `delete_${tenant.id}` }
+            ]
+          ]
+        }
       })
     });
   } catch (e) {

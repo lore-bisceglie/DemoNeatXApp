@@ -1,4 +1,4 @@
-export async function sendTelegramMessage(message: string) {
+export async function sendTelegramMessage(message: string, reply_markup?: any) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
@@ -9,16 +9,22 @@ export async function sendTelegramMessage(message: string) {
 
   try {
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    const payload: any = {
+      chat_id: chatId,
+      text: message,
+      parse_mode: "HTML", // Permette l'uso di <b>, <i>, <code> ecc.
+    };
+    
+    if (reply_markup) {
+      payload.reply_markup = reply_markup;
+    }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: "HTML", // Permette l'uso di <b>, <i>, <code> ecc.
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
