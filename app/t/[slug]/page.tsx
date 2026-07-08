@@ -1037,7 +1037,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 className="absolute inset-0 rounded-full blur-xl"
                 style={{
                   background:
-                    "radial-gradient(circle, rgba(0,180,255,.5), rgba(236,72,153,.18) 42%, transparent 72%)",
+                    `radial-gradient(circle, #${th.mainHex}80, transparent 72%)`,
                   animation: logoClicked
                     ? "demoSoftPulse .7s ease-in-out infinite"
                     : "demoSoftPulse 3.2s ease-in-out infinite",
@@ -1048,8 +1048,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 className="absolute inset-3 rounded-full"
                 style={{
                   background:
-                    "conic-gradient(from 90deg, rgba(0,180,255,.05), rgba(0,180,255,1), rgba(255,255,255,.9), rgba(236,72,153,.95), rgba(0,180,255,.05))",
-                  filter: "drop-shadow(0 0 12px rgba(0,180,255,.6))",
+                    `conic-gradient(from 90deg, transparent, #${th.mainHex}, #ffffff, #${th.mainHex}80, transparent)`,
+                  filter: `drop-shadow(0 0 12px #${th.mainHex}99)`,
                   animation: logoClicked
                     ? "demoHaloSpin .75s linear infinite"
                     : "demoHaloSpin 7s linear infinite",
@@ -1084,7 +1084,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   />
                 ) : (
                   <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(tenantInfo.name)}&background=0b1221&color=00b4ff&size=150&bold=true`}
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(tenantInfo.name)}&background=0b1221&color=${th.mainHex}&size=150&bold=true`}
                     alt={tenantInfo.name}
                     draggable={false}
                     className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative"
@@ -1145,20 +1145,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           </p>
 
           <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
-            <p className="text-blue-300 text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300 text-center">
-              {tenantInfo.address}
-            </p>
-
-            <div className="grid grid-cols-2 gap-2 w-full">
-              {trustBadges.map((badge) => (
-                <span
-                  key={badge}
-                  className="bg-[#131c31] border border-[#1e2b4a] text-slate-300 rounded-xl px-3 py-2 text-[10px] font-extrabold uppercase tracking-wide"
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
+            {tenantInfo.mapsLink ? (
+              <a href={tenantInfo.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors text-sm flex items-center justify-center gap-2 animate-in fade-in duration-300 text-center font-semibold bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/20">
+                📍 {tenantInfo.address}
+              </a>
+            ) : (
+              <p className="text-blue-300 text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300 text-center font-semibold bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
+                📍 {tenantInfo.address}
+              </p>
+            )}
 
             <div className="flex flex-wrap gap-2 justify-center">
               {tenantInfo.instagramUrl && (
@@ -1184,17 +1179,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                   </svg>
                   Instagram
-                </a>
-              )}
-              {tenantInfo.mapsLink && (
-                <a
-                  href={tenantInfo.mapsLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-emerald-900/30 transition transform hover:scale-105"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  Google Maps
                 </a>
               )}
               {tenantInfo.tiktokUrl && (
