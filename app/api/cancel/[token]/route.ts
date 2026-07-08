@@ -71,7 +71,7 @@ export async function POST(
       });
 
       // 🌟 INVIO SMS CANCELLAZIONE
-      if (appointment.customerPhone && appointment.customerPhone !== "0000000000") {
+      if (appointment.tenantId && appointment.customerPhone && appointment.customerPhone !== "0000000000") {
         const tenant = await prisma.tenant.findUnique({ where: { id: appointment.tenantId } });
         if (tenant) {
           const smsBody = `❌ ${tenant.name} - Cancellazione Confermata\nCiao ${appointment.customerName.trim()}, abbiamo cancellato il tuo appuntamento del ${appointment.date.split('-').reverse().join('/')} alle ${appointment.time}. Alla prossima!`;
