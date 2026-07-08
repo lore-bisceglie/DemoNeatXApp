@@ -41,6 +41,7 @@ export async function POST(request: Request) {
         },
       ],
       mode: "subscription",
+      customer_email: tenant.ownerEmail || undefined, // Aggiunto per le fatture automatiche
       client_reference_id: tenantId, // Questo viene poi intercettato dal webhook!
       metadata: {
         plan: plan // Passiamo il piano richiesto nei metadata
