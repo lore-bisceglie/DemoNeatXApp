@@ -33,7 +33,7 @@ export default function ReviewSimulator() {
         <p className="text-slate-400">
           Il 90% dei tuoi clienti è felice, ma si dimentica di lasciarti una recensione. 
           NeatX invia un SMS automatico 2 ore dopo l'appuntamento. 
-          Se il cliente dà 5 stelle, finisce su Google. Se ne dà 2, il feedback resta privato.
+          Se il cliente dà 5 stelle, finisce su Google. Se ne dà 2, il feedback resta privato. Questa funzione è opzionale e disattivabile in qualsiasi momento dal pannello impostazioni.
         </p>
       </div>
 

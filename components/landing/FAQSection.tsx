@@ -6,11 +6,11 @@ import { ChevronDown } from "lucide-react";
 const FAQS = [
   {
     q: "Quanto costa il setup iniziale?",
-    a: "Il setup è una tantum di 300€ e include la configurazione completa della tua agenda: servizi, prezzi, orari, staff, link brandizzato e integrazione pagamenti. Dopo il setup paghi solo l'abbonamento mensile — zero commissioni.",
+    a: "Il setup è completamente gratuito se configuri il negozio in autonomia. Se invece preferisci che il nostro team faccia il lavoro per te (Setup Chiavi in Mano), puoi richiedere il servizio dedicato. In ogni caso non tratteniamo mai percentuali sulle prenotazioni.",
   },
   {
     q: "Come faccio a iniziare?",
-    a: "Clicca su 'Prova Gratis 7 Giorni', inserisci il nome della tua attività e scegli la categoria. In 30 secondi hai la tua agenda pronta con servizi pre-caricati. Nessuna carta di credito richiesta.",
+    a: "Clicca su 'Inizia la Prova', inserisci i dati del tuo salone e in 30 secondi la tua agenda è già online. Hai 7 giorni gratuiti per testare tutto senza inserire la carta di credito.",
   },
   {
     q: "I clienti devono scaricare un'app?",
@@ -18,23 +18,23 @@ const FAQS = [
   },
   {
     q: "Posso usare il mio dominio?",
-    a: "Sì, tramite dashboard puoi configurare un dominio personalizzato (es. prenota.tuosalone.it) così il link è ancora più professionale.",
+    a: "Sì, tramite la dashboard puoi collegare il tuo dominio personalizzato (es. prenota.tuosalone.it) per rendere la tua pagina ancora più professionale.",
   },
   {
     q: "Come gestisco pagamenti e acconti?",
-    a: "Puoi richiedere acconti o pagamenti completi prima della prenotazione tramite Stripe. I soldi vanno direttamente sul tuo conto corrente — nessuna trattenuta, zero commissioni.",
+    a: "Puoi richiedere acconti parziali o pagamenti completi al momento della prenotazione. I fondi finiscono direttamente sul tuo conto Stripe in tempo reale — nessuna trattenuta extra da parte nostra.",
   },
   {
-    q: "Funziona per barbieri, estetiste, psicologi...?",
-    a: "Sì, NeatX è progettato per qualsiasi professionista che lavora su appuntamento: barbieri, parrucchieri, estetiste, centri beauty, tattoo studio, psicologi, consulenti, fisioterapisti, studi medici e molto altro.",
+    q: "Funziona solo per barbieri?",
+    a: "No, NeatX è perfetto per qualsiasi professionista su appuntamento: barbieri, parrucchieri, estetiste, tattoo studio, psicologi, personal trainer e studi medici.",
   },
   {
     q: "Posso cancellare quando voglio?",
-    a: "Sì, non ci sono vincoli né contratti annuali. Paghi solo il mese in corso. Se vuoi sospendere, lo fai in un click dalla dashboard.",
+    a: "Assolutamente sì. Non ci sono contratti annuali o vincoli nascosti. Paghi l'abbonamento mensile e, se vuoi disdire, lo fai con un clic. Dal mese successivo non ti verrà addebitato nulla.",
   },
   {
-    q: "Come funziona il periodo di prova?",
-    a: "Attivi la prova gratuita di 7 giorni senza carta di credito. Hai accesso completo a tutte le funzionalità del piano Pro. Alla scadenza, se vuoi continuare, paghi l'abbonamento. Se non fa per te, il tuo link e i tuoi dati restano al sicuro per 30 giorni.",
+    q: "Come funziona il periodo di prova e i piani a pagamento?",
+    a: "Hai 7 giorni di prova gratuiti con tutte le funzionalità sbloccate, inclusi SMS e pagamenti. Al termine della prova potrai scegliere il piano che preferisci: Pro (29€/mese) o Elite (59€/mese) che include recensioni automatiche e marketing.",
   },
 ];
 
