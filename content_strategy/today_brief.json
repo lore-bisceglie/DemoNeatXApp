@@ -1,17 +1,17 @@
 {
-  "date": "2026-07-07",
+  "date": "2026-07-08",
   "niche": "Coach e Consulenti",
-  "angle": "costo mensile dei no-show",
-  "pain": "clienti che rimandano le call",
-  "promise": "prenotazioni automatiche e follow-up semplici",
-  "cover_title": "BASTA NO-SHOW",
-  "hook_hint": "Se sei un coach o consulente e ogni mese perdi denaro per i no-show, è ora di cambiare.",
-  "blog_topic": "Coach e Consulenti: il costo mensile dei no-show e come un'agenda automatica può aiutarti",
-  "gameplay_style": "block_miner",
+  "angle": "link in bio deve lavorare",
+  "pain": "clienti che rimandano la call",
+  "promise": "prenotazioni automatiche senza stress",
+  "cover_title": "NO-SHOW INACCETTABILI",
+  "hook_hint": "Se sei un coach e perdi tempo con clienti che rimandano, stai bruciando soldi.",
+  "blog_topic": "Coach e Consulenti: link in bio che prenota automaticamente",
+  "gameplay_style": "neon_racer",
   "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "automazione prenotazioni",
+    "link in bio efficace",
+    "agenda consulente"
   ]
 }
