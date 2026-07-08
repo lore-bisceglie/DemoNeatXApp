@@ -168,7 +168,7 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
         try:
             client = genai.Client(api_key=GEMINI_API_KEY)
             print("[*] Contattando il cervello di Google Gemini 2.5 Flash...")
-            response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+            response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
             content = response.text.strip()
             data = json.loads(content)
         except Exception as e:

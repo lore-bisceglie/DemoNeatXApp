@@ -18,7 +18,7 @@ def generate_onboarding_emails():
     report = ""
     for user in MOCK_NEW_USERS:
         prompt = f"Genera un'email di benvenuto per {user['nome']}, un {user['professione']} titolare di {user['salone']}."
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
         report += f"## Email per {user['nome']} ({user['salone']})\\n"
         report += response.text + "\\n\\n---\\n\\n"
     return report

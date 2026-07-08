@@ -42,7 +42,7 @@ Regole del messaggio:
 - Chiudi con una domanda (Call to Action): "Posso mandarvi un breve video di come funziona?"
 """
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         return response.text.strip().replace("\n\n", "\n")
     except Exception as e:
         return f"[Errore Gemini: {e}]"

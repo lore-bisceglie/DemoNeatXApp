@@ -140,7 +140,7 @@ Rispondi in JSON con:
 Sii specifico e actionable."""
     
     print("📊 Analyzing performance data...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")

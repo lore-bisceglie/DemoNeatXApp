@@ -24,7 +24,7 @@ def analyze_reviews():
     for r in RECENT_REVIEWS:
         prompt += f"- \\\"{r}\\\"\\n"
         
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
     return response.text
 
 if __name__ == "__main__":

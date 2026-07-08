@@ -1,38 +1,30 @@
 name: NeatX Auto-SEO Machine
-
 on:
   schedule:
     # Esegue ogni giorno alle 08:00 UTC
     - cron: '0 8 * * *'
   workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
-
 permissions:
   contents: write
-
 concurrency:
   group: neatx-content-writes
   cancel-in-progress: false
-
 jobs:
   run-seo-bot:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
-
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-
       - name: Install dependencies
         run: |
           pip install google-genai
-          
       - name: Run Auto-SEO Machine & Impero Mediatico
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -42,7 +34,6 @@ jobs:
           cd bot_scripts/SEO_Machine
           python auto_seo_machine.py
           python impero_mediatico.py || true
-
       - name: Commit & Push changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

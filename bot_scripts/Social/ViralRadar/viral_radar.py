@@ -62,7 +62,7 @@ Rispondi in JSON con questa struttura:
 Sii specifico per parrucchieri e beauty. Includi dati reali se possibile."""
     
     print("🔍 Scanning viral trends...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")
@@ -112,7 +112,7 @@ Formato JSON:
 Sii pratico e realizzabile."""
     
     print("💡 Generating reel ideas...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")
@@ -149,7 +149,7 @@ Rispondi in JSON:
 Sii specifico su cosa NEATX può fare meglio."""
     
     print("📊 Analyzing competitor landscape...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")

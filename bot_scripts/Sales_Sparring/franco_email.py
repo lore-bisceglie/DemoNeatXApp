@@ -2,7 +2,12 @@ import os
 import datetime
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
 
+load_dotenv()
+
+# Prende il modello dalle variabili d'ambiente (default: gemini-3.5-flash)
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 SYSTEM_PROMPT = """Sei "Franco", un barbiere di 55 anni scettico. Esci dal personaggio solo alla fine per dare un voto.
@@ -15,7 +20,13 @@ Rispondi in questo formato:
 """
 
 def generate_challenge():
-    response = client.models.generate_content(model="gemini-1.5-flash", contents="Genera la sfida di vendita di oggi in italiano.", config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
+    response = client.models.generate_content(
+        model=MODEL,
+        contents="Genera la sfida di vendita di oggi in italiano.",
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+        )
+    )
     return response.text
 
 if __name__ == "__main__":

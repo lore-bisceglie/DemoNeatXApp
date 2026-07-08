@@ -1,5 +1,4 @@
 name: NeatX Viral Radar
-
 on:
   schedule:
     # 10:00, 16:00 e 08:43 Europe/Rome in estate.
@@ -7,32 +6,25 @@ on:
     - cron: '0 14 * * *'
     - cron: '43 6 * * *'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 concurrency:
   group: neatx-content-writes
   cancel-in-progress: false
-
 jobs:
   scan-ideas:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           persist-credentials: true
-
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-
       - name: Install AI dependencies
         run: pip install google-genai instagrapi python-dotenv
-
       - name: Scan legacy viral radar
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -41,7 +33,6 @@ jobs:
           INSTA_PASS: ${{ secrets.INSTA_PASS }}
           GITHUB_ACTIONS: "true"
         run: python bot_scripts/Social/ViralRadar/viral_radar.py || true
-
       - name: Refresh unified strategy and radar
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -49,7 +40,6 @@ jobs:
         run: |
           python bot_scripts/Automation/generate_content_calendar.py
           python bot_scripts/Automation/viral_radar.py
-
       - name: Commit viral radar
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

@@ -118,7 +118,7 @@ Per OGNI script rispondi in JSON con questa struttura:
 Genera ESATTAMENTE 3 script diversi. Output in JSON array."""
     
     print("🎬 Generating reel scripts...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("[")

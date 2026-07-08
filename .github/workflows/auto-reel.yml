@@ -1,20 +1,16 @@
 name: NeatX Auto-Reel Machine
-
 on:
   schedule:
     # 14:00 e 20:00 Europe/Rome, gestendo ora legale/solare con il gate sotto.
     # I cron sono in UTC: 12/18 in estate, 13/19 in inverno.
     - cron: '5 12,13,18,19 * * *'
   workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
-
 concurrency:
   group: neatx-auto-reel
   cancel-in-progress: false
-
 jobs:
   run-reel-bot:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Check Italian posting window
         id: gate
@@ -25,7 +21,6 @@ jobs:
             echo "Manual run: publishing now."
             exit 0
           fi
-
           rome_hour="$(TZ=Europe/Rome date +'%H')"
           rome_time="$(TZ=Europe/Rome date +'%Y-%m-%d %H:%M:%S %Z')"
           if [ "$rome_hour" = "14" ] || [ "$rome_hour" = "20" ]; then
@@ -35,30 +30,25 @@ jobs:
             echo "should_run=false" >> "$GITHUB_OUTPUT"
             echo "Skipping outside posting window: $rome_time"
           fi
-
       - name: Checkout repository
         if: steps.gate.outputs.should_run == 'true'
         uses: actions/checkout@v5
-
       - name: Setup Python
         if: steps.gate.outputs.should_run == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-
       - name: Install System Dependencies (FFmpeg & ImageMagick)
         if: steps.gate.outputs.should_run == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
-
       - name: Install Python dependencies
         if: steps.gate.outputs.should_run == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install requests moviepy==1.0.3 edge-tts google-genai google-auth-oauthlib google-api-python-client python-dotenv imageio-ffmpeg pydub numpy pillow playwright tiktok-uploader yt-dlp
           python -m playwright install chromium
-
       - name: Run Auto-Reel Publisher
         if: steps.gate.outputs.should_run == 'true'
         env:
@@ -76,7 +66,6 @@ jobs:
         run: |
           cd bot_scripts/Social/ReelGenerator
           python auto_bot.py
-
       - name: Upload generated reel artifact
         if: steps.gate.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4

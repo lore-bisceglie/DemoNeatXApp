@@ -121,7 +121,7 @@ Rispondi in JSON:
 Sii creativo, coinvolgente e orientato alla conversione."""
     
     print("📧 Generating newsletter content...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")

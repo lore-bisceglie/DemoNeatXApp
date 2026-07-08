@@ -1,5 +1,4 @@
 name: NeatX Cold Emailer
-
 on:
   workflow_dispatch:
     inputs:
@@ -9,30 +8,24 @@ on:
         default: "10"
   schedule:
     - cron: "0 8 * * 1-5" # Ogni mattina dal lunedi al venerdi alle 08:00
-
 jobs:
   run-cold-emailer:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-          cache: "pip"
-
       - name: Install dependencies
         run: |
           pip install google-genai python-dotenv
-
       - name: Run Cold Emailer
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python bot_scripts/Email/cold_emailer.py
-
       - name: Upload Generated Emails
         uses: actions/upload-artifact@v4
         with:

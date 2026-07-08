@@ -63,7 +63,7 @@ Rispondi in JSON con questa struttura:
 Sii creativo ma mantieni coerenza con il settore. Tema deve essere applicabile a articolo blog, reel Instagram e social post."""
     
     print(f"🔄 Generating theme for {today}...")
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
     
     # Estrai JSON dalla risposta
     text = response.text

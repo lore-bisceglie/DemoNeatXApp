@@ -70,7 +70,7 @@ def genera_recensione_distruttiva(competitor, magazine):
     """
     
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         return response.text.strip()
     except Exception as e:
         print(f"[!] Errore Gemini: {e}")

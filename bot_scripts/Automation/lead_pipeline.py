@@ -118,7 +118,7 @@ def generate_messages(brief, rows):
         return fallback_messages(brief, rows)
 
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
         data = json.loads(response.text)
         if all(data.get(key) for key in ("dm_1", "follow_up", "comment_reply")):
             return data

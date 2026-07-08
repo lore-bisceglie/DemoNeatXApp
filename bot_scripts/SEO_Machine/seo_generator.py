@@ -43,7 +43,7 @@ Regole:
 """
     try:
         print("[*] Gemini sta scrivendo l'articolo (potrebbe richiedere 10-20 secondi)...")
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         return response.text.strip()
     except Exception as e:
         print(f"[!] Errore durante la generazione con Gemini: {e}")

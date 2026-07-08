@@ -61,7 +61,7 @@ def is_commento_negativo(testo):
     Rispondi SOLO con la parola "NO" se è un commento positivo, neutrale, o irrilevante.
     """
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         return "SI" in response.text.upper()
     except Exception:
         return False

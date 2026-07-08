@@ -1,50 +1,40 @@
 name: NeatX Content Calendar
-
 on:
   schedule:
     # 01:00 e 08:17 Europe/Rome in estate.
     - cron: '0 23 * * *'
     - cron: '17 6 * * *'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 concurrency:
   group: neatx-content-writes
   cancel-in-progress: false
-
 jobs:
   plan-content:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
           persist-credentials: true
-
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-
       - name: Install AI dependencies
         run: pip install google-genai python-dotenv
-
       - name: Generate legacy daily theme
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
         run: python bot_scripts/Content/content_calendar.py || true
-
       - name: Generate unified content strategy
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python bot_scripts/Automation/generate_content_calendar.py
-
       - name: Commit content strategy
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

@@ -108,7 +108,7 @@ def gemini_calendar(seed_items):
         "calendar": seed_items,
     }
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
         data = json.loads(response.text)
         if isinstance(data, dict) and isinstance(data.get("days"), list):
             return data["days"]

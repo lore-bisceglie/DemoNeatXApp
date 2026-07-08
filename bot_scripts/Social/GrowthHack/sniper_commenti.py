@@ -86,7 +86,7 @@ def generate_smart_comment(username, caption):
     """
     
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         comment = response.text.strip().replace('"', '')
         return comment
     except Exception as e:

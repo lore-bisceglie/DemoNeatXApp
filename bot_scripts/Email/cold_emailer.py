@@ -71,7 +71,7 @@ Restituisci ESATTAMENTE e SOLO questo formato JSON:
 """
 
     try:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         # Pulisco il testo in caso di formattazione markdown
         json_text = response.text.strip().replace("```json", "").replace("```", "")
         email_data = json.loads(json_text)
