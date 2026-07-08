@@ -22,13 +22,10 @@ export async function POST(request: Request) {
     const successUrl = `${baseUrl}/t/${tenantSlug}/success?session_id={CHECKOUT_SESSION_ID}&app_id=${appointmentId}`;
     const cancelUrl = `${baseUrl}/t/${tenantSlug}`;
 
-    if (!tenant.storeSettings?.stripeAccountId || tenant.storeSettings.stripeAccountId.startsWith("acct_demo_")) {
-      console.log("[Stripe Checkout] Mocking payment for tenant without real Stripe Account");
-      return NextResponse.json({ url: successUrl.replace("{CHECKOUT_SESSION_ID}", "mock_session_123") });
-    }
+    const isDemoAccount = !tenant.storeSettings?.stripeAccountId || tenant.storeSettings.stripeAccountId.startsWith("acct_demo_");
 
-    // Crea la sessione di checkout per l'account collegato (Stripe Connect)
-    const session = await stripe.checkout.sessions.create({
+    // Crea la sessione di checkout per l'account collegato (Stripe Connect) oppure per l'account principale se demo
+    const sessionConfig: any = {
       payment_method_types: ["card"],
       line_items: [
         {
@@ -45,14 +42,20 @@ export async function POST(request: Request) {
       mode: "payment",
       success_url: successUrl,
       cancel_url: cancelUrl,
-      payment_intent_data: {
+    };
+
+    if (!isDemoAccount) {
+      sessionConfig.payment_intent_data = {
         // Applichiamo una commissione della piattaforma fissa (es. 1 euro o 5% per questa demo)
-        // Se l'importo è troppo piccolo, non applichiamo fee
         application_fee_amount: amountEur >= 5 ? 100 : 0, 
-      },
-    }, {
+      };
+    }
+
+    const stripeOptions = isDemoAccount ? undefined : {
       stripeAccount: tenant.storeSettings.stripeAccountId,
-    });
+    };
+
+    const session = await stripe.checkout.sessions.create(sessionConfig, stripeOptions);
 
     // Salva il sessionId nell'appuntamento
     await prisma.appointment.update({
