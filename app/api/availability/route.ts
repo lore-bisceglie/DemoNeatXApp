@@ -123,9 +123,9 @@ export async function GET(request: Request) {
       const potentialStart = currentSlotMins;
       const potentialEnd = potentialStart + duration;
 
-      let isSlotAvailable = false;
+      let availableStaffCount = 0;
 
-      // Se c'è almeno un membro dello staff in grado di farlo libero, lo slot è disponibile
+      // Conta quanti membri dello staff sono disponibili per questo slot
       for (const sId of capableStaffIds) {
         // --- GOOGLE SHEETS SCHEDULING ---
         if (staffSchedules[sId]) {
@@ -163,12 +163,21 @@ export async function GET(request: Request) {
         }
         
         if (!staffHasOverlap) {
-          isSlotAvailable = true;
-          break; // Trovato un parrucchiere libero, lo slot è valido
+          availableStaffCount++;
         }
       }
 
-      if (isSlotAvailable) {
+      // Conta quanti appuntamenti "unassigned" si sovrappongono a questo slot
+      const unassignedIntervals = bookedIntervalsByStaff['unassigned'] || [];
+      let overlappingUnassignedCount = 0;
+      for (const interval of unassignedIntervals) {
+        if (Math.max(potentialStart, interval.start) < Math.min(potentialEnd, interval.end)) {
+          overlappingUnassignedCount++;
+        }
+      }
+
+      // Lo slot è disponibile se ci sono più staff liberi rispetto agli appuntamenti unassigned pendenti
+      if (availableStaffCount > overlappingUnassignedCount) {
         availableSlots.push(minsToTime(potentialStart));
       }
     }

@@ -774,7 +774,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       setFormError("Troppi tentativi ravvicinati! Attendi un paio di minuti e riprova.");
       setIsBooking(false);
     } else {
-      setFormError("Si è verificato un errore di connessione, riprova!");
+      try {
+        const errorData = await res.json();
+        setFormError(errorData.error || "Si è verificato un errore di connessione, riprova!");
+      } catch (e) {
+        setFormError(`Errore server: ${res.statusText}`);
+      }
       setIsBooking(false);
     }
   };

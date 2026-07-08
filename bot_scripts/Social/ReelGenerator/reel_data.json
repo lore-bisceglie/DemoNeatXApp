@@ -1,13 +1,13 @@
 {
-    "niche": "Tatuatori",
-    "script_text": "Sei un tatuatore e continui a prendere appuntamenti su WhatsApp? Stai perdendo soldi. Ogni no-show è un colpo al tuo guadagno! Sei stanco di rispondere a messaggi infiniti? Con NeatX, gestisci tutto in automatico. Richieste filtrate e acconto prima dello slot. Non lasciare che il tuo talento venga sprecato! Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "TATUATORI: BASTA NO-SHOW!",
-    "cover_title": "TATUATORI: BASTA NO-SHOW!",
-    "image_prompt": "photorealistic tattoo studio, tattoo artist focused on a detailed tattoo on a client's arm, modern and clean workspace",
-    "gameplay_style": "block_miner",
-    "caption": "Sei un tatuatore e stai perdendo tempo e soldi? È ora di passare all'automazione! Commenta AGENDA per scoprire come. #tattooartist #tattoos #businessautomation #NeatX",
-    "strategy_date": "2026-07-07",
-    "strategy_angle": "costo mensile dei no-show",
-    "strategy_pain": "consulenze infinite e appuntamenti senza caparra",
-    "strategy_promise": "richieste filtrate e acconto prima dello slot"
+    "niche": "Coach e Consulenti",
+    "script_text": "Sei un coach e continui a rispondere a messaggi e chiamate per programmare appuntamenti? Stai buttando soldi e tempo! Ogni minuto sprecato è un cliente che perdi. Con NeatX, puoi automatizzare le prenotazioni e dire addio ai no-show. Immagina di avere più tempo per i tuoi clienti e meno stress. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "BASTA NO-SHOW",
+    "cover_title": "BASTA NO-SHOW",
+    "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
+    "gameplay_style": "neon_racer",
+    "caption": "Stai perdendo tempo e soldi? Automatizza le tue prenotazioni con NeatX! Commenta AGENDA per il link. #Coaching #Consulenti #PrenotazioniAutomatiche #NeatX",
+    "strategy_date": "2026-07-08",
+    "strategy_angle": "link in bio: prenotazioni automatiche",
+    "strategy_pain": "call manuali e clienti che rinviano",
+    "strategy_promise": "prenotazioni senza sforzo e follow-up più facile"
 }

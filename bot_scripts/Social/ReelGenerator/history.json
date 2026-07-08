@@ -44,7 +44,7 @@
         "title": "CENTRI ESTETICI: BASTA NO-SHOW",
         "hook": "CENTRI ESTETICI: BASTA NO-SHOW",
         "date": "2026-07-05",
-        "views": 1,
+        "views": 2,
         "likes": 0
     },
     {
@@ -52,7 +52,7 @@
         "title": "TATUATORI: BASTA NO-SHOW!",
         "hook": "TATUATORI: BASTA NO-SHOW!",
         "date": "2026-07-06",
-        "views": 1878,
+        "views": 1913,
         "likes": 5
     },
     {
@@ -74,7 +74,7 @@
         "title": "PARRUCCHIERI: NO-SHOW",
         "hook": "PARRUCCHIERI: NO-SHOW",
         "date": "2026-07-07",
-        "views": 1195,
+        "views": 1228,
         "likes": 7
     },
     {
@@ -82,12 +82,20 @@
         "title": "TATUATORI: BASTA NO-SHOW!",
         "hook": "TATUATORI: BASTA NO-SHOW!",
         "date": "2026-07-07",
-        "views": 0
+        "views": 446,
+        "likes": 1
     },
     {
         "youtube_id": "nQ4UydkEm9Y",
         "title": "TATUATORI: BASTA NO-SHOW!",
         "hook": "TATUATORI: BASTA NO-SHOW!",
+        "date": "2026-07-08",
+        "views": 0
+    },
+    {
+        "youtube_id": "SAhITBlA3jo",
+        "title": "BASTA NO-SHOW",
+        "hook": "BASTA NO-SHOW",
         "date": "2026-07-08",
         "views": 0
     }
