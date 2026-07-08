@@ -304,18 +304,11 @@ export default function TeamDrawer({
                             <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${hasService ? "left-7" : "left-1"}`} />
                           </div>
 
-                          {/* Hidden input to make it accessible / handle click */}
                           <input
                             type="checkbox"
                             className="hidden"
                             checked={hasService}
-                            disabled={!isPremium && allServices.length > 0} 
-                            onChange={(e) => {
-                              if (!isPremium) {
-                                alert("La mappatura servizi è una funzione Premium!");
-                                e.preventDefault();
-                                return;
-                              }
+                            onChange={() => {
                               handleToggleService(service.id, hasService)
                             }}
                           />
