@@ -813,12 +813,14 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </span>
               </div>
               
-              <button
-                onClick={() => alert("Acquisto Pacchetti SMS:\\n\\n• 100 SMS -> 9€\\n• 500 SMS -> 39€\\n\\nContatta l'assistenza su WhatsApp o Telegram per farti ricaricare il conto in tempo reale!")}
+              <a
+                href="https://wa.me/393333333333?text=Ciao!%20Vorrei%20acquistare%20un%20pacchetto%20di%20SMS%20per%20il%20mio%20salone."
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-2 rounded-lg border border-emerald-500/20 font-bold transition-all shadow-lg shadow-emerald-500/10"
               >
                 Ricarica 🔋
-              </button>
+              </a>
             </div>
           </div>
         </div>
