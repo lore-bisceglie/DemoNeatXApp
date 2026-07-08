@@ -51,46 +51,6 @@ const categoryHints: Record<string, { services: string; staff: string; bookings:
   private_studio: {
     services: "Consulenze, follow-up, sessioni",
     staff: "2 professionisti demo",
-  Scissors,
-  Sparkles,
-  UserRound,
-} from "lucide-react";
-import { demoCategoryOptions } from "@/lib/demoShopTemplates";
-
-const categoryHints: Record<string, { services: string; staff: string; bookings: string }> = {
-  hair_women: {
-    services: "Piega, taglio, colore, balayage",
-    staff: "3 professionisti demo",
-    bookings: "5 appuntamenti gia in agenda",
-  },
-  barber: {
-    services: "Taglio, barba, sfumatura",
-    staff: "3 barbieri demo",
-    bookings: "5 appuntamenti gia in agenda",
-  },
-  beauty_center: {
-    services: "Viso, corpo, epilazione",
-    staff: "3 estetiste demo",
-    bookings: "5 appuntamenti gia in agenda",
-  },
-  nail_salon: {
-    services: "Semipermanente, refill, pedicure",
-    staff: "2 nail artist demo",
-    bookings: "5 appuntamenti gia in agenda",
-  },
-  massage: {
-    services: "Relax, sportivo, decontratturante",
-    staff: "2 operatori demo",
-    bookings: "5 appuntamenti gia in agenda",
-  },
-  personal_trainer: {
-    services: "Sessioni, valutazioni, check",
-    staff: "2 trainer demo",
-    bookings: "5 appuntamenti gia in agenda",
-  },
-  private_studio: {
-    services: "Consulenze, follow-up, sessioni",
-    staff: "2 professionisti demo",
     bookings: "5 appuntamenti gia in agenda",
   },
 };
