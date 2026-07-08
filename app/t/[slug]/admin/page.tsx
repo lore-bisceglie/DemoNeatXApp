@@ -844,7 +844,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     <p className="text-[#00b4ff] font-extrabold text-lg">
                       {gap.start} - {gap.end}
                     </p>
-                  </div>
                   <div className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-xl text-xs font-bold">
                     {gap.duration} min
                   </div>
@@ -855,20 +854,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         )}
 
         {/* DASHBOARD ANALYTICS */}
-        {isPremium ? (
-          <AnalyticsChart data={analyticsData} />
-        ) : (
-          <div className="bg-[#0b1221] p-10 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 flex flex-col items-center justify-center text-center">
-            <span className="text-6xl mb-4 opacity-50">🔒</span>
-            <h3 className="text-xl font-extrabold text-white mb-2">Analytics Avanzate Bloccate</h3>
-            <p className="text-slate-400 text-sm max-w-md mb-6">
-              Passa al piano Premium (59€) per sbloccare i grafici incassi, le stime orarie e l'agenda Day View multi-staff illimitata.
-            </p>
-            <button className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-orange-500/20 hover:scale-105 transition-transform">
-              Upgrade to Premium
-            </button>
-          </div>
-        )}
+        <AnalyticsChart data={analyticsData} isPro={isPremium} />
 
         {/* AGENDA SETTIMANALE TETRIS */}
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">

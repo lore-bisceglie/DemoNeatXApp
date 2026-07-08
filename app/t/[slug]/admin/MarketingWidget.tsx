@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PaywallOverlay from "../../dashboard/PaywallOverlay";
 
 type DormantCustomer = {
   phone: string;
@@ -35,7 +36,11 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
   if (!data || data.count === 0) return null;
 
   return (
-    <>
+    <PaywallOverlay 
+      title="Sblocca il Marketing Automatico" 
+      description="Invia messaggi promozionali su WhatsApp ai clienti che non tornano da più di 30 giorni e falli tornare in salone in automatico." 
+      isPro={isPremium}
+    >
       {/* Widget Dashboard */}
       <div className="w-full relative bg-gradient-to-br from-[#0b242e] to-[#050814] rounded-3xl p-6 mb-8 border border-emerald-500/30 overflow-hidden group shadow-lg shadow-emerald-500/5">
         {/* Decorative elements */}
@@ -176,6 +181,6 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
           </div>
         </div>
       )}
-    </>
+    </PaywallOverlay>
   );
 }

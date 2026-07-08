@@ -1,4 +1,5 @@
 "use client";
+import PaywallOverlay from "./PaywallOverlay";
 
 import {
   AreaChart,
@@ -18,15 +19,21 @@ interface AnalyticsChartProps {
     revenue: number;
     appointments: number;
   }[];
+  isPro?: boolean;
 }
 
-export default function AnalyticsChart({ data }: AnalyticsChartProps) {
+export default function AnalyticsChart({ data, isPro = false }: AnalyticsChartProps) {
   if (!data || data.length === 0) {
     return <div className="text-slate-500 text-sm italic">Nessun dato disponibile per il grafico.</div>;
   }
 
   return (
-    <div className="bg-[#0b1221] border border-[#1a2642] p-6 rounded-3xl shadow-xl mb-8">
+    <PaywallOverlay 
+      title="Sblocca le Statistiche Avanzate" 
+      description="Scopri quali sono i tuoi giorni migliori, quanto incassi realmente, e tieni traccia della tua crescita finanziaria." 
+      isPro={isPro}
+    >
+      <div className="bg-[#0b1221] border border-[#1a2642] p-6 rounded-3xl shadow-xl mb-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
           <span>📈</span> Andamento Incassi (Ultimi 14 giorni)
@@ -78,7 +85,8 @@ export default function AnalyticsChart({ data }: AnalyticsChartProps) {
             />
           </AreaChart>
         </ResponsiveContainer>
+        </div>
       </div>
-    </div>
+    </PaywallOverlay>
   );
 }
