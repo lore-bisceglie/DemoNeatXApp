@@ -104,12 +104,16 @@ def publish_to_instagram():
     print(f"[*] Caricamento del video {VIDEO_FILE} su server temporaneo per Meta...")
     try:
         r_upload = requests.post(
-            "https://catbox.moe/user/api.php", 
-            data={"reqtype": "fileupload"}, 
+            "https://litterbox.catbox.moe/resources/internals/api.php", 
+            data={"reqtype": "fileupload", "time": "1h"}, 
             files={"fileToUpload": open(VIDEO_FILE, "rb")}
         )
         video_url = r_upload.text.strip()
         print(f"[+] URL temporaneo generato: {video_url}")
+        
+        if not video_url.startswith("http"):
+            raise Exception(f"Risposta non valida dal server temporaneo: {video_url}")
+            
     except Exception as e:
         message = f"Errore durante il caricamento temporaneo: {e}"
         print("[!]", message)
@@ -122,12 +126,17 @@ def publish_to_instagram():
         print(f"[*] Caricamento della copertina {path_cover} su server temporaneo...")
         try:
             r_cover = requests.post(
-                "https://catbox.moe/user/api.php", 
-                data={"reqtype": "fileupload"}, 
+                "https://litterbox.catbox.moe/resources/internals/api.php", 
+                data={"reqtype": "fileupload", "time": "1h"}, 
                 files={"fileToUpload": open(path_cover, "rb")}
             )
             cover_url = r_cover.text.strip()
             print(f"[+] URL copertina generato: {cover_url}")
+            
+            if not cover_url.startswith("http"):
+                print(f"[!] Avviso: Risposta copertina non valida: {cover_url}")
+                cover_url = ""
+                
         except Exception as e:
             print("[!] Errore durante il caricamento della copertina:", e)
     
