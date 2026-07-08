@@ -10,7 +10,7 @@ export default function StripeCheckoutButton({ tenantId, slug }: { tenantId: str
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/stripe/checkout', {
+      const res = await fetch('/api/stripe/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
