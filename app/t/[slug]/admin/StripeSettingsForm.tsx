@@ -111,14 +111,19 @@ export default function StripeSettingsForm({
                 Se disabilitata, il cliente potrà scegliere se pagare in sede o anticipare su Stripe.
               </p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer ml-4">
+            <label className="relative flex items-center cursor-pointer ml-4 group">
               <input
                 type="checkbox"
-                className="sr-only peer"
+                className="sr-only"
                 checked={isMandatory}
                 onChange={(e) => setIsMandatory(e.target.checked)}
               />
-              <div className="w-11 h-6 bg-[#131c31] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 peer-checked:after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00b4ff]"></div>
+              <div className={`w-14 h-7 flex items-center rounded-full p-1 transition-colors duration-300 ${isMandatory ? 'bg-emerald-500' : 'bg-[#131c31] border border-[#1e2b4a]'}`}>
+                <div className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 ${isMandatory ? 'translate-x-7' : 'translate-x-0'}`}></div>
+              </div>
+              <span className={`ml-3 text-xs font-bold w-12 ${isMandatory ? 'text-emerald-400' : 'text-slate-500'}`}>
+                {isMandatory ? 'ATTIVA' : 'SPENTA'}
+              </span>
             </label>
           </div>
         )}

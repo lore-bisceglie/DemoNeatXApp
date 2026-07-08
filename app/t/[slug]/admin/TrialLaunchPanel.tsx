@@ -548,6 +548,16 @@ export default function TrialLaunchPanel({
           </div>
 
           <div className="max-h-[560px] space-y-3 overflow-y-auto pr-1">
+            {/* INTESTAZIONI COLONNE */}
+            {serviceDrafts.length > 0 && (
+              <div className="hidden lg:grid grid-cols-[1fr_92px_92px_auto] gap-3 px-3 pb-1 text-[10px] font-black uppercase tracking-wider text-slate-500">
+                <div>Nome Servizio</div>
+                <div className="text-center">Minuti</div>
+                <div className="text-center">Prezzo (€)</div>
+                <div></div>
+              </div>
+            )}
+            
             {serviceDrafts.map((service) => (
               <div key={service.id} className="rounded-2xl border border-[#1e2b4a] bg-[#050814] p-3">
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_92px_92px_auto]">
@@ -557,26 +567,26 @@ export default function TrialLaunchPanel({
                     className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan-400"
                     placeholder="Nome servizio"
                   />
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-wider text-slate-500">Min</span>
+                  <div className="flex flex-col gap-1 lg:block">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 lg:hidden px-1">Durata (Minuti)</span>
                     <input
                       type="number"
                       min={5}
                       value={service.duration}
                       onChange={(event) => updateServiceDraft(service.id, "duration", Number(event.target.value))}
-                      className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] py-2 pl-10 pr-2 text-sm text-white outline-none focus:border-cyan-400"
-                      placeholder="Durata"
+                      className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400 lg:text-center"
+                      placeholder="Minuti"
                     />
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-wider text-slate-500">Eur</span>
+                  <div className="flex flex-col gap-1 lg:block">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 lg:hidden px-1">Prezzo (€)</span>
                     <input
                       type="number"
                       min={0}
                       value={service.price}
                       onChange={(event) => updateServiceDraft(service.id, "price", Number(event.target.value))}
-                      className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] py-2 pl-10 pr-2 text-sm text-white outline-none focus:border-cyan-400"
-                      placeholder="Prezzo"
+                      className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400 lg:text-center"
+                      placeholder="€"
                     />
                   </div>
                   <div className="flex gap-2">
