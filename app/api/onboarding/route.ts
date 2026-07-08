@@ -8,6 +8,7 @@ import {
 } from "@/lib/demoShopTemplates";
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
+import { sendWelcomeEmail } from "@/lib/email";
 
 import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
@@ -75,6 +76,7 @@ export async function POST(req: Request) {
     const category = cleanText(body.category || body.template, "barber");
     const city = cleanText(body.city);
     const ownerName = cleanText(body.ownerName);
+    const email = cleanText(body.email);
     const password = cleanText(body.password);
     const phone = normalizeWhatsappPhone(body.phone);
     const address = cleanText(body.address, city) || city;
@@ -86,9 +88,9 @@ export async function POST(req: Request) {
     const bookingUrl = null;
     const mapsLink = normalizeOptionalUrl(body.mapsLink) || buildMapsLink(address);
 
-    if (!businessName || !category || !city || !ownerName || !password || !phone) {
+    if (!businessName || !category || !city || !ownerName || !password || !phone || !email) {
       return NextResponse.json(
-        { error: "Inserisci nome attivita, categoria, citta, nome, password e numero WhatsApp." },
+        { error: "Inserisci nome attivita, categoria, citta, email, nome, password e numero WhatsApp." },
         { status: 400 }
       );
     }
@@ -114,7 +116,7 @@ export async function POST(req: Request) {
         category: template.id,
         city,
         ownerName,
-        ownerEmail: null,
+        ownerEmail: email,
         ownerPasswordHash: hashPassword(password),
         description: description || `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
         phone,
@@ -213,6 +215,9 @@ export async function POST(req: Request) {
 
     // 🚀 Invia notifica Telegram al founder
     await sendTelegramNotification(tenant, ownerName, template.id);
+
+    // 🚀 Invia Email di Benvenuto (non bloccante)
+    sendWelcomeEmail(email, ownerName, adminPassword, getTenantAdminUrl(tenant.slug));
 
     return NextResponse.json({
       success: true,

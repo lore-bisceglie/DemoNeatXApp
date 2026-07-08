@@ -1,47 +1,52 @@
-import { Resend } from 'resend';
+import nodemailer from "nodemailer";
 
-// Initialize Resend with the API key from environment variables
-// It won't throw if missing immediately, but will fail gracefully when sending
-const resendApiKey = process.env.RESEND_API_KEY;
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
+export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, adminPassword: string, tenantUrl: string) {
+  const user = process.env.SMTP_EMAIL;
+  const pass = process.env.SMTP_PASSWORD;
 
-// The generic sender email (you must verify a domain on Resend later, e.g. hello@neatx.store)
-// For now, Resend allows sending from onboarding@resend.dev to the registered email address during testing
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-
-export async function sendWelcomeEmail(tenantEmail: string, tenantName: string, adminPassword: string, tenantUrl: string) {
-  if (!resend) {
-    console.warn("RESEND_API_KEY is not set. Skipping welcome email to", tenantEmail);
+  if (!user || !pass) {
+    console.warn("[Email] Credenziali SMTP non configurate. Ignoro l'invio della mail a", tenantEmail);
     return false;
   }
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user,
+      pass,
+    },
+  });
+
+  const subject = `Benvenuto in NeatX, ${ownerName}! Il tuo gestionale è pronto 🎉`;
+  const html = `
+    <div style="font-family: sans-serif; max-w-xl; margin: 0 auto; color: #333;">
+      <h1 style="color: #00b4ff;">Benvenuto a bordo!</h1>
+      <p>Ciao ${ownerName},</p>
+      <p>Sono Tiziano, il creatore di NeatX. Volevo darti il benvenuto personale a bordo!</p>
+      <p>Il tuo spazio gestionale è stato creato ed è pronto all'uso.</p>
+      
+      <div style="background-color: #f4f4f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
+        <p style="margin: 0 0 10px 0;"><strong>Link del tuo Negozio (da dare ai clienti):</strong> <a href="${tenantUrl}">${tenantUrl}</a></p>
+        <p style="margin: 0;"><strong>Password Admin segreta:</strong> <code>${adminPassword}</code></p>
+      </div>
+
+      <p>Per qualsiasi dubbio su come impostare i tuoi orari o attivare i pagamenti online, puoi rispondere direttamente a questa mail e ti aiuterò io di persona.</p>
+      <br/>
+      <p>A presto e buon lavoro,<br/><strong>Tiziano - Founder di NeatX</strong></p>
+    </div>
+  `;
+
   try {
-    const data = await resend.emails.send({
-      from: `NeatX <${FROM_EMAIL}>`,
-      to: [tenantEmail],
-      subject: `Benvenuto in NeatX, ${tenantName}! Il tuo gestionale è pronto 🎉`,
-      html: `
-        <div style="font-family: sans-serif; max-w-xl; margin: 0 auto; color: #333;">
-          <h1 style="color: #00b4ff;">Benvenuto a bordo!</h1>
-          <p>Ciao,</p>
-          <p>Il tuo spazio gestionale per <strong>${tenantName}</strong> è stato creato ed è pronto all'uso.</p>
-          
-          <div style="background-color: #f4f4f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <p style="margin: 0 0 10px 0;"><strong>Link di Accesso:</strong> <a href="${tenantUrl}">${tenantUrl}</a></p>
-            <p style="margin: 0;"><strong>Password Admin:</strong> <code>${adminPassword}</code></p>
-          </div>
-
-          <p>Usa il link qui sopra per accedere alla tua bacheca privata e iniziare a configurare i tuoi servizi e i tuoi orari.</p>
-          <br/>
-          <p>Buon lavoro,<br/><strong>Il Team di NeatX</strong></p>
-        </div>
-      `,
+    await transporter.sendMail({
+      from: `"Tiziano - NeatX" <${user}>`,
+      to: tenantEmail,
+      subject,
+      html,
     });
-
-    console.log("Welcome email sent successfully:", data);
+    console.log(`[Email] Mail di benvenuto inviata con successo a ${tenantEmail}`);
     return true;
   } catch (error) {
-    console.error("Failed to send welcome email via Resend:", error);
+    console.error("[Email] Errore invio mail tramite Gmail SMTP:", error);
     return false;
   }
 }
