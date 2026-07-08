@@ -19,7 +19,16 @@ export default function PublicWidgetsWrapper({ children }: { children: React.Rea
   // Evita hydration errors non renderizzando nulla finché non è montato
   if (!mounted) return null;
 
-  // Sulle pagine pubbliche dei clienti (/t/...), non mostrare i widget della Landing Page
+  // Sulle pagine dei clienti (sottodomini) non mostrare i widget pubblici
+  const isMainDomain = 
+    window.location.hostname === "localhost" || 
+    window.location.hostname === "neatx.store" || 
+    window.location.hostname === "www.neatx.store" ||
+    window.location.hostname.includes("vercel.app");
+
+  if (!isMainDomain) return null;
+
+  // Sulle pagine pubbliche interne (es. preview in app), non mostrare i widget della Landing Page
   if (pathname?.startsWith("/t/")) return null;
 
   // Se sei il SuperAdmin (hai il cookie), disattiva i widget pubblici
