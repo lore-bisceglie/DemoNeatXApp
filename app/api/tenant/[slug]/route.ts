@@ -11,6 +11,7 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
       where: { slug: slug },
       include: {
         services: true,
+        storeSettings: true,
         staff: {
           include: { services: true }
         }

@@ -650,11 +650,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
       // 1. Calcola l'importo da pagare in base alle regole del negozio
       let amountEur = 0;
-      if (tenantInfo.paymentRule === "FIXED") {
-        amountEur = tenantInfo.paymentFixedAmount || 0;
-      } else if (tenantInfo.paymentRule === "PERCENTAGE" && selectedService.price) {
-        amountEur = (selectedService.price * (tenantInfo.paymentPercentage || 0)) / 100;
-      } else if (tenantInfo.paymentRule === "FULL" && selectedService.price) {
+      if (tenantInfo.storeSettings?.paymentStrategy === "FIXED") {
+        amountEur = tenantInfo.storeSettings?.paymentFixedAmount || 0;
+      } else if (tenantInfo.storeSettings?.paymentStrategy === "PERCENTAGE" && selectedService.price) {
+        amountEur = (selectedService.price * (tenantInfo.storeSettings?.paymentPercentage || 0)) / 100;
+      } else if (tenantInfo.storeSettings?.paymentStrategy === "FULL" && selectedService.price) {
         amountEur = selectedService.price;
       }
 
