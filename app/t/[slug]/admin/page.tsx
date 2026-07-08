@@ -8,7 +8,7 @@ import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
 import StripeSettingsForm from "./StripeSettingsForm";
-import { unstable_noStore as noStore } from "next/cache";
+import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 
 import AutoRefreshMonitor from "../../../dashboard/AutoRefreshMonitor";
 import SwipeableAgenda from "../../../dashboard/SwipeableAgenda";
@@ -492,6 +492,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       }
     }
 
+    revalidatePath(redirectUrl);
+    revalidatePath(redirectUrl);
     redirect(redirectUrl);
   }
 
@@ -566,6 +568,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       }
     }
 
+    revalidatePath(redirectUrl);
     redirect(redirectUrl);
   }
 
