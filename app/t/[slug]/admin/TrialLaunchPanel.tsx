@@ -550,7 +550,7 @@ export default function TrialLaunchPanel({
           <div className="max-h-[560px] space-y-3 overflow-y-auto pr-1">
             {/* INTESTAZIONI COLONNE */}
             {serviceDrafts.length > 0 && (
-              <div className="hidden lg:grid grid-cols-[1fr_92px_92px_auto] gap-3 px-3 pb-1 text-[10px] font-black uppercase tracking-wider text-slate-500">
+              <div className="hidden lg:grid grid-cols-[1fr_92px_92px_170px] gap-3 px-3 pb-1 text-[10px] font-black uppercase tracking-wider text-slate-500">
                 <div>Nome Servizio</div>
                 <div className="text-center">Minuti</div>
                 <div className="text-center">Prezzo (€)</div>
@@ -560,7 +560,7 @@ export default function TrialLaunchPanel({
             
             {serviceDrafts.map((service) => (
               <div key={service.id} className="rounded-2xl border border-[#1e2b4a] bg-[#050814] p-3">
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_92px_92px_auto]">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_92px_92px_170px]">
                   <input
                     value={service.name}
                     onChange={(event) => updateServiceDraft(service.id, "name", event.target.value)}
