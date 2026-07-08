@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import WaitlistButton from "../../WaitlistButton";
 import { getTenantAdminUrl } from "@/lib/domains";
+import { TrendingUp } from "lucide-react";
 
 type Service = {
   id: string;
