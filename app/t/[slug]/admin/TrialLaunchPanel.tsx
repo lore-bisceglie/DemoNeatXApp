@@ -115,7 +115,7 @@ export default function TrialLaunchPanel({
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [serviceDrafts, setServiceDrafts] = useState<ServiceDraft[]>(
-    services.map((service) => ({ ...service, price: Number(service.price || 0) }))
+    initialServices.map((service) => ({ ...service, price: Number(service.price || 0) }))
   );
   const [shopDraft, setShopDraft] = useState({
     name: tenantName,
