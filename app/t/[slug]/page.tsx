@@ -1626,6 +1626,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 ? "⏳ Elaborazione..."
                 : isPlaygroundDemo && paymentMethod === "online"
                 ? "Prenota e simula pagamento"
+                : (!isPlaygroundDemo && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && (tenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online") && (tenantInfo.storeSettings?.stripeOnboardingComplete || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_")))
+                ? "💳 Procedi al pagamento"
                 : isSelectedLastMinute
                 ? "🔥 Prenota Subito!"
                 : "✓ Prenota Ora"}
@@ -1634,6 +1636,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <p className="text-[10px] text-slate-500 mt-5 text-center mb-8">
               {isPlaygroundDemo
                 ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
+                : (!isPlaygroundDemo && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && (tenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online") && (tenantInfo.storeSettings?.stripeOnboardingComplete || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_")))
+                ? "Verrai reindirizzato al modulo sicuro di Stripe per il pagamento."
                 : "Verrai reindirizzato a WhatsApp per confermare."}
             </p>
 
