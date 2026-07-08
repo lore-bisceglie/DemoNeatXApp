@@ -1,17 +1,17 @@
 {
   "date": "2026-07-08",
-  "niche": "Coach e Consulenti",
-  "angle": "link in bio: prenotazioni automatiche",
-  "pain": "call manuali e clienti che rinviano",
-  "promise": "prenotazioni senza sforzo e follow-up più facile",
-  "cover_title": "BASTA NO-SHOW",
-  "hook_hint": "Se sei un coach e combatti con chiamate manuali e clienti che rinviano, stai perdendo denaro.",
-  "blog_topic": "Coach e Consulenti: l'importanza del link in bio per prenotazioni automatiche",
+  "niche": "Personal Trainer",
+  "angle": "il link in bio deve prenotare da solo",
+  "pain": "lezioni spostate in chat e slot persi",
+  "promise": "sessioni prenotate e confermate automaticamente",
+  "cover_title": "PERSONAL TRAINER: BASTA NO-SHOW",
+  "hook_hint": "Se sei un personal trainer e perdi soldi a causa di lezioni spostate, cambia ora.",
+  "blog_topic": "Personal Trainer: perché il link in bio deve prenotare da solo",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }

@@ -1,33 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-08T15:50:38.776312+02:00
+Generato: 2026-07-08T21:00:16.176064+02:00
 
-## Idea 1: Se sei un coach e combatti con chiamate manuali e clienti che rinviano, stai perdendo denaro.
-- title: BASTA NO-SHOW
-- hook: Se sei un coach e combatti con chiamate manuali e clienti che rinviano, stai perdendo denaro.
-- type: video
-- content: Mostra come un sistema di prenotazione automatica può liberarti da chiamate noiose e aumentare il tuo guadagno.
+## Idea 1: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
+- format: pain shock
+- niche: Personal Trainer
+- hook: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero lezioni spostate in chat e slot persi.
+- cta: Commenta AGENDA e ti mando il link.
 
-## Idea 2: Scopri come ottimizzare il tuo link in bio per eliminare i no-show e massimizzare le prenotazioni.
-- title: Link in Bio: Prenotazioni Automatiche
-- hook: Scopri come ottimizzare il tuo link in bio per eliminare i no-show e massimizzare le prenotazioni.
-- type: blog
-- content: Analizza l'importanza di avere un link in bio efficace per coach e consulenti.
+## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- format: before after
+- niche: Personal Trainer
+- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- angle: Confronto diretto tra caos manuale e link NeatX.
+- cta: Scrivi DEMO se vuoi provarlo.
 
-## Idea 3: Chi ha bisogno di chiamate se puoi avere prenotazioni automatiche?
-- title: Prenotazioni Facili per Coach
-- hook: Chi ha bisogno di chiamate se puoi avere prenotazioni automatiche?
-- type: video
-- content: Un confronto tra il metodo tradizionale e quello automatizzato per evidenziare i benefici.
-
-## Idea 4: Impara come ridurre il tempo dedicato ai follow-up con un sistema di prenotazione automatica.
-- title: Follow-Up Semplificato
-- hook: Impara come ridurre il tempo dedicato ai follow-up con un sistema di prenotazione automatica.
-- type: blog
-- content: Esplora strategie per rendere il follow-up più semplice e meno stressante.
-
-## Idea 5: Riconquista le tue ore preziose con un'agenda automatica.
-- title: Riscopri il Tuo Tempo
-- hook: Riconquista le tue ore preziose con un'agenda automatica.
-- type: video
-- content: Mostra testimonianze di coach che hanno migliorato la loro produttività grazie all'automazione.
+## Idea 3: Un no-show non è un fastidio, è fatturato perso.
+- format: calculator
+- niche: Personal Trainer
+- hook: Un no-show non è un fastidio, è fatturato perso.
+- angle: Stima soldi persi in un mese e collega promemoria/acconto.
+- cta: Commenta AGENDA.
