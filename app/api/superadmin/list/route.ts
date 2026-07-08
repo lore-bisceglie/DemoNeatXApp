@@ -18,19 +18,26 @@ export async function GET(req: Request) {
       }
     });
 
-    const totalAppointments = await prisma.appointment.count();
-    const allAppointments = await prisma.appointment.findMany({
-      select: { service: { select: { price: true } } }
+    const now = new Date();
+    let mrr = 0;
+    let payingCount = 0;
+    let trialCount = 0;
+
+    tenants.forEach(t => {
+      if (t.plan === 'premium') {
+        payingCount++;
+        mrr += 29; // Assumendo 29€ al mese come prezzo base
+      } else if (t.trialEndsAt && t.trialEndsAt > now) {
+        trialCount++;
+      }
     });
-    const totalRevenue = allAppointments.reduce((acc: number, curr: any) => acc + (curr.service?.price || 0), 0);
-    const totalNoShows = await prisma.noShow.count();
 
     return NextResponse.json({
       tenants,
       stats: {
-        totalAppointments,
-        totalRevenue,
-        totalNoShows
+        mrr,
+        payingCount,
+        trialCount
       }
     });
   } catch (error: any) {

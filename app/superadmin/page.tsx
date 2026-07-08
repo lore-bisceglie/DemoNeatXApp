@@ -215,6 +215,42 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleSetPremium = async (tenantId: string) => {
+    try {
+      const res = await fetch('/api/superadmin/plan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId, plan: 'premium' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore');
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
+  const handleSetBasic = async (tenantId: string) => {
+    try {
+      const res = await fetch('/api/superadmin/plan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId, plan: 'basic' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore');
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
   const handleAddSms = async (tenantId: string) => {
     const amountStr = prompt("Quanti crediti SMS vuoi aggiungere (es. 100, 500)?");
     if (!amountStr) return;
@@ -274,8 +310,8 @@ export default function SuperAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans">
-      <div className="max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans w-full">
+      <div className="w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
             <div className="flex items-center gap-4 mb-2">
@@ -291,25 +327,25 @@ export default function SuperAdminPage() {
       </div>
 
       {/* GOD-EYE STATS */}
-      <div className="max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
-          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Appuntamenti Globali</h3>
-          <div className="text-4xl font-extrabold text-white relative">{stats.totalAppointments}</div>
-        </div>
+      <div className="w-full mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
           <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
-          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Valore Mosso (Teorico)</h3>
-          <div className="text-4xl font-extrabold text-emerald-400 relative">€ {stats.totalRevenue.toLocaleString('it-IT')}</div>
+          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">MRR (Fatturato Ricorrente)</h3>
+          <div className="text-4xl font-extrabold text-emerald-400 relative">€ {stats.mrr ? stats.mrr.toLocaleString('it-IT') : 0}</div>
         </div>
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
-          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">No-Show Sventati</h3>
-          <div className="text-4xl font-extrabold text-rose-400 relative">{stats.totalNoShows}</div>
+          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
+          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Saloni Paganti (Attivi)</h3>
+          <div className="text-4xl font-extrabold text-white relative">{stats.payingCount || 0}</div>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
+          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Saloni in Trial (Lead)</h3>
+          <div className="text-4xl font-extrabold text-amber-400 relative">{stats.trialCount || 0}</div>
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Colonna Creazione (1/4) */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
             <h2 className="text-xl font-semibold mb-4 text-white">Crea Nuovo Cliente</h2>
@@ -542,11 +578,16 @@ export default function SuperAdminPage() {
                       <div className="text-sm text-slate-400 flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
                           <span className="bg-slate-800 px-2 py-1 rounded text-xs">{tenant.services?.length || 0} servizi</span>
+                          {tenant.storeSettings?.stripeOnboardingComplete ? (
+                            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-1 rounded text-[10px] font-bold uppercase">✅ Stripe</span>
+                          ) : (
+                            <span className="bg-slate-800/50 text-slate-500 px-2 py-1 rounded text-[10px] uppercase">❌ No IBAN</span>
+                          )}
                           <span className="text-xs">Creato il {new Date(tenant.createdAt).toLocaleDateString('it-IT')}</span>
                         </div>
                         {trialEndsAt && tenant.plan !== 'premium' && (
                           <div className={`flex items-center gap-2 text-xs font-bold ${isTrialExpired ? 'text-red-400' : 'text-orange-400'}`}>
-                            {isTrialExpired ? '🔒 ABBONAMENTO SCADUTO' : `⏳ ${daysLeft} gg di prova`}
+                            {isTrialExpired ? '🔒 PROVA SCADUTA (Paywall)' : `⏳ ${daysLeft} gg di prova rimanenti`}
                           </div>
                         )}
                         {tenant.ownerEmail && <div className="text-xs truncate text-slate-500 mt-1" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
