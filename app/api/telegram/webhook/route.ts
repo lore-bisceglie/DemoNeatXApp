@@ -85,7 +85,7 @@ export async function POST(req: Request) {
           // Aggiorniamo il piano a Premium
           await prisma.tenant.update({
             where: { id: tenantId },
-            data: { plan: "PRO" }
+            data: { plan: "premium" }
           });
           await answerCallbackQuery(cb.id, "✅ Salone promosso a PRO!");
           await editMessageText(chatId, messageId, `${cb.message.text}\n\n<b>[Approvato: Piano PRO attivo]</b>`);
@@ -164,16 +164,6 @@ export async function POST(req: Request) {
           }
         }
       }
-      else if (text === "/aiuto") {
-        const helpText = `🛠️ <b>Guida ai Comandi</b>\n\n` +
-          `/stats - Riepilogo saloni attivi, prenotazioni e MRR\n` +
-          `/ultimi - Elenco degli ultimi 3 saloni iscritti\n` +
-          `/cerca [nome] - Trova un salone per nome e mostra i contatti\n` +
-          `/entra [nome] - Crea un link per entrare nel pannello di un negozio\n` +
-          `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
-          `/aiuto - Mostra questo messaggio`;
-        await sendTelegramMessage(helpText);
-      }
       else if (text.startsWith("/entra ")) {
         const query = text.replace("/entra ", "").trim();
         if (query.length < 2) {
@@ -201,11 +191,40 @@ export async function POST(req: Request) {
             select: { ownerEmail: true, name: true }
           });
           
-          // Nota: Qui potremmo importare e chiamare sendWelcomeEmail o una sendSystemEmail generica,
-          // ma per il momento mandiamo una notifica di simulazione o usiamo un log
-          // Idealmente dovremmo fare un loop su lib/email.ts
           await sendTelegramMessage(`📣 <b>Megafono:</b> Simulazione di invio email a ${tenants.length} saloni completata con il messaggio:\n"${message}"`);
         }
+      }
+      else if (text.startsWith("/pro ")) {
+        const query = text.replace("/pro ", "").trim();
+        const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query, mode: "insensitive" } } });
+        if (tenant) {
+          await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "premium" } });
+          await sendTelegramMessage(`✅ <b>${tenant.name}</b> promosso al piano <b>PRO</b> (59€)!\nI lucchetti sono stati sbloccati.`);
+        } else {
+          await sendTelegramMessage("❌ Nessun salone trovato.");
+        }
+      }
+      else if (text.startsWith("/basic ")) {
+        const query = text.replace("/basic ", "").trim();
+        const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query, mode: "insensitive" } } });
+        if (tenant) {
+          await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "basic" } });
+          await sendTelegramMessage(`🔒 <b>${tenant.name}</b> retrocesso al piano <b>BASIC</b> (29€)!\nI lucchetti sono stati riattivati.`);
+        } else {
+          await sendTelegramMessage("❌ Nessun salone trovato.");
+        }
+      }
+      else if (text === "/aiuto") {
+        const helpText = `🛠️ <b>Guida ai Comandi</b>\n\n` +
+          `/stats - Riepilogo saloni attivi, prenotazioni e MRR\n` +
+          `/ultimi - Elenco degli ultimi 3 saloni iscritti\n` +
+          `/cerca [nome] - Trova un salone per nome e mostra i contatti\n` +
+          `/entra [nome] - Crea un link per entrare nel pannello di un negozio\n` +
+          `/pro [nome] - Promuove un negozio al piano PRO\n` +
+          `/basic [nome] - Retrocede un negozio al piano BASIC\n` +
+          `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
+          `/aiuto - Mostra questo messaggio`;
+        await sendTelegramMessage(helpText);
       }
       else if (text === "/start") {
         await sendTelegramMessage("🤖 <b>NeatX Maggiordomo</b>\nAi tuoi ordini, Capo. Usa il bottone Menu in basso a sinistra per vedere cosa so fare, o digita /aiuto.");
