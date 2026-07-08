@@ -82,7 +82,8 @@ export default function PricingSection() {
             <div className="text-xs text-slate-500 font-medium mb-6">+ 300€ setup una tantum</div>
             <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Tutto del piano Pro</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione Multi-Staff</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione Turni (Fogli Google)</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Multi-Staff avanzato</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Assistenza Prioritaria H24</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Onboarding dedicato</li>
             </ul>

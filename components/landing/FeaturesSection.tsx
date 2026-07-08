@@ -1,6 +1,6 @@
 "use client";
 
-import { MousePointerClick, BellRing, WalletCards, Zap } from "lucide-react";
+import { MousePointerClick, BellRing, WalletCards, Zap, CalendarSync } from "lucide-react";
 
 const FEATURE_CARDS = [
   {
@@ -27,6 +27,14 @@ const FEATURE_CARDS = [
     accent: "text-emerald-400",
     border: "hover:border-emerald-400/50",
   },
+  {
+    icon: CalendarSync,
+    title: "Turni Live con Google Fogli",
+    description:
+      "Niente impostazioni complesse. Compila il tuo Foglio Google: l'agenda nasconderà all'istante gli orari in cui il tuo staff riposa.",
+    accent: "text-blue-400",
+    border: "hover:border-blue-400/50",
+  },
 ];
 
 export default function FeaturesSection() {
@@ -42,7 +50,7 @@ export default function FeaturesSection() {
           <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX non è solo una pagina di prenotazione: è un flusso completo che porta il cliente dalla curiosità alla conferma.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {FEATURE_CARDS.map((feature) => {
             const Icon = feature.icon;
             return (
