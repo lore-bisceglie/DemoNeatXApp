@@ -1,11 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { CheckCircle2, CalendarDays } from "lucide-react";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2024-04-10",
-});
+import { stripe } from "@/lib/stripe";
+import { CheckCircle2 } from "lucide-react";
 
 export default async function SuccessPage(props: {
   params: Promise<{ slug: string }>;
