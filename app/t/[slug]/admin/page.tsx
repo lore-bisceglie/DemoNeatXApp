@@ -844,6 +844,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     <p className="text-[#00b4ff] font-extrabold text-lg">
                       {gap.start} - {gap.end}
                     </p>
+                  </div>
                   <div className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-xl text-xs font-bold">
                     {gap.duration} min
                   </div>
