@@ -93,12 +93,16 @@ export async function POST(req: Request) {
       ];
     }
 
+    const trialLimit = new Date();
+    trialLimit.setDate(trialLimit.getDate() + 7);
+
     // Crea il Tenant con i servizi annessi e la password
     const newTenant = await prisma.tenant.create({
       data: {
         name,
         slug,
         adminPassword: finalPassword,
+        trialEndsAt: trialLimit,
         phone: phone || null,
         address: address || null,
         instagramUrl: instagramUrl || null,
