@@ -271,6 +271,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       paymentStrategy: string;
       paymentFixedAmount: number;
       paymentPercentage: number;
+      paymentMandatory: boolean;
+      stripeAccountId?: string | null;
+      stripeOnboardingComplete?: boolean;
     } | null
   });
 
