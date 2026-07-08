@@ -22,10 +22,8 @@ export async function POST(request: Request) {
     const successUrl = `${baseUrl}/t/${tenantSlug}/success?session_id={CHECKOUT_SESSION_ID}&app_id=${appointmentId}`;
     const cancelUrl = `${baseUrl}/t/${tenantSlug}`;
 
-    // DEMO MOCK: Se non c'è un account Stripe collegato (es. in prova locale senza Vercel)
-    // ritorniamo l'URL di successo simulando un pagamento
-    if (!tenant.storeSettings?.stripeAccountId) {
-      console.log("[Stripe Checkout] Mocking payment for tenant without Stripe Account");
+    if (!tenant.storeSettings?.stripeAccountId || tenant.storeSettings.stripeAccountId.startsWith("acct_demo_")) {
+      console.log("[Stripe Checkout] Mocking payment for tenant without real Stripe Account");
       return NextResponse.json({ url: successUrl.replace("{CHECKOUT_SESSION_ID}", "mock_session_123") });
     }
 
