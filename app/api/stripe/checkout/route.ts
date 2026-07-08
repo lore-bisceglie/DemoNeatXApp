@@ -7,7 +7,8 @@ export async function POST(request: Request) {
     const { appointmentId, tenantSlug, amountEur, serviceName } = await request.json();
 
     const tenant = await prisma.tenant.findUnique({
-      where: { slug: tenantSlug }
+      where: { slug: tenantSlug },
+      include: { storeSettings: true }
     });
 
     if (!tenant) {
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
 
     // DEMO MOCK: Se non c'è un account Stripe collegato (es. in prova locale senza Vercel)
     // ritorniamo l'URL di successo simulando un pagamento
-    if (!tenant.stripeAccountId) {
+    if (!tenant.storeSettings?.stripeAccountId) {
       console.log("[Stripe Checkout] Mocking payment for tenant without Stripe Account");
       return NextResponse.json({ url: successUrl.replace("{CHECKOUT_SESSION_ID}", "mock_session_123") });
     }
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
         application_fee_amount: amountEur >= 5 ? 100 : 0, 
       },
     }, {
-      stripeAccount: tenant.stripeAccountId,
+      stripeAccount: tenant.storeSettings.stripeAccountId,
     });
 
     // Salva il sessionId nell'appuntamento
