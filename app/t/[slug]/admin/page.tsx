@@ -890,8 +890,17 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           )}
         </div>
 
-        <WaitlistDashboard initialData={waitlistData} tenantId={tenantId} />
         
+        
+        
+
+        </div>
+
+        {/* DASHBOARD ANALYTICS */}
+        <AnalyticsChart data={analyticsData} isPro={isPremium} />
+
+        <div className={activeTab === 'agenda' ? '' : 'hidden'}>
+{/* AGENDA SETTIMANALE TETRIS */}
         {freeGapReports.length > 0 && (
 
           <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
@@ -927,13 +936,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         )}
 
-        </div>
-
-        {/* DASHBOARD ANALYTICS */}
-        <AnalyticsChart data={analyticsData} isPro={isPremium} />
-
-        <div className={activeTab === 'agenda' ? '' : 'hidden'}>
-{/* AGENDA SETTIMANALE TETRIS */}
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
           <SwipeableAgenda>
             <DayNavigator currentDate={targetDate} slug={slug} isMultiStaff={isMultiStaff} />
@@ -1297,6 +1299,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
 
           <div className={activeTab === 'marketing' ? '' : 'hidden'}>
+        {/* DASHBOARD ANALYTICS */}
+        <AnalyticsChart data={analyticsData} isPro={isPremium} />
+
 {/* 🧾 ATTIVITA RECENTI */}
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
             <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
