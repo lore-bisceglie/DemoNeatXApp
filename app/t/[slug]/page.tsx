@@ -1592,29 +1592,24 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       </div>
 
       {/* Banner Promozionale NeatX (Marketing Virale) */}
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-6 mt-6 text-center flex flex-col items-center gap-3 relative z-10">
-        <div className="w-12 h-12 bg-[#00b4ff]/10 rounded-full flex items-center justify-center text-[#00b4ff] mb-2">
-          <TrendingUp className="w-6 h-6" />
-        </div>
-        <h3 className="text-white font-bold text-lg">Sei un professionista?</h3>
-        <p className="text-slate-400 text-sm mb-2">Azzera i no-show e riempi l'agenda in automatico come ha fatto questo negozio.</p>
+      <div className="bg-[#131c31] max-w-md w-full rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-[#1e2b4a] p-6 mt-6 text-center flex flex-col items-center gap-2 relative z-10">
+        <h3 className="text-white font-extrabold text-lg mb-1 tracking-wide">Sei un professionista?</h3>
+        <p className="text-slate-300 text-xs font-medium">Azzera i no-show e riempi la tua agenda in automatico.</p>
+        <p className="text-slate-300 text-xs font-medium mb-3">Scopri il software che usa questo salone.</p>
+        
         <Link href="https://www.neatx.store"
               target="_blank"
-              className="px-6 py-2.5 bg-[#00b4ff] hover:bg-[#0090cc] text-white rounded-full font-medium text-sm transition-all shadow-lg shadow-[#00b4ff]/20">
-          Scopri NeatX
+              className="mt-2 w-full py-3 bg-[#007aff] hover:bg-[#0066cc] text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_20px_rgba(0,122,255,0.4)] flex items-center justify-center gap-2">
+          <span>🚀</span> Scopri NeatX
         </Link>
       </div>
 
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-5 mt-6 text-center flex flex-col items-center gap-4 relative z-10">
-        <div className="text-[10px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
+      <div className="bg-transparent max-w-md w-full rounded-3xl p-5 mt-2 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1a2642] shadow-xl">
+        <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-2">
           <p>
-            Powered by{" "}
-            <span className="font-bold text-slate-300">Neat</span><span className="font-bold text-[#00b4ff]">X</span>
+            Powered by <span className="font-bold text-white">Neat</span><span className="font-bold text-[#007aff]">X</span>
             <br />
-            Developed by{" "}
-            <span className="text-[#00b4ff]/90 font-semibold">
-              NeatX Team
-            </span>
+            Developed by <span className="text-[#007aff] font-semibold">Bisceglie Lorenzo</span>
           </p>
           <Link 
             href={getTenantAdminUrl(params.slug)}
