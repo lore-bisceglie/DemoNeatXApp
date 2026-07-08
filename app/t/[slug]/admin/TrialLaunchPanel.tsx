@@ -374,28 +374,32 @@ export default function TrialLaunchPanel({
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-5">
-        {checklist.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.label}
-              className={`rounded-2xl border p-4 ${
-                item.done
-                  ? "border-emerald-500/20 bg-emerald-500/10"
-                  : "border-[#1a2642] bg-[#0b1221]"
-              }`}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <Icon size={18} className={item.done ? "text-emerald-300" : "text-slate-500"} />
-                {item.done && <CheckCircle2 size={18} className="text-emerald-300" />}
+      {trialStatus !== "converted" && (
+        <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-5">
+          {checklist.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.label}
+                className={`rounded-2xl border p-4 ${
+                  item.done
+                    ? "border-emerald-500/20 bg-emerald-500/10"
+                    : "border-[#1a2642] bg-[#0b1221]"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <Icon size={18} className={item.done ? "text-emerald-300" : "text-slate-500"} />
+                  {item.done && <CheckCircle2 size={18} className="text-emerald-300" />}
+                </div>
+                <div className="mt-3">
+                  <p className={`text-sm font-bold ${item.done ? "text-emerald-400" : "text-white"}`}>{item.label}</p>
+                  <p className="mt-0.5 text-xs font-medium text-slate-500">{item.detail}</p>
+                </div>
               </div>
-              <p className="mt-3 text-sm font-extrabold text-white">{item.label}</p>
-              <p className="mt-1 text-xs font-medium leading-relaxed text-slate-500">{item.detail}</p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-2xl border border-[#1a2642] bg-[#0b1221] p-4">
