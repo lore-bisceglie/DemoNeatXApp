@@ -48,11 +48,11 @@ export async function POST(request: Request) {
       action: "NO_SHOW",
       actor: "admin",
       message: `${name || "Sconosciuto"} segnato come assente (No-Show)`,
-      appointmentId: id,
+      appointmentId: id || undefined,
       customerName: name || "Sconosciuto",
-      customerPhone: phone,
-      date: date,
-      tenantId: appointment.tenantId,
+      customerPhone: phone || undefined,
+      date: date || undefined,
+      tenantId: appointment.tenantId || undefined,
     });
 
     return NextResponse.json({
