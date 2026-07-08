@@ -1,4 +1,4 @@
-const DEFAULT_SALES_WHATSAPP_NUMBER = "393333333333";
+const DEFAULT_SALES_WHATSAPP_NUMBER = "393480480942";
 
 export function phoneDigits(value: unknown) {
   if (typeof value !== "string" && typeof value !== "number") return "";

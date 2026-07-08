@@ -83,7 +83,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         <p className="text-slate-400 mb-8 max-w-md mx-auto">
           I tuoi 7 giorni di prova per <strong>{tenantName}</strong> sono terminati. Attiva il piano Pro (29€/mese) per sbloccare la tua agenda.
         </p>
-        <a href={`https://wa.me/393333333333?text=Ciao,%20voglio%20attivare%20il%20piano%20Pro%20per%20${tenantName}!`} target="_blank" className="py-4 px-8 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-green-500/25 text-lg">Attiva Abbonamento Pro</a>
+        <a href={`https://wa.me/393480480942?text=Ciao,%20voglio%20attivare%20il%20piano%20Pro%20per%20${tenantName}!`} target="_blank" className="py-4 px-8 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-green-500/25 text-lg">Attiva Abbonamento Pro</a>
       </div>
     );
   }
@@ -814,7 +814,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               </div>
               
               <a
-                href="https://wa.me/393333333333?text=Ciao!%20Vorrei%20acquistare%20un%20pacchetto%20di%20SMS%20per%20il%20mio%20salone."
+                href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20acquistare%20un%20pacchetto%20di%20SMS%20per%20il%20mio%20salone."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-2 rounded-lg border border-emerald-500/20 font-bold transition-all shadow-lg shadow-emerald-500/10"
