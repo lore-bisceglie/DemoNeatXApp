@@ -557,22 +557,28 @@ export default function TrialLaunchPanel({
                     className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan-400"
                     placeholder="Nome servizio"
                   />
-                  <input
-                    type="number"
-                    min={5}
-                    value={service.duration}
-                    onChange={(event) => updateServiceDraft(service.id, "duration", Number(event.target.value))}
-                    className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                    placeholder="Min"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    value={service.price}
-                    onChange={(event) => updateServiceDraft(service.id, "price", Number(event.target.value))}
-                    className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                    placeholder="Euro"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-wider text-slate-500">Min</span>
+                    <input
+                      type="number"
+                      min={5}
+                      value={service.duration}
+                      onChange={(event) => updateServiceDraft(service.id, "duration", Number(event.target.value))}
+                      className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] py-2 pl-10 pr-2 text-sm text-white outline-none focus:border-cyan-400"
+                      placeholder="Durata"
+                    />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-wider text-slate-500">Eur</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={service.price}
+                      onChange={(event) => updateServiceDraft(service.id, "price", Number(event.target.value))}
+                      className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] py-2 pl-10 pr-2 text-sm text-white outline-none focus:border-cyan-400"
+                      placeholder="Prezzo"
+                    />
+                  </div>
                   <div className="flex gap-2">
                     <button
                       type="button"
