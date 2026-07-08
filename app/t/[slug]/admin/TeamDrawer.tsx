@@ -18,10 +18,12 @@ export default function TeamDrawer({
   tenantId,
   isPremium,
   allServices,
+  initialStaffSheetUrl,
 }: {
   tenantId: string;
   isPremium: boolean;
   allServices: Service[];
+  initialStaffSheetUrl: string | null;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +31,8 @@ export default function TeamDrawer({
   const [loading, setLoading] = useState(false);
   
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
+  const [staffSheetUrl, setStaffSheetUrl] = useState(initialStaffSheetUrl || "");
+  const [savingUrl, setSavingUrl] = useState(false);
   
   // Per l'aggiunta di un nuovo membro
   const [newStaffName, setNewStaffName] = useState("");
@@ -142,6 +146,27 @@ export default function TeamDrawer({
     setSavingServices(false);
   };
 
+  const handleSaveSheetUrl = async () => {
+    setSavingUrl(true);
+    try {
+      const res = await fetch(`/api/tenant/settings`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantId, staffSheetUrl }),
+      });
+      if (res.ok) {
+        alert("Link salvato con successo!");
+        router.refresh();
+      } else {
+        alert("Errore nel salvataggio del link.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Errore di rete.");
+    }
+    setSavingUrl(false);
+  };
+
   return (
     <>
       <button
@@ -184,6 +209,31 @@ export default function TeamDrawer({
             </p>
           </div>
         )}
+
+        <div className="p-4 border-b border-[#1e2b4a] bg-[#0b1221]">
+          <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
+            Link Orari (Fogli Google)
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Incolla qui il link di condivisione pubblica"
+              value={staffSheetUrl}
+              onChange={(e) => setStaffSheetUrl(e.target.value)}
+              className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500 text-sm placeholder:text-slate-600"
+            />
+            <button
+              onClick={handleSaveSheetUrl}
+              disabled={savingUrl}
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-xl text-sm transition disabled:opacity-50 whitespace-nowrap"
+            >
+              {savingUrl ? "..." : "Salva"}
+            </button>
+          </div>
+          <p className="text-xs text-slate-500 mt-2">
+            Crea una copia del <a href="https://docs.google.com/spreadsheets/d/1H1pZ1l-G2ZpZzT0nFpS-rI_W_tX7b3O6wP2cIqfL_7s/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline font-medium">Foglio Turni Ufficiale</a>, impostalo su "Chiunque abbia il link" e incolla qui l'URL.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] min-h-0 flex-1">
           {/* Lista Staff */}

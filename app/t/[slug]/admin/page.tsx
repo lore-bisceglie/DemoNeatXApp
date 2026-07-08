@@ -583,7 +583,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </h1>
 
           <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 custom-scrollbar snap-x">
-            <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} />
+            <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} />
             <CustomerDrawer tenantId={tenantId} />
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
