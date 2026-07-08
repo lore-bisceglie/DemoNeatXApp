@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendTenantSms } from "@/lib/sms";
 
 export const dynamic = "force-dynamic";
-
-const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
 
 export async function GET(request: Request) {
   try {
@@ -39,29 +38,39 @@ export async function GET(request: Request) {
     const appointments = await prisma.appointment.findMany({
       where: {
         date: tomorrowString,
-        tenantId: DEMO_TENANT_ID,
         customerPhone: {
           not: "0000000000",
         },
       },
       include: {
         service: true,
+        tenant: true,
       },
     });
 
+    let successCount = 0;
+    let failedCount = 0;
+
+    for (const appt of appointments) {
+      if (appt.tenant && appt.customerPhone && appt.customerPhone !== "0000000000") {
+        const smsBody = `⏰ Promemoria da ${appt.tenant.name}\nCiao ${appt.customerName.trim()}, ti ricordiamo l'appuntamento di domani alle ${appt.time} per ${appt.service?.name || 'il tuo servizio'}.\n\nSe non puoi venire, disdici qui: https://${appt.tenant.slug}.neatx.store/cancel/${appt.cancelToken}`;
+        
+        const result = await sendTenantSms(appt.tenantId, appt.customerPhone, smsBody);
+        if (result.success) {
+          successCount++;
+        } else {
+          failedCount++;
+        }
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      mode: "demo",
-      message:
-        "Cron promemoria simulato: nella demo non parte nessun SMS reale.",
-      previewCount: appointments.length,
-      appointments: appointments.map((appointment) => ({
-        customerName: appointment.customerName,
-        customerPhone: appointment.customerPhone,
-        date: appointment.date,
-        time: appointment.time,
-        serviceName: appointment.service?.name || null,
-      })),
+      mode: "live",
+      message: "Cron promemoria completato",
+      processed: appointments.length,
+      successCount,
+      failedCount
     });
   } catch (error) {
     console.error("Errore nel cron demo:", error);

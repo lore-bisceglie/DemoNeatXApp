@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { sendTenantSms } from "@/lib/sms";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Ratelimit } from "@upstash/ratelimit";
@@ -154,6 +155,19 @@ export async function POST(request: Request) {
       time: time,
       tenantId: tenantId,
     });
+
+    // 🌟 INVIO SMS CON MOTORE REALE
+    if (cleanPhone !== "0000000000") {
+      const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+      const service = await prisma.service.findUnique({ where: { id: serviceId } });
+      
+      if (tenant && service) {
+        const smsBody = `✅ ${tenant.name} - Prenotazione Confermata!\n${customerName.trim()}, ti aspettiamo il ${date.split('-').reverse().join('/')} alle ${time} per ${service.name}.\n\nPer disdire o spostare clicca qui: https://${tenant.slug}.neatx.store/cancel/${newCancelToken}`;
+        
+        // Invio tramite il motore SMS (che scala i crediti in automatico)
+        await sendTenantSms(tenantId, cleanPhone, smsBody);
+      }
+    }
 
     revalidatePath("/dashboard");
 
