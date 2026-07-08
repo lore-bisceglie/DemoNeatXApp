@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 
       if (data === "step1") {
         await answerCallbackQuery(botToken, cb.id);
-        const text = "🛒 <b>Qual è il tuo scontrino medio?</b>\nSeleziona l'opzione che si avvicina di più al prezzo di un tuo taglio/servizio medio:";
+        const text = "🛒 <b>Qual è il tuo scontrino medio?</b>\nSeleziona l'opzione che si avvicina di più al prezzo di un tuo servizio, seduta o consulenza media:";
         const markup = {
           inline_keyboard: [
             [{ text: "15€ - 20€", callback_data: "step2_18" }],
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
 
         await answerCallbackQuery(botToken, cb.id);
         
-        const text = `🚨 <b>ANALISI COMPLETATA</b> 🚨\n\nStai letteralmente bruciando circa <b>${monthlyLoss.toFixed(0)}€ al mese</b> (ben ${yearlyLoss.toFixed(0)}€ all'anno!) a causa dei clienti sbadati.\n\nQuei soldi dovrebbero essere nelle tue tasche. Le grandi catene risolvono il problema inviando promemoria automatici su WhatsApp.\n\nCon <b>NeatX</b> puoi creare il tuo sistema di promemoria automatici che lavora per te giorno e notte.\n\n👉 <b>Recupera i tuoi soldi oggi stesso:</b> Clicca qui sotto per configurare gratis la tua Intelligenza Artificiale in 30 secondi.`;
+        const text = `🚨 <b>ANALISI COMPLETATA</b> 🚨\n\nStai letteralmente bruciando circa <b>${monthlyLoss.toFixed(0)}€ al mese</b> (ben ${yearlyLoss.toFixed(0)}€ all'anno!) a causa dei clienti sbadati.\n\nQuei soldi dovrebbero essere nelle tue tasche. Le aziende più avanzate risolvono il problema inviando promemoria automatici su WhatsApp.\n\nCon <b>NeatX</b> puoi creare il tuo sistema di promemoria e gestione appuntamenti che lavora per te giorno e notte.\n\n👉 <b>Recupera i tuoi soldi oggi stesso:</b> Clicca qui sotto per configurare gratis la tua Intelligenza Artificiale in 30 secondi.`;
         
         const markup = {
           inline_keyboard: [
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
         await editMessageText(botToken, chatId, messageId, text, markup);
         
         // Alert the Boss (using the private Maggiordomo)
-        await sendTelegramMessage(`🕵️‍♂️ <b>LEAD MAGNET ALERT</b>\n\nUn potenziale cliente ha appena usato il Calcolatore Pubblico! 💸\nHa scoperto di perdere <b>${monthlyLoss.toFixed(0)}€ al mese</b>.\n\nSi è spaventato ed è molto probabile che clicchi il link di iscrizione a NeatX. Tienilo d'occhio!`);
+        await sendTelegramMessage(`🕵️‍♂️ <b>LEAD MAGNET ALERT</b>\n\nUn imprenditore/professionista ha appena usato il Calcolatore Pubblico! 💸\nHa scoperto di perdere <b>${monthlyLoss.toFixed(0)}€ al mese</b>.\n\nSi è spaventato ed è molto probabile che clicchi il link di iscrizione a NeatX. Tienilo d'occhio!`);
       }
 
       return NextResponse.json({ ok: true });
@@ -119,7 +119,7 @@ export async function POST(req: Request) {
       const chatId = body.message.chat.id.toString();
 
       if (text === "/start") {
-        const reply = "👋 Ciao! Sono l'Assistente Virtuale per Saloni e Barberie.\n\nSapevi che i saloni italiani perdono in media il 15% del loro fatturato mensile a causa dei clienti ritardatari o che si dimenticano l'appuntamento?\n\n👇 <b>Premi il bottone qui sotto per scoprire in 10 secondi esatti quanti soldi ti stanno rubando ogni mese:</b>";
+        const reply = "👋 Ciao! Sono l'Assistente Virtuale per Professionisti e Imprenditori.\n\nSapevi che chi lavora su appuntamento perde in media il 15% del fatturato mensile a causa di clienti ritardatari o dimenticanze?\n\n👇 <b>Premi il bottone qui sotto per scoprire in 10 secondi esatti quanti soldi ti stanno rubando ogni mese:</b>";
         const markup = {
           inline_keyboard: [
             [{ text: "💸 Avvia il Calcolatore", callback_data: "step1" }]
