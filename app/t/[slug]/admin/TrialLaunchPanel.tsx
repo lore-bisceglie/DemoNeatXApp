@@ -142,7 +142,7 @@ export default function TrialLaunchPanel({
 
   const checklist = [
     {
-      label: "Servizi pronti",
+      label: isDemoData ? "Servizi provvisori" : "Servizi pronti",
       detail: `${serviceDrafts.length} servizi con durata e prezzo`,
       done: serviceDrafts.length >= 5,
       icon: Scissors,
@@ -154,7 +154,7 @@ export default function TrialLaunchPanel({
       icon: Settings2,
     },
     {
-      label: "Prenotazioni demo",
+      label: isDemoData ? "Prenotazioni demo" : "Agenda prenotazioni",
       detail: `${appointmentCount} appuntamenti visibili`,
       done: appointmentCount > 0,
       icon: CalendarDays,
