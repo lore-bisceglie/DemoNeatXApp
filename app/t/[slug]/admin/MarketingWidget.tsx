@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import PaywallOverlay from "../../dashboard/PaywallOverlay";
+import PaywallOverlay from "../../../dashboard/PaywallOverlay";
 
 type DormantCustomer = {
   phone: string;
