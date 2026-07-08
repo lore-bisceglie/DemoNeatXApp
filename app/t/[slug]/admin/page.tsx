@@ -848,10 +848,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             
             <div>
               {storeSettings?.stripeOnboardingComplete ? (
-                <div className="flex flex-col items-end gap-2">
-                  <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
-                    <span>✅</span> Conto Collegato
-                  </div>
+                <div className="flex flex-col items-end gap-1">
+                  <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
+                    <span>✅</span> Conto Collegato (Apri Stripe)
+                  </a>
+                  <span className="text-[10px] text-slate-500 mr-2">Clicca per modificare IBAN/Conto</span>
                 </div>
               ) : (
                 <a
