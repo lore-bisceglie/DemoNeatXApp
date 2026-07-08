@@ -1,95 +1,46 @@
 {
-  "generated_at": "2026-07-07T22:33:00.006989+02:00",
+  "generated_at": "2026-07-08T14:08:19.453606+02:00",
   "signals_used": {
     "reel_history_count": 11,
     "viral_hits_count": 0,
-    "blog_titles_count": 7,
-    "today_niche": "Coach e Consulenti"
+    "blog_titles_count": 8,
+    "today_niche": "Personal Trainer"
   },
   "ideas": [
     {
-      "title": "COACH E CONSULENTI: BASTA NO-SHOW!",
-      "hook": "Se sei un coach o consulente e ogni mese perdi denaro per i no-show, è ora di cambiare.",
-      "pain_point": "La frustrazione e la perdita economica derivante dai clienti che rimandano o non si presentano alle call.",
-      "solution": "Implementazione di un sistema di prenotazioni automatiche e follow-up semplici.",
-      "call_to_action": "Scopri come azzerare i no-show e recuperare i tuoi guadagni mensili.",
-      "format": "Short-form Video",
-      "keywords": [
-        "agenda consulente",
-        "prenotazioni coach",
-        "booking consulenze",
-        "no-show coach"
-      ],
-      "VFX_style": "block_miner",
-      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, showing a visual representation of money being lost and then recovered."
+      "type": "Reel",
+      "title": "Personal Trainer: Basta NO-SHOW!",
+      "hook": "Personal Trainer, se il tuo conto bancario soffre per le ore di lezione annullate via chat e gli slot persi, la soluzione è qui.",
+      "description": "Mostra come i personal trainer perdono denaro e tempo a causa delle mancate presentazioni e delle continue riprogrammazioni gestite manualmente, enfatizzando la frustrazione e presentando la soluzione di un'agenda automatica.",
+      "call_to_action": "Scopri come eliminare i no-show con un sistema automatico. Link in bio!"
     },
     {
-      "title": "Coach e Consulenti: il costo mensile dei no-show e come un'agenda automatica può aiutarti",
-      "hook": "Sai esattamente quanto ti costano i no-show ogni mese? Questo articolo rivela le cifre e la soluzione definitiva.",
-      "pain_point": "Ignoranza o sottovalutazione del vero impatto economico e operativo dei no-show.",
-      "solution": "Analisi dettagliata del costo dei no-show e dimostrazione di come un'agenda automatica sia la soluzione più efficace.",
-      "call_to_action": "Leggi per quantificare le tue perdite e implementare un sistema che le elimini.",
-      "format": "Blog Post",
-      "keywords": [
-        "costo no-show consulente",
-        "agenda automatica coach",
-        "strategia anti no-show",
-        "agenda consulente",
-        "prenotazioni coach"
-      ],
-      "VFX_style": "block_miner",
-      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, with charts illustrating financial losses due to no-shows."
+      "type": "Reel",
+      "title": "PT: Il tuo link in bio deve prenotare da solo!",
+      "hook": "Personal Trainer, il tuo link in bio dovrebbe già incassare le tue sessioni senza che tu muova un dito. Se non lo fa, ecco perché.",
+      "description": "Spiega l'importanza di un link in bio che permetta ai clienti di prenotare, confermare e pagare autonomamente, liberando il tempo del PT dalle gestioni manuali e dalle comunicazioni via chat.",
+      "call_to_action": "Automatizza le tue prenotazioni ora! Clicca il link in bio."
     },
     {
-      "title": "Coach e Consulenti: Prenotazioni Automatiche, Zero Stress!",
-      "hook": "Immagina di non dover più inseguire i clienti per le prenotazioni. Con un'agenda automatica, è tutta automazione e zero pensieri.",
-      "pain_point": "La complessità e lo stress della gestione manuale delle prenotazioni e dei promemoria.",
-      "solution": "Un sistema intuitivo per prenotazioni e follow-up automatici, garantendo la presenza dei clienti.",
-      "call_to_action": "Semplifica la tua vita professionale. Scopri come un'agenda automatica gestisce tutto per te.",
-      "format": "Short-form Video",
-      "keywords": [
-        "prenotazioni automatiche coach",
-        "gestione agenda consulente facile",
-        "booking semplice",
-        "agenda consulente",
-        "booking consulenze"
-      ],
-      "VFX_style": "block_miner",
-      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, showing a serene consultant with a seamlessly organized digital calendar."
+      "type": "Blog",
+      "title": "Personal Trainer: perché l'agenda automatica è il tuo miglior assistente",
+      "hook": "Personal Trainer, immagina di non dover più inseguire pagamenti o coordinare lezioni via WhatsApp. Con un'agenda automatica è realtà.",
+      "description": "Un articolo dettagliato sui benefici di un'agenda automatica per personal trainer, dalla riduzione dei no-show alla gestione dei pagamenti e all'ottimizzazione del tempo, con un focus sui vantaggi pratici.",
+      "call_to_action": "Leggi la guida completa e trasforma la gestione del tuo business."
     },
     {
-      "title": "Coach e Consulenti: Recupera Ore Preziose con la Tua Agenda Smart",
-      "hook": "Quante ore al mese perdi gestendo la tua agenda? È ora di riappropriarti del tuo tempo per ciò che conta davvero.",
-      "pain_point": "Spreco di tempo ed energia nella gestione amministrativa anziché focalizzarsi sul coaching o consulenza.",
-      "solution": "Una panoramica sui benefici in termini di tempo di un'agenda smart che automatizza ogni fase del booking.",
-      "call_to_action": "Scopri il segreto dei coach di successo per massimizzare il tempo e minimizzare le scocciature.",
-      "format": "Blog Post",
-      "keywords": [
-        "ottimizzazione tempo coach",
-        "efficienza consulente",
-        "agenda smart professionisti",
-        "agenda consulente",
-        "prenotazioni coach"
-      ],
-      "VFX_style": "block_miner",
-      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, showing a clock with accelerated hands then hands frozen, emphasizing time saved."
+      "type": "Reel",
+      "title": "Stop a lezioni spostate in chat, PT!",
+      "hook": "Personal Trainer, sei stanco di vedere il tuo planning stravolto da una disdetta via messaggio e perdere ore di guadagno? C'è un modo migliore.",
+      "description": "Affronta il problema specifico delle lezioni riprogrammate e disdette via chat, che creano confusione e perdite economiche, e presenta la soluzione di un sistema di prenotazione autogestito e con promemoria automatici.",
+      "call_to_action": "Smettila di subire, prendi il controllo delle tue prenotazioni. Scopri di più nel link in bio."
     },
     {
-      "title": "Coach e Consulenti: Non Permettere Più Ai Clienti Di Rimandare!",
-      "hook": "Stanco di clienti che rimandano le call all'ultimo? Ecco come garantire la loro presenza ad ogni appuntamento.",
-      "pain_point": "Clienti che posticipano frequentemente o non si presentano, causando interruzioni nel flusso di lavoro e entrate.",
-      "solution": "Strategie e strumenti per rendere le prenotazioni ferme e i follow-up irresistibili, riducendo i rinvii.",
-      "call_to_action": "Applica queste tecniche e vedi la tua percentuale di presenza salire alle stelle.",
-      "format": "Short-form Video",
-      "keywords": [
-        "clienti puntuali coach",
-        "ridurre rinvii consulenze",
-        "follow-up efficaci",
-        "prenotazioni coach",
-        "booking consulenze"
-      ],
-      "VFX_style": "block_miner",
-      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup, with visual elements representing a client confirming an appointment steadfastly."
+      "type": "Blog",
+      "title": "I costi nascosti dei no-show per i personal trainer e come recuperarli",
+      "hook": "Personal Trainer, i no-show non sono solo ore vuote, sono centinaia di euro che non incassi ogni mese. Scopri come recuperarli.",
+      "description": "Analizza l'impatto finanziario dei no-show e delle gestioni inefficienti per i personal trainer, presentando dati concreti sui costi mensili e proponendo l'agenda automatica come strumento per recuperare profitti e ottimizzare i guadagni.",
+      "call_to_action": "Scarica la nostra checklist per calcolare i tuoi costi e la soluzione per azzerarli."
     }
   ]
 }
