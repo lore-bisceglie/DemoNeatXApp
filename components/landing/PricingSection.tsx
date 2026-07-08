@@ -29,8 +29,7 @@ export default function PricingSection() {
             </div>
             <h3 className="text-xl font-bold text-[#00b4ff] mb-2">Pro</h3>
             <div className="text-5xl font-extrabold text-white mb-1">29€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
-            <div className="text-emerald-400 font-bold text-sm mb-1">290€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 58€)</span></div>
-            <div className="text-xs text-slate-500 font-medium mb-6">+ 300€ setup una tantum</div>
+            <div className="text-emerald-400 font-bold text-sm mb-6">290€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 58€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-200 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti Illimitati</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-white">Promemoria WhatsApp Automatici*</strong></li>
@@ -47,11 +46,10 @@ export default function PricingSection() {
           </div>
 
           {/* PIANO ELITE */}
-          <div className="glow-card bg-[#0b1221] p-8 rounded-3xl border border-[#1a2642] flex flex-col transform transition-transform hover:scale-105">
+          <div className="glow-card bg-[#0b1221] p-8 rounded-3xl border border-purple-500/50 shadow-[0_0_20px_-5px_rgba(168,85,247,0.2)] flex flex-col transform transition-transform hover:scale-105">
             <h3 className="text-xl font-bold text-purple-400 mb-2">Elite</h3>
             <div className="text-4xl font-extrabold text-white mb-1">59€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
-            <div className="text-purple-400 font-bold text-sm mb-1">590€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 118€)</span></div>
-            <div className="text-xs text-slate-500 font-medium mb-6">+ 300€ setup una tantum</div>
+            <div className="text-purple-400 font-bold text-sm mb-6">590€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 118€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Tutto del piano Pro</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione Turni (Fogli Google)</li>
@@ -76,12 +74,23 @@ export default function PricingSection() {
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
             <ShieldCheck size={26} />
           </div>
-          <div className="text-left">
+          <div className="text-left flex-1">
             <h4 className="text-white font-bold text-lg mb-1">* Trasparenza 100% sui costi di WhatsApp</h4>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <p className="text-slate-400 text-sm leading-relaxed mb-3">
               Noi non inviamo email inutili o vecchi SMS. Usiamo solo la via più diretta: <strong>WhatsApp</strong>. 
-              Per azzerare i no-show inviamo messaggi veri sul telefono del cliente. Il servizio WhatsApp si paga <em>esclusivamente a consumo</em> tramite pacchetti ricaricabili. Non applichiamo margini nascosti. Paghi esattamente quello che spedisci, decidendo tu il tuo budget.
+              Per azzerare i no-show inviamo messaggi veri sul telefono del cliente. Il servizio si paga <em>esclusivamente a consumo</em> tramite pacchetti ricaricabili. Non applichiamo margini nascosti.
             </p>
+            <div className="flex flex-wrap gap-3">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
+                <span className="text-emerald-400">500</span> messaggi = 29€
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
+                <span className="text-emerald-400">1000</span> messaggi = 49€
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
+                <span className="text-emerald-400">2500</span> messaggi = 99€
+              </span>
+            </div>
           </div>
         </div>
       </div>
