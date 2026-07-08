@@ -24,9 +24,12 @@ export async function GET(req: Request) {
     let trialCount = 0;
 
     tenants.forEach(t => {
-      if (t.plan === 'premium') {
+      if (t.plan === 'pro' || t.plan === 'premium') {
         payingCount++;
-        mrr += 29; // Assumendo 29€ al mese come prezzo base
+        mrr += 29;
+      } else if (t.plan === 'elite') {
+        payingCount++;
+        mrr += 59;
       } else if (t.trialEndsAt && t.trialEndsAt > now) {
         trialCount++;
       }

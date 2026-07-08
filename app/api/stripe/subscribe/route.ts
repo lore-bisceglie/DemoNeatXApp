@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { tenantId, slug } = await request.json();
+    const { tenantId, slug, plan = 'pro', priceId } = await request.json();
 
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
@@ -29,10 +29,10 @@ export async function POST(request: Request) {
           price_data: {
             currency: "eur",
             product_data: {
-              name: "NeatX Pro - Abbonamento Mensile",
+              name: plan === 'elite' ? "NeatX Elite - Abbonamento Mensile" : "NeatX Pro - Abbonamento Mensile",
               description: `Abbonamento gestionale per il salone ${tenant.name}`,
             },
-            unit_amount: 2900, // 29€
+            unit_amount: plan === 'elite' ? 5900 : 2900, // 59€ o 29€
             recurring: {
               interval: 'month',
             }
@@ -42,6 +42,9 @@ export async function POST(request: Request) {
       ],
       mode: "subscription",
       client_reference_id: tenantId, // Questo viene poi intercettato dal webhook!
+      metadata: {
+        plan: plan // Passiamo il piano richiesto nei metadata
+      },
       success_url: successUrl,
       cancel_url: cancelUrl,
     };
@@ -54,11 +57,11 @@ export async function POST(request: Request) {
     console.error("Stripe Subscription Checkout Error:", error);
     
     // DEMO MOCK: Se c'è un errore (es. nessuna chiave stripe su Vercel), simuliamo il pagamento per la demo
-    const { tenantId, slug } = await request.json().catch(() => ({}));
-    if (tenantId && slug) {
+    const { tenantId: fallbackId, slug: fallbackSlug, plan: fallbackPlan = 'pro' } = await request.json().catch(() => ({}));
+    if (fallbackId && fallbackSlug) {
        await prisma.tenant.update({
-         where: { id: tenantId },
-         data: { plan: 'premium', trialStatus: 'converted', trialEndsAt: null }
+         where: { id: fallbackId },
+         data: { plan: fallbackPlan, trialStatus: 'converted', trialEndsAt: null }
        });
        const host = request.headers.get("host") || "localhost:3000";
        const protocol = host.includes("localhost") ? "http" : "https";

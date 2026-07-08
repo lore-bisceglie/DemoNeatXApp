@@ -178,35 +178,17 @@ export default function SuperAdminPage() {
     }
   };
 
-  const handleMakePremium = async (tenantId: string) => {
-    if (!confirm('Vuoi promuovere questo cliente al piano Premium (PRO)?')) return;
+  const handleMakePlan = async (tenantId: string, plan: string) => {
+    const msg = plan === 'basic' ? 'Vuoi riportare questo cliente al piano Basic/Trial?' : `Vuoi promuovere questo cliente al piano ${plan.toUpperCase()}?`;
+    if (!confirm(msg)) return;
     try {
-      const res = await fetch('/api/superadmin/premium', {
+      const res = await fetch('/api/superadmin/plan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-admin-password': password
         },
-        body: JSON.stringify({ tenantId })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
-      fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
-  const handleMakeBasic = async (tenantId: string) => {
-    if (!confirm('Vuoi retrocedere questo cliente al piano Basic? I lucchetti si riattiveranno.')) return;
-    try {
-      const res = await fetch('/api/superadmin/basic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId })
+        body: JSON.stringify({ tenantId, plan })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore');
@@ -583,7 +565,8 @@ export default function SuperAdminPage() {
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-bold text-white text-lg leading-tight truncate mr-2" title={tenant.name}>{tenant.name}</h3>
-                        {tenant.plan === 'premium' && <span className="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Premium</span>}
+                        {(tenant.plan === 'pro' || tenant.plan === 'premium') && <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Pro</span>}
+                        {tenant.plan === 'elite' && <span className="bg-fuchsia-500/20 text-fuchsia-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Elite</span>}
                       </div>
                       <div className="text-sm text-slate-400 flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
@@ -635,19 +618,27 @@ export default function SuperAdminPage() {
                       </div>
                       
                       <div className="flex gap-2 w-full">
-                        {tenant.plan !== 'premium' ? (
-                          <button 
-                            onClick={() => handleMakePremium(tenant.id)}
-                            className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all text-center"
-                          >
-                            ⭐ FORZA PREMIUM (Bypassa Paywall)
-                          </button>
+                        {tenant.plan !== 'pro' && tenant.plan !== 'elite' && tenant.plan !== 'premium' ? (
+                          <>
+                            <button 
+                              onClick={() => handleMakePlan(tenant.id, 'pro')}
+                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-all text-center"
+                            >
+                              📘 FORZA PRO
+                            </button>
+                            <button 
+                              onClick={() => handleMakePlan(tenant.id, 'elite')}
+                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 transition-all text-center"
+                            >
+                              🌟 FORZA ELITE
+                            </button>
+                          </>
                         ) : (
                           <button 
-                            onClick={() => handleMakeBasic(tenant.id)}
+                            onClick={() => handleMakePlan(tenant.id, 'basic')}
                             className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
                           >
-                            ⚠️ REVOCA PREMIUM (Torna in Trial)
+                            ⚠️ REVOCA PIANO (Torna in Trial)
                           </button>
                         )}
                       </div>

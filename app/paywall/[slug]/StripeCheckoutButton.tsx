@@ -2,7 +2,21 @@
 
 import { useState } from 'react';
 
-export default function StripeCheckoutButton({ tenantId, slug }: { tenantId: string, slug: string }) {
+export default function StripeCheckoutButton({ 
+  tenantId, 
+  slug, 
+  plan = 'pro', 
+  priceId, 
+  label = 'Attiva Abbonamento', 
+  color = 'blue' 
+}: { 
+  tenantId: string, 
+  slug: string, 
+  plan?: string, 
+  priceId?: string, 
+  label?: string, 
+  color?: 'blue' | 'pink' 
+}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -15,34 +29,34 @@ export default function StripeCheckoutButton({ tenantId, slug }: { tenantId: str
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ tenantId, slug }),
+        body: JSON.stringify({ tenantId, slug, plan, priceId }),
       });
-
       const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || 'Errore durante la creazione del checkout');
-      }
-
       if (data.url) {
-        window.location.href = data.url; // Reindirizza a Stripe
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Errore durante la connessione a Stripe');
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (e: any) {
+      setError(e.message);
       setLoading(false);
     }
   };
+
+  const btnClass = color === 'pink' 
+    ? "w-full rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-500 px-5 py-4 text-sm font-extrabold text-white transition hover:from-fuchsia-500 hover:to-pink-400 shadow-[0_0_20px_rgba(217,70,239,0.3)] hover:shadow-[0_0_30px_rgba(217,70,239,0.5)]"
+    : "w-full rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-500 px-5 py-4 text-sm font-extrabold text-white transition hover:from-cyan-500 hover:to-blue-400 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]";
 
   return (
     <div className="w-full">
       <button
         onClick={handleCheckout}
         disabled={loading}
-        className="w-full rounded-2xl bg-indigo-600 px-5 py-4 text-sm font-extrabold text-white transition hover:bg-indigo-500 disabled:opacity-50 flex items-center justify-center gap-2"
+        className={btnClass}
       >
-        {loading ? 'Caricamento Stripe...' : '💳 Paga 29€ e Sblocca'}
+        {loading ? 'Attivazione in corso...' : label}
       </button>
-      {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
     </div>
   );
 }

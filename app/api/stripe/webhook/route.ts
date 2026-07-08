@@ -33,13 +33,14 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as any;
         const tenantId = session.client_reference_id;
+        const purchasedPlan = session.metadata?.plan || 'pro'; // Default a pro in caso di errore
 
         if (tenantId) {
           console.log(`Abbonamento completato per il tenant ${tenantId}`);
           const updatedTenant = await prisma.tenant.update({
             where: { id: tenantId },
             data: {
-              plan: 'premium',
+              plan: purchasedPlan,
               trialStatus: 'converted',
               trialEndsAt: null, // Rimuove la scadenza della prova
             }
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
           // Notifica God-Eye su Telegram
           await sendTelegramMessage(
             `💰 <b>KA-CHING! INCASSO SAAS!</b>\n\n` +
-            `Il negozio <b>${updatedTenant.name}</b> ha appena pagato l'abbonamento tramite Stripe!\n` +
+            `Il negozio <b>${updatedTenant.name}</b> ha appena pagato l'abbonamento <b>${purchasedPlan.toUpperCase()}</b>!\n` +
             `MRR (Ricavo Mensile Ricorrente) in aumento. 📈`
           );
         }
