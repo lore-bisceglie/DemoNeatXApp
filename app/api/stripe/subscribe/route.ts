@@ -65,7 +65,7 @@ export async function POST(request: Request) {
        });
        const host = request.headers.get("host") || "localhost:3000";
        const protocol = host.includes("localhost") ? "http" : "https";
-       return NextResponse.json({ url: `${protocol}://${host}/t/${slug}/admin?payment=demo_mock_success` });
+       return NextResponse.json({ url: `${protocol}://${host}/t/${fallbackSlug}/admin?payment=demo_mock_success` });
     }
     
     return NextResponse.json(
