@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
 
-const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
-
 export async function POST(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -20,12 +18,23 @@ export async function POST(request: Request) {
       );
     }
 
+    const appointment = await prisma.appointment.findUnique({
+      where: { id }
+    });
+
+    if (!appointment) {
+      return NextResponse.json(
+        { error: "Appuntamento non trovato" },
+        { status: 404 }
+      );
+    }
+
     await prisma.noShow.create({
       data: {
         customerPhone: phone,
         customerName: name || "Sconosciuto",
         date,
-        tenantId: DEMO_TENANT_ID,
+        tenantId: appointment.tenantId,
       },
     });
 
@@ -43,7 +52,7 @@ export async function POST(request: Request) {
       customerName: name || "Sconosciuto",
       customerPhone: phone,
       date: date,
-      tenantId: DEMO_TENANT_ID,
+      tenantId: appointment.tenantId,
     });
 
     return NextResponse.json({
