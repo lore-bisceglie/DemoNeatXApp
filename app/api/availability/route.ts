@@ -76,6 +76,7 @@ export async function GET(request: Request) {
 
     // Recuperiamo lo Staff capace di eseguire il servizio (o tutti se nessun serviceId)
     let capableStaffIds: string[] = [];
+    let allStaffForNames: {id: string, name: string}[] = [];
     
     if (serviceId) {
       const serviceWithStaff = await prisma.service.findUnique({
