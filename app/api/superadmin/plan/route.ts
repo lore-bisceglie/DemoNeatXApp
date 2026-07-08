@@ -31,6 +31,16 @@ export async function POST(req: Request) {
           trialEndsAt: null
         }
       });
+    } else if (plan === 'expire') {
+      // Forza scadenza trial
+      await prisma.tenant.update({
+        where: { id: tenantId },
+        data: {
+          plan: 'basic',
+          trialStatus: 'active',
+          trialEndsAt: new Date(Date.now() - 1000 * 60 * 60 * 24) // Ieri
+        }
+      });
     } else {
       // Revert to basic / trial
       const trialEnds = new Date();

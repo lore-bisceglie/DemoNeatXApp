@@ -179,7 +179,10 @@ export default function SuperAdminPage() {
   };
 
   const handleMakePlan = async (tenantId: string, plan: string) => {
-    const msg = plan === 'basic' ? 'Vuoi riportare questo cliente al piano Basic/Trial?' : `Vuoi promuovere questo cliente al piano ${plan.toUpperCase()}?`;
+    let msg = `Vuoi promuovere questo cliente al piano ${plan.toUpperCase()}?`;
+    if (plan === 'basic') msg = 'Vuoi riportare questo cliente al piano Basic/Trial?';
+    if (plan === 'expire') msg = 'Vuoi forzare la scadenza della prova gratuita per testare il Paywall?';
+    
     if (!confirm(msg)) return;
     try {
       const res = await fetch('/api/superadmin/plan', {
@@ -634,12 +637,20 @@ export default function SuperAdminPage() {
                             </button>
                           </>
                         ) : (
-                          <button 
-                            onClick={() => handleMakePlan(tenant.id, 'basic')}
-                            className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
-                          >
-                            ⚠️ REVOCA PIANO (Torna in Trial)
-                          </button>
+                          <>
+                            <button 
+                              onClick={() => handleMakePlan(tenant.id, 'expire')}
+                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all text-center"
+                            >
+                              🔒 FORZA SCADENZA (Test Paywall)
+                            </button>
+                            <button 
+                              onClick={() => handleMakePlan(tenant.id, 'basic')}
+                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
+                            >
+                              🔄 RESET TRIAL (7 Giorni)
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
