@@ -19,7 +19,7 @@ PROCESSED_POSTS_FILE = "commented_posts.txt"
 GOOGLE_API_KEY = os.environ.get("GEMINI_API_KEY", "") # Assicurati di impostare l'ambiente
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
 else:
     print("⚠️ ATTENZIONE: Nessuna API Key di Gemini trovata. Il commentatore utilizzerà commenti generici (non consigliato).")
     model = None

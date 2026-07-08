@@ -21,7 +21,7 @@ def genera_articolo_seo(argomento):
     print(f"\n[*] Analisi SEO in corso per l'argomento: '{argomento}'...")
     
     # Usiamo il modello Pro per la scrittura lunga
-    model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "text/plain"})
+    model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "text/plain"})
     
     prompt = f"""
 Sei un Copywriter SEO esperto di posizionamento su Google e un venditore persuasivo.

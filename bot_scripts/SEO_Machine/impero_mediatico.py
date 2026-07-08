@@ -39,7 +39,7 @@ def load_competitors():
 def genera_recensione_distruttiva(competitor, magazine):
     print(f"\n[*] La testata '{magazine}' sta scrivendo l'articolo contro {competitor['name']}...")
     
-    model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "text/plain"})
+    model = genai.GenerativeModel('gemini-1.5-flash-latest', generation_config={"response_mime_type": "text/plain"})
     
     debolezze = ", ".join(competitor['weaknesses'])
     vantaggio_neatx = competitor['neatx_advantage']

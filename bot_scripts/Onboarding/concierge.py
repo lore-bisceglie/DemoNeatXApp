@@ -14,7 +14,7 @@ MOCK_NEW_USERS = [
 ]
 
 def generate_onboarding_emails():
-    model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=SYSTEM_PROMPT)
+    model = genai.GenerativeModel('gemini-1.5-flash-latest', system_instruction=SYSTEM_PROMPT)
     report = ""
     for user in MOCK_NEW_USERS:
         prompt = f"Genera un'email di benvenuto per {user['nome']}, un {user['professione']} titolare di {user['salone']}."

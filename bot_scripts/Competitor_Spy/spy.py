@@ -19,7 +19,7 @@ RECENT_REVIEWS = [
 ]
 
 def analyze_reviews():
-    model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=SYSTEM_PROMPT)
+    model = genai.GenerativeModel('gemini-1.5-flash-latest', system_instruction=SYSTEM_PROMPT)
     prompt = f"Analizza queste recenti recensioni negative trovate online oggi:\\n\\n"
     for r in RECENT_REVIEWS:
         prompt += f"- \\\"{r}\\\"\\n"
