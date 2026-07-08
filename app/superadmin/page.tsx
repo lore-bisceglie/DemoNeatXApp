@@ -178,9 +178,28 @@ export default function SuperAdminPage() {
   };
 
   const handleMakePremium = async (tenantId: string) => {
-    if (!confirm('Vuoi forzare questo cliente al piano Premium a vita (Godmode)?')) return;
+    if (!confirm('Vuoi promuovere questo cliente al piano Premium (PRO)?')) return;
     try {
       const res = await fetch('/api/superadmin/premium', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore');
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
+  const handleMakeBasic = async (tenantId: string) => {
+    if (!confirm('Vuoi retrocedere questo cliente al piano Basic? I lucchetti si riattiveranno.')) return;
+    try {
+      const res = await fetch('/api/superadmin/basic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -549,12 +568,19 @@ export default function SuperAdminPage() {
                         >
                           📅 SBLOCCA 1 ANNO
                         </button>
-                        {tenant.plan !== 'premium' && (
+                        {tenant.plan !== 'premium' ? (
                           <button 
                             onClick={() => handleMakePremium(tenant.id)}
                             className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 transition-all text-center"
                           >
-                            👑 LIFETIME
+                            👑 METTI PRO
+                          </button>
+                        ) : (
+                          <button 
+                            onClick={() => handleMakeBasic(tenant.id)}
+                            className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 border border-slate-500/20 transition-all text-center"
+                          >
+                            🔒 METTI BASIC
                           </button>
                         )}
                       </div>
