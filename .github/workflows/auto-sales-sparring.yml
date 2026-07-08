@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
       - name: 📦 Installazione Dipendenze
         run: |
-          pip install google-genai
+          pip install google-genai python-dotenv
       - name: 🥊 Esecuzione Sfida di Franco
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
