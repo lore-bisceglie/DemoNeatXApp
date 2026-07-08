@@ -646,7 +646,48 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     if (res.ok) {
       const data = await res.json();
       const cancelToken = data.cancelToken;
+      const appointmentId = data.appointment?.id;
 
+      // 1. Calcola l'importo da pagare in base alle regole del negozio
+      let amountEur = 0;
+      if (tenantInfo.paymentRule === "FIXED") {
+        amountEur = tenantInfo.paymentFixedAmount || 0;
+      } else if (tenantInfo.paymentRule === "PERCENTAGE" && selectedService.price) {
+        amountEur = (selectedService.price * (tenantInfo.paymentPercentage || 0)) / 100;
+      } else if (tenantInfo.paymentRule === "FULL" && selectedService.price) {
+        amountEur = selectedService.price;
+      }
+
+      // 2. Se l'utente in demo ha scelto esplicitamente "In sede", saltiamo Stripe online
+      const forceOffline = isPlaygroundDemo && paymentMethod === "salon";
+
+      // 3. Se c'è un importo e non è forzato offline, chiamiamo Stripe
+      if (amountEur > 0 && appointmentId && !forceOffline) {
+        try {
+          const stripeRes = await fetch("/api/stripe/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tenantSlug: tenantInfo.slug,
+              appointmentId: appointmentId,
+              amountEur: amountEur,
+              serviceName: selectedService.name
+            })
+          });
+
+          if (stripeRes.ok) {
+            const { url } = await stripeRes.json();
+            if (url) {
+              window.location.href = url; // Teletrasporto su Stripe
+              return;
+            }
+          }
+        } catch (err) {
+          console.error("Stripe redirect fallito, proseguo normalmente", err);
+        }
+      }
+
+      // Se non si passa per Stripe, procede con il classico flusso
       if (isPlaygroundDemo) {
         setDemoModal({
           show: true,

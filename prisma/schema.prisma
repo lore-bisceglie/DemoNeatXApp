@@ -100,8 +100,10 @@ model Appointment {
   // Armatura di Sicurezza & Controllo del Progetto 1
   cancelToken   String   @unique @default(uuid()) // Token per disdetta autonoma (limite 2h)
   source        String   @default("ONLINE")       // ONLINE o WALK_IN
-  isPaid        Boolean  @default(false)          // Integrazione Stripe Mock / Salone
-  createdAt     DateTime @default(now()) 
+  isPaid        Boolean  @default(false)          // Compatibilità con sistema precedente
+  paymentStatus String   @default("NONE")         // "NONE", "PENDING", "PAID"
+  stripeSession String?                           // ID della sessione di Stripe per confermare
+  createdAt     DateTime @default(now())
 
   // Relazione con il Servizio specifico
   serviceId     String?
