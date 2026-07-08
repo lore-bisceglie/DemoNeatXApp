@@ -116,8 +116,41 @@ export async function POST(req: Request) {
         });
         await sendTelegramMessage(reply);
       }
+      else if (text.startsWith("/cerca ")) {
+        const query = text.replace("/cerca ", "").trim();
+        if (query.length < 2) {
+          await sendTelegramMessage("⚠️ Inserisci almeno 2 lettere per cercare.");
+        } else {
+          const results = await prisma.tenant.findMany({
+            where: { name: { contains: query, mode: "insensitive" } },
+            take: 5,
+            select: { name: true, phone: true, ownerEmail: true, city: true, slug: true }
+          });
+          
+          if (results.length === 0) {
+            await sendTelegramMessage(`Nessun salone trovato per "<b>${query}</b>"`);
+          } else {
+            let reply = `🔍 <b>Risultati per "${query}":</b>\n\n`;
+            results.forEach(r => {
+              reply += `🏢 <b>${r.name}</b> (${r.city})\n`;
+              if (r.phone) reply += `📞 ${r.phone}\n`;
+              if (r.ownerEmail) reply += `✉️ ${r.ownerEmail}\n`;
+              reply += `🔗 demo-neatx.vercel.app/t/${r.slug}\n\n`;
+            });
+            await sendTelegramMessage(reply);
+          }
+        }
+      }
+      else if (text === "/aiuto") {
+        const helpText = `🛠️ <b>Guida ai Comandi</b>\n\n` +
+          `/stats - Riepilogo saloni attivi, prenotazioni e MRR\n` +
+          `/ultimi - Elenco degli ultimi 3 saloni iscritti\n` +
+          `/cerca [nome] - Trova un salone per nome e mostra i contatti\n` +
+          `/aiuto - Mostra questo messaggio`;
+        await sendTelegramMessage(helpText);
+      }
       else if (text === "/start") {
-        await sendTelegramMessage("🤖 <b>NeatX Maggiordomo</b>\nAi tuoi ordini, Capo. Usa /stats o /ultimi.");
+        await sendTelegramMessage("🤖 <b>NeatX Maggiordomo</b>\nAi tuoi ordini, Capo. Usa il bottone Menu in basso a sinistra per vedere cosa so fare, o digita /aiuto.");
       }
 
       return NextResponse.json({ ok: true });
