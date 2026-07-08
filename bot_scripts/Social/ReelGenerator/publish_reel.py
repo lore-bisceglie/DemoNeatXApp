@@ -213,13 +213,24 @@ def publish_to_tiktok():
     print("[*] Avvio pubblicazione su TikTok...")
     try:
         from tiktok_uploader.upload import upload_video
-        upload_video(
+        success = upload_video(
             VIDEO_FILE,
             description=caption,
             cookies_list=cookies,
             browser="chromium", # Usa la versione locale invece di quella globale
             headless=TIKTOK_HEADLESS
         )
+        
+        # tiktok_uploader returns a boolean or a list of booleans
+        is_success = False
+        if isinstance(success, list):
+            is_success = all(success)
+        else:
+            is_success = bool(success)
+            
+        if not is_success:
+            raise Exception("TikTok ha rifiutato l'upload (probabilmente cookie scaduti o bloccati).")
+            
         print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
         return platform_result(True, "Pubblicato su TikTok.")
     except Exception as e:
