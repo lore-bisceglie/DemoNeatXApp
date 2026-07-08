@@ -674,7 +674,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              tenantSlug: tenantInfo.slug,
+              tenantSlug: params.slug,
               appointmentId: appointmentId,
               amountEur: amountEur,
               serviceName: selectedService.name
