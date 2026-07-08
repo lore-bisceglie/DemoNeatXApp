@@ -106,8 +106,12 @@ export async function POST(req: Request) {
         
         await editMessageText(botToken, chatId, messageId, text, markup);
         
+        // Estraiamo i dati di chi sta cliccando
+        const userFirstName = cb.from?.first_name || "Un imprenditore";
+        const userUsername = cb.from?.username ? `@${cb.from.username}` : "(Senza Username Telegram)";
+
         // Alert the Boss (using the private Maggiordomo)
-        await sendTelegramMessage(`🕵️‍♂️ <b>LEAD MAGNET ALERT</b>\n\nUn imprenditore/professionista ha appena usato il Calcolatore Pubblico! 💸\nHa scoperto di perdere <b>${monthlyLoss.toFixed(0)}€ al mese</b>.\n\nSi è spaventato ed è molto probabile che clicchi il link di iscrizione a NeatX. Tienilo d'occhio!`);
+        await sendTelegramMessage(`🕵️‍♂️ <b>LEAD MAGNET ALERT</b>\n\n<b>${userFirstName}</b> ${userUsername} ha appena completato il Calcolatore Pubblico! 💸\nHa scoperto di perdere <b>${monthlyLoss.toFixed(0)}€ al mese</b>.\n\nSi è spaventato ed è molto probabile che clicchi il link di iscrizione a NeatX. Tienilo d'occhio! Se non si iscrive entro 10 minuti, scrivigli in privato cliccando sul suo username!`);
       }
 
       return NextResponse.json({ ok: true });
