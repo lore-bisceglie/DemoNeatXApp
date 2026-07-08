@@ -1588,12 +1588,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         </Link>
       </div>
 
-      <div className="bg-transparent max-w-md w-full rounded-3xl p-5 mt-2 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1a2642] shadow-xl">
+      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl p-6 mt-2 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1e2b4a] shadow-lg">
         <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-2">
           <p>
-            Powered by <span className="font-bold text-white">Neat</span><span className="font-bold text-[#00b4ff]">X</span>
+            Powered by <span className="font-bold text-white">Neat</span><span className="font-bold text-[#007aff]">X</span>
             <br />
-            Developed by <span className="text-[#00b4ff] font-semibold">Bisceglie Lorenzo</span>
+            Developed by <span className="text-[#007aff] font-semibold">Bisceglie Lorenzo</span>
           </p>
           <Link 
             href={getTenantAdminUrl(params.slug)}
