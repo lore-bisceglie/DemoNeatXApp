@@ -29,6 +29,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   noStore();
 
   const searchParams = await props.searchParams;
+  const activeTab = searchParams?.tab || 'agenda';
 
   
   const { slug } = await props.params;
@@ -618,108 +619,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         </div>
 
-        {/* SETUP CHECKLIST */}
-        {false && rawAppointments.filter(a => !a.customerName.includes("PAUSA") && !a.customerName.includes("FERIE")).length === 0 && (
-          <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-                🚀 Checklist di lancio
-              </h2>
-              <span className="text-xs text-slate-500 font-bold">
-                {[
-                  tenantServices.length > 0,
-                  !!tenant?.phone,
-                  staffList.length > 0,
-                ].filter(Boolean).length}/3 completati
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenantServices.length > 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenantServices.length > 0 ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {tenantServices.length > 0 ? '✓' : '1'}
-                </span>
-                <div>
-                  <p className={`font-bold text-sm ${tenantServices.length > 0 ? 'text-emerald-300' : 'text-white'}`}>Servizi configurati</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {tenantServices.length > 0 ? `${tenantServices.length} servizi pronti` : 'Aggiungi i tuoi servizi con prezzi e durata'}
-                  </p>
-                </div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenant?.phone ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenant?.phone ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {tenant?.phone ? '✓' : '2'}
-                </span>
-                <div>
-                  <p className={`font-bold text-sm ${tenant?.phone ? 'text-emerald-300' : 'text-white'}`}>WhatsApp collegato</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {tenant?.phone ? `Ricevi notifiche al ${tenant?.phone}` : 'Inserisci il numero per ricevere le prenotazioni'}
-                  </p>
-                </div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${staffList.length > 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${staffList.length > 0 ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {staffList.length > 0 ? '✓' : '3'}
-                </span>
-                <div>
-                  <p className={`font-bold text-sm ${staffList.length > 0 ? 'text-emerald-300' : 'text-white'}`}>Staff aggiunto</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {staffList.length > 0 ? `${staffList.length} membri dello staff` : 'Aggiungi collaboratori per gestirli in agenda'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 bg-[#050814] rounded-2xl p-4 border border-[#1a2642]">
-              <p className="text-sm font-bold text-white mb-2">📢 Il tuo link prenotazioni</p>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-cyan-400 text-sm font-medium truncate">{slug}.neatx.store</span>
-                <Link
-                  href={`https://${slug}.neatx.store`}
-                  className="shrink-0 bg-[#00b4ff]/10 text-[#00b4ff] text-xs font-bold px-4 py-2 rounded-lg hover:bg-[#00b4ff]/20 transition"
-                >
-                  Apri
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <TrialLaunchPanel
-          slug={slug}
-          tenantId={tenantId}
-          tenantName={tenantName}
-          category={tenant.category}
-          city={tenant.city}
-          description={tenant.description}
-          phone={tenant.phone}
-          address={tenant.address}
-          openTime={tenant.openTime}
-          instagramUrl={tenant.instagramUrl}
-          tiktokUrl={tenant.tiktokUrl}
-          mapsLink={tenant.mapsLink}
-          closeTime={tenant.closeTime}
-          breakStart={tenant.breakStart}
-          breakEnd={tenant.breakEnd}
-          closedDays={tenant.closedDays}
-          trialStatus={tenant.trialStatus}
-          isDemoData={tenant.isDemoData}
-          activationRequested={tenant.activationRequested}
-          trialEndsAt={tenant.trialEndsAt}
-          services={tenantServices.map((service) => ({
-            id: service.id,
-            name: service.name,
-            duration: service.duration,
-            price: Number(service.price || 0),
-          }))}
-          staffCount={staffList.length}
-          appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
-        />
-
-        <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
-
         {/* I 3 KPI */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px]">
@@ -830,7 +729,122 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         </div>
 
-        {/* SEZIONE PAGAMENTI STRIPE */}
+        
+        {/* --- TAB NAVIGATION BAR --- */}
+        <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-6 border-b border-[#1e2b4a] custom-scrollbar snap-x">
+          <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'agenda' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📅 Agenda & Orari</Link>
+          <Link href={`/t/${slug}/admin?tab=servizi`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'servizi' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>⚙️ Servizi & Setup</Link>
+          <Link href={`/t/${slug}/admin?tab=marketing`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'marketing' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📈 Marketing & Dati</Link>
+          <Link href={`/t/${slug}/admin?tab=stripe`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'stripe' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>💳 Pagamenti</Link>
+        </div>
+
+        <div className={activeTab === 'servizi' ? '' : 'hidden'}>
+{/* SETUP CHECKLIST */}
+        {false && rawAppointments.filter(a => !a.customerName.includes("PAUSA") && !a.customerName.includes("FERIE")).length === 0 && (
+          <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                🚀 Checklist di lancio
+              </h2>
+              <span className="text-xs text-slate-500 font-bold">
+                {[
+                  tenantServices.length > 0,
+                  !!tenant?.phone,
+                  staffList.length > 0,
+                ].filter(Boolean).length}/3 completati
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenantServices.length > 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenantServices.length > 0 ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
+                  {tenantServices.length > 0 ? '✓' : '1'}
+                </span>
+                <div>
+                  <p className={`font-bold text-sm ${tenantServices.length > 0 ? 'text-emerald-300' : 'text-white'}`}>Servizi configurati</p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {tenantServices.length > 0 ? `${tenantServices.length} servizi pronti` : 'Aggiungi i tuoi servizi con prezzi e durata'}
+                  </p>
+                </div>
+              </div>
+
+              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenant?.phone ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenant?.phone ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
+                  {tenant?.phone ? '✓' : '2'}
+                </span>
+                <div>
+                  <p className={`font-bold text-sm ${tenant?.phone ? 'text-emerald-300' : 'text-white'}`}>WhatsApp collegato</p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {tenant?.phone ? `Ricevi notifiche al ${tenant?.phone}` : 'Inserisci il numero per ricevere le prenotazioni'}
+                  </p>
+                </div>
+              </div>
+
+              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${staffList.length > 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${staffList.length > 0 ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
+                  {staffList.length > 0 ? '✓' : '3'}
+                </span>
+                <div>
+                  <p className={`font-bold text-sm ${staffList.length > 0 ? 'text-emerald-300' : 'text-white'}`}>Staff aggiunto</p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {staffList.length > 0 ? `${staffList.length} membri dello staff` : 'Aggiungi collaboratori per gestirli in agenda'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 bg-[#050814] rounded-2xl p-4 border border-[#1a2642]">
+              <p className="text-sm font-bold text-white mb-2">📢 Il tuo link prenotazioni</p>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-cyan-400 text-sm font-medium truncate">{slug}.neatx.store</span>
+                <Link
+                  href={`https://${slug}.neatx.store`}
+                  className="shrink-0 bg-[#00b4ff]/10 text-[#00b4ff] text-xs font-bold px-4 py-2 rounded-lg hover:bg-[#00b4ff]/20 transition"
+                >
+                  Apri
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <TrialLaunchPanel
+          slug={slug}
+          tenantId={tenantId}
+          tenantName={tenantName}
+          category={tenant.category}
+          city={tenant.city}
+          description={tenant.description}
+          phone={tenant.phone}
+          address={tenant.address}
+          openTime={tenant.openTime}
+          instagramUrl={tenant.instagramUrl}
+          tiktokUrl={tenant.tiktokUrl}
+          mapsLink={tenant.mapsLink}
+          closeTime={tenant.closeTime}
+          breakStart={tenant.breakStart}
+          breakEnd={tenant.breakEnd}
+          closedDays={tenant.closedDays}
+          trialStatus={tenant.trialStatus}
+          isDemoData={tenant.isDemoData}
+          activationRequested={tenant.activationRequested}
+          trialEndsAt={tenant.trialEndsAt}
+          services={tenantServices.map((service) => ({
+            id: service.id,
+            name: service.name,
+            duration: service.duration,
+            price: Number(service.price || 0),
+          }))}
+          staffCount={staffList.length}
+          appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
+        />
+
+        <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
+
+        </div>
+
+        <div className={activeTab === 'stripe' ? '' : 'hidden'}>
+{/* SEZIONE PAGAMENTI STRIPE */}
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
           <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
             💳
@@ -913,10 +927,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         )}
 
+        </div>
+
         {/* DASHBOARD ANALYTICS */}
         <AnalyticsChart data={analyticsData} isPro={isPremium} />
 
-        {/* AGENDA SETTIMANALE TETRIS */}
+        <div className={activeTab === 'agenda' ? '' : 'hidden'}>
+{/* AGENDA SETTIMANALE TETRIS */}
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
           <SwipeableAgenda>
             <DayNavigator currentDate={targetDate} slug={slug} isMultiStaff={isMultiStaff} />
@@ -1067,9 +1084,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </SwipeableAgenda>
         </div>
 
+        </div>
+
         {/* ALTRE FUNZIONI DASHBOARD */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden">
+          <div className={`bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden ${activeTab === 'marketing' ? '' : 'hidden'}`}>
             <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
               🎯
             </div>
@@ -1116,7 +1135,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className={`flex flex-col gap-6 ${activeTab === 'agenda' ? '' : 'hidden'}`}>
             <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-red-900/5 border border-[#1a2642] h-fit flex flex-col">
               <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
                 <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
@@ -1277,7 +1296,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           </div>
 
-          {/* 🧾 ATTIVITA RECENTI */}
+          <div className={activeTab === 'marketing' ? '' : 'hidden'}>
+{/* 🧾 ATTIVITA RECENTI */}
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
             <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
               <span>🧾</span>
@@ -1355,8 +1375,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
 
 
-          {/* LISTA ATTESA */}
+          </div>
+<div className={activeTab === 'marketing' ? '' : 'hidden'}>
+{/* LISTA ATTESA */}
           <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
+</div>
 
         </div>
       </div>
