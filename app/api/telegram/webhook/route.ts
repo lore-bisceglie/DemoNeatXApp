@@ -124,20 +124,27 @@ export async function POST(req: Request) {
           const results = await prisma.tenant.findMany({
             where: { name: { contains: query, mode: "insensitive" } },
             take: 5,
-            select: { name: true, phone: true, ownerEmail: true, city: true, slug: true }
+            select: { id: true, name: true, phone: true, ownerEmail: true, city: true, slug: true }
           });
           
           if (results.length === 0) {
             await sendTelegramMessage(`Nessun salone trovato per "<b>${query}</b>"`);
           } else {
-            let reply = `🔍 <b>Risultati per "${query}":</b>\n\n`;
-            results.forEach(r => {
-              reply += `🏢 <b>${r.name}</b> (${r.city})\n`;
+            await sendTelegramMessage(`🔍 <b>Trovati ${results.length} risultati per "${query}":</b>`);
+            for (const r of results) {
+              let reply = `🏢 <b>${r.name}</b> (${r.city})\n`;
               if (r.phone) reply += `📞 ${r.phone}\n`;
               if (r.ownerEmail) reply += `✉️ ${r.ownerEmail}\n`;
-              reply += `🔗 demo-neatx.vercel.app/t/${r.slug}\n\n`;
-            });
-            await sendTelegramMessage(reply);
+              reply += `🔗 demo-neatx.vercel.app/t/${r.slug}`;
+              
+              const markup = {
+                inline_keyboard: [
+                  [{ text: "🔴 Elimina", callback_data: `delete_${r.id}` }]
+                ]
+              };
+              
+              await sendTelegramMessage(reply, markup);
+            }
           }
         }
       }
