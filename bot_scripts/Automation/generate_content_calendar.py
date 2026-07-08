@@ -95,7 +95,7 @@ def gemini_calendar(seed_items):
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(
-        "gemini-2.5-flash",
+        "gemini-1.5-flash",
         generation_config={"response_mime_type": "application/json"},
     )
     prompt = {
