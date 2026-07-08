@@ -266,7 +266,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     isPremium: false,
     staff: [] as any[],
     logoUrl: "",
-    themeColor: "cyan"
+    themeColor: "cyan",
+    storeSettings: null as {
+      paymentStrategy: string;
+      paymentFixedAmount: number;
+      paymentPercentage: number;
+    } | null
   });
 
   const [loadingTenant, setLoadingTenant] = useState(true);
