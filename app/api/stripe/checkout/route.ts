@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     const stripeOptions = isDemoAccount ? undefined : {
-      stripeAccount: tenant.storeSettings.stripeAccountId,
+      stripeAccount: tenant.storeSettings!.stripeAccountId,
     };
 
     const session = await stripe.checkout.sessions.create(sessionConfig, stripeOptions);
