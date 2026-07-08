@@ -1,8 +1,8 @@
-export default function PaywallOverlay({ title, description, isPro, children }: { title: string, description: string, isPro: boolean, children: React.ReactNode }) {
-  if (isPro) return <>{children}</>;
+export default function PaywallOverlay({ title, description, isPro, className, children }: { title: string, description: string, isPro: boolean, className?: string, children: React.ReactNode }) {
+  if (isPro) return <div className={className}>{children}</div>;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl group">
+    <div className={`relative overflow-hidden rounded-3xl group ${className || ""}`}>
       {/* Il contenuto sfocato sotto il lucchetto */}
       <div className="filter blur-sm opacity-50 pointer-events-none select-none transition-all group-hover:blur-md">
         {children}
@@ -18,12 +18,14 @@ export default function PaywallOverlay({ title, description, isPro, children }: 
         <h3 className="text-xl font-bold text-white mb-2 tracking-tight">{title}</h3>
         <p className="text-sm text-slate-300 mb-6 max-w-[280px] leading-relaxed">{description}</p>
         
-        <button 
-          onClick={() => window.open('https://demo-neatx.vercel.app', '_blank')} 
+        <a 
+          href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20sbloccare%20il%20piano%20PRO%20per%20il%20mio%20salone."
+          target="_blank"
+          rel="noopener noreferrer"
           className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 hover:scale-105 transition-all shadow-[0_10px_20px_rgba(0,0,0,0.2)]"
         >
           Sblocca col Piano PRO
-        </button>
+        </a>
       </div>
     </div>
   );

@@ -40,9 +40,10 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
       title="Sblocca il Marketing Automatico" 
       description="Invia messaggi promozionali su WhatsApp ai clienti che non tornano da più di 30 giorni e falli tornare in salone in automatico." 
       isPro={isPremium}
+      className="mb-8"
     >
       {/* Widget Dashboard */}
-      <div className="w-full relative bg-gradient-to-br from-[#0b242e] to-[#050814] rounded-3xl p-6 mb-8 border border-emerald-500/30 overflow-hidden group shadow-lg shadow-emerald-500/5">
+      <div className="w-full relative bg-gradient-to-br from-[#0b242e] to-[#050814] rounded-3xl p-6 border border-emerald-500/30 overflow-hidden group shadow-lg shadow-emerald-500/5">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition duration-700"></div>
         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl"></div>
