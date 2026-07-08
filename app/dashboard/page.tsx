@@ -14,7 +14,6 @@ import SwipeableAgenda from "./SwipeableAgenda";
 import CustomerDrawer from "./CustomerDrawer";
 import WaitlistDashboard from "./WaitlistDashboard";
 import ResetDemoButton from "./ResetDemoButton";
-import GoogleSheetsSync from "./GoogleSheetsSync";
 
 export default async function Dashboard(props: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -1178,8 +1177,6 @@ export default async function Dashboard(props: {
               )}
             </div>
           </div>
-
-          <GoogleSheetsSync tenantId={tenantId} initialUrl={tenant.staffSheetUrl} />
 
         </div>
       </div>
