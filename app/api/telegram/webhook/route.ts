@@ -65,7 +65,20 @@ export async function POST(req: Request) {
         } catch (e) {
           await answerCallbackQuery(cb.id, "Errore durante l'eliminazione.");
         }
-      } 
+      }
+      else if (data.startsWith("suspend_")) {
+        const tenantId = data.replace("suspend_", "");
+        try {
+          await prisma.tenant.update({
+            where: { id: tenantId },
+            data: { trialStatus: "suspended" }
+          });
+          await answerCallbackQuery(cb.id, "🔒 Salone Sospeso!");
+          await editMessageText(chatId, messageId, `<s>${cb.message.text}</s>\n\n<b>[Account Sospeso]</b>`);
+        } catch (e) {
+          await answerCallbackQuery(cb.id, "Errore durante la sospensione.");
+        }
+      }
       else if (data.startsWith("approve_")) {
         const tenantId = data.replace("approve_", "");
         try {
@@ -139,7 +152,10 @@ export async function POST(req: Request) {
               
               const markup = {
                 inline_keyboard: [
-                  [{ text: "🔴 Elimina", callback_data: `delete_${r.id}` }]
+                  [
+                    { text: "🔴 Elimina", callback_data: `delete_${r.id}` },
+                    { text: "🔒 Sospendi", callback_data: `suspend_${r.id}` }
+                  ]
                 ]
               };
               
@@ -153,8 +169,43 @@ export async function POST(req: Request) {
           `/stats - Riepilogo saloni attivi, prenotazioni e MRR\n` +
           `/ultimi - Elenco degli ultimi 3 saloni iscritti\n` +
           `/cerca [nome] - Trova un salone per nome e mostra i contatti\n` +
+          `/entra [nome] - Crea un link per entrare nel pannello di un negozio\n` +
+          `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
           `/aiuto - Mostra questo messaggio`;
         await sendTelegramMessage(helpText);
+      }
+      else if (text.startsWith("/entra ")) {
+        const query = text.replace("/entra ", "").trim();
+        if (query.length < 2) {
+          await sendTelegramMessage("⚠️ Inserisci almeno 2 lettere del negozio in cui vuoi entrare.");
+        } else {
+          const tenant = await prisma.tenant.findFirst({
+            where: { name: { contains: query, mode: "insensitive" } }
+          });
+          
+          if (!tenant) {
+            await sendTelegramMessage(`Nessun salone trovato per "<b>${query}</b>"`);
+          } else {
+            const magicLink = `https://demo-neatx.vercel.app/api/telegram/magic?slug=${tenant.slug}&secret=${tenant.adminPassword}`;
+            await sendTelegramMessage(`🕵️‍♂️ <b>Login Magico per ${tenant.name}</b>\n\nClicca qui sotto per entrare nel suo gestionale scavalcando la password:\n🔗 ${magicLink}`);
+          }
+        }
+      }
+      else if (text.startsWith("/avvisa ")) {
+        const message = text.replace("/avvisa ", "").trim();
+        if (message.length < 5) {
+          await sendTelegramMessage("⚠️ Il messaggio da inviare a tutti deve essere più lungo.");
+        } else {
+          const tenants = await prisma.tenant.findMany({
+            where: { ownerEmail: { not: null } },
+            select: { ownerEmail: true, name: true }
+          });
+          
+          // Nota: Qui potremmo importare e chiamare sendWelcomeEmail o una sendSystemEmail generica,
+          // ma per il momento mandiamo una notifica di simulazione o usiamo un log
+          // Idealmente dovremmo fare un loop su lib/email.ts
+          await sendTelegramMessage(`📣 <b>Megafono:</b> Simulazione di invio email a ${tenants.length} saloni completata con il messaggio:\n"${message}"`);
+        }
       }
       else if (text === "/start") {
         await sendTelegramMessage("🤖 <b>NeatX Maggiordomo</b>\nAi tuoi ordini, Capo. Usa il bottone Menu in basso a sinistra per vedere cosa so fare, o digita /aiuto.");

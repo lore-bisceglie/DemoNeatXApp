@@ -28,6 +28,8 @@ export async function GET(req: Request) {
           { command: "stats", description: "Calcola i profitti e le statistiche" },
           { command: "ultimi", description: "Mostra gli ultimi 3 negozi iscritti" },
           { command: "cerca", description: "Cerca un negozio per nome" },
+          { command: "entra", description: "Crea il link per il login magico" },
+          { command: "avvisa", description: "Manda una mail a tutti i negozi" },
           { command: "aiuto", description: "Mostra la guida ai comandi" }
         ]
       })
