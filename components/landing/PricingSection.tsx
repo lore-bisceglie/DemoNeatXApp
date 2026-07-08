@@ -52,10 +52,11 @@ export default function PricingSection() {
             <div className="text-purple-400 font-bold text-sm mb-6">590€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 118€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Tutto del piano Pro</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione Turni (Fogli Google)</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Multi-Staff avanzato</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Assistenza Prioritaria H24</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Onboarding dedicato</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-purple-300">Mini-Marketing (Recupero Clienti)</strong></li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Autopilota Recensioni Google</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Multi-Staff illimitato</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Statistiche ed Esportazione Dati</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Onboarding VIP dedicato</li>
             </ul>
             <div className="mt-8 flex flex-col gap-3">
               <Link
