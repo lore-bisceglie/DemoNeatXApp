@@ -1590,6 +1590,20 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         )}
       </div>
 
+      {/* Banner Promozionale NeatX (Marketing Virale) */}
+      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-6 mt-6 text-center flex flex-col items-center gap-3 relative z-10">
+        <div className="w-12 h-12 bg-[#00b4ff]/10 rounded-full flex items-center justify-center text-[#00b4ff] mb-2">
+          <TrendingUp className="w-6 h-6" />
+        </div>
+        <h3 className="text-white font-bold text-lg">Sei un professionista?</h3>
+        <p className="text-slate-400 text-sm mb-2">Azzera i no-show e riempi l'agenda in automatico come ha fatto questo negozio.</p>
+        <Link href="https://www.neatx.store"
+              target="_blank"
+              className="px-6 py-2.5 bg-[#00b4ff] hover:bg-[#0090cc] text-white rounded-full font-medium text-sm transition-all shadow-lg shadow-[#00b4ff]/20">
+          Scopri NeatX
+        </Link>
+      </div>
+
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl shadow-xl shadow-cyan-900/5 border border-[#1a2642] p-5 mt-6 text-center flex flex-col items-center gap-4 relative z-10">
         <div className="text-[10px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
           <p>
