@@ -787,7 +787,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
             <h2
               className={`text-xs font-bold mb-2 uppercase tracking-widest flex items-center justify-between ${
-                storeSettings.smsCredits > 20
+                (storeSettings?.smsCredits || 0) > 20
                   ? "text-slate-500"
                   : "text-red-400"
               }`}
@@ -802,10 +802,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               <div className="flex items-end gap-3">
                 <span
                   className={`text-4xl font-extrabold ${
-                    storeSettings.smsCredits > 20 ? "text-white" : "text-red-500"
+                    (storeSettings?.smsCredits || 0) > 20 ? "text-white" : "text-red-500"
                   }`}
                 >
-                  {storeSettings.smsCredits}
+                  {storeSettings?.smsCredits || 0}
                 </span>
 
                 <span className="text-slate-400 font-medium mb-1 text-sm">
