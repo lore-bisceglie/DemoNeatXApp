@@ -25,7 +25,7 @@ export default function SuperAdminPage() {
   const [themeColor, setThemeColor] = useState("cyan");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [stats, setStats] = useState({ totalAppointments: 0, totalRevenue: 0, totalNoShows: 0 });
+  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, trialCount: 0 });
 
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
