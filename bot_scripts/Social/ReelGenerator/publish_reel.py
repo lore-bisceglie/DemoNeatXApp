@@ -14,11 +14,7 @@ load_dotenv()
 
 META_ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN")
 IG_ACCOUNT_ID = os.environ.get("IG_ACCOUNT_ID")
-TIKTOK_SESSION_ID = os.environ.get("TIKTOK_SESSION_ID")
-TIKTOK_HEADLESS = os.environ.get(
-    "TIKTOK_HEADLESS",
-    "true" if os.environ.get("GITHUB_ACTIONS") else "false",
-).lower() in ("1", "true", "yes", "y")
+TIKTOK_MAKE_WEBHOOK_URL = os.environ.get("TIKTOK_MAKE_WEBHOOK_URL")
 VIDEO_FILE = "reel_splitscreen_subbed.mp4"
 STRICT_PUBLISH = os.environ.get("STRICT_PUBLISH", "").lower() in ("1", "true", "yes", "y")
 REPORT_FILE = os.environ.get("PUBLISH_REPORT_FILE", "publish_report.json")
@@ -56,8 +52,8 @@ def run_preflight():
             "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID.",
         ),
         "tiktok": platform_result(
-            bool(load_tiktok_cookies()),
-            "Richiede TIKTOK_COOKIES_JSON valido o TIKTOK_SESSION_ID valido.",
+            bool(TIKTOK_MAKE_WEBHOOK_URL),
+            "Richiede TIKTOK_MAKE_WEBHOOK_URL valido configurato nel file .env",
         ),
         "youtube": platform_result(
             has_youtube_auth(),
@@ -197,9 +193,8 @@ def publish_to_instagram():
         return platform_result(False, message)
 
 def publish_to_tiktok():
-    cookies = load_tiktok_cookies()
-    if not cookies:
-        message = "TIKTOK_COOKIES_JSON/TIKTOK_SESSION_ID mancanti o non validi."
+    if not TIKTOK_MAKE_WEBHOOK_URL:
+        message = "TIKTOK_MAKE_WEBHOOK_URL mancante. Crea un webhook su Make.com e mettilo nel .env"
         print(f"[!] Errore: {message}")
         return platform_result(False, message)
         
@@ -210,31 +205,21 @@ def publish_to_tiktok():
         
     caption = get_caption()
     
-    print("[*] Avvio pubblicazione su TikTok...")
+    print("[*] Avvio invio a Make.com (Ponte Ufficiale TikTok)...")
     try:
-        from tiktok_uploader.upload import upload_video
-        success = upload_video(
-            VIDEO_FILE,
-            description=caption,
-            cookies_list=cookies,
-            browser="chromium", # Usa la versione locale invece di quella globale
-            headless=TIKTOK_HEADLESS
-        )
-        
-        # tiktok_uploader returns a boolean or a list of booleans
-        is_success = False
-        if isinstance(success, list):
-            is_success = all(success)
+        with open(VIDEO_FILE, "rb") as f:
+            files = {"video": (VIDEO_FILE, f, "video/mp4")}
+            data = {"caption": caption}
+            response = requests.post(TIKTOK_MAKE_WEBHOOK_URL, files=files, data=data)
+            
+        if response.status_code == 200:
+            print("[+] VIDEO INVIATO CON SUCCESSO A MAKE.COM!")
+            return platform_result(True, "Inviato a Make.com per TikTok.")
         else:
-            is_success = bool(success)
+            raise Exception(f"Make.com ha restituito errore {response.status_code}: {response.text}")
             
-        if not is_success:
-            raise Exception("TikTok ha rifiutato l'upload (probabilmente cookie scaduti o bloccati).")
-            
-        print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
-        return platform_result(True, "Pubblicato su TikTok.")
     except Exception as e:
-        message = f"Errore durante la pubblicazione su TikTok: {e}"
+        message = f"Errore durante l'invio a Make.com: {e}"
         print(f"[!] {message}")
         return platform_result(False, message)
 
