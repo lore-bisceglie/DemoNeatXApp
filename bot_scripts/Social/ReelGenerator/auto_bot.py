@@ -5,7 +5,8 @@ import subprocess
 import requests
 import re
 import sys
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -165,10 +166,9 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
         data = build_fallback_content(target, gameplay_style, strategy, "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili")
     else:
         try:
-            genai.configure(api_key=GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "application/json"})
+            client = genai.Client(api_key=GEMINI_API_KEY)
             print("[*] Contattando il cervello di Google Gemini 2.5 Flash...")
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
             content = response.text.strip()
             data = json.loads(content)
         except Exception as e:

@@ -12,7 +12,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except ImportError:
     print("⚠️  google-generativeai not installed. Install with: pip install google-generativeai")
     exit(1)
@@ -23,8 +24,7 @@ if not GEMINI_API_KEY:
     print("❌ GEMINI_API_KEY not set")
     exit(1)
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-pro")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Path
 SCRIPT_DIR = Path(__file__).parent
@@ -62,7 +62,7 @@ Rispondi in JSON con questa struttura:
 Sii specifico per parrucchieri e beauty. Includi dati reali se possibile."""
     
     print("🔍 Scanning viral trends...")
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")
@@ -112,7 +112,7 @@ Formato JSON:
 Sii pratico e realizzabile."""
     
     print("💡 Generating reel ideas...")
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")
@@ -149,7 +149,7 @@ Rispondi in JSON:
 Sii specifico su cosa NEATX può fare meglio."""
     
     print("📊 Analyzing competitor landscape...")
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("{")

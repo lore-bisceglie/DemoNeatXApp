@@ -12,7 +12,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except ImportError:
     print("⚠️  google-generativeai not installed. Install with: pip install google-generativeai")
     exit(1)
@@ -23,8 +24,7 @@ if not GEMINI_API_KEY:
     print("❌ GEMINI_API_KEY not set")
     exit(1)
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.0-flash")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Path
 SCRIPT_DIR = Path(__file__).parent
@@ -63,7 +63,7 @@ Rispondi in JSON con questa struttura:
 Sii creativo ma mantieni coerenza con il settore. Tema deve essere applicabile a articolo blog, reel Instagram e social post."""
     
     print(f"🔄 Generating theme for {today}...")
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
     
     # Estrai JSON dalla risposta
     text = response.text

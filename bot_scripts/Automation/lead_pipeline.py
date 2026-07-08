@@ -7,7 +7,8 @@ from pathlib import Path
 from ai_provider import openai_json
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except Exception:
     genai = None
 
@@ -42,11 +43,8 @@ def setup_gemini():
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or genai is None:
         return None
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(
-        "gemini-pro",
-        generation_config={"response_mime_type": "application/json"},
-    )
+    client = genai.Client(api_key=api_key)
+    return client
 
 
 def build_targets(brief):
@@ -120,7 +118,7 @@ def generate_messages(brief, rows):
         return fallback_messages(brief, rows)
 
     try:
-        response = model.generate_content(json.dumps(prompt, ensure_ascii=False))
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
         data = json.loads(response.text)
         if all(data.get(key) for key in ("dm_1", "follow_up", "comment_reply")):
             return data

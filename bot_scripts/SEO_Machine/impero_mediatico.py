@@ -3,7 +3,8 @@ import json
 import re
 import random
 from datetime import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # Cartelle
 SATELLITES_DIR = r"satellites_content"
@@ -24,7 +25,7 @@ def setup_gemini():
                 if match:
                     api_key = match.group(1)
         if api_key:
-            genai.configure(api_key=api_key)
+            client = genai.Client(api_key=api_key)
             return True
     except Exception as e:
         print(f"[!] Errore recupero API Key: {e}")
@@ -39,7 +40,6 @@ def load_competitors():
 def genera_recensione_distruttiva(competitor, magazine):
     print(f"\n[*] La testata '{magazine}' sta scrivendo l'articolo contro {competitor['name']}...")
     
-    model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
     
     debolezze = ", ".join(competitor['weaknesses'])
     vantaggio_neatx = competitor['neatx_advantage']
@@ -70,7 +70,7 @@ def genera_recensione_distruttiva(competitor, magazine):
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return response.text.strip()
     except Exception as e:
         print(f"[!] Errore Gemini: {e}")

@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except ImportError:
     print("[!] google-generativeai non è installato. Esegui: pip install google-generativeai")
     exit(1)
@@ -24,8 +25,7 @@ if not GEMINI_API_KEY:
     print("[!] Errore: GEMINI_API_KEY non trovata. Inseriscila nei Secrets di GitHub o nel file .env")
     exit(1)
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.0-flash")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Lista finta (demo) di saloni che vogliamo contattare oggi
 target_salons = [
@@ -71,7 +71,7 @@ Restituisci ESATTAMENTE e SOLO questo formato JSON:
 """
 
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         # Pulisco il testo in caso di formattazione markdown
         json_text = response.text.strip().replace("```json", "").replace("```", "")
         email_data = json.loads(json_text)

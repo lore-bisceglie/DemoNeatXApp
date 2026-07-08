@@ -1,9 +1,10 @@
 import os
 import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # Setup API Key
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 SYSTEM_PROMPT = """Sei "NeatX Competitor Spy", un esperto stratega di marketing a risposta diretta e analista competitivo per NeatX.
 Il tuo obiettivo è analizzare le recensioni negative dei nostri competitor (Treatwell, Booksy, Fresha) e trasformarle in munizioni per le nostre campagne marketing.
@@ -19,12 +20,11 @@ RECENT_REVIEWS = [
 ]
 
 def analyze_reviews():
-    model = genai.GenerativeModel('gemini-pro', system_instruction=SYSTEM_PROMPT)
     prompt = f"Analizza queste recenti recensioni negative trovate online oggi:\\n\\n"
     for r in RECENT_REVIEWS:
         prompt += f"- \\\"{r}\\\"\\n"
         
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
     return response.text
 
 if __name__ == "__main__":

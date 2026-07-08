@@ -1,8 +1,9 @@
 import os
 import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 SYSTEM_PROMPT = """Sei "Franco", un barbiere di 55 anni scettico. Esci dal personaggio solo alla fine per dare un voto.
 L'obiettivo di questo script è generare una "Sfida Obiezione del Giorno" per i venditori di NeatX.
@@ -14,8 +15,7 @@ Rispondi in questo formato:
 """
 
 def generate_challenge():
-    model = genai.GenerativeModel('gemini-pro', system_instruction=SYSTEM_PROMPT)
-    response = model.generate_content("Genera la sfida di vendita di oggi in italiano.")
+    response = client.models.generate_content(model="gemini-1.5-flash", contents="Genera la sfida di vendita di oggi in italiano.", config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
     return response.text
 
 if __name__ == "__main__":

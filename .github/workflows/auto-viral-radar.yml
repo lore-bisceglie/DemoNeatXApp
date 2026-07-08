@@ -31,7 +31,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install AI dependencies
-        run: pip install google-generativeai instagrapi python-dotenv
+        run: pip install google-genai instagrapi python-dotenv
 
       - name: Scan legacy viral radar
         env:

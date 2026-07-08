@@ -2,7 +2,8 @@ import os
 import time
 import random
 from instagrapi import Client
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -18,8 +19,7 @@ PROCESSED_POSTS_FILE = "commented_posts.txt"
 # Inizializza Gemini
 GOOGLE_API_KEY = os.environ.get("GEMINI_API_KEY", "") # Assicurati di impostare l'ambiente
 if GOOGLE_API_KEY:
-    genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-pro')
+    client = genai.Client(api_key=GOOGLE_API_KEY)
 else:
     print("⚠️ ATTENZIONE: Nessuna API Key di Gemini trovata. Il commentatore utilizzerà commenti generici (non consigliato).")
     model = None
@@ -86,7 +86,7 @@ def generate_smart_comment(username, caption):
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         comment = response.text.strip().replace('"', '')
         return comment
     except Exception as e:

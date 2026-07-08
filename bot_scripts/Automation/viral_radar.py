@@ -7,7 +7,8 @@ from zoneinfo import ZoneInfo
 from ai_provider import openai_json
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except Exception:
     genai = None
 
@@ -96,11 +97,7 @@ def gemini_ideas(signals):
     if not api_key or genai is None:
         return None
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        "gemini-pro",
-        generation_config={"response_mime_type": "application/json"},
-    )
+    client = genai.Client(api_key=api_key)
     prompt = {
         "role": "viral radar for NeatX",
         "goal": "Create short-form video and blog ideas from available signals.",
@@ -113,7 +110,7 @@ def gemini_ideas(signals):
         "signals": signals,
     }
     try:
-        response = model.generate_content(json.dumps(prompt, ensure_ascii=False))
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
         data = json.loads(response.text)
         if isinstance(data, dict) and isinstance(data.get("ideas"), list):
             return data["ideas"]

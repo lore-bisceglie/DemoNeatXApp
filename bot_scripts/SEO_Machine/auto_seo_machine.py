@@ -6,7 +6,8 @@ import subprocess
 import json
 import sys
 from datetime import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # Percorsi relativi (adatti sia per locale che per GitHub Actions)
 APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -29,7 +30,7 @@ def setup_gemini():
     try:
         api_key = os.environ.get("GEMINI_API_KEY")
         if api_key:
-            genai.configure(api_key=api_key)
+            client = genai.Client(api_key=api_key)
             return True
 
         # Se siamo su GitHub Actions, la chiave è nelle Environment Variables
@@ -43,7 +44,7 @@ def setup_gemini():
             content = f.read()
             match = re.search(r'GEMINI_API_KEY\s*=\s*"([^"]+)"', content)
             if match:
-                genai.configure(api_key=match.group(1))
+                client = genai.Client(api_key=match.group(1))
                 return True
     except Exception as e:
         print(f"[!] Errore recupero API Key: {e}")
@@ -80,8 +81,7 @@ def inventa_argomento():
     try:
         if not setup_gemini():
             return f"Come gestire al meglio gli appuntamenti per {target}"
-        model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         titolo = response.text.strip().replace('"', '')
         print(f"[+] L'IA ha scelto l'argomento: '{titolo}'")
         return titolo
@@ -122,8 +122,7 @@ Regole:
     try:
         if not setup_gemini():
             return None
-        model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return response.text.strip()
     except Exception as e:
         print(f"[!] Errore scrittura articolo: {e}")

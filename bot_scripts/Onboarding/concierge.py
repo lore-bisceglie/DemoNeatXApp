@@ -1,8 +1,9 @@
 import os
 import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 SYSTEM_PROMPT = """Sei "NeatX Onboarding Concierge", il responsabile dell'esperienza clienti di NeatX.
 Il tuo compito è scrivere la bozza di un'email di benvenuto personalizzata per i nuovi iscritti di oggi.
@@ -14,11 +15,10 @@ MOCK_NEW_USERS = [
 ]
 
 def generate_onboarding_emails():
-    model = genai.GenerativeModel('gemini-pro', system_instruction=SYSTEM_PROMPT)
     report = ""
     for user in MOCK_NEW_USERS:
         prompt = f"Genera un'email di benvenuto per {user['nome']}, un {user['professione']} titolare di {user['salone']}."
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
         report += f"## Email per {user['nome']} ({user['salone']})\\n"
         report += response.text + "\\n\\n---\\n\\n"
     return report

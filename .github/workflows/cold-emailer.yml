@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install google-generativeai python-dotenv
+          pip install google-genai python-dotenv
 
       - name: Run Cold Emailer
         env:

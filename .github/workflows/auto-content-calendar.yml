@@ -30,7 +30,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install AI dependencies
-        run: pip install google-generativeai python-dotenv
+        run: pip install google-genai python-dotenv
 
       - name: Generate legacy daily theme
         env:

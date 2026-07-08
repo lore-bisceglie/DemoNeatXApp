@@ -8,7 +8,8 @@ from zoneinfo import ZoneInfo
 from ai_provider import openai_json
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except Exception:
     genai = None
 
@@ -93,11 +94,7 @@ def gemini_calendar(seed_items):
     if not api_key or genai is None:
         return None
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        "gemini-pro",
-        generation_config={"response_mime_type": "application/json"},
-    )
+    client = genai.Client(api_key=api_key)
     prompt = {
         "role": "NeatX content strategist",
         "task": "Improve this 7-day Italian content calendar for short videos and SEO blog posts. Keep the same JSON shape.",
@@ -111,7 +108,7 @@ def gemini_calendar(seed_items):
         "calendar": seed_items,
     }
     try:
-        response = model.generate_content(json.dumps(prompt, ensure_ascii=False))
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=json.dumps(prompt, ensure_ascii=False))
         data = json.loads(response.text)
         if isinstance(data, dict) and isinstance(data.get("days"), list):
             return data["days"]

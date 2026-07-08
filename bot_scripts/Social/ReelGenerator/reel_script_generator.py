@@ -12,7 +12,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 try:
-    import google.generativeai as genai
+    from google import genai
+    from google.genai import types
 except ImportError:
     print("⚠️  google-generativeai not installed. Install with: pip install google-generativeai")
     exit(1)
@@ -23,8 +24,7 @@ if not GEMINI_API_KEY:
     print("❌ GEMINI_API_KEY not set")
     exit(1)
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.0-flash")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Path
 SCRIPT_DIR = Path(__file__).parent
@@ -118,7 +118,7 @@ Per OGNI script rispondi in JSON con questa struttura:
 Genera ESATTAMENTE 3 script diversi. Output in JSON array."""
     
     print("🎬 Generating reel scripts...")
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
     
     text = response.text
     start = text.find("[")

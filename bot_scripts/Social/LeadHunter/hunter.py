@@ -4,7 +4,8 @@ import csv
 import json
 import re
 from playwright.sync_api import sync_playwright
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 # ==========================================
 # CONFIGURAZIONE
@@ -16,7 +17,7 @@ def setup_gemini():
             content = f.read()
             match = re.search(r'GEMINI_API_KEY\s*=\s*"([^"]+)"', content)
             if match:
-                genai.configure(api_key=match.group(1))
+                client = genai.Client(api_key=match.group(1))
                 return True
     except Exception as e:
         print(f"[!] Impossibile leggere API Key: {e}")
@@ -26,7 +27,6 @@ def genera_messaggio_vendita(nome_salone, settore):
     """
     Usa Gemini per scrivere un messaggio a freddo irresistibile
     """
-    model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
     
     prompt = f"""
 Sei un venditore esperto e spietato, ma molto amichevole e naturale.
@@ -42,7 +42,7 @@ Regole del messaggio:
 - Chiudi con una domanda (Call to Action): "Posso mandarvi un breve video di come funziona?"
 """
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return response.text.strip().replace("\n\n", "\n")
     except Exception as e:
         return f"[Errore Gemini: {e}]"

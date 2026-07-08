@@ -1,7 +1,8 @@
 import os
 import re
 from datetime import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 BLOG_DIR = r"C:\Users\Lxxmtq\Documents\Korsakoff\NeatX\DemoNeatXApp\content\blog"
 
@@ -11,7 +12,7 @@ def setup_gemini():
             content = f.read()
             match = re.search(r'GEMINI_API_KEY\s*=\s*"([^"]+)"', content)
             if match:
-                genai.configure(api_key=match.group(1))
+                client = genai.Client(api_key=match.group(1))
                 return True
     except Exception as e:
         print(f"[!] Errore recupero API Key: {e}")
@@ -21,7 +22,6 @@ def genera_articolo_seo(argomento):
     print(f"\n[*] Analisi SEO in corso per l'argomento: '{argomento}'...")
     
     # Usiamo il modello Pro per la scrittura lunga
-    model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
     
     prompt = f"""
 Sei un Copywriter SEO esperto di posizionamento su Google e un venditore persuasivo.
@@ -43,7 +43,7 @@ Regole:
 """
     try:
         print("[*] Gemini sta scrivendo l'articolo (potrebbe richiedere 10-20 secondi)...")
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return response.text.strip()
     except Exception as e:
         print(f"[!] Errore durante la generazione con Gemini: {e}")

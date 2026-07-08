@@ -2,7 +2,8 @@ import os
 import time
 import random
 from instagrapi import Client
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -18,7 +19,7 @@ COMPETITOR_ACCOUNTS = ["treatwell_it", "uala_it", "booksybiz.it"]
 def setup_gemini():
     api_key = os.environ.get("GEMINI_API_KEY", "")
     if api_key:
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         return True
     return False
 
@@ -52,7 +53,6 @@ def login_instagram():
         return None
 
 def is_commento_negativo(testo):
-    model = genai.GenerativeModel('gemini-pro', generation_config={"response_mime_type": "text/plain"})
     prompt = f"""
     Questo è un commento lasciato da un utente sotto il post di un software gestionale per parrucchieri (es. Treatwell, Uala).
     Testo del commento: "{testo}"
@@ -61,7 +61,7 @@ def is_commento_negativo(testo):
     Rispondi SOLO con la parola "NO" se è un commento positivo, neutrale, o irrilevante.
     """
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
         return "SI" in response.text.upper()
     except Exception:
         return False
