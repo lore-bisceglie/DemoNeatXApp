@@ -22,7 +22,7 @@ export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, a
     <div style="font-family: sans-serif; max-w-xl; margin: 0 auto; color: #333;">
       <h1 style="color: #00b4ff;">Benvenuto a bordo!</h1>
       <p>Ciao ${ownerName},</p>
-      <p>Sono Tiziano, il creatore di NeatX. Volevo darti il benvenuto personale a bordo!</p>
+      <p>Sono Lorenzo, il creatore di NeatX. Volevo darti il benvenuto personale a bordo!</p>
       <p>Il tuo spazio gestionale è stato creato ed è pronto all'uso.</p>
       
       <div style="background-color: #f4f4f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
@@ -32,13 +32,13 @@ export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, a
 
       <p>Per qualsiasi dubbio su come impostare i tuoi orari o attivare i pagamenti online, puoi rispondere direttamente a questa mail e ti aiuterò io di persona.</p>
       <br/>
-      <p>A presto e buon lavoro,<br/><strong>Tiziano - Founder di NeatX</strong></p>
+      <p>A presto e buon lavoro,<br/><strong>Lorenzo - Founder di NeatX</strong></p>
     </div>
   `;
 
   try {
     await transporter.sendMail({
-      from: `"Tiziano - NeatX" <${user}>`,
+      from: `"Lorenzo - NeatX" <${user}>`,
       to: tenantEmail,
       subject,
       html,
