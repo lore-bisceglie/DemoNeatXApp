@@ -231,7 +231,7 @@ export default function TeamDrawer({
             </button>
           </div>
           <p className="text-xs text-slate-500 mt-2">
-            Crea una copia del <a href="https://docs.google.com/spreadsheets/d/1H1pZ1l-G2ZpZzT0nFpS-rI_W_tX7b3O6wP2cIqfL_7s/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline font-medium">Foglio Turni Ufficiale</a>, impostalo su "Chiunque abbia il link" e incolla qui l'URL.
+            Crea una copia del <a href="https://docs.google.com/spreadsheets/d/1eyOExG-DexoWZcYKkW3FjNxzKQ-hITWGh7SSfR9CS10/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline font-medium">Foglio Turni Ufficiale</a>, impostalo su "Chiunque abbia il link" e incolla qui l'URL.
           </p>
         </div>
 
