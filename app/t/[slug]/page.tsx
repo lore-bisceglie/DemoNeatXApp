@@ -332,7 +332,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         });
         setServices(data.services || []);
         if (data.services && data.services.length > 0) {
-          setSelectedService(data.services[0]);
+          const firstService = data.services[0];
+          setSelectedService(firstService);
+          
+          let defaultStaff = "any";
+          if (data.staff && data.staff.length > 0) {
+            const capableStaff = data.staff.find((st: any) => st.services.some((srv: any) => srv.id === firstService.id));
+            if (capableStaff) defaultStaff = capableStaff.id;
+          }
+          setSelectedStaffId(defaultStaff);
         }
         setLoadingTenant(false);
       })
@@ -1293,7 +1301,14 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               onChange={(e) => {
                 const s = visibleServices.find((srv) => srv.id === e.target.value);
                 setSelectedService(s || null);
-                setSelectedStaffId("any");
+                
+                let defaultStaff = "any";
+                if (s && tenantInfo.staff && tenantInfo.staff.length > 0) {
+                  const capableStaff = tenantInfo.staff.find((st: any) => st.services.some((srv: any) => srv.id === s.id));
+                  if (capableStaff) defaultStaff = capableStaff.id;
+                }
+                setSelectedStaffId(defaultStaff);
+                
                 setSlots([]);
                 setSelectedSlot("");
                 setFormError("");
@@ -1316,17 +1331,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               Scegli il professionista (Opzionale)
             </label>
             <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2 snap-x">
-              <button
-                type="button"
-                onClick={() => { setSelectedStaffId("any"); setSlots([]); setSelectedSlot(""); }}
-                className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition snap-center ${
-                  selectedStaffId === "any"
-                    ? `bg-[#00b4ff] text-[#050814] border-[#00b4ff]`
-                    : "bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500"
-                }`}
-              >
-                Nessuna preferenza
-              </button>
+
               
               {tenantInfo.staff
                 .filter((s: any) => s.services.some((srv: any) => srv.id === selectedService.id))
