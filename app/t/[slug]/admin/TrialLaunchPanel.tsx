@@ -49,6 +49,7 @@ type Props = {
   services: ServiceDraft[];
   staffCount: number;
   appointmentCount: number;
+  activationRequested?: boolean;
 };
 
 const weekDays = [
@@ -101,11 +102,13 @@ export default function TrialLaunchPanel({
   trialStatus,
   isDemoData,
   trialEndsAt,
-  services,
+  services: initialServices,
   staffCount,
   appointmentCount,
+  activationRequested: initialActivationRequested,
 }: Props) {
   const router = useRouter();
+  const [hasRequested, setHasRequested] = useState(initialActivationRequested);
   const publicUrl = getTenantPublicUrl(slug);
   const adminUrl = getTenantAdminUrl(slug);
   const [copied, setCopied] = useState(false);
@@ -603,17 +606,34 @@ export default function TrialLaunchPanel({
             Nessun reset: servizi, staff, agenda e link restano quelli che hai appena configurato.
           </p>
         </div>
-        <a
-          href={getSalesWhatsappUrl(
-            `Ciao, voglio attivare NeatX per ${tenantName}. Dashboard: ${adminUrl}`
-          )}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-extrabold text-black transition hover:bg-purple-200"
-        >
-          Richiedi attivazione
-          <ArrowRight size={16} />
-        </a>
+        
+        {hasRequested ? (
+          <div className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm font-extrabold text-emerald-400">
+            <CheckCircle2 size={16} />
+            Attivazione Richiesta
+          </div>
+        ) : (
+          <button
+            onClick={async () => {
+              try {
+                await fetch("/api/tenant/activation", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ tenantId })
+                });
+                setHasRequested(true);
+                // Apriamo comunque il link di whatsapp
+                window.open(getSalesWhatsappUrl(`Ciao, voglio attivare NeatX per ${tenantName}. Dashboard: ${adminUrl}`), "_blank");
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-extrabold text-black transition hover:bg-purple-200"
+          >
+            Richiedi attivazione
+            <ArrowRight size={16} />
+          </button>
+        )}
       </div>
 
       {message && (

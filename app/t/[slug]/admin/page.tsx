@@ -703,6 +703,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           closedDays={tenant.closedDays}
           trialStatus={tenant.trialStatus}
           isDemoData={tenant.isDemoData}
+          activationRequested={tenant.activationRequested}
           trialEndsAt={tenant.trialEndsAt}
           services={tenantServices.map((service) => ({
             id: service.id,

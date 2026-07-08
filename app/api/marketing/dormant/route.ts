@@ -63,16 +63,6 @@ export async function GET(req: Request) {
       }
     });
 
-    // Per la DEMO: aggiungiamo dei finti clienti dormienti se non ce ne sono, per fargli vedere l'effetto WOW
-    if (customerMap.size < 3) {
-      const fakeDate = new Date();
-      fakeDate.setDate(fakeDate.getDate() - 45); // 45 giorni fa
-      const fakeDateStr = fakeDate.toISOString().split('T')[0];
-      
-      customerMap.set("3331112222", { lastVisit: fakeDateStr, name: "Chiara F.", totalSpent: 210, futureAppointments: 0 });
-      customerMap.set("3332223333", { lastVisit: fakeDateStr, name: "Roberto M.", totalSpent: 150, futureAppointments: 0 });
-      customerMap.set("3334445555", { lastVisit: fakeDateStr, name: "Valentina Rossi", totalSpent: 350, futureAppointments: 0 });
-    }
 
     const dormantCustomers = [];
     let estimatedRecoverableRevenue = 0;

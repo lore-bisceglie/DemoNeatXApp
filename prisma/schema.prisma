@@ -42,6 +42,7 @@ model Tenant {
   trialEndsAt   DateTime?     // Scadenza del periodo di prova di 7 giorni
   trialStatus   String        @default("demo") // demo, trial_active, published, expired, converted
   isDemoData    Boolean       @default(true)   // Dati generati da template, convertibili in reali
+  activationRequested Boolean @default(false)  // Flag per nascondere il box "Richiedi attivazione" una volta cliccato
   publishedAt   DateTime?
   convertedAt   DateTime?
   plan          String        @default("basic") // "basic" o "premium"
