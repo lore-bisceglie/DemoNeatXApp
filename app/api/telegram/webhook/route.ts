@@ -228,7 +228,7 @@ export async function POST(req: Request) {
                 create: { tenantId: tenant.id, smsCredits: amount },
                 update: { smsCredits: { increment: amount } }
               });
-              await sendTelegramMessage(`✅ <b>${tenant.name}</b> ricaricato di <b>${amount} SMS</b>!\nNuovo saldo totale: ${storeSettings.smsCredits} SMS.`);
+              await sendTelegramMessage(`✅ <b>${tenant.name}</b> ricaricato di <b>${amount} pacchetti WhatsApp</b>!\nNuovo saldo totale: ${storeSettings.smsCredits} messaggi.`);
             } else {
               await sendTelegramMessage("❌ Nessun salone trovato con quel nome.");
             }
@@ -247,7 +247,7 @@ export async function POST(req: Request) {
           `/entra [nome] - Crea un link per entrare nel pannello di un negozio\n` +
           `/pro [nome] - Promuove un negozio al piano PRO\n` +
           `/basic [nome] - Retrocede un negozio al piano BASIC\n` +
-          `/sms [nome] [crediti] - Ricarica pacchetto messaggi SMS (es. /sms beart 100)\n` +
+          `/sms [nome] [crediti] - Ricarica pacchetto messaggi WhatsApp (es. /sms beart 100)\n` +
           `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
           `/aiuto - Mostra questo messaggio`;
         await sendTelegramMessage(helpText);

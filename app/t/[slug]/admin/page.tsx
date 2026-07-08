@@ -794,7 +794,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             >
               <span className="flex items-center gap-2">
                 <span>💬</span>
-                Messaggi Auto
+                WhatsApp Auto
               </span>
             </h2>
 
@@ -814,7 +814,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               </div>
               
               <a
-                href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20acquistare%20un%20pacchetto%20di%20SMS%20per%20il%20mio%20salone."
+                href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20acquistare%20un%20pacchetto%20WhatsApp%20per%20il%20mio%20salone."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-2 rounded-lg border border-emerald-500/20 font-bold transition-all shadow-lg shadow-emerald-500/10"

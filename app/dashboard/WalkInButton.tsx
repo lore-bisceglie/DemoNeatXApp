@@ -95,7 +95,7 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
                 </div>
               )}
               <div>
-                <input type="tel" placeholder="Telefono (Opzionale per SMS)" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition" />
+                <input type="tel" placeholder="Telefono (Opzionale per WhatsApp)" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition" />
               </div>
             </div>
 

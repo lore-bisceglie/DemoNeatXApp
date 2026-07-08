@@ -170,11 +170,11 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
                     </button>
                   ) : (
                     <div className="w-full py-4 bg-emerald-500/20 text-emerald-400 font-black rounded-2xl border border-emerald-500/30 flex justify-center items-center gap-2 animate-pulse">
-                      <span>✅</span> SMS Inviati! Aspettati nuove prenotazioni a breve...
+                      <span>✅</span> Messaggi WhatsApp Inviati! Aspettati nuove prenotazioni a breve...
                     </div>
                   )}
                   <p className="text-center text-xs text-slate-500 mt-4">
-                    Questa azione scalerà {data.count} crediti SMS dal tuo piano.
+                    Questa azione scalerà {data.count} crediti WhatsApp dal tuo piano.
                   </p>
                 </div>
               </div>
