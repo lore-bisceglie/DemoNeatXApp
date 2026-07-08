@@ -7,7 +7,8 @@ export default function StripeSettingsForm({
   tenantId, 
   initialStrategy, 
   initialFixed, 
-  initialPercentage 
+  initialPercentage,
+  initialMandatory
 }: { 
   tenantId: string;
   initialStrategy: string;
