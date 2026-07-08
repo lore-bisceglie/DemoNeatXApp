@@ -18,7 +18,7 @@ import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
 import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
-import GoogleSheetsSync from "../../../dashboard/GoogleSheetsSync";
+
 
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
@@ -1306,8 +1306,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           </div>
 
-          {/* Sincronizzazione Orari via Google Sheets */}
-          <GoogleSheetsSync tenantId={tenant.id} initialUrl={tenant.staffSheetUrl} />
 
           {/* LISTA ATTESA */}
           <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
