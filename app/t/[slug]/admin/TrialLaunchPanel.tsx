@@ -615,42 +615,7 @@ export default function TrialLaunchPanel({
         </div>
       </div>
 
-      <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-purple-500/20 bg-purple-500/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm font-extrabold text-white">Quando hai visto che funziona, tieni il negozio online.</p>
-          <p className="mt-1 text-xs font-medium text-slate-400">
-            Nessun reset: servizi, staff, agenda e link restano quelli che hai appena configurato.
-          </p>
-        </div>
-        
-        {hasRequested ? (
-          <div className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-3 text-sm font-extrabold text-emerald-400">
-            <CheckCircle2 size={16} />
-            Attivazione Richiesta
-          </div>
-        ) : (
-          <button
-            onClick={async () => {
-              try {
-                await fetch("/api/tenant/activation", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ tenantId })
-                });
-                setHasRequested(true);
-                // Apriamo comunque il link di whatsapp
-                window.open(getSalesWhatsappUrl(`Ciao, voglio attivare NeatX per ${tenantName}. Dashboard: ${adminUrl}`), "_blank");
-              } catch (e) {
-                console.error(e);
-              }
-            }}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-extrabold text-black transition hover:bg-purple-200"
-          >
-            Richiedi attivazione
-            <ArrowRight size={16} />
-          </button>
-        )}
-      </div>
+
 
       {message && (
         <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm font-bold text-cyan-200">
