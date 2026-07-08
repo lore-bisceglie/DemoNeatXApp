@@ -84,7 +84,7 @@ export default function Onboarding() {
     setError("");
 
     if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !password.trim() || !phone.trim() || !email.trim()) {
-      setError("Compila nome attivita, categoria, citta, nome, password e WhatsApp prenotazioni.");
+      setError("Compila nome attivita, categoria, citta, email, nome, password e WhatsApp prenotazioni.");
       return;
     }
 
@@ -285,20 +285,34 @@ export default function Onboarding() {
               </label>
             </div>
 
-            <label className="block">
-              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                <Phone size={14} />
-                WhatsApp prenotazioni
-              </span>
-              <input
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                placeholder="Es. 3331234567"
-              />
-            </label>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Phone size={14} />
+                  WhatsApp prenotazioni
+                </span>
+                <input
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="Es. 3331234567"
+                />
+              </label>
 
-
+              <label className="block">
+                <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <Globe2 size={14} />
+                  Email Proprietario
+                </span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  placeholder="Es. mario@email.com"
+                />
+              </label>
+            </div>
             <label className="block">
               <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                 <MapPin size={14} />
