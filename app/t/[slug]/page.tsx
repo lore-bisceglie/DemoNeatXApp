@@ -328,6 +328,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           staff: data.staff || [],
           logoUrl: data.logoUrl || "",
           themeColor: data.themeColor || "cyan",
+          storeSettings: data.storeSettings || null,
         });
         setServices(data.services || []);
         if (data.services && data.services.length > 0) {
