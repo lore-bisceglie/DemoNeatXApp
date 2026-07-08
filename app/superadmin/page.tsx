@@ -215,6 +215,30 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleAddSms = async (tenantId: string) => {
+    const amountStr = prompt("Quanti crediti SMS vuoi aggiungere (es. 100, 500)?");
+    if (!amountStr) return;
+    const amount = parseInt(amountStr, 10);
+    if (isNaN(amount) || amount <= 0) return;
+
+    try {
+      const res = await fetch('/api/superadmin/sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId, amount })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore');
+      alert(`Fatto! Ora questo salone ha ${data.newTotal} crediti SMS.`);
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
   const handleImpersonate = (slug: string, adminPassword: string | null) => {
     if (!adminPassword) {
       alert("Questo tenant non ha ancora una password admin generata.");
@@ -526,6 +550,10 @@ export default function SuperAdminPage() {
                           </div>
                         )}
                         {tenant.ownerEmail && <div className="text-xs truncate text-slate-500 mt-1" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
+                        <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-800/50">
+                          <span className="text-xs font-semibold text-slate-300 bg-slate-900 px-2 py-1 rounded">💬 {tenant.storeSettings?.smsCredits || 0} SMS</span>
+                          <button onClick={() => handleAddSms(tenant.id)} className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded hover:bg-emerald-500/20 font-bold border border-emerald-500/20 transition-all">+ CARICA</button>
+                        </div>
                       </div>
                     </div>
                     

@@ -798,18 +798,27 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               </span>
             </h2>
 
-            <div className="flex items-end gap-3 mt-2">
-              <span
-                className={`text-4xl font-extrabold ${
-                  storeSettings.smsCredits > 20 ? "text-white" : "text-red-500"
-                }`}
-              >
-                {storeSettings.smsCredits}
-              </span>
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-end gap-3">
+                <span
+                  className={`text-4xl font-extrabold ${
+                    storeSettings.smsCredits > 20 ? "text-white" : "text-red-500"
+                  }`}
+                >
+                  {storeSettings.smsCredits}
+                </span>
 
-              <span className="text-slate-400 font-medium mb-1 text-sm">
-                crediti residui
-              </span>
+                <span className="text-slate-400 font-medium mb-1 text-sm">
+                  crediti residui
+                </span>
+              </div>
+              
+              <button
+                onClick={() => alert("Acquisto Pacchetti SMS:\\n\\n• 100 SMS -> 9€\\n• 500 SMS -> 39€\\n\\nContatta l'assistenza su WhatsApp o Telegram per farti ricaricare il conto in tempo reale!")}
+                className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-2 rounded-lg border border-emerald-500/20 font-bold transition-all shadow-lg shadow-emerald-500/10"
+              >
+                Ricarica 🔋
+              </button>
             </div>
           </div>
         </div>

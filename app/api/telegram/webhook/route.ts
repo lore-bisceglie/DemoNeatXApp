@@ -214,6 +214,31 @@ export async function POST(req: Request) {
           await sendTelegramMessage("❌ Nessun salone trovato.");
         }
       }
+      else if (text.startsWith("/sms ")) {
+        const parts = text.replace("/sms ", "").trim().split(" ");
+        if (parts.length === 2) {
+          const query = parts[0];
+          const amount = parseInt(parts[1], 10);
+          
+          if (!isNaN(amount) && amount > 0) {
+            const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query, mode: "insensitive" } } });
+            if (tenant) {
+              const storeSettings = await prisma.storeSettings.upsert({
+                where: { tenantId: tenant.id },
+                create: { tenantId: tenant.id, smsCredits: amount },
+                update: { smsCredits: { increment: amount } }
+              });
+              await sendTelegramMessage(`✅ <b>${tenant.name}</b> ricaricato di <b>${amount} SMS</b>!\nNuovo saldo totale: ${storeSettings.smsCredits} SMS.`);
+            } else {
+              await sendTelegramMessage("❌ Nessun salone trovato con quel nome.");
+            }
+          } else {
+            await sendTelegramMessage("⚠️ Inserisci un importo valido (es. /sms beart 100).");
+          }
+        } else {
+          await sendTelegramMessage("⚠️ Formato errato. Usa: /sms [nome] [crediti] (es. /sms beart 100)");
+        }
+      }
       else if (text === "/aiuto") {
         const helpText = `🛠️ <b>Guida ai Comandi</b>\n\n` +
           `/stats - Riepilogo saloni attivi, prenotazioni e MRR\n` +
@@ -222,6 +247,7 @@ export async function POST(req: Request) {
           `/entra [nome] - Crea un link per entrare nel pannello di un negozio\n` +
           `/pro [nome] - Promuove un negozio al piano PRO\n` +
           `/basic [nome] - Retrocede un negozio al piano BASIC\n` +
+          `/sms [nome] [crediti] - Ricarica pacchetto messaggi SMS (es. /sms beart 100)\n` +
           `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
           `/aiuto - Mostra questo messaggio`;
         await sendTelegramMessage(helpText);

@@ -13,7 +13,8 @@ export async function GET(req: Request) {
     const tenants = await prisma.tenant.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        services: true
+        services: true,
+        storeSettings: true
       }
     });
 
