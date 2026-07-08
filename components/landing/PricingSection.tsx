@@ -26,34 +26,6 @@ export default function PricingSection() {
           <div className="bg-[#0b1221] p-8 rounded-3xl border border-[#00b4ff] shadow-[0_0_30px_-5px_rgba(0,180,255,0.3)] relative flex flex-col md:-mt-8 transform transition-transform hover:scale-105 z-10">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-[#00b4ff] to-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg">
               Più Scelto
-"use client";
-
-import { Check, ShieldCheck } from "lucide-react";
-import Link from "next/link";
-
-export default function PricingSection() {
-  return (
-    <section id="pricing" className="relative z-10 bg-[#050814] py-24 border-y border-[#1a2642]">
-      <div className="max-w-6xl mx-auto px-6">
-        
-        <div className="mb-20 max-w-3xl mx-auto bg-gradient-to-r from-emerald-500/10 to-emerald-900/20 border border-emerald-500/30 rounded-3xl p-8 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/20 blur-[60px]"></div>
-          <h2 className="text-3xl font-extrabold text-white mb-3 relative z-10">0% Commissioni. <span className="text-emerald-400">Zero trattenute.</span></h2>
-          <p className="text-emerald-100/70 font-medium relative z-10 text-lg">
-            A differenza delle altre piattaforme che si tengono il 20-30% sui tuoi incassi, con NeatX i soldi sono tutti tuoi. Paghi solo l&apos;abbonamento mensile, e basta.
-          </p>
-        </div>
-
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Scegli il piano per il tuo Salone</h2>
-          <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto items-start">
-          {/* PIANO PRO (EVIDENZIATO) */}
-          <div className="bg-[#0b1221] p-8 rounded-3xl border border-[#00b4ff] shadow-[0_0_30px_-5px_rgba(0,180,255,0.3)] relative flex flex-col md:-mt-8 transform transition-transform hover:scale-105 z-10">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-[#00b4ff] to-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg">
-              Più Scelto
             </div>
             <h3 className="text-xl font-bold text-[#00b4ff] mb-2">Pro</h3>
             <div className="text-5xl font-extrabold text-white mb-1">29€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
@@ -98,7 +70,7 @@ export default function PricingSection() {
           </div>
         </div>
         
-        {/* BANNER TRASPARENZA WhatsApp */}
+        {/* BANNER TRASPARENZA SMS */}
         <div className="mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
