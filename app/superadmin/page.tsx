@@ -28,6 +28,7 @@ export default function SuperAdminPage() {
   const [stats, setStats] = useState({ mrr: 0, payingCount: 0, trialCount: 0 });
 
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
 
@@ -293,13 +294,22 @@ export default function SuperAdminPage() {
       <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
         <form onSubmit={handleLogin} className="bg-slate-900 border border-slate-800 p-8 rounded-xl max-w-md w-full shadow-2xl">
           <h1 className="text-2xl font-bold text-white mb-6 text-center">Super Admin Login</h1>
-          <input 
-            type="password" 
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Inserisci la password segreta"
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 mb-4"
-          />
+          <div className="relative mb-4">
+            <input 
+              type={showPassword ? "text" : "password"} 
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Inserisci la password segreta"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500"
+            />
+            <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+            >
+              {showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
           {authError && <div className="text-red-400 text-sm mb-4">{authError}</div>}
           <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg">
             {loading ? "Verifica..." : "Entra"}
@@ -624,32 +634,20 @@ export default function SuperAdminPage() {
                         </button>
                       </div>
                       
-                      <div className="flex gap-2 w-full flex-wrap xl:flex-nowrap">
-                        <button 
-                          onClick={() => handleUnlock(tenant.id)}
-                          className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all text-center"
-                        >
-                          SBLOCCA 30 GG
-                        </button>
-                        <button 
-                          onClick={() => handleUnlockAnnual(tenant.id)}
-                          className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-all text-center whitespace-nowrap"
-                        >
-                          📅 SBLOCCA 1 ANNO
-                        </button>
+                      <div className="flex gap-2 w-full">
                         {tenant.plan !== 'premium' ? (
                           <button 
                             onClick={() => handleMakePremium(tenant.id)}
-                            className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 transition-all text-center"
+                            className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all text-center"
                           >
-                            👑 METTI PRO
+                            ⭐ FORZA PREMIUM (Bypassa Paywall)
                           </button>
                         ) : (
                           <button 
                             onClick={() => handleMakeBasic(tenant.id)}
-                            className="flex-1 text-[10px] font-bold px-2 py-2 rounded-lg bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 border border-slate-500/20 transition-all text-center"
+                            className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
                           >
-                            🔒 METTI BASIC
+                            ⚠️ REVOCA PREMIUM (Torna in Trial)
                           </button>
                         )}
                       </div>

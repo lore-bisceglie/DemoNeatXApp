@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function DELETE(req: Request) {
   const auth = req.headers.get('x-admin-password');
-  if (auth !== 'NeatxAdmin2026') {
+  if (auth !== 'godmode') {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
   }
 

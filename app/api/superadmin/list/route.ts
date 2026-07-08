@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   const auth = req.headers.get('x-admin-password');
-  if (auth !== 'NeatxAdmin2026') {
+  if (auth !== 'godmode') {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
   }
 
