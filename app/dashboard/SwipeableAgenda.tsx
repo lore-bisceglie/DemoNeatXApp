@@ -1,11 +1,12 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, TouchEvent } from "react";
 
 export default function SwipeableAgenda({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const currentOffset = parseInt(searchParams.get("weekOffset") || "0", 10);
   
   // ✅ Ora tracciamo sia la X (orizzontale) che la Y (verticale)
@@ -46,11 +47,15 @@ export default function SwipeableAgenda({ children }: { children: React.ReactNod
     const isLeftSwipe = deltaX > minSwipeDistance;
     const isRightSwipe = deltaX < -minSwipeDistance;
     
-    if (isLeftSwipe) {
-      router.push(`/dashboard?weekOffset=${currentOffset + 1}`, { scroll: false });
-    }
-    if (isRightSwipe) {
-      router.push(`/dashboard?weekOffset=${currentOffset - 1}`, { scroll: false });
+    if (isLeftSwipe || isRightSwipe) {
+      const newOffset = isLeftSwipe ? currentOffset + 1 : currentOffset - 1;
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.set("weekOffset", newOffset.toString());
+      
+      const search = current.toString();
+      const query = search ? `?${search}` : "";
+      
+      router.push(`${pathname}${query}`, { scroll: false });
     }
   };
 
