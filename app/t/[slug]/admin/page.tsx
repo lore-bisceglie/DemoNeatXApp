@@ -825,9 +825,39 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         </div>
 
-        {/*  */}
+        {/* SEZIONE PAGAMENTI STRIPE */}
+        <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
+          <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
+            💳
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
+                <span>💳</span>
+                Integrazione Pagamenti (Stripe)
+              </h2>
+              <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
+                Collega il tuo conto bancario per richiedere caparre online. Zero commissioni da parte di NeatX (Stripe trattiene solo i costi vivi del ~1.5%). I soldi arrivano direttamente sul tuo IBAN.
+              </p>
+            </div>
+            
+            <div>
+              {storeSettings?.stripeOnboardingComplete ? (
+                <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                  <span>✅</span> Conto Collegato
+                </div>
+              ) : (
+                <a
+                  href={`/api/stripe/connect?tenantId=${tenantId}`}
+                  className="bg-[#007aff] hover:bg-[#00b4ff] text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap"
+                >
+                  Collega Conto Bancario
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
 
-        
         <WaitlistDashboard initialData={waitlistData} tenantId={tenantId} />
         
         {freeGapReports.length > 0 && (

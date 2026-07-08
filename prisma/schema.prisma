@@ -136,6 +136,11 @@ model StoreSettings {
   id                        String   @id @default(cuid())
   smsCredits                Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone
   maxConcurrentAppointments Int      @default(1) // Numero massimo di appuntamenti sovrapposti (Multi-staff)
+  
+  // Stripe Connect
+  stripeAccountId           String?  // ID dell'account Stripe Connect collegato
+  stripeOnboardingComplete  Boolean  @default(false) // Indica se l'onboarding Stripe è completato
+
   updatedAt                 DateTime @updatedAt
 
   // Relazione 1-a-1 col Tenant
