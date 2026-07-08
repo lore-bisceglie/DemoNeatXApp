@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(request: Request) {
   try {
-    const { tenantId, paymentStrategy, paymentFixedAmount, paymentPercentage } = await request.json();
+    const { tenantId, paymentStrategy, paymentFixedAmount, paymentPercentage, paymentMandatory } = await request.json();
 
     if (!tenantId) {
       return NextResponse.json({ error: "Missing tenantId" }, { status: 400 });
@@ -15,6 +15,7 @@ export async function PUT(request: Request) {
         paymentStrategy,
         paymentFixedAmount: paymentFixedAmount ? parseFloat(paymentFixedAmount) : null,
         paymentPercentage: paymentPercentage ? parseInt(paymentPercentage, 10) : null,
+        paymentMandatory: paymentMandatory !== undefined ? Boolean(paymentMandatory) : false,
       },
     });
 

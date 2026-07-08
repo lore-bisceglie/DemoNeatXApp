@@ -148,6 +148,7 @@ model StoreSettings {
   paymentStrategy           String   @default("OFF") // "OFF", "FIXED", "PERCENTAGE", "FULL"
   paymentFixedAmount        Float?   @default(5.0)   // Es. 5.0 euro
   paymentPercentage         Int?     @default(20)    // Es. 20%
+  paymentMandatory          Boolean  @default(false) // Se false, l'utente può scegliere di pagare "In salone"
 
   updatedAt                 DateTime @updatedAt
 

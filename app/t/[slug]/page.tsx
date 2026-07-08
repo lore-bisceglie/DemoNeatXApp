@@ -672,8 +672,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         amountEur = selectedService.price;
       }
 
-      // 2. Se l'utente in demo ha scelto esplicitamente "In sede", saltiamo Stripe online
-      const forceOffline = isPlaygroundDemo && paymentMethod === "salon";
+      // 2. Se c'è una scelta esplicita di pagare in sede (e la caparra non è obbligatoria)
+      const isMandatoryPayment = tenantInfo.storeSettings?.paymentStrategy !== "OFF" && tenantInfo.storeSettings?.paymentMandatory;
+      const forceOffline = !isMandatoryPayment && paymentMethod === "salon";
 
       // 3. Se c'è un importo e non è forzato offline, chiamiamo Stripe
       if (amountEur > 0 && appointmentId && !forceOffline) {
@@ -1539,10 +1540,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               </div>
             </div>
 
-            {isPlaygroundDemo && (
+            {((isPlaygroundDemo || (!tenantInfo.storeSettings?.paymentMandatory && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && tenantInfo.storeSettings?.paymentStrategy !== null))) && (
               <div className="mb-6">
                 <label className="block text-sm font-bold mb-3 text-slate-300 text-center">
-                  Simula metodo di pagamento
+                  Come preferisci pagare?
                 </label>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -1555,29 +1556,37 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                         : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
                     }`}
                   >
-                    <span className="text-xs font-bold">In sede</span>
-                    <span className="text-[9px] opacity-70">Pagamento dopo</span>
+                    <span className="text-xs font-bold">In salone</span>
+                    <span className="text-[9px] opacity-70">Paghi dopo il servizio</span>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("online")}
+                    onClick={() => {
+                      if (tenantInfo.storeSettings?.stripeOnboardingComplete || isPlaygroundDemo || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_")) {
+                        setPaymentMethod("online");
+                      }
+                    }}
                     className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
-                      paymentMethod === "online"
-                        ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                      !(tenantInfo.storeSettings?.stripeOnboardingComplete || isPlaygroundDemo || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_"))
+                        ? "bg-[#131c31] border-[#1e2b4a] text-slate-600 cursor-not-allowed"
+                        : paymentMethod === "online"
+                        ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.15)]"
                         : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500"
                     }`}
                   >
-                    <span className="text-xs font-bold">Online demo</span>
+                    <span className="text-xs font-bold">Acconto online</span>
                     <span className="text-[9px] opacity-70">
-                      {selectedService?.price
-                        ? `${selectedService.price} EUR simulati`
-                        : "Simulazione"}
+                      {!(tenantInfo.storeSettings?.stripeOnboardingComplete || isPlaygroundDemo || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_"))
+                        ? "Da attivare"
+                        : isPlaygroundDemo
+                        ? "Simulazione"
+                        : "Paga ora su Stripe"}
                     </span>
                   </button>
                 </div>
 
-                {paymentMethod === "online" && (
+                {isPlaygroundDemo && paymentMethod === "online" && (
                   <div className="mt-3 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-left">
                     <p className="text-emerald-300 text-xs font-bold uppercase tracking-widest mb-1">
                       Pagamento online simulato

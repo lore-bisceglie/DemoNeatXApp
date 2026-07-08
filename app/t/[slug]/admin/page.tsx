@@ -870,6 +870,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               initialStrategy={storeSettings.paymentStrategy}
               initialFixed={storeSettings.paymentFixedAmount}
               initialPercentage={storeSettings.paymentPercentage}
+              initialMandatory={storeSettings.paymentMandatory}
             />
           )}
         </div>
