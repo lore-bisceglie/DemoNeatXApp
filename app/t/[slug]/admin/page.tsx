@@ -776,7 +776,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
           <div
             className={`p-6 rounded-3xl shadow-xl border flex flex-col justify-center h-full min-h-[140px] relative overflow-hidden transition-all ${
-              storeSettings.smsCredits > 20
+              (storeSettings?.smsCredits || 0) > 20
                 ? "bg-[#0b1221] border-[#1a2642] shadow-cyan-900/10"
                 : "bg-red-950/20 border-red-900/50 shadow-red-900/20"
             }`}
