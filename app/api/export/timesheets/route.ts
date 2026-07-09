@@ -103,12 +103,13 @@ export async function GET(request: Request) {
       for (let d = 1; d <= lastDay.getDate(); d++) {
         // Correggiamo la timezone locale per non sbagliare giorno
         const dateLoop = new Date(year, month, d, 12, 0, 0);
-        const dayName = dayNameMapping[dateLoop.getDay()];
+        const dayIndex = dateLoop.getDay();
+        const dayName = dayNameMapping[dayIndex];
         const dateStr = dateLoop.toISOString().split("T")[0]; // YYYY-MM-DD
         const dataIta = `${d.toString().padStart(2, '0')}/${(month+1).toString().padStart(2, '0')}/${year}`;
 
         let expectedHours = 0;
-        let isClosed = closedDaysArr.includes(dayName);
+        let isClosed = closedDaysArr.includes(dayIndex) || closedDaysArr.includes(dayIndex.toString()) || closedDaysArr.includes(dayName);
 
         if (scheduleObj && scheduleObj[dayName] !== undefined) {
           // Ha un Google Sheet impostato per questo giorno
