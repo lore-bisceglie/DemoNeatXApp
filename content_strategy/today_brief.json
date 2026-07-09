@@ -1,17 +1,17 @@
 {
   "date": "2026-07-09",
-  "niche": "Parrucchieri",
-  "angle": "gestire acconti e promemoria",
-  "pain": "clienti invadenti su WhatsApp",
-  "promise": "agenda piena senza perdere tempo",
-  "cover_title": "PARRUCCHIERI: NO-SHOW FINITO",
-  "hook_hint": "Se sei un parrucchiere e perdi tempo con clienti invadenti su WhatsApp, stai perdendo denaro.",
-  "blog_topic": "Parrucchieri: gestire acconti e promemoria con un'agenda automatica",
+  "niche": "Barbieri",
+  "angle": "gestire clienti in modo efficace",
+  "pain": "no-show e appuntamenti presi al volo in DM",
+  "promise": "meno buchi in agenda e più clienti paganti",
+  "cover_title": "BARBIERI: BASTA NO-SHOW",
+  "hook_hint": "Se sei un barbiere e perdi soldi a causa di no-show e messaggi confusi, è tempo di cambiare.",
+  "blog_topic": "Barbieri: gestire clienti e appuntamenti con un'agenda automatica",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
+  "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
