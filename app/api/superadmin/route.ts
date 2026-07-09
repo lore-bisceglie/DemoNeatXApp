@@ -166,8 +166,26 @@ export async function POST(req: Request) {
         logoUrl: logoUrl || null,
         themeColor: themeColor || 'cyan',
         ownerEmail: ownerEmail || null,
+        trialStatus: "trial_active",
+        isDemoData: false,
         services: {
           create: defaultServices
+        }
+      }
+    });
+
+    // Fetch the newly created services
+    const createdServices = await prisma.service.findMany({
+      where: { tenantId: newTenant.id }
+    });
+
+    // Create default staff
+    await prisma.staff.create({
+      data: {
+        name: ownerEmail ? ownerEmail.split('@')[0] : "Titolare",
+        tenantId: newTenant.id,
+        services: {
+          connect: createdServices.map((s) => ({ id: s.id }))
         }
       }
     });
