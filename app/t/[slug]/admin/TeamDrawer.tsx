@@ -230,8 +230,13 @@ export default function TeamDrawer({
               {savingUrl ? "..." : "Salva"}
             </button>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            Crea una copia del <a href="https://docs.google.com/spreadsheets/d/1eyOExG-DexeWZeYKWk3FjNxzIQ-hITWGh7S5fR8OS10/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline font-medium">Foglio Turni Ufficiale</a>, impostalo su "Chiunque abbia il link" e incolla qui l'URL.
+          <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+            1. Crea una copia del <a href="https://docs.google.com/spreadsheets/d/1eyOExG-DexeWZeYKWk3FjNxzIQ-hITWGh7S5fR8OS10/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline font-medium">Foglio Turni Ufficiale</a>{" "}
+            e impostalo su &quot;Chiunque abbia il link&quot;.<br/>
+            2. Scrivi il <strong className="text-slate-300">nome</strong> di ogni dipendente nella colonna A.<br/>
+            3. Per ogni giorno inserisci gli orari nel formato <strong className="text-slate-300">09:00-13:00, 14:00-19:00</strong> (più turni separati da virgola).<br/>
+            4. Per i giorni di riposo scrivi <strong className="text-slate-300">Riposo</strong>.<br/>
+            5. Incolla il link qui sopra e clicca Salva. Le ore verranno usate anche per il foglio presenze del commercialista.
           </p>
         </div>
 
