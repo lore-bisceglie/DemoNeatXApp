@@ -14,25 +14,20 @@ export async function GET(request: Request) {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      include: {
-        staff: true
-      }
+      include: { staff: true }
     });
 
     if (!tenant) {
       return new NextResponse("Tenant non trovato", { status: 404 });
     }
 
-    // Calcolo mese corrente (o un mese passato, per ora usiamo il mese corrente)
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
     
-    // Primo e ultimo giorno del mese
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
-    // Gestione orari salone
     let openMins = 540; // 09:00
     if (tenant.openTime) {
       const [h, m] = tenant.openTime.split(":");
@@ -57,41 +52,19 @@ export async function GET(request: Request) {
     const dailyWorkMins = (closeMins - openMins) - (breakEndMins - breakStartMins);
     const dailyWorkHours = Math.max(0, dailyWorkMins / 60);
 
-    // Chiusure fisse (closedDays)
     let closedDaysArr: string[] = [];
     if (tenant.closedDays) {
       if (typeof tenant.closedDays === "string") {
-        try {
-          closedDaysArr = JSON.parse(tenant.closedDays);
-        } catch(e) {}
+        try { closedDaysArr = JSON.parse(tenant.closedDays); } catch(e) {}
       } else {
         closedDaysArr = tenant.closedDays as string[];
       }
     }
 
     const dayNameMapping: Record<number, string> = {
-      0: "domenica",
-      1: "lunedì",
-      2: "martedì",
-      3: "mercoledì",
-      4: "giovedì",
-      5: "venerdì",
-      6: "sabato",
+      0: "domenica", 1: "lunedì", 2: "martedì", 3: "mercoledì", 4: "giovedì", 5: "venerdì", 6: "sabato"
     };
 
-    // Conta giorni lavorativi nel mese
-    let workingDaysInMonth = 0;
-    for (let d = 1; d <= lastDay.getDate(); d++) {
-      const dateLoop = new Date(year, month, d);
-      const dayName = dayNameMapping[dateLoop.getDay()];
-      if (!closedDaysArr.includes(dayName)) {
-        workingDaysInMonth++;
-      }
-    }
-
-    const totalExpectedHours = workingDaysInMonth * dailyWorkHours;
-
-    // Recupera assenze del mese
     const firstDayStr = firstDay.toISOString().split("T")[0];
     const lastDayStr = lastDay.toISOString().split("T")[0];
 
@@ -106,41 +79,75 @@ export async function GET(request: Request) {
       }
     });
 
-    // Costruisci il CSV
-    let csv = "Mese;Dipendente;Giorni Lavorativi Previsti;Ore Lavorative Previste;Giorni Ferie;Ore Pausa Extra;Ore Effettive Lavorate\n";
+    // Costruisci CSV
+    let csv = "Data;Giorno;Dipendente;Stato Negozio;Ore Teoriche;Ore Ferie;Ore Pausa Extra;Note Assenze;Ore Effettive Lavorate\n";
     const monthName = firstDay.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
 
     for (const s of tenant.staff) {
+      // Filtra le assenze per questo dipendente o quelle "per tutto il negozio" (staffId = null)
       const staffAbsences = absences.filter(a => a.staffId === s.id || !a.staffId);
       
-      let ferieDays = 0;
-      let pauseMins = 0;
+      let totalExpected = 0;
+      let totalFerie = 0;
+      let totalPausa = 0;
+      let totalWorked = 0;
 
-      for (const abs of staffAbsences) {
-        if (abs.customerName.includes("FERIE")) {
-          ferieDays++;
-        } else if (abs.customerName.includes("PAUSA")) {
-          if (abs.time && abs.endTime) {
-            const [sh, sm] = abs.time.split(":");
-            const startM = parseInt(sh) * 60 + parseInt(sm);
-            const [eh, em] = abs.endTime.split(":");
-            const endM = parseInt(eh) * 60 + parseInt(em);
-            pauseMins += Math.max(0, endM - startM);
+      for (let d = 1; d <= lastDay.getDate(); d++) {
+        // Correggiamo la timezone locale per non sbagliare giorno
+        const dateLoop = new Date(year, month, d, 12, 0, 0);
+        const dayName = dayNameMapping[dateLoop.getDay()];
+        const dateStr = dateLoop.toISOString().split("T")[0]; // YYYY-MM-DD
+        const dataIta = `${d.toString().padStart(2, '0')}/${(month+1).toString().padStart(2, '0')}/${year}`;
+
+        const isClosed = closedDaysArr.includes(dayName);
+        let expectedHours = isClosed ? 0 : dailyWorkHours;
+        
+        let ferieH = 0;
+        let pausaH = 0;
+        let notesArr: string[] = [];
+
+        // Trova assenze per questo giorno esatto
+        const dayAbsences = staffAbsences.filter(a => a.date === dateStr);
+        for (const abs of dayAbsences) {
+          if (abs.customerName.includes("FERIE")) {
+            ferieH = expectedHours; // Se c'è ferie, brucia tutte le ore teoriche
+            notesArr.push("Ferie Intera Giornata");
+          } else if (abs.customerName.includes("PAUSA")) {
+            if (abs.time && abs.endTime) {
+              const [sh, sm] = abs.time.split(":");
+              const startM = parseInt(sh) * 60 + parseInt(sm);
+              const [eh, em] = abs.endTime.split(":");
+              const endM = parseInt(eh) * 60 + parseInt(em);
+              const p = Math.max(0, endM - startM) / 60;
+              pausaH += p;
+              notesArr.push(`Permesso ${abs.time}-${abs.endTime}`);
+            }
           }
         }
+
+        let workedHours = expectedHours - ferieH - pausaH;
+        if (workedHours < 0) workedHours = 0;
+
+        totalExpected += expectedHours;
+        totalFerie += ferieH;
+        totalPausa += pausaH;
+        totalWorked += workedHours;
+
+        const statoNegozio = isClosed ? "CHIUSO" : "Aperto";
+        const notes = notesArr.length > 0 ? notesArr.join(", ") : "";
+
+        csv += `"${dataIta}";"${dayName}";"${s.name}";"${statoNegozio}";${expectedHours.toFixed(2)};${ferieH.toFixed(2)};${pausaH.toFixed(2)};"${notes}";${workedHours.toFixed(2)}\n`;
       }
 
-      const pauseHours = pauseMins / 60;
-      const finalWorkedHours = totalExpectedHours - (ferieDays * dailyWorkHours) - pauseHours;
-
-      csv += `"${monthName}";"${s.name}";${workingDaysInMonth};${totalExpectedHours.toFixed(2)};${ferieDays};${pauseHours.toFixed(2)};${finalWorkedHours.toFixed(2)}\n`;
+      // Riga di totale per il dipendente
+      csv += `\n"TOTALE ${monthName.toUpperCase()}";;"${s.name}";;${totalExpected.toFixed(2)};${totalFerie.toFixed(2)};${totalPausa.toFixed(2)};;${totalWorked.toFixed(2)}\n\n`;
     }
 
     return new NextResponse(csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="foglio_presenze_${tenant.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${monthName.replace(" ", "_")}.csv"`,
+        "Content-Disposition": `attachment; filename="timesheet_${tenant.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${monthName.replace(/\s+/g, "_")}.csv"`,
       },
     });
   } catch (error) {
