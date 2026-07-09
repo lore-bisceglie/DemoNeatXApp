@@ -52,16 +52,26 @@ export async function POST(request: Request) {
       
       for (let d = 0; d < 7; d++) {
         const dayName = daysOfWeek[d];
-        const cellValue = cols[d + 1] ? cols[d + 1].toLowerCase() : "riposo";
+        const cellValue = cols[d + 1] ? cols[d + 1].toLowerCase().trim() : "riposo";
         
-        if (cellValue === "riposo" || cellValue === "") {
+        const offKeywords = ["riposo", "off", "libero", "ferie", "chiuso", "rest", "free", ""];
+        if (offKeywords.includes(cellValue)) {
            scheduleObj[dayName] = { active: false };
         } else {
-           // Esempio: "09:00-13:00, 14:00-18:00"
+           // Supporta: "09:00-13:00, 14:00-18:00" oppure "09:00 13:00, 14:00 18:00"
            const timeBlocks = cellValue.split(',').map(b => b.trim());
            let blocks = [];
            for (const block of timeBlocks) {
-             const [start, end] = block.split('-');
+             let start, end;
+             if (block.includes('-')) {
+               [start, end] = block.split('-');
+             } else {
+               // Formato con spazio: "09:00 13:00"
+               const parts = block.trim().split(/\s+/);
+               if (parts.length === 2) {
+                 [start, end] = parts;
+               }
+             }
              if (start && end) {
                blocks.push({ start: start.trim(), end: end.trim() });
              }
