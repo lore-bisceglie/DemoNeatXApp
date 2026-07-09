@@ -432,6 +432,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     const startTime = formData.get("startTime") as string;
     const endTime = formData.get("endTime") as string;
     const staffIdParam = formData.get("staffId") as string;
+    const blockType = formData.get("blockType") as string || "PAUSA";
 
     if (date && startTime && endTime) {
       const startMins =
@@ -488,8 +489,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               }
             }
             
+            const label = blockType === "PERMESSO" ? "📋 PERMESSO" : "☕ PAUSA";
             const newApps = staffIds.map(sId => ({
-                customerName: "☕ PAUSA",
+                customerName: label,
                 customerPhone: "0000000000",
                 date,
                 time: startTime,
@@ -1163,13 +1165,20 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
                 <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
                   <h3 className="text-[10px] text-slate-400 font-bold uppercase mb-3">
-                    ☕ Blocca Orari
+                    ☕ Blocca Orari / Permessi
                   </h3>
 
                   <form
                     action={blockTimeRange}
                     className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
                   >
+                    <select
+                      name="blockType"
+                      className="w-full sm:w-auto bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
+                    >
+                      <option value="PAUSA">☕ Pausa</option>
+                      <option value="PERMESSO">📋 Permesso</option>
+                    </select>
                     {staffList.length > 0 && (
                       <select
                         name="staffId"

@@ -80,7 +80,7 @@ export async function GET(request: Request) {
     });
 
     // Costruisci CSV
-    let csv = "Data;Giorno;Dipendente;Stato Negozio;Ore Teoriche;Ore Ferie;Ore Pausa Extra;Note Assenze;Ore Effettive Lavorate\n";
+    let csv = "Data;Giorno;Dipendente;Stato Negozio;Ore Teoriche;Ore Ferie;Ore Pausa;Ore Permesso;Note Assenze;Ore Effettive Lavorate\n";
     const monthName = firstDay.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
 
     for (const s of tenant.staff) {
@@ -98,6 +98,7 @@ export async function GET(request: Request) {
       let totalExpected = 0;
       let totalFerie = 0;
       let totalPausa = 0;
+      let totalPermesso = 0;
       let totalWorked = 0;
 
       for (let d = 1; d <= lastDay.getDate(); d++) {
@@ -138,6 +139,7 @@ export async function GET(request: Request) {
         
         let ferieH = 0;
         let pausaH = 0;
+        let permessoH = 0;
         let notesArr: string[] = [];
 
         // Trova assenze per questo giorno esatto
@@ -146,6 +148,16 @@ export async function GET(request: Request) {
           if (abs.customerName.includes("FERIE")) {
             ferieH = expectedHours; // Se c'è ferie, brucia tutte le ore teoriche
             notesArr.push("Ferie Intera Giornata");
+          } else if (abs.customerName.includes("PERMESSO")) {
+            if (abs.time && abs.endTime) {
+              const [sh, sm] = abs.time.split(":");
+              const startM = parseInt(sh) * 60 + parseInt(sm);
+              const [eh, em] = abs.endTime.split(":");
+              const endM = parseInt(eh) * 60 + parseInt(em);
+              const p = Math.max(0, endM - startM) / 60;
+              permessoH += p;
+              notesArr.push(`Permesso ${abs.time}-${abs.endTime}`);
+            }
           } else if (abs.customerName.includes("PAUSA")) {
             if (abs.time && abs.endTime) {
               const [sh, sm] = abs.time.split(":");
@@ -154,27 +166,28 @@ export async function GET(request: Request) {
               const endM = parseInt(eh) * 60 + parseInt(em);
               const p = Math.max(0, endM - startM) / 60;
               pausaH += p;
-              notesArr.push(`Permesso ${abs.time}-${abs.endTime}`);
+              notesArr.push(`Pausa ${abs.time}-${abs.endTime}`);
             }
           }
         }
 
-        let workedHours = expectedHours - ferieH - pausaH;
+        let workedHours = expectedHours - ferieH - pausaH - permessoH;
         if (workedHours < 0) workedHours = 0;
 
         totalExpected += expectedHours;
         totalFerie += ferieH;
         totalPausa += pausaH;
+        totalPermesso += permessoH;
         totalWorked += workedHours;
 
         const statoNegozio = isClosed ? "CHIUSO" : "Aperto";
         const notes = notesArr.length > 0 ? notesArr.join(", ") : "";
 
-        csv += `"${dataIta}";"${dayName}";"${s.name}";"${statoNegozio}";${expectedHours.toFixed(2)};${ferieH.toFixed(2)};${pausaH.toFixed(2)};"${notes}";${workedHours.toFixed(2)}\n`;
+        csv += `"${dataIta}";"${dayName}";"${s.name}";"${statoNegozio}";${expectedHours.toFixed(2)};${ferieH.toFixed(2)};${pausaH.toFixed(2)};${permessoH.toFixed(2)};"${notes}";${workedHours.toFixed(2)}\n`;
       }
 
       // Riga di totale per il dipendente
-      csv += `\n"TOTALE ${monthName.toUpperCase()}";;"${s.name}";;${totalExpected.toFixed(2)};${totalFerie.toFixed(2)};${totalPausa.toFixed(2)};;${totalWorked.toFixed(2)}\n\n`;
+      csv += `\n"TOTALE ${monthName.toUpperCase()}";;"${s.name}";;${totalExpected.toFixed(2)};${totalFerie.toFixed(2)};${totalPausa.toFixed(2)};${totalPermesso.toFixed(2)};;${totalWorked.toFixed(2)}\n\n`;
     }
 
     return new NextResponse(csv, {
