@@ -108,11 +108,13 @@ export async function GET(request: Request) {
         const dataIta = `${d.toString().padStart(2, '0')}/${(month+1).toString().padStart(2, '0')}/${year}`;
 
         let expectedHours = 0;
+        let isClosed = closedDaysArr.includes(dayName);
 
         if (scheduleObj && scheduleObj[dayName] !== undefined) {
           // Ha un Google Sheet impostato per questo giorno
           const daySchedule = scheduleObj[dayName];
           if (daySchedule.active && daySchedule.blocks) {
+            isClosed = false;
             let mins = 0;
             for (const b of daySchedule.blocks) {
               try {
@@ -130,7 +132,6 @@ export async function GET(request: Request) {
           }
         } else {
           // Nessun foglio Google: Fallback all'orario classico del negozio
-          const isClosed = closedDaysArr.includes(dayName);
           expectedHours = isClosed ? 0 : dailyWorkHours;
         }
         
