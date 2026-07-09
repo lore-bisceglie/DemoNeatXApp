@@ -22,7 +22,6 @@ import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 
 
 import LoginScreen from "./LoginScreen";
-import TrialLaunchPanel from "./TrialLaunchPanel";
 import crypto from "crypto";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
@@ -508,6 +507,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
     const startDate = formData.get("startDate") as string;
     const endDate = formData.get("endDate") as string;
+    const staffIdParam = formData.get("staffId") as string;
 
     if (startDate && endDate) {
       const start = new Date(startDate);
@@ -527,6 +527,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               in: datesToBlock,
             },
             tenantId,
+            ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
             NOT: [
               { customerName: { contains: "PAUSA" } },
               { customerName: { contains: "FERIE" } },
@@ -543,8 +544,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           while (insertLoop <= end) {
             const d = insertLoop.toISOString().split("T")[0];
 
-            const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
-            const staffIds = staffMembers.length > 0 ? staffMembers.map(s => s.id) : [null];
+            let staffIds: (string | null)[] = [null];
+            
+            if (staffIdParam && staffIdParam !== "all") {
+              staffIds = [staffIdParam];
+            } else {
+              const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
+              if (staffMembers.length > 0) {
+                staffIds = staffMembers.map((s) => s.id);
+              }
+            }
             
             for (const sId of staffIds) {
               const existingFerie = await prisma.appointment.findFirst({
@@ -1196,6 +1205,17 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     action={blockHoliday}
                     className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
                   >
+                    {staffList.length > 0 && (
+                      <select
+                        name="staffId"
+                        className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                      >
+                        <option value="all">Tutto lo staff</option>
+                        {staffList.map((s) => (
+                          <option key={s.id} value={s.id}>{s.name}</option>
+                        ))}
+                      </select>
+                    )}
                     <input
                       type="date"
                       name="startDate"
