@@ -744,23 +744,31 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         <div className={activeTab === 'servizi' ? '' : 'hidden'}>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-cyan-400 text-sm font-medium truncate">{slug}.neatx.store</span>
-                <Link
-                  href={`https://${slug}.neatx.store`}
-                  className="shrink-0 bg-[#00b4ff]/10 text-[#00b4ff] text-xs font-bold px-4 py-2 rounded-lg hover:bg-[#00b4ff]/20 transition"
-                >
-                  Apri
-                </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="bg-[#0b1221] p-8 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] flex flex-col items-center justify-center text-center">
+              <div className="text-6xl mb-4 opacity-50">💇‍♀️</div>
+              <h3 className="text-xl font-extrabold text-white mb-2">Gestione Team & Servizi</h3>
+              <p className="text-slate-400 text-sm mb-6 max-w-sm">
+                Configura i membri del tuo staff, gli orari di lavoro e tutti i servizi offerti (con prezzi e durate) direttamente dal pannello di gestione.
+              </p>
+              <div className="pointer-events-none opacity-50 ring-2 ring-white/20 p-2 rounded-xl">
+                 <span className="text-white font-bold bg-[#1e2b4a] px-4 py-2 rounded-lg">Cerca in alto: &quot;Impostazioni Team&quot;</span>
+              </div>
+            </div>
+
+            <div className="bg-[#0b1221] p-8 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col items-center justify-center text-center">
+              <div className="text-6xl mb-4 opacity-50">📒</div>
+              <h3 className="text-xl font-extrabold text-white mb-2">Database Clienti</h3>
+              <p className="text-slate-400 text-sm mb-6 max-w-sm">
+                Accedi alla rubrica completa di tutti i tuoi clienti per vedere i loro appuntamenti passati e i contatti WhatsApp.
+              </p>
+              <div className="pointer-events-none opacity-50 ring-2 ring-white/20 p-2 rounded-xl">
+                 <span className="text-white font-bold bg-[#1e2b4a] px-4 py-2 rounded-lg">Cerca in alto: &quot;Rubrica&quot;</span>
               </div>
             </div>
           </div>
-        )}
-
-        {/* Rimosso TrialLaunchPanel (Onboarding Checklist) come richiesto dall'utente */}
-
-        <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
-
+          
+          <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
         </div>
 
         <div className={activeTab === 'stripe' ? '' : 'hidden'}>
