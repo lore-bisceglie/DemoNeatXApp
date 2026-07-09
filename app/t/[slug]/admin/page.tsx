@@ -22,6 +22,7 @@ import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 
 
 import LoginScreen from "./LoginScreen";
+import TrialLaunchPanel from "./TrialLaunchPanel";
 import crypto from "crypto";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
@@ -753,29 +754,32 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         <div className={activeTab === 'servizi' ? '' : 'hidden'}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-[#0b1221] p-8 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] flex flex-col items-center justify-center text-center">
-              <div className="text-6xl mb-4 opacity-50">💇‍♀️</div>
-              <h3 className="text-xl font-extrabold text-white mb-2">Gestione Team & Servizi</h3>
-              <p className="text-slate-400 text-sm mb-6 max-w-sm">
-                Configura i membri del tuo staff, gli orari di lavoro e tutti i servizi offerti (con prezzi e durate) direttamente dal pannello di gestione.
-              </p>
-              <div className="pointer-events-none opacity-50 ring-2 ring-white/20 p-2 rounded-xl">
-                 <span className="text-white font-bold bg-[#1e2b4a] px-4 py-2 rounded-lg">Cerca in alto: &quot;Impostazioni Team&quot;</span>
-              </div>
-            </div>
-
-            <div className="bg-[#0b1221] p-8 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col items-center justify-center text-center">
-              <div className="text-6xl mb-4 opacity-50">📒</div>
-              <h3 className="text-xl font-extrabold text-white mb-2">Database Clienti</h3>
-              <p className="text-slate-400 text-sm mb-6 max-w-sm">
-                Accedi alla rubrica completa di tutti i tuoi clienti per vedere i loro appuntamenti passati e i contatti WhatsApp.
-              </p>
-              <div className="pointer-events-none opacity-50 ring-2 ring-white/20 p-2 rounded-xl">
-                 <span className="text-white font-bold bg-[#1e2b4a] px-4 py-2 rounded-lg">Cerca in alto: &quot;Rubrica&quot;</span>
-              </div>
-            </div>
-          </div>
+          <TrialLaunchPanel
+            slug={slug}
+            tenantId={tenantId}
+            tenantName={tenant.name}
+            category={tenant.category}
+            city={tenant.city}
+            description={tenant.description}
+            phone={tenant.phone}
+            address={tenant.address}
+            openTime={tenant.openTime}
+            closeTime={tenant.closeTime}
+            breakStart={tenant.breakStart}
+            breakEnd={tenant.breakEnd}
+            closedDays={typeof tenant.closedDays === 'string' ? JSON.parse(tenant.closedDays) : tenant.closedDays}
+            trialStatus={tenant.trialStatus}
+            isDemoData={tenant.isDemoData}
+            trialEndsAt={tenant.trialEndsAt?.toISOString()}
+            services={tenantServices.map((service) => ({
+              id: service.id,
+              name: service.name,
+              duration: service.duration,
+              price: Number(service.price || 0),
+            }))}
+            staffCount={staffList.length}
+            appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
+          />
           
           <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
         </div>
