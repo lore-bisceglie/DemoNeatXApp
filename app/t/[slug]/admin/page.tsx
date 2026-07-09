@@ -425,28 +425,30 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   async function blockTimeRange(formData: FormData) {
     "use server";
-
+    
     let redirectUrl = `/t/${slug}/admin`;
 
     const date = formData.get("date") as string;
     const startTime = formData.get("startTime") as string;
     const endTime = formData.get("endTime") as string;
+    const staffIdParam = formData.get("staffId") as string;
 
     if (date && startTime && endTime) {
       const startMins =
         parseInt(startTime.split(":")[0]) * 60 +
         parseInt(startTime.split(":")[1]);
-
       const endMins =
-        parseInt(endTime.split(":")[0]) * 60 +
-        parseInt(endTime.split(":")[1]);
+        parseInt(endTime.split(":")[0]) * 60 + parseInt(endTime.split(":")[1]);
 
-      if (startMins < endMins) {
+      if (endMins > startMins) {
         try {
+          const storeSettings = await prisma.storeSettings.findUnique({ where: { tenantId } });
+
           const existingApps = await prisma.appointment.findMany({
             where: {
               date,
               tenantId,
+              ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
               NOT: [
                 { customerName: { contains: "PAUSA" } },
                 { customerName: { contains: "FERIE" } },
@@ -475,8 +477,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           if (hasOverlap) {
             redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
           } else {
-            const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
-            const staffIds = staffMembers.length > 0 ? staffMembers.map(s => s.id) : [null];
+            let staffIds: (string | null)[] = [null];
+            
+            if (staffIdParam && staffIdParam !== "all") {
+              staffIds = [staffIdParam];
+            } else {
+              const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
+              if (staffMembers.length > 0) {
+                staffIds = staffMembers.map((s) => s.id);
+              }
+            }
             
             const newApps = staffIds.map(sId => ({
                 customerName: "☕ PAUSA",
@@ -616,6 +626,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
             >
               Export clienti
+            </a>
+            <a
+              href={`/api/export/timesheets?tenantId=${tenantId}`}
+              className="flex-shrink-0 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+            >
+              Export presenze
             </a>
             
             <Link
@@ -1154,6 +1170,17 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     action={blockTimeRange}
                     className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
                   >
+                    {staffList.length > 0 && (
+                      <select
+                        name="staffId"
+                        className="w-full sm:w-[30%] bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
+                      >
+                        <option value="all">Tutto lo staff</option>
+                        {staffList.map((s) => (
+                          <option key={s.id} value={s.id}>{s.name}</option>
+                        ))}
+                      </select>
+                    )}
                     <input
                       type="date"
                       name="date"
