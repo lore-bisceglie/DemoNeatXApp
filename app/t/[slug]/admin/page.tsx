@@ -1165,24 +1165,18 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
                 <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
                   <h3 className="text-[10px] text-slate-400 font-bold uppercase mb-3">
-                    ☕ Blocca Orari / Permessi
+                    ☕ Blocca Orari (Pausa)
                   </h3>
 
                   <form
                     action={blockTimeRange}
-                    className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
+                    className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
                   >
-                    <select
-                      name="blockType"
-                      className="w-full sm:w-auto bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
-                    >
-                      <option value="PAUSA">☕ Pausa</option>
-                      <option value="PERMESSO">📋 Permesso</option>
-                    </select>
+                    <input type="hidden" name="blockType" value="PAUSA" />
                     {staffList.length > 0 && (
                       <select
                         name="staffId"
-                        className="w-full sm:w-[30%] bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
+                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
                       >
                         <option value="all">Tutto lo staff</option>
                         {staffList.map((s) => (
@@ -1195,43 +1189,92 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                       name="date"
                       required
                       defaultValue={todayItaly}
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm w-full sm:w-[40%]"
-                      style={{
-                        colorScheme: "dark",
-                      }}
+                      className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
+                      style={{ colorScheme: "dark" }}
                     />
-
                     <select
                       name="startTime"
                       required
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm flex-grow"
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
                     >
                       <option value="">Dalle</option>
                       {allSlots.map((s) => (
-                        <option key={`s-${s}`} value={s}>
-                          {s}
-                        </option>
+                        <option key={`s-${s}`} value={s}>{s}</option>
                       ))}
                     </select>
-
                     <select
                       name="endTime"
                       required
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm flex-grow"
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
                     >
                       <option value="">Alle</option>
                       {allSlots.map((s) => (
-                        <option key={`e-${s}`} value={s}>
-                          {s}
-                        </option>
+                        <option key={`e-${s}`} value={s}>{s}</option>
                       ))}
                     </select>
-
                     <button
                       type="submit"
-                      className="bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl text-sm w-full sm:w-auto"
+                      className="col-span-2 sm:col-span-1 bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl text-sm"
                     >
                       Blocca
+                    </button>
+                  </form>
+                </div>
+
+                <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                  <h3 className="text-[10px] text-blue-400 font-bold uppercase mb-3">
+                    📋 Permesso Retribuito
+                  </h3>
+
+                  <form
+                    action={blockTimeRange}
+                    className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
+                  >
+                    <input type="hidden" name="blockType" value="PERMESSO" />
+                    {staffList.length > 0 && (
+                      <select
+                        name="staffId"
+                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
+                      >
+                        <option value="all">Tutto lo staff</option>
+                        {staffList.map((s) => (
+                          <option key={`p-${s.id}`} value={s.id}>{s.name}</option>
+                        ))}
+                      </select>
+                    )}
+                    <input
+                      type="date"
+                      name="date"
+                      required
+                      defaultValue={todayItaly}
+                      className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
+                      style={{ colorScheme: "dark" }}
+                    />
+                    <select
+                      name="startTime"
+                      required
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
+                    >
+                      <option value="">Dalle</option>
+                      {allSlots.map((s) => (
+                        <option key={`ps-${s}`} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <select
+                      name="endTime"
+                      required
+                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
+                    >
+                      <option value="">Alle</option>
+                      {allSlots.map((s) => (
+                        <option key={`pe-${s}`} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <button
+                      type="submit"
+                      className="col-span-2 sm:col-span-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold px-4 py-2 rounded-xl text-sm"
+                    >
+                      Registra
                     </button>
                   </form>
                 </div>
