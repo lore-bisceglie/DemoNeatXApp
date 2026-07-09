@@ -270,8 +270,8 @@ export default function SuperAdminPage() {
     const domainStr = isLocal ? '' : `; domain=.neatx.store`;
     document.cookie = `admin_auth_${slug}=${adminPassword}; path=/; max-age=86400${domainStr}`;
     
-    const baseUrl = isLocal ? `http://${slug}.localhost:3000` : `https://${slug}.neatx.store`;
-    window.open(`${baseUrl}/admin`, '_blank');
+    const url = isLocal ? `http://localhost:3000/t/${slug}/admin` : `https://${slug}.neatx.store/admin`;
+    window.open(url, '_blank');
   };
 
   if (!isAuthenticated) {
