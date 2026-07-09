@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
       include: {
-        staff: { where: { isActive: true } }
+        staff: true
       }
     });
 

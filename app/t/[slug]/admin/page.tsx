@@ -482,7 +482,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             if (staffIdParam && staffIdParam !== "all") {
               staffIds = [staffIdParam];
             } else {
-              const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
+              const staffMembers = await prisma.staff.findMany({ where: { tenantId } });
               if (staffMembers.length > 0) {
                 staffIds = staffMembers.map((s) => s.id);
               }
@@ -560,7 +560,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             if (staffIdParam && staffIdParam !== "all") {
               staffIds = [staffIdParam];
             } else {
-              const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
+              const staffMembers = await prisma.staff.findMany({ where: { tenantId } });
               if (staffMembers.length > 0) {
                 staffIds = staffMembers.map((s) => s.id);
               }
