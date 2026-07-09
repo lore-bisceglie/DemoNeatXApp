@@ -84,6 +84,14 @@ export async function GET(request: Request) {
     const monthName = firstDay.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
 
     for (const s of tenant.staff) {
+      // Parsing del Google Sheet baseSchedule
+      let scheduleObj: any = null;
+      if (s.baseSchedule && s.baseSchedule.length > 5) {
+        try {
+          scheduleObj = JSON.parse(s.baseSchedule);
+        } catch (e) {}
+      }
+
       // Filtra le assenze per questo dipendente o quelle "per tutto il negozio" (staffId = null)
       const staffAbsences = absences.filter(a => a.staffId === s.id || !a.staffId);
       
@@ -99,8 +107,32 @@ export async function GET(request: Request) {
         const dateStr = dateLoop.toISOString().split("T")[0]; // YYYY-MM-DD
         const dataIta = `${d.toString().padStart(2, '0')}/${(month+1).toString().padStart(2, '0')}/${year}`;
 
-        const isClosed = closedDaysArr.includes(dayName);
-        let expectedHours = isClosed ? 0 : dailyWorkHours;
+        let expectedHours = 0;
+
+        if (scheduleObj && scheduleObj[dayName] !== undefined) {
+          // Ha un Google Sheet impostato per questo giorno
+          const daySchedule = scheduleObj[dayName];
+          if (daySchedule.active && daySchedule.blocks) {
+            let mins = 0;
+            for (const b of daySchedule.blocks) {
+              try {
+                const [sh, sm] = b.start.split(":");
+                const startM = parseInt(sh) * 60 + parseInt(sm);
+                const [eh, em] = b.end.split(":");
+                const endM = parseInt(eh) * 60 + parseInt(em);
+                mins += Math.max(0, endM - startM);
+              } catch (e) {}
+            }
+            expectedHours = mins / 60;
+          } else {
+            // Turno di riposo forzato da Google Sheet
+            expectedHours = 0;
+          }
+        } else {
+          // Nessun foglio Google: Fallback all'orario classico del negozio
+          const isClosed = closedDaysArr.includes(dayName);
+          expectedHours = isClosed ? 0 : dailyWorkHours;
+        }
         
         let ferieH = 0;
         let pausaH = 0;
