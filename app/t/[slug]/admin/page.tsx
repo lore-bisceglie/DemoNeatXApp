@@ -1052,7 +1052,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         {/* ALTRE FUNZIONI DASHBOARD */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="grid grid-cols-1 gap-6 mt-6">
           <div className={`bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden ${activeTab === 'marketing' ? '' : 'hidden'}`}>
             <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
               🎯
