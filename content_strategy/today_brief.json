@@ -1,17 +1,17 @@
 {
   "date": "2026-07-09",
-  "niche": "Barbieri",
-  "angle": "gestire clienti in modo efficace",
-  "pain": "no-show e appuntamenti presi al volo in DM",
-  "promise": "meno buchi in agenda e più clienti paganti",
-  "cover_title": "BARBIERI: BASTA NO-SHOW",
-  "hook_hint": "Se sei un barbiere e perdi soldi a causa di no-show e messaggi confusi, è tempo di cambiare.",
-  "blog_topic": "Barbieri: gestire clienti e appuntamenti con un'agenda automatica",
+  "niche": "Fisioterapisti",
+  "angle": "gestire acconti e promemoria efficacemente",
+  "pain": "sedute saltate e agenda confusa",
+  "promise": "prenotazioni facili e promemoria per ogni paziente",
+  "cover_title": "FISIOTERAPISTI: NO-SHOW STOP",
+  "hook_hint": "Se sei un fisioterapista e hai sedute saltate, stai perdendo denaro.",
+  "blog_topic": "Fisioterapisti: gestire acconti e promemoria con un'agenda automatica",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
+  "image_prompt": "photorealistic physiotherapy studio, physiotherapist assisting patient, sleek modern clinic",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }
