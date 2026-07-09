@@ -158,8 +158,7 @@ export async function POST(req: Request) {
     const serviceByName = new Map(tenant.services.map((service) => [service.name, service]));
     const staffByName = new Map<string, { id: string; name: string }>();
 
-    // Aggiungo il proprietario come membro principale dello staff
-    const staffList = [{ name: ownerName, services: [] }, ...template.staff];
+    const staffList = [{ name: ownerName, services: [] }];
 
     for (const member of staffList) {
       const allowedServices = member.services?.length

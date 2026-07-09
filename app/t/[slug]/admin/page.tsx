@@ -744,62 +744,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         <div className={activeTab === 'servizi' ? '' : 'hidden'}>
-{/* SETUP CHECKLIST */}
-        {false && rawAppointments.filter(a => !a.customerName.includes("PAUSA") && !a.customerName.includes("FERIE")).length === 0 && (
-          <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-                🚀 Checklist di lancio
-              </h2>
-              <span className="text-xs text-slate-500 font-bold">
-                {[
-                  tenantServices.length > 0,
-                  !!tenant?.phone,
-                  staffList.length > 0,
-                ].filter(Boolean).length}/3 completati
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenantServices.length > 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenantServices.length > 0 ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {tenantServices.length > 0 ? '✓' : '1'}
-                </span>
-                <div>
-                  <p className={`font-bold text-sm ${tenantServices.length > 0 ? 'text-emerald-300' : 'text-white'}`}>Servizi configurati</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {tenantServices.length > 0 ? `${tenantServices.length} servizi pronti` : 'Aggiungi i tuoi servizi con prezzi e durata'}
-                  </p>
-                </div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${tenant?.phone ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${tenant?.phone ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {tenant?.phone ? '✓' : '2'}
-                </span>
-                <div>
-                  <p className={`font-bold text-sm ${tenant?.phone ? 'text-emerald-300' : 'text-white'}`}>WhatsApp collegato</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {tenant?.phone ? `Ricevi notifiche al ${tenant?.phone}` : 'Inserisci il numero per ricevere le prenotazioni'}
-                  </p>
-                </div>
-              </div>
-
-              <div className={`p-4 rounded-2xl border flex items-start gap-3 ${staffList.length > 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#131c31] border-[#1e2b4a]'}`}>
-                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 mt-0.5 ${staffList.length > 0 ? 'bg-emerald-500 text-black' : 'bg-[#1e2b4a] text-slate-500'}`}>
-                  {staffList.length > 0 ? '✓' : '3'}
-                </span>
-                <div>
-                  <p className={`font-bold text-sm ${staffList.length > 0 ? 'text-emerald-300' : 'text-white'}`}>Staff aggiunto</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {staffList.length > 0 ? `${staffList.length} membri dello staff` : 'Aggiungi collaboratori per gestirli in agenda'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 bg-[#050814] rounded-2xl p-4 border border-[#1a2642]">
-              <p className="text-sm font-bold text-white mb-2">📢 Il tuo link prenotazioni</p>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-cyan-400 text-sm font-medium truncate">{slug}.neatx.store</span>
                 <Link
