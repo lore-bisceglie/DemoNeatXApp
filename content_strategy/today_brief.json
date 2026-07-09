@@ -1,17 +1,17 @@
 {
   "date": "2026-07-09",
   "niche": "Parrucchieri",
-  "angle": "gestire clienti invadenti",
-  "pain": "messaggi incessanti a qualsiasi ora",
-  "promise": "agenda piena senza stress",
-  "cover_title": "PARRUCCHIERI: NO-SHOW STOP",
-  "hook_hint": "Se i tuoi clienti ti tempestano di messaggi, stai perdendo tempo e denaro.",
-  "blog_topic": "Parrucchieri: gestire clienti invadenti tramite un'agenda automatica",
+  "angle": "gestire acconti e promemoria",
+  "pain": "clienti invadenti su WhatsApp",
+  "promise": "agenda piena senza perdere tempo",
+  "cover_title": "PARRUCCHIERI: NO-SHOW FINITO",
+  "hook_hint": "Se sei un parrucchiere e perdi tempo con clienti invadenti su WhatsApp, stai perdendo denaro.",
+  "blog_topic": "Parrucchieri: gestire acconti e promemoria con un'agenda automatica",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic modern hair salon, professional hairdresser interacting with a client, premium lighting",
+  "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
   "keywords": [
     "gestionale parrucchieri",
-    "prenotazioni salone",
-    "agenda automatica"
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }

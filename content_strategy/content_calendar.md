@@ -1,50 +1,50 @@
 # NeatX Content Calendar
 
 ## 2026-07-09 - Parrucchieri
-- Angolo: gestire clienti invadenti
-- Dolore: messaggi incessanti a qualsiasi ora
-- Promessa: agenda piena senza stress
-- Cover: PARRUCCHIERI: NO-SHOW STOP
-- Blog: Parrucchieri: gestire clienti invadenti tramite un'agenda automatica
+- Angolo: gestire acconti e promemoria
+- Dolore: clienti invadenti su WhatsApp
+- Promessa: agenda piena senza perdere tempo
+- Cover: PARRUCCHIERI: NO-SHOW FINITO
+- Blog: Parrucchieri: gestire acconti e promemoria con un'agenda automatica
 
-## 2026-07-10 - Barbieri
-- Angolo: tempo sprecato nei messaggi
-- Dolore: clienti che non si presentano
-- Promessa: mantenere agenda piena e clienti fedeli
-- Cover: BARBIERI: NO-SHOW STOP
-- Blog: Barbieri: tempo sprecato nei messaggi e come evitarlo con un'agenda automatica
+## 2026-07-10 - Personal Trainer
+- Angolo: rispondere ai messaggi ti costa
+- Dolore: slot persi per chat
+- Promessa: sessioni confermate automaticamente
+- Cover: PERSONAL TRAINER: NO-SHOW FINITO
+- Blog: Personal Trainer: come risparmiare tempo con un'agenda automatica
 
-## 2026-07-11 - Centri Estetici
-- Angolo: link in bio inefficace
-- Dolore: clienti dimentichi degli appuntamenti
-- Promessa: prenotazioni automatiche senza sforzo
-- Cover: CENTRI ESTETICI: NO-SHOW STOP
-- Blog: Centri Estetici: perché il link in bio deve prenotare da solo con un'agenda automatica
+## 2026-07-11 - Fisioterapisti
+- Angolo: il link in bio deve lavorare
+- Dolore: cambi manuali continui
+- Promessa: prenotazioni e promemoria facili
+- Cover: FISIOTERAPISTI: NO-SHOW FINITO
+- Blog: Fisioterapisti: perché il link in bio deve gestire prenotazioni
 
-## 2026-07-12 - Coach e Consulenti
-- Angolo: convertire follower in clienti
-- Dolore: clienti indecisi e chiamate perse
-- Promessa: appuntamenti confermati senza stress
-- Cover: COACH: NO-SHOW STOP
-- Blog: Coach e Consulenti: convertire follower in clienti con un'agenda automatica
+## 2026-07-12 - Centri Estetici
+- Angolo: da follower a clienti
+- Dolore: clienti che dimenticano appuntamenti
+- Promessa: promemoria e acconti automatici
+- Cover: CENTRI ESTETICI: NO-SHOW FINITO
+- Blog: Centri Estetici: convertire follower in appuntamenti veri
 
-## 2026-07-13 - Fisioterapisti
-- Angolo: gestire appuntamenti saltati
-- Dolore: sedute saltate e cancellazioni
-- Promessa: promemoria e organizzazione automatica
-- Cover: FISIOTERAPISTI: NO-SHOW STOP
-- Blog: Fisioterapisti: gestire appuntamenti saltati con un'agenda automatica
+## 2026-07-13 - Coach e Consulenti
+- Angolo: prenotare senza stress
+- Dolore: call fissate a mano
+- Promessa: follow-up semplificato
+- Cover: COACH: NO-SHOW FINITO
+- Blog: Coach e Consulenti: come semplificare la prenotazione automatica
 
-## 2026-07-14 - Personal Trainer
-- Angolo: costi dei no-show mensili
-- Dolore: slot persi e lezioni spostate
-- Promessa: sessioni confermate senza preoccupazioni
-- Cover: TRAINER: NO-SHOW STOP
-- Blog: Personal Trainer: quanto costano i no-show mensili e come evitarli
+## 2026-07-14 - Barbieri
+- Angolo: costi dei no-show
+- Dolore: appuntamenti presi all'ultimo
+- Promessa: più clienti, meno buchi
+- Cover: BARBIERI: NO-SHOW FINITO
+- Blog: Barbieri: calcola i costi dei no-show
 
 ## 2026-07-15 - Tatuatori
-- Angolo: gestire le consulenze infinite
-- Dolore: appuntamenti senza caparra
-- Promessa: richieste filtrate e pagamenti anticipati
-- Cover: TATUATORI: NO-SHOW STOP
-- Blog: Tatuatori: gestire le consulenze infinite con un'agenda automatica
+- Angolo: acconti per ogni appuntamento
+- Dolore: consulenze infinite senza caparra
+- Promessa: richieste filtrate e prenotazioni sicure
+- Cover: TATUATORI: NO-SHOW FINITO
+- Blog: Tatuatori: gestire acconti e promemoria
