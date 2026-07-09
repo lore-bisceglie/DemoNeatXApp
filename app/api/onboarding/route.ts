@@ -118,7 +118,7 @@ export async function POST(req: Request) {
         ownerName,
         ownerEmail: email,
         ownerPasswordHash: hashPassword(password),
-        description: description || `${template.description} Demo generata automaticamente: modifica tutto quando vuoi e pubblicala senza ricominciare.`,
+        description: description || template.description,
         phone,
         address,
         instagramUrl,
@@ -158,7 +158,10 @@ export async function POST(req: Request) {
     const serviceByName = new Map(tenant.services.map((service) => [service.name, service]));
     const staffByName = new Map<string, { id: string; name: string }>();
 
-    for (const member of template.staff) {
+    // Aggiungo il proprietario come membro principale dello staff
+    const staffList = [{ name: ownerName, services: [] }, ...template.staff];
+
+    for (const member of staffList) {
       const allowedServices = member.services?.length
         ? member.services
             .map((serviceName) => serviceByName.get(serviceName))

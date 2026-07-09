@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import DeleteButton from "./DeleteButton";
 import ReminderButton from "./ReminderButton";
@@ -22,7 +23,12 @@ export default function AppointmentBlock({
   const [moveTime, setMoveTime] = useState(appt.time || "");
   const [moveError, setMoveError] = useState("");
   const [moving, setMoving] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isWalkIn = appt.source === "WALK_IN";
   const isPausa = appt.customerName.includes("PAUSA");
@@ -164,7 +170,7 @@ export default function AppointmentBlock({
         )}
       </button>
 
-      {isOpen && (
+      {isOpen && mounted && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#050814]/80 backdrop-blur-sm p-4">
           <div className="bg-[#0b1221] border border-[#1e2b4a] rounded-3xl p-6 w-full max-w-sm shadow-2xl shadow-cyan-900/20 relative animate-in zoom-in-95 duration-200 text-left">
             <button
@@ -320,7 +326,8 @@ export default function AppointmentBlock({
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
