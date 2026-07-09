@@ -475,17 +475,20 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           if (hasOverlap) {
             redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
           } else {
-            await prisma.appointment.create({
-              data: {
+            const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
+            const staffIds = staffMembers.length > 0 ? staffMembers.map(s => s.id) : [null];
+            
+            const newApps = staffIds.map(sId => ({
                 customerName: "☕ PAUSA",
                 customerPhone: "0000000000",
                 date,
                 time: startTime,
                 endTime,
                 tenantId,
+                staffId: sId,
                 cancelToken: crypto.randomUUID(),
-              },
-            });
+            }));
+            await prisma.appointment.createMany({ data: newApps });
           }
         } catch (error) {
           console.error(error);
@@ -540,25 +543,27 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           while (insertLoop <= end) {
             const d = insertLoop.toISOString().split("T")[0];
 
-            const existingFerie = await prisma.appointment.findFirst({
-              where: {
-                date: d,
-                time: "ALL_DAY",
-                tenantId,
-              },
-            });
-
-            if (!existingFerie) {
-              await prisma.appointment.create({
-                data: {
-                  customerName: "🌴 FERIE",
-                  customerPhone: "0000000000",
-                  date: d,
-                  time: "ALL_DAY",
-                  tenantId,
-                  cancelToken: crypto.randomUUID(),
-                },
+            const staffMembers = await prisma.staff.findMany({ where: { tenantId, isActive: true } });
+            const staffIds = staffMembers.length > 0 ? staffMembers.map(s => s.id) : [null];
+            
+            for (const sId of staffIds) {
+              const existingFerie = await prisma.appointment.findFirst({
+                where: { date: d, time: "ALL_DAY", tenantId, staffId: sId },
               });
+
+              if (!existingFerie) {
+                await prisma.appointment.create({
+                  data: {
+                    customerName: "🌴 FERIE",
+                    customerPhone: "0000000000",
+                    date: d,
+                    time: "ALL_DAY",
+                    tenantId,
+                    staffId: sId,
+                    cancelToken: crypto.randomUUID(),
+                  },
+                });
+              }
             }
 
             insertLoop.setDate(insertLoop.getDate() + 1);
@@ -808,36 +813,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         )}
 
-        <TrialLaunchPanel
-          slug={slug}
-          tenantId={tenantId}
-          tenantName={tenantName}
-          category={tenant.category}
-          city={tenant.city}
-          description={tenant.description}
-          phone={tenant.phone}
-          address={tenant.address}
-          openTime={tenant.openTime}
-          instagramUrl={tenant.instagramUrl}
-          tiktokUrl={tenant.tiktokUrl}
-          mapsLink={tenant.mapsLink}
-          closeTime={tenant.closeTime}
-          breakStart={tenant.breakStart}
-          breakEnd={tenant.breakEnd}
-          closedDays={tenant.closedDays}
-          trialStatus={tenant.trialStatus}
-          isDemoData={tenant.isDemoData}
-          activationRequested={tenant.activationRequested}
-          trialEndsAt={tenant.trialEndsAt}
-          services={tenantServices.map((service) => ({
-            id: service.id,
-            name: service.name,
-            duration: service.duration,
-            price: Number(service.price || 0),
-          }))}
-          staffCount={staffList.length}
-          appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
-        />
+        {/* Rimosso TrialLaunchPanel (Onboarding Checklist) come richiesto dall'utente */}
 
         <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
 
@@ -891,51 +867,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         
-{/* SEZIONE PAGAMENTI STRIPE */}
-        <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
-          <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
-            💳
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
-                <span>💳</span>
-                Integrazione Pagamenti (Stripe)
-              </h2>
-              <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                Collega il tuo conto bancario per richiedere caparre online. Zero commissioni da parte di NeatX (Stripe trattiene solo i costi vivi del ~1.5%). I soldi arrivano direttamente sul tuo IBAN.
-              </p>
-            </div>
-            
-            <div>
-              {storeSettings?.stripeOnboardingComplete ? (
-                <div className="flex flex-col items-end gap-1">
-                  <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
-                    <span>✅</span> Conto Collegato (Apri Stripe)
-                  </a>
-                  <span className="text-[10px] text-slate-500 mr-2">Clicca per modificare IBAN/Conto</span>
-                </div>
-              ) : (
-                <a
-                  href={`/api/stripe/connect?tenantId=${tenantId}`}
-                  className="bg-[#007aff] hover:bg-[#00b4ff] text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap"
-                >
-                  Collega Conto Bancario
-                </a>
-              )}
-            </div>
-          </div>
-          
-          {storeSettings?.stripeOnboardingComplete && (
-            <StripeSettingsForm 
-              tenantId={tenantId}
-              initialStrategy={storeSettings.paymentStrategy}
-              initialFixed={storeSettings.paymentFixedAmount}
-              initialPercentage={storeSettings.paymentPercentage}
-              initialMandatory={storeSettings.paymentMandatory}
-            />
-          )}
-        </div>
+{/* Rimosso blocco Stripe duplicato */}
 
         
         

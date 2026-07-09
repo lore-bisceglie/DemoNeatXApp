@@ -14,7 +14,7 @@ export default function LoginScreen({
   ownerEmail?: string | null;
   showLegacyHint?: boolean;
 }) {
-  const [email, setEmail] = useState(ownerEmail || "");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
