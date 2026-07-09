@@ -614,40 +614,39 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </span>
           </h1>
 
-          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 custom-scrollbar snap-x">
+          <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} />
             <CustomerDrawer tenantId={tenantId} />
+            <Link
+              href={`/t/${slug}/admin/analytics`}
+              className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm"
+            >
+              <span>📊</span><span className="hidden sm:inline">Analytics</span>
+            </Link>
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
-              className="flex-shrink-0 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              Export agenda
+              <span>📅</span><span className="hidden sm:inline">Export</span> Agenda
             </a>
             <a
               href={`/api/export/customers?tenantId=${tenantId}`}
-              className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+              className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              Export clienti
+              <span>👥</span><span className="hidden sm:inline">Export</span> Clienti
             </a>
             <a
               href={`/api/export/timesheets?tenantId=${tenantId}`}
-              className="flex-shrink-0 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+              className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              Export presenze
+              <span>🧾</span><span className="hidden sm:inline">Export</span> Presenze
             </a>
-            
-            <Link
-              href={`/t/${slug}/admin/analytics`}
-              className="flex-shrink-0 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-4 sm:px-4 py-2 sm:py-2.5 rounded-xl transition flex items-center gap-2 text-sm snap-center"
-            >
-              <span>📊</span> Analytics
-            </Link>
-
             <Link
               href={`/t/${slug}`}
-              className="flex-shrink-0 bg-[#00b4ff] hover:bg-cyan-400 text-[#050814] text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-cyan-500/20 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+              target="_blank"
+              className="col-span-3 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              [+] Nuova Prenotazione
+              <span>🌐</span> Pagina Clienti
             </Link>
           </div>
         </div>
