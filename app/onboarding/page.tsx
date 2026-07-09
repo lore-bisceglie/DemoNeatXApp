@@ -53,6 +53,36 @@ const categoryHints: Record<string, { services: string; staff: string; bookings:
     staff: "2 professionisti demo",
     bookings: "5 appuntamenti gia in agenda",
   },
+  medico: {
+    services: "Visite, controlli, check-up",
+    staff: "0 staff demo (solo titolare)",
+    bookings: "0 appuntamenti demo",
+  },
+  nutrizionista: {
+    services: "Prime visite, controlli, diete",
+    staff: "0 staff demo (solo titolare)",
+    bookings: "0 appuntamenti demo",
+  },
+  tatuatore: {
+    services: "Consulenze, tattoo piccoli e grandi",
+    staff: "0 staff demo (solo titolare)",
+    bookings: "0 appuntamenti demo",
+  },
+  toelettatura: {
+    services: "Bagni e tagli, taglia piccola e media",
+    staff: "0 staff demo (solo titolare)",
+    bookings: "0 appuntamenti demo",
+  },
+  psicologo: {
+    services: "Colloqui individuali, di coppia",
+    staff: "0 staff demo (solo titolare)",
+    bookings: "0 appuntamenti demo",
+  },
+  consulente: {
+    services: "Call, meeting strategici",
+    staff: "0 staff demo (solo titolare)",
+    bookings: "0 appuntamenti demo",
+  },
 };
 
 export default function Onboarding() {

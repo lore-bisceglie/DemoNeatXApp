@@ -5,7 +5,13 @@ export type DemoCategory =
   | "nail_salon"
   | "massage"
   | "personal_trainer"
-  | "private_studio";
+  | "private_studio"
+  | "medico"
+  | "nutrizionista"
+  | "tatuatore"
+  | "toelettatura"
+  | "psicologo"
+  | "consulente";
 
 export type DemoServiceTemplate = {
   name: string;
@@ -285,6 +291,121 @@ export const demoShopTemplates: Record<DemoCategory, DemoShopTemplate> = {
       { customerName: "Marta Demo", customerPhone: "3330007004", dayOffset: 3, time: "10:00", serviceName: "Incontro online", staffName: "Silvia" },
       { customerName: "Nicola Test", customerPhone: "3330007005", dayOffset: 4, time: "16:00", serviceName: "Pacchetto revisione", staffName: "Silvia" },
     ],
+    reviews: demoReviews,
+  },
+  medico: {
+    id: "medico",
+    label: "Studio medico",
+    shortLabel: "Medico",
+    description: "Studio medico con prenotazione visite specialistiche, di controllo ed esami. Meno chiamate, agenda sempre piena e organizzata.",
+    openTime: "08:30",
+    closeTime: "19:00",
+    breakStart: "13:00",
+    breakEnd: "14:30",
+    closedDays: [0, 6],
+    services: [
+      { name: "Prima Visita Specialistica", duration: 45, price: 120 },
+      { name: "Visita di Controllo", duration: 20, price: 80 },
+      { name: "Visione Esami / Referti", duration: 15, price: 40 },
+      { name: "Elettrocardiogramma (ECG)", duration: 30, price: 50 },
+      { name: "Ecografia", duration: 30, price: 90 },
+      { name: "Check-up Completo", duration: 60, price: 150 },
+    ],
+    staff: [{ name: "Dott. Demo" }],
+    bookings: [],
+    reviews: demoReviews,
+  },
+  nutrizionista: {
+    id: "nutrizionista",
+    label: "Nutrizionista",
+    shortLabel: "Nutrizione",
+    description: "Agenda per nutrizionista. Visite di controllo, prime visite e creazione piani alimentari. Prenota in pochi secondi.",
+    openTime: "09:00",
+    closeTime: "19:30",
+    closedDays: [0, 6],
+    services: [
+      { name: "Prima Visita e Consegna Dieta", duration: 60, price: 100 },
+      { name: "Controllo Mensile e Misure", duration: 30, price: 50 },
+      { name: "Valutazione Bioimpedenziometrica", duration: 30, price: 40 },
+      { name: "Dieta per Sportivi", duration: 60, price: 120 },
+      { name: "Colloquio Conoscitivo Gratuito", duration: 15, price: 0 },
+    ],
+    staff: [{ name: "Dott.ssa Test" }],
+    bookings: [],
+    reviews: demoReviews,
+  },
+  tatuatore: {
+    id: "tatuatore",
+    label: "Studio tatuaggi",
+    shortLabel: "Tattoo",
+    description: "Tattoo studio con prenotazione consulenze, lavori piccoli e sedute intere. Riduce le richieste a vuoto su Instagram.",
+    openTime: "11:00",
+    closeTime: "20:00",
+    closedDays: [0, 1],
+    services: [
+      { name: "Consulenza e Preventivo", duration: 30, price: 0 },
+      { name: "Tatuaggio Piccolo (Minimal)", duration: 60, price: 80 },
+      { name: "Tatuaggio Medio (Mezza Seduta)", duration: 120, price: 150 },
+      { name: "Tatuaggio Grande (Seduta Intera)", duration: 240, price: 300 },
+      { name: "Piercing", duration: 30, price: 40 },
+    ],
+    staff: [{ name: "Tatuatore Demo" }],
+    bookings: [],
+    reviews: demoReviews,
+  },
+  toelettatura: {
+    id: "toelettatura",
+    label: "Toelettatura cani",
+    shortLabel: "Toelettatura",
+    description: "Servizio di toelettatura cani e gatti. Appuntamenti automatizzati per taglia piccola, media e grande.",
+    openTime: "09:00",
+    closeTime: "18:00",
+    closedDays: [0, 1],
+    services: [
+      { name: "Bagno e Taglio (Taglia Piccola)", duration: 60, price: 45 },
+      { name: "Bagno e Taglio (Taglia Media)", duration: 75, price: 55 },
+      { name: "Bagno e Taglio (Taglia Grande)", duration: 90, price: 75 },
+      { name: "Solo Bagno", duration: 45, price: 30 },
+      { name: "Taglio Unghie e Pulizia", duration: 15, price: 15 },
+    ],
+    staff: [{ name: "Toelettatore Test" }],
+    bookings: [],
+    reviews: demoReviews,
+  },
+  psicologo: {
+    id: "psicologo",
+    label: "Psicologo / Psicoterapeuta",
+    shortLabel: "Psicologo",
+    description: "Prenotazione facile e privata per percorsi terapeutici, sedute di coppia o individuali. Semplifica la gestione dello studio.",
+    openTime: "09:00",
+    closeTime: "20:00",
+    closedDays: [0, 6],
+    services: [
+      { name: "Primo Colloquio Conoscitivo", duration: 60, price: 70 },
+      { name: "Seduta di Supporto Psicologico", duration: 60, price: 70 },
+      { name: "Psicoterapia Individuale", duration: 60, price: 80 },
+      { name: "Terapia di Coppia", duration: 90, price: 120 },
+    ],
+    staff: [{ name: "Dott. Psicologo" }],
+    bookings: [],
+    reviews: demoReviews,
+  },
+  consulente: {
+    id: "consulente",
+    label: "Consulente / Freelance",
+    shortLabel: "Consulente",
+    description: "Gestione appuntamenti per liberi professionisti. Le call e i meeting si incastrano perfettamente nell'agenda.",
+    openTime: "09:00",
+    closeTime: "18:00",
+    closedDays: [0, 6],
+    services: [
+      { name: "Consulenza Breve / Call", duration: 30, price: 60 },
+      { name: "Consulenza Strategica Completa", duration: 60, price: 120 },
+      { name: "Revisione Progetto", duration: 90, price: 150 },
+      { name: "Affiancamento Tecnico", duration: 60, price: 100 },
+    ],
+    staff: [{ name: "Consulente Demo" }],
+    bookings: [],
     reviews: demoReviews,
   },
 };
