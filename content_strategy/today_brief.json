@@ -1,17 +1,17 @@
 {
-  "date": "2026-07-08",
-  "niche": "Personal Trainer",
-  "angle": "il link in bio deve prenotare da solo",
-  "pain": "lezioni spostate in chat e slot persi",
-  "promise": "sessioni prenotate e confermate automaticamente",
-  "cover_title": "PERSONAL TRAINER: BASTA NO-SHOW",
-  "hook_hint": "Se sei un personal trainer e perdi soldi a causa di lezioni spostate, cambia ora.",
-  "blog_topic": "Personal Trainer: perché il link in bio deve prenotare da solo",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+  "date": "2026-07-09",
+  "niche": "Parrucchieri",
+  "angle": "gestire clienti invadenti",
+  "pain": "messaggi incessanti a qualsiasi ora",
+  "promise": "agenda piena senza stress",
+  "cover_title": "PARRUCCHIERI: NO-SHOW STOP",
+  "hook_hint": "Se i tuoi clienti ti tempestano di messaggi, stai perdendo tempo e denaro.",
+  "blog_topic": "Parrucchieri: gestire clienti invadenti tramite un'agenda automatica",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic modern hair salon, professional hairdresser interacting with a client, premium lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "gestionale parrucchieri",
+    "prenotazioni salone",
+    "agenda automatica"
   ]
 }
