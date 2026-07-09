@@ -7,6 +7,7 @@ import TrustMarquee from "@/components/landing/TrustMarquee";
 import BeforeAfterSlider from "@/components/landing/BeforeAfterSlider";
 import ComparisonTable from "@/components/landing/ComparisonTable";
 import FeaturesSection from "@/components/landing/FeaturesSection";
+import TimesheetFeatureSection from "@/components/landing/TimesheetFeatureSection";
 import OperatingSteps from "@/components/landing/OperatingSteps";
 import NoShowSimulator from "@/components/landing/NoShowSimulator";
 import ReviewSimulator from "@/components/landing/ReviewSimulator";
@@ -77,6 +78,7 @@ export default function Home() {
       <BeforeAfterSlider />
       <ComparisonTable />
       <FeaturesSection />
+      <TimesheetFeatureSection />
       <OperatingSteps />
       <NoShowSimulator onOpenStripe={() => setShowStripe(true)} />
       <ReviewSimulator />

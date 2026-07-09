@@ -7,13 +7,13 @@ import FloatingPhone from "./FloatingPhone";
 const HERO_METRICS = [
   { value: "24/7", label: "prenotazioni attive" },
   { value: "0%", label: "commissioni sui clienti" },
-  { value: "-90%", label: "no-show in meno" },
+  { value: "1 click", label: "export commercialista" },
 ];
 
 const TRUST_POINTS = [
   "Pagina prenotazioni generata in automatico",
-  "Servizi, staff e orari gia precompilati",
-  "Il negozio demo diventa reale quando vuoi",
+  "Turni staff sincronizzati da Google Fogli",
+  "Ore scaricabili per il commercialista",
 ];
 
 export default function HeroSection() {

@@ -1,13 +1,13 @@
 {
-    "niche": "Coach e Consulenti",
-    "script_text": "Sei un coach e continui a rispondere a messaggi e chiamate per programmare appuntamenti? Stai buttando soldi e tempo! Ogni minuto sprecato è un cliente che perdi. Con NeatX, puoi automatizzare le prenotazioni e dire addio ai no-show. Immagina di avere più tempo per i tuoi clienti e meno stress. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "BASTA NO-SHOW",
-    "cover_title": "BASTA NO-SHOW",
-    "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
-    "gameplay_style": "neon_racer",
-    "caption": "Stai perdendo tempo e soldi? Automatizza le tue prenotazioni con NeatX! Commenta AGENDA per il link. #Coaching #Consulenti #PrenotazioniAutomatiche #NeatX",
-    "strategy_date": "2026-07-08",
-    "strategy_angle": "link in bio: prenotazioni automatiche",
-    "strategy_pain": "call manuali e clienti che rinviano",
-    "strategy_promise": "prenotazioni senza sforzo e follow-up più facile"
+    "niche": "Barbieri",
+    "script_text": "Sei un barbiere e continui a rispondere a messaggi su WhatsApp? Stai buttando soldi e tempo! Ogni no-show è un cliente perso e un appuntamento che rimane vuoto. Con NeatX, puoi dire addio a questi problemi! Automatizza le tue prenotazioni e inizia a guadagnare senza stress. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "BARBIERI: BASTA NO-SHOW",
+    "cover_title": "BARBIERI: BASTA NO-SHOW",
+    "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
+    "gameplay_style": "runner",
+    "caption": "Barbieri, smettete di perdere clienti! Automatizzate le vostre prenotazioni con NeatX e guadagnate di più! Commenta 'AGENDA' per info! #barberlife #noShow #NeatX #businessautomation",
+    "strategy_date": "2026-07-09",
+    "strategy_angle": "gestire clienti in modo efficace",
+    "strategy_pain": "no-show e appuntamenti presi al volo in DM",
+    "strategy_promise": "meno buchi in agenda e più clienti paganti"
 }

@@ -17,6 +17,10 @@ const FAQS = [
     a: "No. I tuoi clienti prenotano direttamente dal browser cliccando sul tuo link da Instagram, Google, WhatsApp o dal sito. Niente app da installare, niente account da creare.",
   },
   {
+    q: "Come funziona il Foglio Google per turni e commercialista?",
+    a: "Crei una copia del foglio turni, scrivi per ogni collaboratore orari, riposi, ferie o permessi e incolli il link in NeatX. L'agenda usa quei turni per mostrare gli slot corretti e puoi scaricare un export ordinato delle ore da mandare al commercialista.",
+  },
+  {
     q: "Posso usare il mio dominio?",
     a: "Sì, tramite la dashboard puoi collegare il tuo dominio personalizzato (es. prenota.tuosalone.it) per rendere la tua pagina ancora più professionale.",
   },

@@ -52,8 +52,8 @@
         "title": "TATUATORI: BASTA NO-SHOW!",
         "hook": "TATUATORI: BASTA NO-SHOW!",
         "date": "2026-07-06",
-        "views": 1913,
-        "likes": 5
+        "views": 1914,
+        "likes": 6
     },
     {
         "youtube_id": true,
@@ -82,7 +82,7 @@
         "title": "TATUATORI: BASTA NO-SHOW!",
         "hook": "TATUATORI: BASTA NO-SHOW!",
         "date": "2026-07-07",
-        "views": 446,
+        "views": 447,
         "likes": 1
     },
     {
@@ -97,6 +97,22 @@
         "title": "BASTA NO-SHOW",
         "hook": "BASTA NO-SHOW",
         "date": "2026-07-08",
+        "views": 1003,
+        "likes": 4
+    },
+    {
+        "youtube_id": "LDJa1IvOc3U",
+        "title": "BARBIERI: BASTA NO-SHOW",
+        "hook": "BARBIERI: BASTA NO-SHOW",
+        "date": "2026-07-09",
+        "views": 1,
+        "likes": 0
+    },
+    {
+        "youtube_id": true,
+        "title": "BARBIERI: BASTA NO-SHOW",
+        "hook": "BARBIERI: BASTA NO-SHOW",
+        "date": "2026-07-09",
         "views": 0
     }
 ]

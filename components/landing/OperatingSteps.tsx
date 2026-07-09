@@ -5,8 +5,8 @@ import { Sparkles, CalendarCheck2, LineChart, LockKeyhole, Clock3, ShieldCheck, 
 const OPERATING_STEPS = [
   {
     icon: Sparkles,
-    title: "Crea il tuo profilo in 60 secondi",
-    text: "Inserisci i tuoi orari e i tuoi servizi. NeatX genera all'istante la tua pagina di prenotazione personalizzata senza bisogno di programmatori.",
+    title: "Crea profilo, servizi e turni",
+    text: "Inserisci servizi e orari base. Se hai uno staff, colleghi un Foglio Google con turni, riposi e ferie: NeatX lo usa per costruire l'agenda reale.",
   },
   {
     icon: CalendarCheck2,

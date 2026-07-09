@@ -29,7 +29,7 @@ const FEATURE_CARDS = [
   },
   {
     icon: CalendarSync,
-    title: "Turni Live con Google Fogli",
+    title: "Turni Google + commercialista",
     description:
       "Niente impostazioni complesse. Compila il tuo Foglio Google: l'agenda nasconderà all'istante gli orari in cui il tuo staff riposa.",
     accent: "text-blue-400",

@@ -1,17 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { fetchStaffSchedule, StaffDaySchedule } from "@/lib/sheets";
+import { fetchStaffSchedule } from "@/lib/sheets";
+import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, minsToTime, DAY_NAME_MAP_IT } from "@/lib/schedule";
 
-// Funzioni Helper per matematica oraria
-const timeToMins = (t: string) => {
-  const [h, m] = t.split(':').map(Number);
-  return h * 60 + m;
-};
-
-const minsToTime = (m: number) => {
-  const h = Math.floor(m / 60).toString().padStart(2, '0');
-  const min = (m % 60).toString().padStart(2, '0');
-  return `${h}:${min}`;
+export type StaffDaySchedule = {
+  isOff: boolean;
+  shifts: { start: string; end: string }[];
 };
 
 export async function GET(request: Request) {
@@ -25,7 +19,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Mancano parametri essenziali" }, { status: 400 });
   }
 
-  // Recupera orari personalizzati del tenant
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
     select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true }
@@ -35,7 +28,7 @@ export async function GET(request: Request) {
   const closeTime = tenant?.closeTime ? timeToMins(tenant.closeTime) : 19 * 60;
   const interval = 15;
 
-  // Controlla se il giorno è un giorno di chiusura settimanale
+  // Check chiusura settimanale
   if (tenant?.closedDays) {
     try {
       const closedDaysArray = JSON.parse(tenant.closedDays);
@@ -44,9 +37,7 @@ export async function GET(request: Request) {
       if (closedDaysArray.includes(dayOfWeek)) {
         return NextResponse.json({ slots: [], isHoliday: false, isClosedDay: true });
       }
-    } catch (e) {
-      // Ignora JSON malformato
-    }
+    } catch (e) {}
   }
 
   try {
@@ -60,77 +51,85 @@ export async function GET(request: Request) {
       return NextResponse.json({ slots: [], isHoliday: true });
     }
 
-    // Costruiamo gli intervalli già occupati per STAFF [Inizio, Fine]
+    // Intervalli occupati per staff
     const bookedIntervalsByStaff: Record<string, { start: number, end: number }[]> = {};
-
     appointments.forEach(app => {
       const start = timeToMins(app.time);
-      const end = app.endTime ? timeToMins(app.endTime) : start + 15; 
-      
+      const end = app.endTime ? timeToMins(app.endTime) : start + 15;
       const sId = app.staffId || 'unassigned';
-      if (!bookedIntervalsByStaff[sId]) {
-        bookedIntervalsByStaff[sId] = [];
-      }
+      if (!bookedIntervalsByStaff[sId]) bookedIntervalsByStaff[sId] = [];
       bookedIntervalsByStaff[sId].push({ start, end });
     });
 
-    // Recuperiamo lo Staff capace di eseguire il servizio (o tutti se nessun serviceId)
+    // Staff capaci del servizio
     let capableStaffIds: string[] = [];
-    let allStaffForNames: {id: string, name: string}[] = [];
-    
+    let allStaff: { id: string; name: string; baseSchedule: string | null; shiftExceptions: string | null }[] = [];
+
     if (serviceId) {
       const serviceWithStaff = await prisma.service.findUnique({
         where: { id: serviceId },
-        include: { staff: true }
+        include: { staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
       });
       if (serviceWithStaff && serviceWithStaff.staff.length > 0) {
         capableStaffIds = serviceWithStaff.staff.map(s => s.id);
-        allStaffForNames = serviceWithStaff.staff;
+        allStaff = serviceWithStaff.staff;
       }
     }
-    
-    // Fallback: se non abbiamo staff specifico, permettiamo a tutti (simulazione vecchi tenant)
+
     if (capableStaffIds.length === 0) {
-      const allStaff = await prisma.staff.findMany({ where: { tenantId } });
-      if (allStaff.length > 0) {
-        capableStaffIds = allStaff.map(s => s.id);
-        allStaffForNames = allStaff;
+      const allStaffResult = await prisma.staff.findMany({
+        where: { tenantId },
+        select: { id: true, name: true, baseSchedule: true, shiftExceptions: true }
+      });
+      if (allStaffResult.length > 0) {
+        capableStaffIds = allStaffResult.map(s => s.id);
+        allStaff = allStaffResult;
       } else {
-        // Fallback totale per i tenant senza staff (retrocompatibilità)
         capableStaffIds = ['unassigned'];
       }
     }
 
-    // Google Sheets Integration
+    // Costruisci schedule per ogni staff: DB prima, poi Google Sheet fallback
     const staffSchedules: Record<string, StaffDaySchedule> = {};
-    if (tenant?.staffSheetUrl && allStaffForNames.length > 0) {
-      for (const staff of allStaffForNames) {
-        const schedule = await fetchStaffSchedule(tenant.staffSheetUrl, staff.name, date);
-        if (schedule) {
-          staffSchedules[staff.id] = schedule;
+
+    for (const staff of allStaff) {
+      const baseSchedule = parseBaseSchedule(staff.baseSchedule);
+      const exceptions = parseShiftExceptions(staff.shiftExceptions);
+
+      if (Object.keys(baseSchedule).length > 0) {
+        // Usa DB
+        const dayResult = getDayScheduleForDate(baseSchedule, exceptions, date);
+        if (!dayResult.active) {
+          staffSchedules[staff.id] = { isOff: true, shifts: [] };
+        } else {
+          staffSchedules[staff.id] = { isOff: false, shifts: dayResult.blocks };
+        }
+      } else if (tenant?.staffSheetUrl) {
+        // Fallback Google Sheet
+        const sheetSchedule = await fetchStaffSchedule(tenant.staffSheetUrl, staff.name, date);
+        if (sheetSchedule) {
+          staffSchedules[staff.id] = sheetSchedule;
         }
       }
     }
 
-    // Calcola intervallo pausa pranzo
+    // Pausa pranzo tenant
     const breakStartMins = tenant?.breakStart ? timeToMins(tenant.breakStart) : null;
     const breakEndMins = tenant?.breakEnd ? timeToMins(tenant.breakEnd) : null;
 
-    // 🌟 MOTORE DI COLLISIONE PER STAFF
+    // Motore di collisione
     let availableSlots: string[] = [];
-    
+
     for (let currentSlotMins = openTime; currentSlotMins <= closeTime - duration; currentSlotMins += interval) {
       const potentialStart = currentSlotMins;
       const potentialEnd = potentialStart + duration;
 
       let availableStaffCount = 0;
 
-      // Conta quanti membri dello staff sono disponibili per questo slot
       for (const sId of capableStaffIds) {
-        // --- GOOGLE SHEETS SCHEDULING ---
         if (staffSchedules[sId]) {
           const schedule = staffSchedules[sId];
-          if (schedule.isOff) continue; // Oggi non lavora
+          if (schedule.isOff) continue;
 
           let withinShift = false;
           for (const shift of schedule.shifts) {
@@ -141,10 +140,9 @@ export async function GET(request: Request) {
               break;
             }
           }
-          if (!withinShift) continue; // Fuori turno
-
+          if (!withinShift) continue;
         } else {
-          // --- STANDARD TENANT HOURS FALLBACK ---
+          // Fallback orari tenant
           if (breakStartMins !== null && breakEndMins !== null) {
             if (Math.max(potentialStart, breakStartMins) < Math.min(potentialEnd, breakEndMins)) {
               continue;
@@ -153,7 +151,6 @@ export async function GET(request: Request) {
         }
 
         const staffIntervals = bookedIntervalsByStaff[sId] || [];
-        
         let staffHasOverlap = false;
         for (const interval of staffIntervals) {
           if (Math.max(potentialStart, interval.start) < Math.min(potentialEnd, interval.end)) {
@@ -161,13 +158,10 @@ export async function GET(request: Request) {
             break;
           }
         }
-        
-        if (!staffHasOverlap) {
-          availableStaffCount++;
-        }
+
+        if (!staffHasOverlap) availableStaffCount++;
       }
 
-      // Conta quanti appuntamenti "unassigned" si sovrappongono a questo slot
       const unassignedIntervals = bookedIntervalsByStaff['unassigned'] || [];
       let overlappingUnassignedCount = 0;
       for (const interval of unassignedIntervals) {
@@ -176,13 +170,12 @@ export async function GET(request: Request) {
         }
       }
 
-      // Lo slot è disponibile se ci sono più staff liberi rispetto agli appuntamenti unassigned pendenti
       if (availableStaffCount > overlappingUnassignedCount) {
         availableSlots.push(minsToTime(potentialStart));
       }
     }
 
-    // Filtro Passato
+    // Filtro passato
     const now = new Date();
     const dateFormatter = new Intl.DateTimeFormat('it-IT', { timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit' });
     const parts = dateFormatter.formatToParts(now);
@@ -195,13 +188,12 @@ export async function GET(request: Request) {
       const currentTotalMinutes = currentHours * 60 + currentMinutes;
 
       availableSlots = availableSlots.filter(slot => {
-        const slotMins = timeToMins(slot);
-        return slotMins > currentTotalMinutes;
+        return timeToMins(slot) > currentTotalMinutes;
       });
     }
 
     return NextResponse.json({ slots: availableSlots, isHoliday: false });
-    
+
   } catch (error) {
     console.error("Errore Availability:", error);
     return NextResponse.json({ error: "Errore di connessione" }, { status: 500 });

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import ScheduleEditor from "@/components/ScheduleEditor";
 
 type Service = {
   id: string;
@@ -37,6 +38,9 @@ export default function TeamDrawer({
   // Per l'aggiunta di un nuovo membro
   const [newStaffName, setNewStaffName] = useState("");
   const [adding, setAdding] = useState(false);
+  
+  // Per l'editor turni
+  const [scheduleEditorStaff, setScheduleEditorStaff] = useState<StaffMember | null>(null);
   
   // Per l'aggiornamento dei servizi
   const [savingServices, setSavingServices] = useState(false);
@@ -295,6 +299,13 @@ export default function TeamDrawer({
                       </div>
                     </button>
                     <button
+                      onClick={() => setScheduleEditorStaff(staff)}
+                      className="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center hover:bg-cyan-500 hover:text-white transition shrink-0 mr-1"
+                      title="Turni"
+                    >
+                      🕐
+                    </button>
+                    <button
                       onClick={() => handleDeleteStaff(staff.id)}
                       className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition shrink-0"
                       title="Elimina"
@@ -377,6 +388,14 @@ export default function TeamDrawer({
           </div>
         </div>
       </div>
+
+      {scheduleEditorStaff && (
+        <ScheduleEditor
+          staffId={scheduleEditorStaff.id}
+          staffName={scheduleEditorStaff.name}
+          onClose={() => setScheduleEditorStaff(null)}
+        />
+      )}
     </>
   );
 }
