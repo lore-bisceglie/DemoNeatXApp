@@ -53,9 +53,21 @@ export async function GET(request: Request) {
 
     for (const appt of appointments) {
       if (appt.tenantId && appt.tenant && appt.customerPhone && appt.customerPhone !== "0000000000") {
-        const smsBody = `⏰ Promemoria da ${appt.tenant.name}\nCiao ${appt.customerName.trim()}, ti ricordiamo l'appuntamento di domani alle ${appt.time} per ${appt.service?.name || 'il tuo servizio'}.\n\nSe non puoi venire, disdici qui: https://${appt.tenant.slug}.neatx.store/cancel/${appt.cancelToken}`;
+        const cancelUrl = `https://${appt.tenant.slug}.neatx.store/cancel/${appt.cancelToken}`;
         
-        const result = await sendTenantSms(appt.tenantId, appt.customerPhone, smsBody);
+        // Testo SMS di fallback
+        const smsBody = `⏰ Promemoria da ${appt.tenant.name}\nCiao ${appt.customerName.trim()}, ti ricordiamo l'appuntamento di domani alle ${appt.time} per ${appt.service?.name || 'il tuo servizio'}.\n\nSe non puoi venire, disdici qui: ${cancelUrl}`;
+        
+        // Variabili per il template WhatsApp approvato da Meta
+        const whatsappVars = {
+          storeName: appt.tenant.name,
+          customerName: appt.customerName.trim(),
+          date: tomorrowString,
+          time: appt.time,
+          cancelUrl,
+        };
+        
+        const result = await sendTenantSms(appt.tenantId, appt.customerPhone, smsBody, whatsappVars);
         if (result.success) {
           successCount++;
         } else {
