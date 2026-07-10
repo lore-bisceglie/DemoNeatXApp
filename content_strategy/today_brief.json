@@ -1,17 +1,17 @@
 {
   "date": "2026-07-10",
-  "niche": "Centri Estetici",
-  "angle": "trasformare follower in appuntamenti",
-  "pain": "cabine vuote e clienti che dimenticano",
-  "promise": "promemoria automatici e acconti",
-  "cover_title": "NO-SHOW CENTRI ESTETICI",
-  "hook_hint": "Se hai cabine vuote e clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: trasformare follower in appuntamenti con l'agenda automatica",
+  "niche": "Personal Trainer",
+  "angle": "follower curiosi in appuntamenti",
+  "pain": "lezioni spostate e slot persi",
+  "promise": "sessioni prenotate e confermate",
+  "cover_title": "PERSONAL TRAINER: NO-SHOW",
+  "hook_hint": "Se sei un personal trainer e perdi soldi a causa di lezioni spostate, agisci ora.",
+  "blog_topic": "Trasformare follower in appuntamenti con un'agenda automatica",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
