@@ -241,6 +241,7 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Errore Onboarding:", error);
-    return NextResponse.json({ error: "Errore interno durante la creazione." }, { status: 500 });
+    const msg = error instanceof Error ? error.message : "Errore interno durante la creazione.";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
