@@ -1,17 +1,17 @@
 {
   "date": "2026-07-10",
-  "niche": "Fisioterapisti",
-  "angle": "trasforma follower in pazienti",
-  "pain": "sedute saltate e agenda piena di cambi",
-  "promise": "prenotazioni e promemoria automatizzati",
-  "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
-  "hook_hint": "Se sei un fisioterapista e le sedute saltano, perdi soldi.",
-  "blog_topic": "Fisioterapisti: come convertire follower in appuntamenti con un sistema automatico",
+  "niche": "Centri Estetici",
+  "angle": "trasformare follower in appuntamenti",
+  "pain": "cabine vuote e clienti che dimenticano",
+  "promise": "promemoria automatici e acconti",
+  "cover_title": "NO-SHOW CENTRI ESTETICI",
+  "hook_hint": "Se hai cabine vuote e clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: trasformare follower in appuntamenti con l'agenda automatica",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
