@@ -19,6 +19,7 @@ import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
 import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
+import MessageRechargeCard from "./MessageRechargeCard";
 
 
 import LoginScreen from "./LoginScreen";
@@ -710,55 +711,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </p>
           </div>
 
-          <div
-            className={`p-6 rounded-3xl shadow-xl border flex flex-col justify-center h-full min-h-[140px] relative overflow-hidden transition-all ${
-              (storeSettings?.smsCredits || 0) > 20
-                ? "bg-[#0b1221] border-[#1a2642] shadow-cyan-900/10"
-                : "bg-red-950/20 border-red-900/50 shadow-red-900/20"
-            }`}
-          >
-            <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
-              💬
-            </div>
-
-            <h2
-              className={`text-xs font-bold mb-2 uppercase tracking-widest flex items-center justify-between ${
-                (storeSettings?.smsCredits || 0) > 20
-                  ? "text-slate-500"
-                  : "text-red-400"
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <span>💬</span>
-                WhatsApp Auto
-              </span>
-            </h2>
-
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-end gap-3">
-                <span
-                  className={`text-4xl font-extrabold ${
-                    (storeSettings?.smsCredits || 0) > 20 ? "text-white" : "text-red-500"
-                  }`}
-                >
-                  {storeSettings?.smsCredits || 0}
-                </span>
-
-                <span className="text-slate-400 font-medium mb-1 text-sm">
-                  crediti residui
-                </span>
-              </div>
-              
-              <a
-                href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20acquistare%20un%20pacchetto%20WhatsApp%20per%20il%20mio%20salone."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-3 py-2 rounded-lg border border-emerald-500/20 font-bold transition-all shadow-lg shadow-emerald-500/10"
-              >
-                Ricarica 🔋
-              </a>
-            </div>
-          </div>
+          <MessageRechargeCard
+            tenantId={tenantId}
+            slug={slug}
+            currentCredits={storeSettings?.smsCredits || 0}
+          />
         </div>
 
         
