@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from market_intelligence import MarketIntelligenceAgent
 from content_advisor import ContentAdvisorAgent
 from guardian import GuardianAgent
+from content_machine import ContentMachineAgent
 
 
 def main():
@@ -21,6 +22,7 @@ def main():
 
     agents = [
         ("Market Intelligence", MarketIntelligenceAgent()),
+        ("Content Machine", ContentMachineAgent()),
         ("Content Advisor", ContentAdvisorAgent()),
         ("Guardian", GuardianAgent()),
     ]

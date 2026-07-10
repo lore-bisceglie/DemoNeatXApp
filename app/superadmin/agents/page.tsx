@@ -10,7 +10,8 @@ type AgentStatus = {
 
 const AGENTS = [
   { id: "market_intelligence", name: "MarketIntelligence", desc: "Scansiona competitor, trova trend, genera idee", color: "cyan" },
-  { id: "content_advisor", name: "ContentAdvisor", desc: "Migliora il calendario contenuti con le idee ricevute", color: "emerald" },
+  { id: "content_machine", name: "ContentMachine", desc: "Genera contenuti multi-canale: reel, blog, newsletter, social dalla stessa idea", color: "emerald" },
+  { id: "content_advisor", name: "ContentAdvisor", desc: "Migliora il calendario contenuti con le idee ricevute", color: "indigo" },
   { id: "guardian", name: "Guardian", desc: "Report salute business + notifica Telegram", color: "amber" },
 ];
 
