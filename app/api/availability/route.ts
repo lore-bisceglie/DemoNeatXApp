@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { fetchStaffSchedule } from "@/lib/sheets";
-import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, minsToTime, DAY_NAME_MAP_IT } from "@/lib/schedule";
+import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, minsToTime } from "@/lib/schedule";
 
 export type StaffDaySchedule = {
   isOff: boolean;

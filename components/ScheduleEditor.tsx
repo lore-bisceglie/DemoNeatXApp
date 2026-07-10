@@ -19,6 +19,7 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
   const [exceptions, setExceptions] = useState<ShiftException[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   // Nuova eccezione form
   const [newEx, setNewEx] = useState<ShiftException>({
@@ -87,7 +88,8 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
       body: JSON.stringify({ staffId, baseSchedule: schedule }),
     });
     setSaving(false);
-    onClose();
+    setSaved(true);
+    setTimeout(() => onClose(), 600);
   };
 
   const addException = () => {
@@ -108,7 +110,8 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
       body: JSON.stringify({ staffId, exceptions }),
     });
     setSaving(false);
-    onClose();
+    setSaved(true);
+    setTimeout(() => onClose(), 600);
   };
 
   if (loading) {
@@ -232,6 +235,11 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
               })}
 
               <div className="flex justify-end pt-4">
+                {saved ? (
+                  <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/15 px-6 py-3 text-sm font-extrabold text-emerald-300">
+                    ✓ Salvataggio completato
+                  </div>
+                ) : (
                 <button
                   onClick={saveSchedule}
                   disabled={saving}
@@ -240,7 +248,7 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
                   <Save size={16} />
                   {saving ? "Salvataggio..." : "Salva orari fissi"}
                 </button>
-              </div>
+                )}
             </div>
           )}
 
@@ -349,6 +357,11 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
               </div>
 
               <div className="flex justify-end pt-2">
+                {saved ? (
+                  <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/15 px-6 py-3 text-sm font-extrabold text-emerald-300">
+                    ✓ Salvataggio completato
+                  </div>
+                ) : (
                 <button
                   onClick={saveExceptions}
                   disabled={saving}
@@ -357,7 +370,7 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
                   <Save size={16} />
                   {saving ? "Salvataggio..." : "Salva eccezioni"}
                 </button>
-              </div>
+                )}
             </div>
           )}
         </div>

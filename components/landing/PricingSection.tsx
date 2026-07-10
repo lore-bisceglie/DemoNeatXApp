@@ -56,7 +56,7 @@ export default function PricingSection() {
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-purple-300">Mini-Marketing (Recupero Clienti)</strong></li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Autopilota Recensioni Google</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Multi-Staff illimitato</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Export ore per commercialista</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Statistiche e analytics avanzati</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Onboarding VIP dedicato</li>
             </ul>
             <div className="mt-8 flex flex-col gap-3">
