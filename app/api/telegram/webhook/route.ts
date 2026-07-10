@@ -241,16 +241,19 @@ export async function POST(req: Request) {
       }
       else if (text === "/agents") {
         try {
-          const res = await fetch("https://neatx.store/api/agents/status");
-          const data = await res.json();
+          const totalLeads = await prisma.lead.count();
+          const newLeads = await prisma.lead.count({ where: { status: 'new' } });
+          const activeTrials = await prisma.tenant.count({ where: { trialStatus: { in: ['trial_active', 'demo', 'published'] }, plan: { not: 'premium' } } });
+          const paying = await prisma.tenant.count({ where: { trialStatus: 'converted' } });
+          const expired = await prisma.tenant.count({ where: { trialStatus: 'expired' } });
           const reply =
             `🤖 <b>STATO AGENTI NEATX</b>\n\n` +
-            `👤 <b>Lead:</b> ${data.leads.total} totali, ${data.leads.new} nuovi\n` +
-            `🏢 <b>Tenant:</b> ${data.tenants.activeTrials} trial, ${data.tenants.paying} paganti, ${data.tenants.expired} scaduti\n\n` +
+            `👤 <b>Lead:</b> ${totalLeads} totali, ${newLeads} nuovi\n` +
+            `🏢 <b>Tenant:</b> ${activeTrials} trial, ${paying} paganti, ${expired} scaduti\n\n` +
             `Usa /agent run per eseguire tutti gli agenti ora.`;
           await sendTelegramMessage(reply);
-        } catch {
-          await sendTelegramMessage("❌ Errore nel contattare l'API agenti.");
+        } catch (e) {
+          await sendTelegramMessage("❌ Errore nel caricare lo stato agenti.");
         }
       }
       else if (text === "/agent run") {
