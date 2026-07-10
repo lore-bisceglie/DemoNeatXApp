@@ -120,15 +120,15 @@ export async function DELETE(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id") || "";
 
-    const existing = await prisma.service.findUnique({ where: { id } });
-    if (!existing) {
-      return NextResponse.json({ error: "Servizio non trovato" }, { status: 404 });
-    }
+const existing = await prisma.service.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: "Servizio non trovato" }, { status: 404 });
+  }
 
-    const tenant = await requireTenantAdmin(existing.tenantId);
-    if (!tenant) {
-      return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
-    }
+  const tenant = await requireTenantAdmin(request);
+  if (!tenant || tenant.id !== existing.tenantId) {
+    return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
+  }
 
     await prisma.appointment.updateMany({
       where: { serviceId: id },
