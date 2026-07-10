@@ -39,3 +39,4 @@ jobs:
         with:
           commit_message: "Auto-SEO: Nuovo articolo generato dall'IA 🤖"
           file_pattern: "content/blog/*.md bot_scripts/SEO_Machine/satellites_content/*.md"
+          pull_options: '--rebase'

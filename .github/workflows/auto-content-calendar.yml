@@ -40,3 +40,4 @@ jobs:
         with:
           commit_message: 'Auto-strategy: aggiorna calendario contenuti'
           file_pattern: 'content_strategy/*.json content_strategy/*.md'
+          pull_options: '--rebase'

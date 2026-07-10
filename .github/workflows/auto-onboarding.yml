@@ -25,7 +25,8 @@ jobs:
         run: |
           python bot_scripts/Onboarding/concierge.py
       - name: 💾 Commit & Push Bozze
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Concierge: Nuove email di benvenuto pronte per i clienti di oggi! 🚀"
           file_pattern: "onboarding_drafts/*.md"
+          pull_options: '--rebase'

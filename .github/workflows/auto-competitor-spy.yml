@@ -25,7 +25,8 @@ jobs:
         run: |
           python bot_scripts/Competitor_Spy/spy.py
       - name: 💾 Commit & Push Report
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Spy: Nuovo report di spionaggio generato 🕵️"
           file_pattern: "competitor_reports/*.md"
+          pull_options: '--rebase'

@@ -25,7 +25,8 @@ jobs:
         run: |
           python bot_scripts/Sales_Sparring/franco_email.py
       - name: 💾 Commit & Push Sfida
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Franco: Nuova sfida di vendita giornaliera! 🥊"
           file_pattern: "sales_challenges/*.md"
+          pull_options: '--rebase'

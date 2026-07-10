@@ -82,3 +82,4 @@ jobs:
       with:
         commit_message: "Auto-growth: aggiorna dati social"
         file_pattern: "bot_scripts/Social/GrowthHack/viral_hits.json bot_scripts/Social/GrowthHack/commented_posts.txt bot_scripts/Social/GrowthHack/scontenti.txt bot_scripts/Social/GrowthHack/cacciatore_seen.txt"
+        pull_options: '--rebase'

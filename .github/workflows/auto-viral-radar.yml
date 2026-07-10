@@ -45,3 +45,4 @@ jobs:
         with:
           commit_message: 'Auto-radar: aggiorna idee virali'
           file_pattern: 'content_strategy/*.json content_strategy/*.md'
+          pull_options: '--rebase'
