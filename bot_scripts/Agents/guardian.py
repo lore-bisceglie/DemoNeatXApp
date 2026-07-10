@@ -84,12 +84,20 @@ class GuardianAgent(BaseAgent):
             "detail": f"{len(suggestions)} raccomandazioni attive",
         }
 
-        # 6. Controlla messaggi in attesa (lead pipeline)
-        leads = self.bus.read("leads")
-        report["checks"]["leads_pipeline"] = {
-            "ok": True,
-            "detail": f"{len(leads)} lead in pipeline",
-        }
+        # 6. Controlla lead reali dal DB (via API)
+        try:
+            import urllib.request
+            resp = urllib.request.urlopen("https://neatx.store/api/agents/lead-stats", timeout=10)
+            lead_data = json.loads(resp.read())
+            report["checks"]["leads_pipeline"] = {
+                "ok": True,
+                "detail": f"{lead_data.get('total', 0)} totali, {lead_data.get('newLeads', 0)} nuovi",
+            }
+        except Exception:
+            report["checks"]["leads_pipeline"] = {
+                "ok": True,
+                "detail": "API non raggiungibile",
+            }
 
         return report
 
