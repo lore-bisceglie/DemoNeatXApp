@@ -98,3 +98,7 @@ bot_scripts/Social/Social/ReelGenerator/*.mp4
 *.m4a
 *.webm
 *.exe  
+
+# Agent cache
+bot_scripts/Agents/__pycache__/
+bot_scripts/Agents/blackboard/*.json
