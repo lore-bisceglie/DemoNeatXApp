@@ -90,7 +90,7 @@ export default function PricingSection() {
                 <span className="text-emerald-400">1000</span> messaggi = 69€
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">2500</span> messaggi = 149€
+                <span className="text-emerald-400">2000</span> messaggi = 149€
               </span>
             </div>
           </div>
