@@ -240,21 +240,18 @@ export async function POST(req: Request) {
         }
       }
       else if (text === "/agents") {
-        try {
-          const totalLeads = await prisma.lead.count();
-          const newLeads = await prisma.lead.count({ where: { status: 'new' } });
-          const activeTrials = await prisma.tenant.count({ where: { trialStatus: { in: ['trial_active', 'demo', 'published'] }, plan: { not: 'premium' } } });
-          const paying = await prisma.tenant.count({ where: { trialStatus: 'converted' } });
-          const expired = await prisma.tenant.count({ where: { trialStatus: 'expired' } });
-          const reply =
-            `🤖 <b>STATO AGENTI NEATX</b>\n\n` +
-            `👤 <b>Lead:</b> ${totalLeads} totali, ${newLeads} nuovi\n` +
-            `🏢 <b>Tenant:</b> ${activeTrials} trial, ${paying} paganti, ${expired} scaduti\n\n` +
-            `Usa /agent run per eseguire tutti gli agenti ora.`;
-          await sendTelegramMessage(reply);
-        } catch (e) {
-          await sendTelegramMessage("❌ Errore nel caricare lo stato agenti.");
-        }
+        let totalLeads = 0, newLeads = 0;
+        try { totalLeads = await prisma.lead.count(); } catch {}
+        try { newLeads = await prisma.lead.count({ where: { status: 'new' } }); } catch {}
+        const activeTrials = await prisma.tenant.count({ where: { trialStatus: { in: ['trial_active', 'demo', 'published'] }, plan: { not: 'premium' } } });
+        const paying = await prisma.tenant.count({ where: { trialStatus: 'converted' } });
+        const expired = await prisma.tenant.count({ where: { trialStatus: 'expired' } });
+        const reply =
+          `🤖 <b>STATO AGENTI NEATX</b>\n\n` +
+          `👤 <b>Lead:</b> ${totalLeads} totali, ${newLeads} nuovi\n` +
+          `🏢 <b>Tenant:</b> ${activeTrials} trial, ${paying} paganti, ${expired} scaduti\n\n` +
+          `Usa /agent run per eseguire tutti gli agenti ora.`;
+        await sendTelegramMessage(reply);
       }
       else if (text === "/agent run") {
         try {
