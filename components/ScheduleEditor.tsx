@@ -249,6 +249,7 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
                   {saving ? "Salvataggio..." : "Salva orari fissi"}
                 </button>
                 )}
+              </div>
             </div>
           )}
 
@@ -371,6 +372,7 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
                   {saving ? "Salvataggio..." : "Salva eccezioni"}
                 </button>
                 )}
+              </div>
             </div>
           )}
         </div>

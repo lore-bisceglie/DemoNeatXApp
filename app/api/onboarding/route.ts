@@ -218,8 +218,10 @@ export async function POST(req: Request) {
     // 🚀 Invia notifica Telegram al founder
     await sendTelegramNotification(tenant, ownerName, template.id);
 
-    // 🚀 Invia Email di Benvenuto (non bloccante)
-    sendWelcomeEmail(email, ownerName, adminPassword, getTenantAdminUrl(tenant.slug));
+    // 🚀 Invia Email di Benvenuto
+    await sendWelcomeEmail(email, ownerName, adminPassword, getTenantAdminUrl(tenant.slug)).catch(e =>
+      console.error("[Email] Errore invio benvenuto:", e)
+    );
 
     return NextResponse.json({
       success: true,
