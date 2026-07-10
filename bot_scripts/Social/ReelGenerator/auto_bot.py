@@ -60,12 +60,67 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
     if reason:
         print(f"[!] Uso contenuto fallback per il reel: {reason}")
 
-    script_text = (
-        f"Se sei tra i {target.lower()} e stai ancora gestendo appuntamenti su WhatsApp, "
-        f"stai perdendo tempo e soldi. Il problema e' {pain}. "
-        f"Con NeatX puoi avere {promise}, senza rincorrere clienti tutto il giorno. "
-        "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
-    )
+    feature = strategy.get("feature", "")
+    if feature == "timesheet":
+        script_text = (
+            f"Se sei tra i {target.lower()} e ancora segni i turni su Excel, "
+            f"stai perdendo ore preziose. Il problema e' {pain}. "
+            f"Con NeatX puoi avere {promise}, senza fogli ne calcoli a mano. "
+            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+        )
+        caption = (
+            f"{target}: timesheet automatici per il commercialista. "
+            "Commenta AGENDA e ti mando la demo NeatX. "
+            "#NeatX #timesheet #turni #commercialista #automazione"
+        )
+    elif feature == "recensioni":
+        script_text = (
+            f"Se sei tra i {target.lower()} e i clienti soddisfatti non lasciano recensioni, "
+            f"stai perdendo visibilità. Il problema e' {pain}. "
+            f"Con NeatX puoi avere {promise}, in automatico dopo ogni appuntamento. "
+            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+        )
+        caption = (
+            f"{target}: recensioni Google automatiche. "
+            "Commenta AGENDA e ti mando la demo NeatX. "
+            "#NeatX #recensioni #google #automazione #business"
+        )
+    elif feature == "analytics":
+        script_text = (
+            f"Se sei tra i {target.lower()} e non sai quanto guadagni davvero ogni mese, "
+            f"stai lavorando al buio. Il problema e' {pain}. "
+            f"Con NeatX puoi avere {promise}, senza fogli ne calcoli. "
+            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+        )
+        caption = (
+            f"{target}: statistiche in tempo reale. "
+            "Commenta AGENDA e ti mando la demo NeatX. "
+            "#NeatX #statistiche #analytics #dati #business"
+        )
+    elif feature == "multi_staff":
+        script_text = (
+            f"Se sei tra i {target.lower()} e gestire piu collaboratori e un caos, "
+            f"stai perdendo clienti e soldi. Il problema e' {pain}. "
+            f"Con NeatX puoi avere {promise}, ogni staff con la propria agenda. "
+            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+        )
+        caption = (
+            f"{target}: gestione staff e turni automatici. "
+            "Commenta AGENDA e ti mando la demo NeatX. "
+            "#NeatX #staff #turni #team #gestione"
+        )
+    else:
+        script_text = (
+            f"Se sei tra i {target.lower()} e stai ancora gestendo appuntamenti su WhatsApp, "
+            f"stai perdendo tempo e soldi. Il problema e' {pain}. "
+            f"Con NeatX puoi avere {promise}, senza rincorrere clienti tutto il giorno. "
+            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+        )
+        caption = (
+            f"{target}: basta agenda gestita a mano. "
+            "Commenta AGENDA e ti mando la demo NeatX. "
+            "#NeatX #agendaonline #prenotazioni #automazione #business"
+        )
 
     return {
         "niche": target,
@@ -74,13 +129,9 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
         "cover_title": cover_title,
         "image_prompt": image_prompt,
         "gameplay_style": gameplay_style,
-        "caption": (
-            f"{target}: basta agenda gestita a mano. "
-            "Commenta AGENDA e ti mando la demo NeatX. "
-            "#NeatX #agendaonline #prenotazioni #automazione #business"
-        ),
+        "caption": caption,
         "strategy_date": strategy.get("date"),
-        "strategy_angle": strategy.get("angle"),
+        "strategy_feature": feature,
         "strategy_pain": pain,
         "strategy_promise": promise,
         "fallback_reason": reason,
@@ -111,17 +162,39 @@ def generate_daily_content():
             pass
 
     strategy_context = ""
+    pain_focus = ""
     if strategy:
         strategy_context = f"""
 [STRATEGIA DEL GIORNO]
 Target: {target}
-Angolo: {strategy.get("angle", "")}
+Feature: {strategy.get("feature_label", "")} ({strategy.get("feature", "")})
 Dolore: {strategy.get("pain", "")}
 Promessa: {strategy.get("promise", "")}
 Titolo copertina suggerito: {strategy.get("cover_title", "")}
 Prompt immagine suggerito: {strategy.get("image_prompt", "")}
 Argomento blog collegato: {strategy.get("blog_topic", "")}
 """
+        pain_focus = strategy.get("pain", "")
+
+    # Determina il pain/focus dinamico per il prompt
+    feature = (strategy or {}).get("feature", "")
+    hook_instruction = ""
+    if feature == "no_show":
+        hook_instruction = "Fai capire che stanno perdendo soldi con clienti che non si presentano. Parla di acconti obbligatori e no-show azzerati."
+    elif feature == "booking":
+        hook_instruction = "Fai capire che stanno perdendo tempo a rispondere su WhatsApp o al telefono. Parla di prenotazioni automatiche 24/7."
+    elif feature == "timesheet":
+        hook_instruction = "Fai capire che perdono ore a gestire turni su Excel. Parla di CSV pronto per il commercialista, ferie e permessi automatici."
+    elif feature == "recensioni":
+        hook_instruction = "Fai capire che perdono recensioni Google preziose. Parla del sistema automatico che raccoglie 5 stelle da ogni cliente soddisfatto."
+    elif feature == "promemoria":
+        hook_instruction = "Fai capire che i clienti dimenticano gli appuntamenti. Parla di promemoria WhatsApp automatici che riducono i no-show del 90%."
+    elif feature == "analytics":
+        hook_instruction = "Fai capire che non sanno quanto guadagnano davvero. Parla di statistiche in tempo reale su incassi, performance e trend."
+    elif feature == "multi_staff":
+        hook_instruction = "Fai capire che gestire piu collaboratori e un caos. Parla di agenda separata per ogni staff, turni e ferie automatici."
+    else:
+        hook_instruction = "Fai capire che stanno perdendo tempo e soldi con sistemi manuali. Parla di automazione con NeatX."
 
     prompt = f"""
 Sei un esperto di marketing virale su Instagram e TikTok (stile ADHD retention).
@@ -136,13 +209,13 @@ Lo sfondo superiore sara un gameplay stile "{gameplay_style}", quindi il testo d
 {strategy_context}
 Regole:
 - Il video dura circa 20-30 secondi.
-- Usa uno stile diretto, provocatorio ma professionale. Fai capire che stanno perdendo tempo a rispondere su WhatsApp o al telefono.
+- Usa uno stile diretto, provocatorio ma professionale. {hook_instruction}
 - Alla fine del video DEVI dire chiaramente: "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!".
 - Il copione deve essere breve (circa 20-30 secondi parlati), super naturale e NON sembrare un robot che legge. Usa un tono energico e informale. NIENTE EMOJI NEL COPIONE PARLATO. LE EMOJI SONO SEVERAMENTE VIETATE IN script_text.
-- L'hook del copione deve toccare un punto di dolore ESTREMO del target. Sii aggressivo, fagli capire che stanno buttando soldi e tempo (es: "Sei un tatuatore e continui a prendere appuntamenti su WhatsApp? Stai perdendo soldi.").
+- L'hook del copione deve toccare un punto di dolore ESTREMO del target. Sii aggressivo, fagli capire che stanno buttando soldi e tempo.
 - La scritta a schermo (hook_text) DEVE ESSERE IDENTICA a cover_title. Saranno le 3-4 parole enormi che appaiono in faccia all'utente.
 - La caption di Instagram deve essere persuasiva e contenere hashtag rilevanti e l'invito a commentare la parola AGENDA.
-- Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante (es: TATUATORI: BASTA NO-SHOW! oppure SMETTILA DI PERDERE CLIENTI).
+- Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante.
 - Il "image_prompt" deve essere in INGLESE e descrivere una scena fotografica coerente con {target}, con un professionista vero al lavoro nel suo ambiente.
 
 Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtick):
@@ -186,7 +259,7 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
         data["hook_text"] = data["cover_title"]
     if strategy:
         data["strategy_date"] = strategy.get("date")
-        data["strategy_angle"] = strategy.get("angle")
+        data["strategy_feature"] = strategy.get("feature")
         data["strategy_pain"] = strategy.get("pain")
         data["strategy_promise"] = strategy.get("promise")
     

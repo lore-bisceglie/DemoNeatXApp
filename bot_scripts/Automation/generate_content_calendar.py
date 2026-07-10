@@ -20,66 +20,55 @@ CALENDAR_JSON = OUT_DIR / "content_calendar.json"
 TODAY_BRIEF_JSON = OUT_DIR / "today_brief.json"
 CALENDAR_MD = OUT_DIR / "content_calendar.md"
 
+FEATURES = [
+    {"id": "no_show", "label": "Zero No-Show", "pain": "acconti automatici che filtrano i clienti che non si presentano", "promise": "ogni slot occupato da clienti che hanno già pagato", "cover_formats": ["BASTA NO-SHOW", "MAI PIU BUCHI", "ACCONTO OBBLIGATORIO", "CLIENTI FANTASMA ADDIO"]},
+    {"id": "booking", "label": "Prenotazione 24/7", "pain": "telefono che squilla tutto il giorno e messaggi senza fine", "promise": "clienti che prenotano da soli anche mentre dormi", "cover_formats": ["ADDIO TELEFONO", "PRENOTA 24/7", "LINK IN BIO"]},
+    {"id": "timesheet", "label": "Timesheet Commercialista", "pain": "ore dei dipendenti segnate a mano su fogli Excel persi", "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista", "cover_formats": ["TIMESHEET AUTOMATICO", "ADDIO EXCEL", "TURNI IN UN CLICK"]},
+    {"id": "recensioni", "label": "Recensioni Automatiche", "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche", "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta", "cover_formats": ["RECENSIONI AUTO", "5 STELLE AUTOMATICHE", "GOOGLE SI RIEMPIE DA SOLO"]},
+    {"id": "promemoria", "label": "Promemoria WhatsApp", "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono", "promise": "promemoria automatici che riducono i no-show del 90%", "cover_formats": ["PROMEMORIA AUTO", "MAI PIU DIMENTICANO", "WA RICORDA PER TE"]},
+    {"id": "analytics", "label": "Statistiche e Dati", "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti", "promise": "dashboard con incassi, trend e performance in tempo reale", "cover_formats": ["DATI IN TEMPO REALE", "STATISTICHE SALONE", "SAPERE QUANTO GUADAGNI"]},
+    {"id": "multi_staff", "label": "Gestione Staff", "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato", "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto", "cover_formats": ["STAFF AUTOMATICO", "GESTIONE TEAM", "TURNI STAFF FACILI"]},
+]
+
 TARGETS = [
     {
         "niche": "Parrucchieri",
-        "pain": "clienti che scrivono su WhatsApp a qualsiasi ora",
-        "promise": "agenda piena senza perdere tempo in chat",
         "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
         "keywords": ["gestionale parrucchieri", "prenotazioni parrucchiere", "agenda salone"],
     },
     {
         "niche": "Barbieri",
-        "pain": "no-show e appuntamenti presi al volo in DM",
-        "promise": "meno buchi in agenda e più clienti paganti",
         "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
         "keywords": ["gestionale barbiere", "prenotazioni barbiere", "no show barber shop"],
     },
     {
         "niche": "Centri Estetici",
-        "pain": "cabine vuote e clienti che dimenticano l'appuntamento",
-        "promise": "promemoria automatici e acconti prima del trattamento",
         "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
         "keywords": ["gestionale centro estetico", "prenotazioni estetista", "agenda centro estetico"],
     },
     {
         "niche": "Fisioterapisti",
-        "pain": "sedute saltate e agenda piena di cambi manuali",
-        "promise": "prenotazioni ordinate e promemoria per ogni paziente",
         "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
         "keywords": ["agenda fisioterapista", "prenotazioni fisioterapia", "gestionale fisioterapisti"],
     },
     {
         "niche": "Tatuatori",
-        "pain": "consulenze infinite e appuntamenti senza caparra",
-        "promise": "richieste filtrate e acconto prima dello slot",
         "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
         "keywords": ["prenotazioni tatuatore", "agenda tatuatori", "caparra tatuaggio"],
     },
     {
         "niche": "Coach e Consulenti",
-        "pain": "call fissate a mano e clienti che rimandano",
-        "promise": "call prenotate da sole e follow-up più semplice",
         "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
         "keywords": ["agenda consulente", "prenotazioni coach", "booking consulenze"],
     },
     {
         "niche": "Personal Trainer",
-        "pain": "lezioni spostate in chat e slot persi",
-        "promise": "sessioni prenotate, confermate e ricordate automaticamente",
         "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
         "keywords": ["agenda personal trainer", "prenotazioni palestra", "gestionale personal trainer"],
     },
 ]
 
 GAMEPLAY_STYLES = ["runner", "block_miner", "neon_racer"]
-ANGLES = [
-    "quanto tempo perdi rispondendo ai messaggi",
-    "quanto ti costano i no-show ogni mese",
-    "perché il link in bio deve prenotare da solo",
-    "come usare acconti e promemoria senza sembrare aggressivo",
-    "come trasformare follower curiosi in appuntamenti veri",
-]
 
 
 def rome_today():
@@ -149,24 +138,25 @@ def build_seed_calendar():
     items = []
     rotated = TARGETS[:]
     random.shuffle(rotated)
+    rotated_features = FEATURES[:]
+    random.shuffle(rotated_features)
     for i in range(7):
         target = rotated[i % len(rotated)]
+        feature = rotated_features[i % len(rotated_features)]
         date = today + timedelta(days=i)
-        angle = ANGLES[(i + date.weekday()) % len(ANGLES)]
         gameplay = GAMEPLAY_STYLES[(i + date.day) % len(GAMEPLAY_STYLES)]
-        cover_title = f"{target['niche'].upper()}: BASTA NO-SHOW"
-        if len(cover_title.split()) > 4:
-            cover_title = "BASTA NO-SHOW"
+        cover_title = random.choice(feature["cover_formats"])
         items.append(
             {
                 "date": date.isoformat(),
                 "niche": target["niche"],
-                "angle": angle,
-                "pain": target["pain"],
-                "promise": target["promise"],
+                "feature": feature["id"],
+                "feature_label": feature["label"],
+                "pain": feature["pain"],
+                "promise": feature["promise"],
                 "cover_title": cover_title,
-                "hook_hint": f"Se sei tra i {target['niche'].lower()} e {target['pain']}, stai perdendo soldi.",
-                "blog_topic": f"{target['niche']}: {angle} con un'agenda automatica",
+                "hook_hint": f"Se sei tra i {target['niche'].lower()} e {feature['pain']}, stai perdendo soldi.",
+                "blog_topic": f"{target['niche']}: {feature['label']} con NeatX",
                 "gameplay_style": gameplay,
                 "image_prompt": target["image_prompt"],
                 "keywords": target["keywords"],
@@ -188,8 +178,7 @@ def write_outputs(days):
 
     lines = ["# NeatX Content Calendar", ""]
     for item in days:
-        lines.append(f"## {item['date']} - {item['niche']}")
-        lines.append(f"- Angolo: {item['angle']}")
+        lines.append(f"## {item['date']} - {item['niche']} - {item.get('feature_label', item.get('feature', '?'))}")
         lines.append(f"- Dolore: {item['pain']}")
         lines.append(f"- Promessa: {item['promise']}")
         lines.append(f"- Cover: {item['cover_title']}")
@@ -198,7 +187,7 @@ def write_outputs(days):
     CALENDAR_MD.write_text("\n".join(lines), encoding="utf-8")
 
     print(f"[+] Calendario salvato in {CALENDAR_JSON}")
-    print(f"[+] Brief di oggi: {today_brief.get('niche')} / {today_brief.get('angle')}")
+    print(f"[+] Brief di oggi: {today_brief.get('niche')} / {today_brief.get('feature_label', today_brief.get('feature', '?'))} / {today_brief.get('cover_title')}")
 
 
 def main():
