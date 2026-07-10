@@ -35,33 +35,76 @@ export async function sendTenantSms(
       formattedPhone = `+39${formattedPhone}`;
     }
 
-    // 4. Invia l'SMS tramite le API REST di Twilio (senza bisogno della libreria SDK)
     const auth = Buffer.from(`${TWILIO_SID}:${TWILIO_TOKEN}`).toString("base64");
-    
-    const twilioResponse = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${auth}`,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          To: formattedPhone,
-          From: TWILIO_FROM,
-          Body: messageBody,
-        }).toString(),
+
+    // 4. TENTATIVO 1: WhatsApp Business (gratuito, tasso di lettura 98%)
+    let sent = false;
+    let messageId = "";
+
+    try {
+      console.log(`📱 Tentativo WhatsApp per ${formattedPhone}...`);
+      
+      const whatsappResponse = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${auth}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            To: `whatsapp:${formattedPhone}`,
+            From: `whatsapp:${TWILIO_FROM}`,
+            Body: messageBody,
+          }).toString(),
+        }
+      );
+
+      const whatsappData = await whatsappResponse.json();
+
+      if (whatsappResponse.ok && !whatsappData.error_code) {
+        console.log(`✅ WhatsApp inviato a ${formattedPhone} per il tenant ${tenantId}`);
+        sent = true;
+        messageId = whatsappData.sid;
+      } else {
+        console.warn(`⚠️ WhatsApp fallito (${whatsappData.error_code || whatsappData.status}), provo SMS...`);
       }
-    );
-
-    const twilioData = await twilioResponse.json();
-
-    if (!twilioResponse.ok) {
-      console.error("❌ Errore API Twilio:", twilioData);
-      return { success: false, error: twilioData.message || "Errore sconosciuto Twilio" };
+    } catch (whatsappError) {
+      console.warn(`⚠️ WhatsApp errore di rete, provo SMS...`, whatsappError);
     }
 
-    // 5. Se l'invio ha successo, scala 1 credito dal saldo del salone
+    // 5. TENTATIVO 2 (Fallback): SMS classico se WhatsApp non ha funzionato
+    if (!sent) {
+      console.log(`📨 Fallback SMS per ${formattedPhone}...`);
+      
+      const smsResponse = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${auth}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            To: formattedPhone,
+            From: TWILIO_FROM,
+            Body: messageBody,
+          }).toString(),
+        }
+      );
+
+      const smsData = await smsResponse.json();
+
+      if (!smsResponse.ok) {
+        console.error("❌ Errore API Twilio (SMS fallback):", smsData);
+        return { success: false, error: smsData.message || "Errore sconosciuto Twilio" };
+      }
+
+      console.log(`✅ SMS fallback inviato a ${formattedPhone} per il tenant ${tenantId}`);
+      messageId = smsData.sid;
+    }
+
+    // 6. Scala 1 credito dal saldo del salone (sia per WhatsApp che per SMS)
     await prisma.storeSettings.update({
       where: { tenantId },
       data: {
@@ -70,12 +113,12 @@ export async function sendTenantSms(
     });
 
     console.log(
-      `✅ SMS inviato a ${formattedPhone} per il tenant ${tenantId}. Crediti residui: ${storeSettings.smsCredits - 1}`
+      `💰 Crediti residui per ${tenantId}: ${storeSettings.smsCredits - 1}`
     );
 
-    return { success: true, messageId: twilioData.sid };
+    return { success: true, messageId };
   } catch (error) {
-    console.error("❌ Errore critico nel motore SMS:", error);
-    return { success: false, error: "Errore interno del motore SMS" };
+    console.error("❌ Errore critico nel motore messaggi:", error);
+    return { success: false, error: "Errore interno del motore messaggi" };
   }
 }

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 const MESSAGES = [
   {
     type: "out",
-    text: "Ciao Marco! 👋 Ti ricordiamo il tuo appuntamento domani alle 15:00 da Rosanna Acconciature — Taglio Uomo. Ti aspettiamo!",
+    text: "Ciao Marco! 👋 Ti ricordiamo il tuo appuntamento domani alle 15:00. Ti aspettiamo!",
     time: "18:00",
   },
   {
@@ -15,7 +15,7 @@ const MESSAGES = [
   },
   {
     type: "out",
-    text: "Ciao Giulia! 👋 Ti ricordiamo il tuo appuntamento domani alle 10:30 — Colore e Piega. Ti aspettiamo!",
+    text: "Ciao Giulia! 👋 Ti ricordiamo il tuo appuntamento domani alle 10:30. Ti aspettiamo!",
     time: "18:00",
   },
   {
