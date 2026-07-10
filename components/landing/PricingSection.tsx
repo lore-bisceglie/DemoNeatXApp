@@ -33,8 +33,8 @@ export default function PricingSection() {
             <ul className="space-y-4 mb-auto text-sm text-slate-200 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti Illimitati</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-white">Promemoria WhatsApp Automatici*</strong></li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Blocco orari e ferie</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Turni da Google Fogli</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione turni, orari e ferie</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Export presenze per commercialista</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Link brandizzato prenotazione</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Acconti e pagamenti Stripe</li>
             </ul>
