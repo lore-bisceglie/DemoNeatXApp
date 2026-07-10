@@ -20,7 +20,6 @@ export async function POST(req: Request) {
     if (webhookSecret) {
       event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
     } else {
-      // Fallback per sviluppo se non si ha il webhook secret
       event = JSON.parse(payload);
     }
   } catch (err: any) {
@@ -36,33 +35,22 @@ export async function POST(req: Request) {
         const metadataType = session.metadata?.type;
 
         if (tenantId && metadataType === 'message_package') {
-          // --- PACCHETTO MESSAGGI WHATSAPP/SMS ---
           const creditsToAdd = parseInt(session.metadata?.credits || '0', 10);
           const packageId = session.metadata?.packageId || 'unknown';
-
           if (creditsToAdd > 0) {
             const storeSettings = await prisma.storeSettings.upsert({
               where: { tenantId },
               create: { tenantId, smsCredits: creditsToAdd },
               update: { smsCredits: { increment: creditsToAdd } },
             });
-
             const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
-
-            console.log(`✅ Pacchetto messaggi: +${creditsToAdd} crediti per ${tenantId}. Totale: ${storeSettings.smsCredits}`);
-
             await sendTelegramMessage(
-              `💬 <b>VENDITA MESSAGGI!</b>\n\n` +
-              `Il negozio <b>${tenant?.name || tenantId}</b> ha acquistato il pacchetto <b>${packageId}</b>.\n` +
-              `+${creditsToAdd} crediti aggiunti automaticamente.\n` +
-              `Totale crediti: <b>${storeSettings.smsCredits}</b> 📈`
+              `💬 <b>VENDITA MESSAGGI!</b>\n\nIl negozio <b>${tenant?.name || tenantId}</b> ha acquistato il pacchetto <b>${packageId}</b>.\n+${creditsToAdd} crediti. Totale: <b>${storeSettings.smsCredits}</b> 📈`
             );
           }
         } else if (tenantId) {
-          // --- ABBONAMENTO SAAS (logica esistente) ---
           const purchasedPlan = session.metadata?.plan || 'pro';
-
-          console.log(`Abbonamento completato per il tenant ${tenantId}`);
+          const interval = session.metadata?.interval || 'month';
           const updatedTenant = await prisma.tenant.update({
             where: { id: tenantId },
             data: {
@@ -71,23 +59,74 @@ export async function POST(req: Request) {
               trialEndsAt: null,
             }
           });
-
           await sendTelegramMessage(
-            `💰 <b>KA-CHING! INCASSO SAAS!</b>\n\n` +
-            `Il negozio <b>${updatedTenant.name}</b> ha appena pagato l'abbonamento <b>${purchasedPlan.toUpperCase()}</b>!\n` +
-            `MRR (Ricavo Mensile Ricorrente) in aumento. 📈`
+            `💰 <b>PAGAMENTO SAAS!</b>\n\nIl negozio <b>${updatedTenant.name}</b> ha attivato <b>${purchasedPlan.toUpperCase()}</b> (${interval === 'year' ? 'annuale' : 'mensile'})!\nMRR in aumento. 📈`
           );
         }
         break;
       }
-      // Qui si possono aggiungere listener per 'invoice.payment_failed' ecc.
+
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as any;
+        const tenantId = invoice.subscription_details?.metadata?.tenant_id || invoice.metadata?.tenant_id;
+        if (tenantId) {
+          const subscriptionId = invoice.subscription;
+          console.warn(`[Stripe] Pagamento fallito per tenant ${tenantId}, subscription ${subscriptionId}`);
+          const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+          await sendTelegramMessage(
+            `❌ <b>PAGAMENTO FALLITO!</b>\n\nIl negozio <b>${tenant?.name || tenantId}</b> ha il pagamento della carta fallito.\nAbbonamento non rinnovato. ⚠️`
+          );
+        }
+        break;
+      }
+
+      case 'invoice.paid': {
+        const paidInvoice = event.data.object as any;
+        const paidTenantId = paidInvoice.subscription_details?.metadata?.tenant_id || paidInvoice.metadata?.tenant_id;
+        if (paidTenantId) {
+          console.log(`[Stripe] Rinnovo pagato per tenant ${paidTenantId}`);
+          const tenant = await prisma.tenant.findUnique({ where: { id: paidTenantId } });
+          await sendTelegramMessage(
+            `🔄 <b>RINNOVO SAAS!</b>\n\nIl negozio <b>${tenant?.name || paidTenantId}</b> ha rinnovato l'abbonamento.\nMRR confermato. ✅`
+          );
+        }
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as any;
+        const subTenantId = subscription.metadata?.tenant_id;
+        if (subTenantId) {
+          await prisma.tenant.update({
+            where: { id: subTenantId },
+            data: { trialStatus: 'expired', plan: 'basic' },
+          });
+          const tenant = await prisma.tenant.findUnique({ where: { id: subTenantId } });
+          await sendTelegramMessage(
+            `🚫 <b>ABBONAMENTO CANCELLATO</b>\n\nIl negozio <b>${tenant?.name || subTenantId}</b> ha cancellato l'abbonamento.\nRetrocesso a trial scaduto.`
+          );
+        }
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const subUpdate = event.data.object as any;
+        const subUpdateTenantId = subUpdate.metadata?.tenant_id;
+        if (subUpdateTenantId && subUpdate.status === 'past_due') {
+          await sendTelegramMessage(
+            `⚠️ <b>ABBONAMENTO IN RITARDO</b>\n\nIl tenant <b>${subUpdateTenantId}</b> ha un pagamento in ritardo (past_due).`
+          );
+        }
+        break;
+      }
+
       default:
         console.log(`Evento non gestito: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    console.error('Errore durante l\'aggiornamento del DB nel webhook:', error);
-    return NextResponse.json({ error: 'Errore interno al DB' }, { status: 500 });
+    console.error('Errore webhook Stripe:', error);
+    return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { tenantId, slug, plan = 'pro', priceId } = await request.json();
+    const { tenantId, slug, plan = 'pro', interval = 'month', priceId } = await request.json();
 
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
@@ -21,7 +21,16 @@ export async function POST(request: Request) {
     const successUrl = `${baseUrl}/t/${slug}/admin?payment=success`;
     const cancelUrl = `${baseUrl}/paywall/${slug}`;
 
-    // Creo una sessione di abbonamento (mode: "subscription") usando l'account Stripe del proprietario della piattaforma (NeatX)
+    const isMonthly = interval !== 'year';
+    const prices: Record<string, { monthly: number; yearly: number }> = {
+      pro: { monthly: 2900, yearly: 29000 },
+      elite: { monthly: 5900, yearly: 59000 },
+    };
+    const selected = prices[plan] || prices.pro;
+    const amount = isMonthly ? selected.monthly : selected.yearly;
+    const planLabel = plan === 'elite' ? "Elite" : "Pro";
+    const intervalLabel = isMonthly ? "Mensile" : "Annuale";
+
     const sessionConfig: any = {
       payment_method_types: ["card"],
       line_items: [
@@ -29,35 +38,32 @@ export async function POST(request: Request) {
           price_data: {
             currency: "eur",
             product_data: {
-              name: plan === 'elite' ? "NeatX Elite - Abbonamento Mensile" : "NeatX Pro - Abbonamento Mensile",
+              name: `NeatX ${planLabel} - ${intervalLabel}`,
               description: `Abbonamento gestionale per il salone ${tenant.name}`,
             },
-            unit_amount: plan === 'elite' ? 5900 : 2900, // 59€ o 29€
-            recurring: {
-              interval: 'month',
-            }
+            unit_amount: amount,
+            recurring: { interval: isMonthly ? 'month' : 'year' },
           },
           quantity: 1,
         },
       ],
       mode: "subscription",
-      customer_email: tenant.ownerEmail || undefined, // Aggiunto per le fatture automatiche
-      client_reference_id: tenantId, // Questo viene poi intercettato dal webhook!
-      metadata: {
-        plan: plan // Passiamo il piano richiesto nei metadata
+      customer_email: tenant.ownerEmail || undefined,
+      client_reference_id: tenantId,
+      metadata: { plan, interval },
+      subscription_data: {
+        metadata: { tenant_id: tenantId, plan, interval },
       },
       success_url: successUrl,
       cancel_url: cancelUrl,
     };
 
     const session = await stripe.checkout.sessions.create(sessionConfig);
-
     return NextResponse.json({ url: session.url });
 
   } catch (error: any) {
     console.error("Stripe Subscription Checkout Error:", error);
-    
-    // DEMO MOCK: Se c'è un errore (es. nessuna chiave stripe su Vercel), simuliamo il pagamento per la demo
+
     const { tenantId: fallbackId, slug: fallbackSlug, plan: fallbackPlan = 'pro' } = await request.json().catch(() => ({}));
     if (fallbackId && fallbackSlug) {
        await prisma.tenant.update({
@@ -68,7 +74,7 @@ export async function POST(request: Request) {
        const protocol = host.includes("localhost") ? "http" : "https";
        return NextResponse.json({ url: `${protocol}://${host}/t/${fallbackSlug}/admin?payment=demo_mock_success` });
     }
-    
+
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

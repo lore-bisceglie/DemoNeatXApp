@@ -1,24 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getTenantAdminUrl } from "@/lib/domains";
-
-async function sendEmail(to: string, subject: string, html: string) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.TRIAL_EMAIL_FROM || "NeatX <noreply@neatx.store>";
-
-  if (!apiKey) return { skipped: true };
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from, to, subject, html }),
-  });
-
-  return { ok: res.ok };
-}
+import { sendTrialReminder3Days, sendTrialReminder1Day, sendTrialExpiredOffer } from "@/lib/email";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 function authorize(req: Request) {
   const secret = process.env.CRON_SECRET;
@@ -32,65 +16,90 @@ export async function GET(req: Request) {
   }
 
   const now = new Date();
-  const soon = new Date(now);
-  soon.setDate(soon.getDate() + 7);
+  const results = { reminder3Days: 0, reminder1Day: 0, expiredOffers: 0, expired: 0, hotLeads: [] as string[] };
 
-  const expiringSoon = await prisma.tenant.findMany({
+  // --- TENANT CON TRIAL IN SCADENZA TRA 3 GIORNI ---
+  const in3Days = new Date(now);
+  in3Days.setDate(in3Days.getDate() + 3);
+  const day3Tenants = await prisma.tenant.findMany({
     where: {
       ownerEmail: { not: null },
       plan: { not: "premium" },
-      trialStatus: { in: ["demo", "trial_active", "published"] },
-      trialEndsAt: {
-        gte: now,
-        lte: soon,
-      },
+      trialStatus: { in: ["trial_active", "demo", "published"] },
+      trialEndsAt: { gte: new Date(now.getTime() - 86400000), lte: new Date(in3Days.getTime() + 86400000) },
     },
-    select: {
-      name: true,
-      slug: true,
-      ownerEmail: true,
-      trialEndsAt: true,
-      plan: true,
-    },
+    select: { id: true, name: true, slug: true, ownerEmail: true, ownerName: true, trialEndsAt: true },
   });
-
-  let reminderEmails = 0;
-  for (const tenant of expiringSoon) {
-    if (!tenant.ownerEmail) continue;
-
-    const isAnnual = tenant.plan === "annual";
-    const subject = isAnnual 
-      ? `Il tuo abbonamento NeatX sta per scadere` 
-      : `La prova NeatX di ${tenant.name} sta per scadere`;
-    
-    const html = isAnnual 
-      ? `<p>Ciao, il tuo abbonamento annuale per <strong>${tenant.name}</strong> scade tra pochi giorni.</p><p>Per rinnovare o per accedere al gestionale clicca qui: <a href="${getTenantAdminUrl(tenant.slug)}">${getTenantAdminUrl(tenant.slug)}</a></p>`
-      : `<p>Ciao, la prova gratuita di <strong>${tenant.name}</strong> scade a breve.</p><p>Puoi rientrare qui: <a href="${getTenantAdminUrl(tenant.slug)}">${getTenantAdminUrl(tenant.slug)}</a></p>`;
-
-    await sendEmail(
-      tenant.ownerEmail,
-      subject,
-      html
-    );
-    reminderEmails += 1;
+  for (const t of day3Tenants) {
+    if (!t.ownerEmail) continue;
+    const daysLeft = Math.ceil((t.trialEndsAt!.getTime() - now.getTime()) / 86400000);
+    if (daysLeft === 3) {
+      await sendTrialReminder3Days(t.ownerEmail, t.name, t.ownerName || "titolare", getTenantAdminUrl(t.slug));
+      results.reminder3Days++;
+      results.hotLeads.push(`${t.name} (scade tra 3gg)`);
+    }
   }
 
-  const expired = await prisma.tenant.updateMany({
+  // --- TENANT CON TRIAL IN SCADENZA TRA 1 GIORNO ---
+  const in1Day = new Date(now);
+  in1Day.setDate(in1Day.getDate() + 1);
+  const day1Tenants = await prisma.tenant.findMany({
+    where: {
+      ownerEmail: { not: null },
+      plan: { not: "premium" },
+      trialStatus: { in: ["trial_active", "demo", "published"] },
+      trialEndsAt: { gte: new Date(now.getTime() - 86400000), lte: new Date(in1Day.getTime() + 86400000) },
+    },
+    select: { id: true, name: true, slug: true, ownerEmail: true, ownerName: true, trialEndsAt: true },
+  });
+  for (const t of day1Tenants) {
+    if (!t.ownerEmail) continue;
+    const daysLeft = Math.ceil((t.trialEndsAt!.getTime() - now.getTime()) / 86400000);
+    if (daysLeft <= 1) {
+      await sendTrialReminder1Day(t.ownerEmail, t.name, t.ownerName || "titolare", getTenantAdminUrl(t.slug));
+      results.reminder1Day++;
+      results.hotLeads.push(`${t.name} (ULTIMO GIORNO!)`);
+    }
+  }
+
+  // --- TENANT CON TRIAL APPENA SCADUTO (da 1 a 3 giorni fa) ---
+  const expiredSince = new Date(now);
+  expiredSince.setDate(expiredSince.getDate() - 3);
+  const expiredTenants = await prisma.tenant.findMany({
+    where: {
+      ownerEmail: { not: null },
+      plan: { not: "premium" },
+      trialStatus: { in: ["trial_active", "demo", "published"] },
+      trialEndsAt: { gte: expiredSince, lt: now },
+    },
+    select: { id: true, name: true, slug: true, ownerEmail: true, ownerName: true },
+  });
+  for (const t of expiredTenants) {
+    if (!t.ownerEmail) continue;
+    await sendTrialExpiredOffer(t.ownerEmail, t.name, t.ownerName || "titolare", `${process.env.NEXT_PUBLIC_APP_URL || "https://neatx.store"}/paywall/${t.slug}`);
+    results.expiredOffers++;
+    results.hotLeads.push(`${t.name} (scaduto - offerta riattivazione)`);
+  }
+
+  // --- SCADENZA AUTOMATICA (trial scaduto da >3gg) ---
+  const expiredCutoff = new Date(now);
+  expiredCutoff.setDate(expiredCutoff.getDate() - 3);
+  const expiredResult = await prisma.tenant.updateMany({
     where: {
       plan: { not: "premium" },
       trialStatus: { in: ["demo", "trial_active", "published"] },
-      trialEndsAt: {
-        lt: now,
-      },
+      trialEndsAt: { lt: expiredCutoff },
     },
-    data: {
-      trialStatus: "expired",
-    },
+    data: { trialStatus: "expired" },
   });
+  results.expired = expiredResult.count;
 
-  return NextResponse.json({
-    success: true,
-    expiredUpdated: expired.count,
-    reminderEmails,
-  });
+  // --- NOTIFICA TELEGRAM HOT LEADS ---
+  if (results.hotLeads.length > 0) {
+    const msg = "🔥 <b>SALES PIPELINE NEATX</b>\n\n" +
+      results.hotLeads.map(l => `• ${l}`).join("\n");
+    await sendTelegramMessage(msg).catch(() => {});
+  }
+
+  return NextResponse.json({ success: true, ...results });
 }

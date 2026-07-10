@@ -2,20 +2,22 @@
 
 import { useState } from 'react';
 
-export default function StripeCheckoutButton({ 
-  tenantId, 
-  slug, 
-  plan = 'pro', 
-  priceId, 
-  label = 'Attiva Abbonamento', 
-  color = 'blue' 
-}: { 
-  tenantId: string, 
-  slug: string, 
-  plan?: string, 
-  priceId?: string, 
-  label?: string, 
-  color?: 'blue' | 'pink' 
+export default function StripeCheckoutButton({
+  tenantId,
+  slug,
+  plan = 'pro',
+  interval = 'month',
+  priceId,
+  label = 'Attiva Abbonamento',
+  color = 'blue'
+}: {
+  tenantId: string,
+  slug: string,
+  plan?: string,
+  interval?: string,
+  priceId?: string,
+  label?: string,
+  color?: 'blue' | 'pink'
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,7 +31,7 @@ export default function StripeCheckoutButton({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ tenantId, slug, plan, priceId }),
+        body: JSON.stringify({ tenantId, slug, plan, interval, priceId }),
       });
       const data = await res.json();
       if (data.url) {
@@ -43,7 +45,7 @@ export default function StripeCheckoutButton({
     }
   };
 
-  const btnClass = color === 'pink' 
+  const btnClass = color === 'pink'
     ? "w-full rounded-2xl bg-gradient-to-r from-fuchsia-600 to-pink-500 px-5 py-4 text-sm font-extrabold text-white transition hover:from-fuchsia-500 hover:to-pink-400 shadow-[0_0_20px_rgba(217,70,239,0.3)] hover:shadow-[0_0_30px_rgba(217,70,239,0.5)]"
     : "w-full rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-500 px-5 py-4 text-sm font-extrabold text-white transition hover:from-cyan-500 hover:to-blue-400 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]";
 
