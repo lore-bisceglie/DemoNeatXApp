@@ -39,15 +39,12 @@ export default function SuperAdminAgentsPage() {
     setRunning(agentId);
     setLog([]);
     try {
-      const res = await fetch("https://api.github.com/repos/neatxinfo-db/DemoNeatXApp/actions/workflows/auto-neatx-agents.yml/dispatches", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN || ""}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ ref: "main" }),
-      });
+      const res = await fetch("/api/agents/trigger", { method: "POST" });
       if (res.ok) {
         setLog(prev => [...prev, `[${agentId}] ✅ Workflow triggerato su GitHub. Controlla Actions > auto-neatx-agents.`]);
       } else {
-        setLog(prev => [...prev, `[${agentId}] ❌ Errore trigger: ${res.status}`]);
+        const err = await res.json();
+        setLog(prev => [...prev, `[${agentId}] ❌ ${err.error || 'Errore sconosciuto'}`]);
       }
     } catch (e: any) {
       setLog(prev => [...prev, `[${agentId}] ❌ ${e.message}`]);
