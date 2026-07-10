@@ -1,17 +1,17 @@
 {
   "date": "2026-07-10",
-  "niche": "Personal Trainer",
-  "angle": "follower curiosi in appuntamenti",
-  "pain": "lezioni spostate e slot persi",
-  "promise": "sessioni prenotate e confermate",
-  "cover_title": "PERSONAL TRAINER: NO-SHOW",
-  "hook_hint": "Se sei un personal trainer e perdi soldi a causa di lezioni spostate, agisci ora.",
-  "blog_topic": "Trasformare follower in appuntamenti con un'agenda automatica",
+  "niche": "Coach e Consulenti",
+  "angle": "trasforma follower in clienti",
+  "pain": "call rinviate e clienti indecisi",
+  "promise": "prenotazioni automatiche e follow-up semplici",
+  "cover_title": "BASTA NO-SHOW",
+  "hook_hint": "Se sei un coach e hai clienti che rinviano, stai perdendo opportunità.",
+  "blog_topic": "Coach e Consulenti: come trasformare follower in clienti con un'agenda automatica",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+  "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "agenda consulente",
+    "prenotazioni coach",
+    "booking consulenze"
   ]
 }
