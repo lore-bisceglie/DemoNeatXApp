@@ -1,0 +1,32 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export async function GET() {
+  const leadStats = await prisma.lead.aggregate({
+    _count: { id: true },
+    _max: { createdAt: true },
+  });
+
+  const totalLeads = leadStats._count.id;
+  const lastLeadDate = leadStats._max.createdAt;
+
+  const newLeads = await prisma.lead.count({ where: { status: 'new' } });
+  const convertedLeads = await prisma.lead.count({ where: { status: 'converted' } });
+
+  const activeTrials = await prisma.tenant.count({
+    where: { trialStatus: { in: ['trial_active', 'demo', 'published'] }, plan: { not: 'premium' } },
+  });
+
+  const payingTenants = await prisma.tenant.count({
+    where: { trialStatus: 'converted' },
+  });
+
+  const expiredTrials = await prisma.tenant.count({
+    where: { trialStatus: 'expired' },
+  });
+
+  return NextResponse.json({
+    leads: { total: totalLeads, new: newLeads, converted: convertedLeads, lastLead: lastLeadDate },
+    tenants: { activeTrials, paying: payingTenants, expired: expiredTrials },
+  });
+}

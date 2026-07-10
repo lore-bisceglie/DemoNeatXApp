@@ -239,6 +239,41 @@ export async function POST(req: Request) {
           await sendTelegramMessage("⚠️ Formato errato. Usa: /sms [nome] [crediti] (es. /sms beart 100)");
         }
       }
+      else if (text === "/agents") {
+        try {
+          const res = await fetch("https://neatx.store/api/agents/status");
+          const data = await res.json();
+          const reply =
+            `🤖 <b>STATO AGENTI NEATX</b>\n\n` +
+            `👤 <b>Lead:</b> ${data.leads.total} totali, ${data.leads.new} nuovi\n` +
+            `🏢 <b>Tenant:</b> ${data.tenants.activeTrials} trial, ${data.tenants.paying} paganti, ${data.tenants.expired} scaduti\n\n` +
+            `Usa /agent run per eseguire tutti gli agenti ora.`;
+          await sendTelegramMessage(reply);
+        } catch {
+          await sendTelegramMessage("❌ Errore nel contattare l'API agenti.");
+        }
+      }
+      else if (text === "/agent run") {
+        try {
+          const token = process.env.GITHUB_TOKEN || process.env.GH_PAT;
+          if (!token) {
+            await sendTelegramMessage("❌ GITHUB_TOKEN non configurato. Imposta la variabile d'ambiente.");
+          } else {
+            const res = await fetch("https://api.github.com/repos/neatxinfo-db/DemoNeatXApp/actions/workflows/auto-neatx-agents.yml/dispatches", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ ref: "main" }),
+            });
+            if (res.ok) {
+              await sendTelegramMessage("✅ Agenti triggerati su GitHub Actions. Controlla tra un paio di minuti.");
+            } else {
+              await sendTelegramMessage(`❌ Errore trigger: ${res.status}`);
+            }
+          }
+        } catch {
+          await sendTelegramMessage("❌ Errore nel triggerare gli agenti.");
+        }
+      }
       else if (text === "/aiuto") {
         const helpText = `🛠️ <b>Guida ai Comandi</b>\n\n` +
           `/stats - Riepilogo saloni attivi, prenotazioni e MRR\n` +
@@ -249,6 +284,8 @@ export async function POST(req: Request) {
           `/basic [nome] - Retrocede un negozio al piano BASIC\n` +
           `/sms [nome] [crediti] - Ricarica pacchetto messaggi WhatsApp (es. /sms beart 100)\n` +
           `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
+          `/agents - Mostra lo stato degli agenti automatici\n` +
+          `/agent run - Esegue tutti gli agenti ora su GitHub\n` +
           `/aiuto - Mostra questo messaggio`;
         await sendTelegramMessage(helpText);
       }

@@ -313,6 +313,9 @@ export default function SuperAdminPage() {
               <Link href="/" className="text-sm font-medium flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">
                 🏠 Torna al Sito Pubblico
               </Link>
+              <Link href="/superadmin/agents" className="text-sm font-medium flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">
+                🤖 Agenti
+              </Link>
             </div>
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
               Pannello Super Admin (NeatX SaaS)
