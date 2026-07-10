@@ -2,8 +2,19 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-async function requireTenantAdmin(tenantId: string) {
-  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+async function requireTenantAdmin(request: Request) {
+  const url = new URL(request.url);
+  const tenantSlug = url.searchParams.get("tenantSlug");
+  
+  let tenant;
+  if (tenantSlug) {
+    tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+  } else {
+    // Fallback per compatibilità: tenantId nel body
+    // Per ora restituiamo null se non c'è slug - il chiamante deve gestire il fallback
+    return null;
+  }
+
   if (!tenant?.adminPassword) return null;
 
   const cookieStore = await cookies();
@@ -20,15 +31,20 @@ function cleanService(input: any) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const tenantId = searchParams.get("tenantId");
+  const tenantSlug = searchParams.get("tenantSlug");
+  
+  if (!tenantSlug) {
+    return NextResponse.json({ error: "tenantSlug mancante" }, { status: 400 });
+  }
 
-  if (!tenantId) {
-    return NextResponse.json({ error: "ID mancante" }, { status: 400 });
+  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+  if (!tenant) {
+    return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
   }
 
   try {
     const services = await prisma.service.findMany({
-      where: { tenantId },
+      where: { tenantId: tenant.id },
       orderBy: [{ duration: "asc" }, { price: "asc" }, { name: "asc" }],
     });
 
@@ -40,15 +56,14 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const tenantId = typeof body.tenantId === "string" ? body.tenantId : "";
-    const tenant = await requireTenantAdmin(tenantId);
+    const tenant = await requireTenantAdmin(request);
 
     if (!tenant) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
-    const service = cleanService(body);
+    const body = await request.json();
+    const service = cleanService(await request.json());
     if (!service.name) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
@@ -56,7 +71,7 @@ export async function POST(request: Request) {
     const created = await prisma.service.create({
       data: {
         ...service,
-        tenantId,
+        tenantId: tenant.id,
       },
     });
 
@@ -67,7 +82,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const id = typeof body.id === "string" ? body.id : "";
@@ -77,12 +92,12 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Servizio non trovato" }, { status: 404 });
     }
 
-    const tenant = await requireTenantAdmin(existing.tenantId);
-    if (!tenant) {
+    const tenant = await requireTenantAdmin(request);
+    if (!tenant || tenant.id !== existing.tenantId) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
-    const service = cleanService(body);
+    const service = cleanService(await request.json());
     if (!service.name) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
