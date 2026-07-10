@@ -1,17 +1,17 @@
 {
   "date": "2026-07-10",
-  "niche": "Tatuatori",
-  "angle": "come trasformare follower in appuntamenti",
-  "pain": "consulenze infinite e appuntamenti senza caparra",
-  "promise": "richieste filtrate e acconto prima dello slot",
-  "cover_title": "TATUATORI: BASTA NO-SHOW",
-  "hook_hint": "Se sei un tatuatore e hai consulenze infinite, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: converti follower in appuntamenti veri con un'agenda automatica",
+  "niche": "Fisioterapisti",
+  "angle": "trasforma follower in pazienti",
+  "pain": "sedute saltate e agenda piena di cambi",
+  "promise": "prenotazioni e promemoria automatizzati",
+  "cover_title": "FISIOTERAPISTI: BASTA NO-SHOW",
+  "hook_hint": "Se sei un fisioterapista e le sedute saltano, perdi soldi.",
+  "blog_topic": "Fisioterapisti: come convertire follower in appuntamenti con un sistema automatico",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
+  "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }
