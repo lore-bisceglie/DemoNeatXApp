@@ -1,0 +1,33 @@
+[
+  {
+    "from": "ContentAdvisor",
+    "channel": "content_suggestions",
+    "payload": {
+      "type": "strategy_update",
+      "suggestions": [
+        {
+          "type": "reel",
+          "action": "Crea un reel su Tatuatori: Tatuatori: Booksy ti sta facendo perdere soldi?",
+          "priority": "alta"
+        },
+        {
+          "type": "reel",
+          "action": "Crea un reel su Personal Trainer: Personal Trainer: Booksy ti sta facendo perdere soldi?",
+          "priority": "alta"
+        },
+        {
+          "type": "blog",
+          "action": "Articolo blog: 'timesheet digitali per la riforma fiscale 2025 — come NeatX risolve il problema'",
+          "priority": "media"
+        },
+        {
+          "type": "general",
+          "action": "Aggiornare i prompt AI del reel bot per enfatizzare il confronto con competitor",
+          "priority": "bassa"
+        }
+      ],
+      "target_segment": "Parrucchieri"
+    },
+    "timestamp": "2026-07-10T23:32:00.212649"
+  }
+]

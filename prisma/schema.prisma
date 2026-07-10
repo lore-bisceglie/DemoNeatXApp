@@ -206,7 +206,25 @@ model CustomerNote {
 }
 
 // ------------------------------------------------------
-// 8. LOG ATTIVITA' RECENTI (ACTIVITY LOG)
+// 8. LEAD CAPTURE (EmailCapture, LeadHunter)
+// ------------------------------------------------------
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  source    String   @default("web") // "lead_magnet", "lead_hunter", "web"
+  status    String   @default("new") // "new", "contacted", "converted", "lost"
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ------------------------------------------------------
+// 9. LOG ATTIVITA' RECENTI (ACTIVITY LOG)
 // ------------------------------------------------------
 model ActivityLog {
   id            String   @id @default(cuid())

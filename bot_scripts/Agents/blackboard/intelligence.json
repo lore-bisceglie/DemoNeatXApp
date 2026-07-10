@@ -1,0 +1,16 @@
+[
+  {
+    "from": "MarketIntelligence",
+    "channel": "intelligence",
+    "payload": {
+      "type": "daily_brief",
+      "trend": "timesheet digitali per la riforma fiscale 2025",
+      "competitor": {
+        "name": "Booksy",
+        "weakness": "commissioni 20-30%, abbonamento alto, interfaccia complessa"
+      },
+      "recommendation": "Approfitta del trend 'timesheet digitali per la riforma fiscale 2025' per creare contenuti che confrontano NeatX con Booksy (commissioni 20-30%, abbonamento alto, interfaccia complessa)."
+    },
+    "timestamp": "2026-07-10T23:32:00.198514"
+  }
+]

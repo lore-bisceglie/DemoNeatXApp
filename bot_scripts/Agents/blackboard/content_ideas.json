@@ -1,0 +1,36 @@
+[
+  {
+    "from": "MarketIntelligence",
+    "channel": "content_ideas",
+    "payload": {
+      "type": "new_ideas",
+      "ideas": [
+        {
+          "niche": "Tatuatori",
+          "hook": "Tatuatori: Booksy ti sta facendo perdere soldi?",
+          "angle": "timesheet digitali per la riforma fiscale 2025",
+          "cta": "Commenta AGENDA"
+        },
+        {
+          "niche": "Personal Trainer",
+          "hook": "Personal Trainer: Booksy ti sta facendo perdere soldi?",
+          "angle": "timesheet digitali per la riforma fiscale 2025",
+          "cta": "Commenta AGENDA"
+        },
+        {
+          "niche": "Centri Estetici",
+          "hook": "Centri Estetici: Booksy ti sta facendo perdere soldi?",
+          "angle": "timesheet digitali per la riforma fiscale 2025",
+          "cta": "Commenta AGENDA"
+        }
+      ],
+      "trend": "timesheet digitali per la riforma fiscale 2025",
+      "competitor_focus": {
+        "name": "Booksy",
+        "weakness": "commissioni 20-30%, abbonamento alto, interfaccia complessa"
+      },
+      "generated_at": "2026-07-10T23:32:00.198514"
+    },
+    "timestamp": "2026-07-10T23:32:00.198514"
+  }
+]
