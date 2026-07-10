@@ -1,50 +1,43 @@
 # NeatX Content Calendar
 
-## 2026-07-10 - Coach e Consulenti
-- Angolo: trasforma follower in clienti
-- Dolore: call rinviate e clienti indecisi
-- Promessa: prenotazioni automatiche e follow-up semplici
+## 2026-07-11 - Personal Trainer - Recensioni Automatiche
+- Dolore: clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche
+- Promessa: recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta
+- Cover: 5 STELLE AUTOMATICHE
+- Blog: Personal Trainer: Recensioni Automatiche con NeatX
+
+## 2026-07-12 - Parrucchieri - Timesheet Commercialista
+- Dolore: ore dei dipendenti segnate a mano su fogli Excel persi
+- Promessa: turni, ferie e permessi in un click, CSV pronto per il commercialista
+- Cover: ADDIO EXCEL
+- Blog: Parrucchieri: Timesheet Commercialista con NeatX
+
+## 2026-07-13 - Coach e Consulenti - Statistiche e Dati
+- Dolore: non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti
+- Promessa: dashboard con incassi, trend e performance in tempo reale
+- Cover: DATI IN TEMPO REALE
+- Blog: Coach e Consulenti: Statistiche e Dati con NeatX
+
+## 2026-07-14 - Barbieri - Zero No-Show
+- Dolore: acconti automatici che filtrano i clienti che non si presentano
+- Promessa: ogni slot occupato da clienti che hanno già pagato
 - Cover: BASTA NO-SHOW
-- Blog: Coach e Consulenti: come trasformare follower in clienti con un'agenda automatica
+- Blog: Barbieri: Zero No-Show con NeatX
 
-## 2026-07-11 - Tatuatori
-- Angolo: costo dei no-show mensili
-- Dolore: appuntamenti senza deposito e perdite economiche
-- Promessa: richieste selezionate e acconti garantiti
-- Cover: TATUATORI: BASTA NO-SHOW
-- Blog: Tatuatori: costo reale dei no-show con un'agenda automatica
+## 2026-07-15 - Centri Estetici - Promemoria WhatsApp
+- Dolore: clienti che dimenticano l'appuntamento e non rispondono al telefono
+- Promessa: promemoria automatici che riducono i no-show del 90%
+- Cover: WA RICORDA PER TE
+- Blog: Centri Estetici: Promemoria WhatsApp con NeatX
 
-## 2026-07-12 - Parrucchieri
-- Angolo: acconti e promemoria efficaci
-- Dolore: clienti che disturbano a tutte le ore
-- Promessa: agenda piena senza messaggi incessanti
-- Cover: PARRUCCHIERI: BASTA NO-SHOW
-- Blog: Parrucchieri: come gestire acconti e promemoria senza apparire aggressivi
+## 2026-07-16 - Tatuatori - Prenotazione 24/7
+- Dolore: telefono che squilla tutto il giorno e messaggi senza fine
+- Promessa: clienti che prenotano da soli anche mentre dormi
+- Cover: PRENOTA 24/7
+- Blog: Tatuatori: Prenotazione 24/7 con NeatX
 
-## 2026-07-13 - Personal Trainer
-- Angolo: promemoria senza pressione
-- Dolore: lezioni spostate e slot persi
-- Promessa: sessioni confermate e ricordate automaticamente
-- Cover: PERSONAL TRAINER: BASTA NO-SHOW
-- Blog: Personal Trainer: gestire promemoria e acconti senza stress
-
-## 2026-07-14 - Fisioterapisti
-- Angolo: tempo sprecato rispondendo ai messaggi
-- Dolore: sedute saltate per cambi last minute
-- Promessa: prenotazioni organizzate e promemoria per ogni paziente
-- Cover: FISIOTERAPISTI: BASTA NO-SHOW
-- Blog: Fisioterapisti: come ottimizzare il tempo con un'agenda automatica
-
-## 2026-07-15 - Barbieri
-- Angolo: link in bio per prenotazioni
-- Dolore: no-show e appuntamenti presi via DM
-- Promessa: minori buchi in agenda e clienti paganti
-- Cover: BARBIERI: BASTA NO-SHOW
-- Blog: Barbieri: perché il link in bio deve essere automatico
-
-## 2026-07-16 - Centri Estetici
-- Angolo: trasforma follower in appuntamenti
-- Dolore: clienti dimenticano gli appuntamenti
-- Promessa: promemoria automatici e acconti prima dei trattamenti
-- Cover: CENTRI ESTETICI: BASTA NO-SHOW
-- Blog: Centri Estetici: come convertire follower in clienti con un'agenda automatica
+## 2026-07-17 - Fisioterapisti - Gestione Staff
+- Dolore: turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato
+- Promessa: ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto
+- Cover: STAFF AUTOMATICO
+- Blog: Fisioterapisti: Gestione Staff con NeatX
