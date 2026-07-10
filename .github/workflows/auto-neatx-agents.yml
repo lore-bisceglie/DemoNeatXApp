@@ -1,0 +1,40 @@
+name: auto-neatx-agents
+
+on:
+  schedule:
+    - cron: "07 07 * * *"   # 09:07 Europe/Rome
+    - cron: "37 19 * * *"   # 21:37 Europe/Rome
+  workflow_dispatch:
+
+jobs:
+  run-agents:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run agents
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bot_scripts/Agents/coordinator.py
+
+      - name: Commit blackboard updates
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "agent: report automatico agenti NeatX"
+          commit_user_name: "NeatX Agent"
+          commit_user_email: "agent@neatx.store"
+          file_pattern: "bot_scripts/Agents/blackboard/*.json content_strategy/*.json"
+          pull_options: "--rebase"
