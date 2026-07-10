@@ -1,17 +1,17 @@
 {
-  "date": "2026-07-09",
-  "niche": "Fisioterapisti",
-  "angle": "gestire acconti e promemoria efficacemente",
-  "pain": "sedute saltate e agenda confusa",
-  "promise": "prenotazioni facili e promemoria per ogni paziente",
-  "cover_title": "FISIOTERAPISTI: NO-SHOW STOP",
-  "hook_hint": "Se sei un fisioterapista e hai sedute saltate, stai perdendo denaro.",
-  "blog_topic": "Fisioterapisti: gestire acconti e promemoria con un'agenda automatica",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic physiotherapy studio, physiotherapist assisting patient, sleek modern clinic",
+  "date": "2026-07-10",
+  "niche": "Tatuatori",
+  "angle": "come trasformare follower in appuntamenti",
+  "pain": "consulenze infinite e appuntamenti senza caparra",
+  "promise": "richieste filtrate e acconto prima dello slot",
+  "cover_title": "TATUATORI: BASTA NO-SHOW",
+  "hook_hint": "Se sei un tatuatore e hai consulenze infinite, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: converti follower in appuntamenti veri con un'agenda automatica",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
