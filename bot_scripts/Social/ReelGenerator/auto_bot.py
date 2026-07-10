@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from hashtag_strategy import build_hashtags, ALWAYS, NICHE_TAGS
+
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
@@ -29,6 +32,10 @@ TARGET_AUDIENCES = [
     "Avvocati",
     "Commercialisti"
 ]
+
+# Hashtag ad alto reach virale
+ALWAYS_TAGS = " ".join(ALWAYS)
+NICHE_TAGS_MAP = {k.lower(): v for k, v in NICHE_TAGS.items()}
 
 GAMEPLAY_STYLES = [
     "runner",
@@ -119,7 +126,7 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
         caption = (
             f"{target}: basta agenda gestita a mano. "
             "Commenta AGENDA e ti mando la demo NeatX. "
-            "#NeatX #agendaonline #prenotazioni #automazione #business"
+            "#perte #fyp #foryou #viral #imprenditore #businessitalia #crescita"
         )
 
     return {
@@ -214,7 +221,7 @@ Regole:
 - Il copione deve essere breve (circa 20-30 secondi parlati), super naturale e NON sembrare un robot che legge. Usa un tono energico e informale. NIENTE EMOJI NEL COPIONE PARLATO. LE EMOJI SONO SEVERAMENTE VIETATE IN script_text.
 - L'hook del copione deve toccare un punto di dolore ESTREMO del target. Sii aggressivo, fagli capire che stanno buttando soldi e tempo.
 - La scritta a schermo (hook_text) DEVE ESSERE IDENTICA a cover_title. Saranno le 3-4 parole enormi che appaiono in faccia all'utente.
-- La caption di Instagram deve essere persuasiva e contenere hashtag rilevanti e l'invito a commentare la parola AGENDA.
+- La caption di Instagram deve essere persuasiva, includere hashtag VIRALI come #perte #fyp #foryou #viral #imprenditore #businessitalia + hashtag di nicchia e l'invito a commentare la parola AGENDA.
 - Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante.
 - Il "image_prompt" deve essere in INGLESE e descrivere una scena fotografica coerente con {target}, con un professionista vero al lavoro nel suo ambiente.
 

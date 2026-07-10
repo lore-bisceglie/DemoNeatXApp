@@ -79,7 +79,7 @@ def get_caption():
     if os.path.exists("reel_data.json"):
         with open("reel_data.json", "r", encoding="utf-8") as f:
             data = json.load(f)
-            return data.get("caption", "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione")
+            return data.get("caption", "Scopri come automatizzare il tuo business con NeatX! #perte #fyp #foryou #viral #imprenditore #businessitalia")
     return "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione"
 
 def publish_to_instagram():

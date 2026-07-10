@@ -161,7 +161,7 @@ class ContentMachineAgent(BaseAgent):
             return {
                 "platform": "facebook",
                 "text": f"{title} 👈\n\nSe sei tra i {niche.lower()} e ancora {pain}, oggi c'e una soluzione.\n\nNeatX: {promise}.\n\n👉 https://neatx.store/registrazione",
-                "hashtags": ["#NeatX", f"#{niche.lower()}", "#automazione", "#prenotazioni"],
+                "hashtags": "#perte #fyp #foryou #viral #imprenditore #businessitalia #crescita #neatx",
             }
 
         return None
