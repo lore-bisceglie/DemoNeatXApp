@@ -12,16 +12,16 @@ REEL_DIR = REPO_ROOT / "bot_scripts" / "Social" / "ReelGenerator"
 BLOG_DIR = REPO_ROOT / "bot_scripts" / "SEO_Machine"
 OUT_DIR = REPO_ROOT / "content_strategy"
 
-CHANNELS = ["reel", "blog", "newsletter", "social"]
+CHANNELS = ["newsletter", "social"]  # Canali NON coperti da altri bot
 
 WEEKLY_PLAN = {
-    0: "reel",      # lunedi
-    1: "blog",      # martedi
-    2: "reel",      # mercoledi
-    3: "newsletter", # giovedi
-    4: "reel",      # venerdi
-    5: "social",    # sabato
-    6: "rest",      # domenica
+    0: "reel",        # lunedi -> gia coperto da reel bot
+    1: "newsletter",  # martedi -> NUOVO
+    2: "reel",        # mercoledi -> gia coperto da reel bot
+    3: "newsletter",  # giovedi -> NUOVO
+    4: "reel",        # venerdi -> gia coperto da reel bot
+    5: "social",      # sabato -> NUOVO
+    6: "rest",        # domenica
 }
 
 class ContentMachineAgent(BaseAgent):
@@ -144,37 +144,13 @@ class ContentMachineAgent(BaseAgent):
         return None
 
     def _generate_content(self, idea: dict, channel: str, history: list) -> dict | None:
-        """Genera contenuto specifico per il canale del giorno."""
+        """Genera contenuto specifico per il canale del giorno (solo canali non coperti da altri bot)."""
         niche = idea.get("niche", "Barbieri")
         title = idea.get("cover_title", "BASTA NO-SHOW")
         pain = idea.get("pain", "perdere tempo")
         promise = idea.get("promise", "automatizzare")
-        feature = idea.get("feature_label", "")
 
-        if channel == "reel":
-            # Riutilizza il reel_data.json esistente
-            reel_path = REPO_ROOT / "bot_scripts/Social/ReelGenerator/reel_data.json"
-            if reel_path.exists():
-                return None  # Il reel bot gia gestisce questo
-
-            return {
-                "niche": niche,
-                "cover_title": title,
-                "script_text": f"Se sei tra i {niche.lower()} e ancora {pain}, stai perdendo soldi. Con NeatX puoi {promise}. Commenta AGENDA per il link!",
-                "hook_text": title,
-                "image_prompt": idea.get("image_prompt", ""),
-                "caption": f"{niche}: {title}. Commenta AGENDA per la demo! #NeatX #automazione",
-            }
-
-        elif channel == "blog":
-            return {
-                "niche": niche,
-                "title": f"{niche}: {title} — Come {promise}",
-                "content": f"<p>Se gestisci un {niche.lower()} e ancora {pain}, sei nel posto giusto.</p><p>NeatX ti aiuta a {promise} in pochi click. Niente piu fogli, niente piu telefonate.</p><h2>Perche passare a NeatX?</h2><p>Prenotazioni 24/7, promemoria automatici, timesheet per il commercialista, recensioni Google automatiche.</p><p><a href='https://neatx.store/registrazione'>Prova gratis 7 giorni</a>.</p>",
-                "keywords": [niche.lower(), "gestionale", "prenotazioni", "automazione"],
-            }
-
-        elif channel == "newsletter":
+        if channel == "newsletter":
             return {
                 "subject": f"{title} — La soluzione per {niche}",
                 "preview": f"Scopri come {promise} senza stress",

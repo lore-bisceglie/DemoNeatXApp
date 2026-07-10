@@ -125,6 +125,18 @@
         "prenotazioni estetista",
         "agenda centro estetico"
       ]
+    },
+    {
+      "date": "2026-07-17",
+      "niche": "Parrucchieri",
+      "feature": "recensioni",
+      "feature_label": "Recensioni Automatiche",
+      "cover_title": "RECENSIONI AUTO",
+      "pain": "perdere tempo con parrucchieri",
+      "promise": "automatizzare con NeatX",
+      "platform": "reel",
+      "image_prompt": "photorealistic parrucchieri working",
+      "gameplay_style": "neon_racer"
     }
   ],
   "agent_enhanced_at": "2026-07-10T23:32:00.212649"
