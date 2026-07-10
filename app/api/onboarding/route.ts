@@ -147,7 +147,7 @@ export async function POST(req: Request) {
         },
         storeSettings: {
           create: {
-            smsCredits: 25,
+            smsCredits: 50,
             maxConcurrentAppointments: Math.max(1, template.staff.length),
           },
         },
