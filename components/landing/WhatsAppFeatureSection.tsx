@@ -60,14 +60,13 @@ export default function WhatsAppFeatureSection() {
             Integrazione WhatsApp
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            Promemoria direttamente su{" "}
+            I tuoi clienti ricevono un messaggio da{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300">
-              WhatsApp
+              NeatX su WhatsApp
             </span>
           </h2>
           <p className="text-slate-400 font-medium max-w-2xl mx-auto">
-            Niente più SMS costosi e ignorati. NeatX invia i promemoria
-            direttamente su WhatsApp: il tasso di lettura passa dal 20% al 98%.
+            Niente SMS da numeri sconosciuti. NeatX è un&apos;azienda verificata su WhatsApp Business: i tuoi clienti vedono il nome, il logo e la spunta di verifica. Il tasso di lettura passa dal 20% al 98%.
           </p>
         </div>
 
@@ -79,21 +78,24 @@ export default function WhatsAppFeatureSection() {
               <div className="rounded-[2.2rem] bg-[#111b2e] overflow-hidden">
                 {/* Header */}
                 <div className="bg-[#1a2642] px-5 py-4 flex items-center gap-3 border-b border-emerald-500/10">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-emerald-500/30">
-                    N
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00b4ff] to-cyan-400 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-cyan-500/30">
+                    NX
                   </div>
                   <div>
-                    <p className="text-white font-bold text-sm">
-                      Rosanna Acconciature
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-white font-bold text-sm">
+                        NeatX
+                      </p>
+                      <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-bold">✓ Verificato</span>
+                    </div>
                     <p className="text-emerald-400 text-[10px] font-semibold">
-                      ● online
+                      Account Business
                     </p>
                   </div>
                   <div className="ml-auto flex items-center gap-1">
                     <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
                     <span className="text-emerald-400 text-[10px] font-bold">
-                      NeatX Auto
+                      Automatico
                     </span>
                   </div>
                 </div>
@@ -139,27 +141,27 @@ export default function WhatsAppFeatureSection() {
           <div className="flex flex-col gap-6">
             {[
               {
-                icon: "🚀",
-                title: "WhatsApp First, SMS di riserva",
-                desc: "Il sistema prova prima WhatsApp (gratuito con Meta). Se non riesce, passa automaticamente agli SMS come rete di sicurezza.",
+                icon: "🏢",
+                title: "NeatX è il mittente ufficiale",
+                desc: "Il cliente non riceve messaggi da numeri sconosciuti. Vede arrivare un messaggio da 'NeatX' con logo e spunta di verifica WhatsApp Business.",
                 color: "border-emerald-500/20 bg-emerald-500/5",
               },
               {
                 icon: "🤖",
-                title: "100% automatico",
-                desc: "Non devi fare nulla. NeatX scansiona le prenotazioni del giorno dopo e spara i promemoria alle 18:00 in automatico.",
+                title: "100% automatico, zero fatica",
+                desc: "Ogni sera alle 18:00 NeatX scansiona le prenotazioni del giorno dopo e spara i promemoria. Tu non devi toccare nulla.",
                 color: "border-cyan-500/20 bg-cyan-500/5",
+              },
+              {
+                icon: "🛡️",
+                title: "SMS come rete di sicurezza",
+                desc: "Se per qualunque motivo WhatsApp non dovesse funzionare, il sistema scatta in automatico sull'SMS classico. Nessun cliente viene mai dimenticato.",
+                color: "border-purple-500/20 bg-purple-500/5",
               },
               {
                 icon: "📱",
                 title: "98% tasso di lettura",
-                desc: "Gli SMS vengono ignorati. I messaggi WhatsApp vengono aperti entro 3 minuti. I tuoi clienti non dimenticheranno mai più un appuntamento.",
-                color: "border-purple-500/20 bg-purple-500/5",
-              },
-              {
-                icon: "💰",
-                title: "Zero costi aggiuntivi",
-                desc: "I messaggi WhatsApp Business passano dall'API di Meta: nessun costo per messaggio. Solo i pochi SMS di backup consumano crediti.",
+                desc: "Gli SMS vengono ignorati. Un messaggio WhatsApp Business con il nome NeatX viene aperto entro 3 minuti. I no-show crollano del 90%.",
                 color: "border-amber-500/20 bg-amber-500/5",
               },
             ].map((item) => (
