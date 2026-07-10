@@ -20,7 +20,7 @@ import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 import MessageRechargeCard from "./MessageRechargeCard";
-
+import ReferralCard from "@/components/ReferralCard";
 
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
@@ -716,6 +716,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             slug={slug}
             currentCredits={storeSettings?.smsCredits || 0}
           />
+
+          <div className="mt-4">
+            <ReferralCard tenantId={tenantId} />
+          </div>
         </div>
 
         

@@ -63,6 +63,11 @@ model Tenant {
   customerNotes CustomerNote[]
   activityLogs  ActivityLog[]
   staff         Staff[]
+
+  // Referral System
+  referralCode   String?   @unique
+  referredByCode String?
+  referredAt     DateTime?
 }
 
 // ------------------------------------------------------

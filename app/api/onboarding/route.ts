@@ -109,6 +109,14 @@ export async function POST(req: Request) {
     const trialEndsAt = new Date();
     trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
 
+    // Referral: chi ha invitato questo tenant?
+    const refCode = cleanText(body.ref);
+    let referredByCode = null;
+    if (refCode) {
+      const referrer = await prisma.tenant.findUnique({ where: { referralCode: refCode } });
+      if (referrer) referredByCode = refCode;
+    }
+
     const tenant = await prisma.tenant.create({
       data: {
         name: businessName,
@@ -138,6 +146,8 @@ export async function POST(req: Request) {
         trialStatus: "trial_active",
         isDemoData: true,
         plan: "basic",
+        referredByCode,
+        referredAt: referredByCode ? now : null,
         services: {
           create: template.services.map((service) => ({
             name: service.name,
@@ -147,7 +157,7 @@ export async function POST(req: Request) {
         },
         storeSettings: {
           create: {
-            smsCredits: 50,
+            smsCredits: referredByCode ? 75 : 50, // 25 crediti in piu' se invitato
             maxConcurrentAppointments: Math.max(1, template.staff.length),
           },
         },

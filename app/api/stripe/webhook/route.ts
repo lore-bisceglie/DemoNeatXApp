@@ -62,6 +62,21 @@ export async function POST(req: Request) {
           await sendTelegramMessage(
             `💰 <b>PAGAMENTO SAAS!</b>\n\nIl negozio <b>${updatedTenant.name}</b> ha attivato <b>${purchasedPlan.toUpperCase()}</b> (${interval === 'year' ? 'annuale' : 'mensile'})!\nMRR in aumento. 📈`
           );
+
+          // Referral reward: se e stato invitato, premia chi lo ha invitato
+          if (updatedTenant.referredByCode) {
+            const referrer = await prisma.tenant.findUnique({ where: { referralCode: updatedTenant.referredByCode } });
+            if (referrer) {
+              await prisma.storeSettings.upsert({
+                where: { tenantId: referrer.id },
+                create: { tenantId: referrer.id, smsCredits: 100 },
+                update: { smsCredits: { increment: 100 } },
+              });
+              await sendTelegramMessage(
+                `🎉 <b>REFERRAL PREMIATO!</b>\n\n<b>${referrer.name}</b> ha guadagnato 100 crediti WhatsApp per aver invitato <b>${updatedTenant.name}</b>!\nPiù inviti, più messaggi gratis. 🚀`
+              );
+            }
+          }
         }
         break;
       }
