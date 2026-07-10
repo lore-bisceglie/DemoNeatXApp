@@ -1,6 +1,6 @@
 "use client";
 
-import { MousePointerClick, BellRing, WalletCards, Zap, CalendarSync } from "lucide-react";
+import { MousePointerClick, BellRing, WalletCards, Zap, CalendarSync, FileSpreadsheet, ShieldCheck, UserCog } from "lucide-react";
 
 const FEATURE_CARDS = [
   {
@@ -13,27 +13,43 @@ const FEATURE_CARDS = [
   },
   {
     icon: BellRing,
-    title: "Promemoria anti no-show",
+    title: "Promemoria WhatsApp automatici",
     description:
-      "NeatX ricorda al cliente l'appuntamento e riduce i buchi in agenda senza inseguimenti manuali.",
-    accent: "text-purple-400",
-    border: "hover:border-purple-400/50",
+      "NeatX invia i promemoria direttamente su WhatsApp alle 18:00 del giorno prima. Se WhatsApp non funziona, scatta l'SMS di backup.",
+    accent: "text-emerald-400",
+    border: "hover:border-emerald-400/50",
   },
   {
     icon: WalletCards,
     title: "Acconti prima del servizio",
     description:
-      "Per i servizi importanti puoi richiedere caparra o pagamento completo prima della conferma.",
-    accent: "text-emerald-400",
-    border: "hover:border-emerald-400/50",
+      "Per i servizi importanti puoi richiedere caparra o pagamento completo con Stripe prima della conferma.",
+    accent: "text-purple-400",
+    border: "hover:border-purple-400/50",
   },
   {
     icon: CalendarSync,
-    title: "Turni Google + commercialista",
+    title: "Turni da Google Sheets",
     description:
-      "Niente impostazioni complesse. Compila il tuo Foglio Google: l'agenda nasconderà all'istante gli orari in cui il tuo staff riposa.",
+      "Compila il Foglio Google con gli orari di ogni dipendente. NeatX sincronizza tutto: l'agenda mostra solo gli slot liberi di ciascuno.",
     accent: "text-blue-400",
     border: "hover:border-blue-400/50",
+  },
+  {
+    icon: UserCog,
+    title: "Ferie, Pause e Permessi",
+    description:
+      "Gestisci ferie intere, pause pranzo e permessi retribuiti per ogni singolo dipendente. Tutto separato, tutto tracciato.",
+    accent: "text-amber-400",
+    border: "hover:border-amber-400/50",
+  },
+  {
+    icon: FileSpreadsheet,
+    title: "Foglio presenze per il commercialista",
+    description:
+      "Un click e NeatX genera un CSV con lo spaccato giornaliero di ogni dipendente: ore teoriche, ferie, permessi e totale mensile.",
+    accent: "text-rose-400",
+    border: "hover:border-rose-400/50",
   },
 ];
 
@@ -47,10 +63,10 @@ export default function FeaturesSection() {
             Il sistema operativo dell&apos;agenda
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">Meno messaggi. Più slot pieni.</h2>
-          <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX non è solo una pagina di prenotazione: è un flusso completo che porta il cliente dalla curiosità alla conferma.</p>
+          <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX non è solo una pagina di prenotazione: è un gestionale completo che copre dal primo click del cliente fino alla busta paga dei dipendenti.</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {FEATURE_CARDS.map((feature) => {
             const Icon = feature.icon;
             return (

@@ -7,6 +7,7 @@ import TrustMarquee from "@/components/landing/TrustMarquee";
 import BeforeAfterSlider from "@/components/landing/BeforeAfterSlider";
 import ComparisonTable from "@/components/landing/ComparisonTable";
 import FeaturesSection from "@/components/landing/FeaturesSection";
+import WhatsAppFeatureSection from "@/components/landing/WhatsAppFeatureSection";
 import TimesheetFeatureSection from "@/components/landing/TimesheetFeatureSection";
 import OperatingSteps from "@/components/landing/OperatingSteps";
 import NoShowSimulator from "@/components/landing/NoShowSimulator";
@@ -78,6 +79,7 @@ export default function Home() {
       <BeforeAfterSlider />
       <ComparisonTable />
       <FeaturesSection />
+      <WhatsAppFeatureSection />
       <TimesheetFeatureSection />
       <OperatingSteps />
       <NoShowSimulator onOpenStripe={() => setShowStripe(true)} />

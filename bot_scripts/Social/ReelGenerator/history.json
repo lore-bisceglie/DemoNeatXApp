@@ -52,7 +52,7 @@
         "title": "TATUATORI: BASTA NO-SHOW!",
         "hook": "TATUATORI: BASTA NO-SHOW!",
         "date": "2026-07-06",
-        "views": 1914,
+        "views": 1913,
         "likes": 6
     },
     {
@@ -74,7 +74,7 @@
         "title": "PARRUCCHIERI: NO-SHOW",
         "hook": "PARRUCCHIERI: NO-SHOW",
         "date": "2026-07-07",
-        "views": 1228,
+        "views": 1226,
         "likes": 7
     },
     {
@@ -97,7 +97,7 @@
         "title": "BASTA NO-SHOW",
         "hook": "BASTA NO-SHOW",
         "date": "2026-07-08",
-        "views": 1003,
+        "views": 1006,
         "likes": 4
     },
     {
@@ -113,6 +113,13 @@
         "title": "BARBIERI: BASTA NO-SHOW",
         "hook": "BARBIERI: BASTA NO-SHOW",
         "date": "2026-07-09",
+        "views": 0
+    },
+    {
+        "youtube_id": "Mn69WMgnQ54",
+        "title": "FISIOTERAPISTI: NO-SHOW STOP",
+        "hook": "FISIOTERAPISTI: NO-SHOW STOP",
+        "date": "2026-07-10",
         "views": 0
     }
 ]

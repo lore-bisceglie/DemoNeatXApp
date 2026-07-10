@@ -1,13 +1,13 @@
 {
-    "niche": "Barbieri",
-    "script_text": "Sei un barbiere e continui a rispondere a messaggi su WhatsApp? Stai buttando soldi e tempo! Ogni no-show è un cliente perso e un appuntamento che rimane vuoto. Con NeatX, puoi dire addio a questi problemi! Automatizza le tue prenotazioni e inizia a guadagnare senza stress. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "BARBIERI: BASTA NO-SHOW",
-    "cover_title": "BARBIERI: BASTA NO-SHOW",
-    "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
+    "niche": "Fisioterapisti",
+    "script_text": "Sei un fisioterapista e continui a gestire gli appuntamenti su WhatsApp? Stai buttando via tempo e denaro! Ogni no-show è un'opportunità persa. Con NeatX, puoi avere prenotazioni automatiche e promemoria per ogni paziente. Dimentica le chiamate confuse e le email! È ora di semplificare la tua vita. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "FISIOTERAPISTI: NO-SHOW STOP",
+    "cover_title": "FISIOTERAPISTI: NO-SHOW STOP",
+    "image_prompt": "photorealistic physiotherapy studio with a physiotherapist assisting a patient, showcasing a sleek and modern clinic environment",
     "gameplay_style": "runner",
-    "caption": "Barbieri, smettete di perdere clienti! Automatizzate le vostre prenotazioni con NeatX e guadagnate di più! Commenta 'AGENDA' per info! #barberlife #noShow #NeatX #businessautomation",
+    "caption": "Fisioterapisti, è tempo di smettere di perdere tempo! Prenotazioni automatiche e promemoria per i tuoi pazienti. Commenta 'AGENDA' per scoprire come! #Fisioterapia #NoShow #PrenotazioniAutomatiche #NeatX",
     "strategy_date": "2026-07-09",
-    "strategy_angle": "gestire clienti in modo efficace",
-    "strategy_pain": "no-show e appuntamenti presi al volo in DM",
-    "strategy_promise": "meno buchi in agenda e più clienti paganti"
+    "strategy_angle": "gestire acconti e promemoria efficacemente",
+    "strategy_pain": "sedute saltate e agenda confusa",
+    "strategy_promise": "prenotazioni facili e promemoria per ogni paziente"
 }
