@@ -20,8 +20,8 @@ export async function POST(req: Request) {
 
     // Risposta automatica TwiML
     const autoReply = isWhatsApp
-      ? "Ciao! 👋 Questo è un numero automatico di *NeatX* e non leggiamo i messaggi.\n\nPer parlare con il salone, contattali direttamente sul loro numero.\n\nSe devi annullare un appuntamento, clicca il link nel promemoria che hai ricevuto. Grazie! 🙏"
-      : "Ciao! Questo e' un numero automatico di NeatX. Per parlare con il salone, contattali direttamente. Per annullare un appuntamento, usa il link nel promemoria. Grazie!";
+      ? "Ciao! 👋 Questo è un servizio automatico per la gestione appuntamenti e non leggiamo i messaggi.\n\nPer parlare con il salone, contattali direttamente sul loro numero.\n\nSe devi annullare un appuntamento, clicca il link nel promemoria che hai ricevuto. Grazie! 🙏"
+      : "Ciao! Questo e' un servizio automatico. Per parlare con il salone, contattali direttamente. Per annullare un appuntamento, usa il link nel promemoria. Grazie!";
 
     // Twilio si aspetta una risposta TwiML
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
