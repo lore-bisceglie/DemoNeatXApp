@@ -19,6 +19,7 @@ import Footer from "@/components/landing/Footer";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 import StripeMockup from "@/components/landing/StripeMockup";
+import RevealOnScroll from "@/components/landing/RevealOnScroll";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
@@ -73,20 +74,20 @@ export default function Home() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[#00b4ff]/10 blur-[150px] rounded-full pointer-events-none opacity-60 animate-pulse" />
 
       <Navbar onOpenRoi={() => setShowRoiModal(true)} />
-      <HeroSection />
-      <TrustMarquee />
-      <BeforeAfterSlider />
-      <ComparisonTable />
-      <FeaturesSection />
-      <TimesheetFeatureSection />
-      <OperatingSteps />
-      <NoShowSimulator onOpenStripe={() => setShowStripe(true)} />
-      <ReviewSimulator />
-      <PricingSection />
-      <EmailCapture />
-      <FAQSection />
-      <FinalCTA />
-      <Footer />
+      <RevealOnScroll><HeroSection /></RevealOnScroll>
+      <RevealOnScroll delay={100}><TrustMarquee /></RevealOnScroll>
+      <RevealOnScroll delay={100}><BeforeAfterSlider /></RevealOnScroll>
+      <RevealOnScroll delay={100}><ComparisonTable /></RevealOnScroll>
+      <RevealOnScroll delay={100}><FeaturesSection /></RevealOnScroll>
+      <RevealOnScroll delay={100}><TimesheetFeatureSection /></RevealOnScroll>
+      <RevealOnScroll delay={100}><OperatingSteps /></RevealOnScroll>
+      <RevealOnScroll delay={100}><NoShowSimulator onOpenStripe={() => setShowStripe(true)} /></RevealOnScroll>
+      <RevealOnScroll delay={100}><ReviewSimulator /></RevealOnScroll>
+      <RevealOnScroll delay={100}><PricingSection /></RevealOnScroll>
+      <RevealOnScroll delay={100}><EmailCapture /></RevealOnScroll>
+      <RevealOnScroll delay={100}><FAQSection /></RevealOnScroll>
+      <RevealOnScroll delay={100}><FinalCTA /></RevealOnScroll>
+      <RevealOnScroll delay={100}><Footer /></RevealOnScroll>
       <LiveNotification />
       <ROICalculator show={showRoiModal} onClose={() => setShowRoiModal(false)} />
     </div>
