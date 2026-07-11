@@ -35,5 +35,6 @@ jobs:
           commit_message: "agent: report automatico agenti NeatX"
           commit_user_name: "NeatX Agent"
           commit_user_email: "agent@neatx.store"
-          file_pattern: "bot_scripts/Agents/blackboard/*.json content_strategy/*.json"
-          pull_options: "--rebase"
+          file_pattern: |
+            bot_scripts/Agents/blackboard/*.json
+            content_strategy/*.json
