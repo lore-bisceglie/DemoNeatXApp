@@ -6,13 +6,9 @@ import { NextRequest } from "next/server";
 async function requireTenantAdmin(request: NextRequest) {
   const tenantSlug = request.nextUrl.searchParams.get("tenantSlug");
   
-  let tenant;
-  if (tenantSlug) {
-    tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-  } else {
-    return null;
-  }
-
+  if (!tenantSlug) return null;
+  
+  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
   if (!tenant?.adminPassword) return null;
 
   const cookieStore = await cookies();
