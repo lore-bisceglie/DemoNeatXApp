@@ -31,12 +31,20 @@ export function middleware(request: NextRequest) {
   const isTenantRoute = isApi || isAdmin || isRoot;
 
   if (isTenantSubdomain && tenantSlug && isTenantRoute) {
-    // Rewrite interno: /api/xyz -> /api/xyz?tenantSlug=xxx (passa slug via query)
-    // Le API useranno il parametro tenantSlug se presente, altrimenti leggono dal cookie
+    // Rewrite interno: /api/xyz -> /api/xyz?tenantSlug=xxx
     url.searchParams.set("tenantSlug", tenantSlug);
     const response = NextResponse.rewrite(url);
     response.headers.set("x-middleware-tenant", tenantSlug);
-    return response;
+    
+    // Passa anche il cookie auth in un header per bypassare problemi cookie
+    const authCookie = request.headers.get("cookie");
+    if (authCookie) {
+      const authMatch = authCookie.match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
+      if (authMatch) {
+        response.headers.set("x-middleware-auth", authMatch[1]);
+      }
+    }
+    return NextResponse.rewrite(url);
   }
 
   // Cookie domain sharing per root domain

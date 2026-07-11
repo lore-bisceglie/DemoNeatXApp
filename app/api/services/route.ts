@@ -4,15 +4,28 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
 async function requireTenantAdmin(request: NextRequest) {
-  const tenantSlug = request.nextUrl.searchParams.get("tenantSlug");
-
+  // Prova prima il parametro query (aggiunto dal middleware)
+  let tenantSlug = request.nextUrl.searchParams.get("tenantSlug");
+  
+  // Fallback: leggi dall'header aggiunto dal middleware
+  if (!tenantSlug) {
+    tenantSlug = request.headers.get("x-middleware-tenant");
+  }
+  
   if (!tenantSlug) return null;
-
+  
   const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-  if (!tenant?.adminPassword) return null;
+  if (!tenant) return null;
 
+  // Prova prima il cookie
   const cookieStore = await cookies();
-  const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
+  let authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
+  
+  // Fallback: leggi dall'header aggiunto dal middleware
+  if (!authCookie) {
+    authCookie = request.headers.get("x-middleware-auth");
+  }
+  
   return authCookie === tenant.adminPassword ? tenant : null;
 }
 
