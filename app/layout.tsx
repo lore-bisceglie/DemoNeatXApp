@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" translate="no">
+    <html lang="it">
       <body className="bg-[#050814] text-slate-200 antialiased relative">
         {/* Iubenda Cookie Banner Script */}
         <Script 
