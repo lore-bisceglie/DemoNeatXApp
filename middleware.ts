@@ -26,27 +26,44 @@ export function middleware(request: NextRequest) {
   const isApi = url.pathname.startsWith("/api/");
   const isAdmin = url.pathname.startsWith("/admin");
   const isRoot = url.pathname === "/";
-  const isTenantRoute = isApi || isAdmin || url.pathname === "/";
+  const isTenantPage = isAdmin || isRoot;
+  const isCancel = url.pathname.startsWith("/cancel/");
 
-  if (!tenantSlug && isTenantRoute) {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const adminCookieMatch = cookieHeader.match(/admin_auth_([^=]+)=/);
-    if (adminCookieMatch) {
-      tenantSlug = adminCookieMatch[1];
+  // Se siamo su subdomain tenant
+  if (isTenantSubdomain && tenantSlug) {
+    if (isApi) {
+      // API: passa solo header, niente rewrite
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("x-middleware-tenant", tenantSlug);
+      const authMatch = (request.headers.get("cookie") || "").match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
+      if (authMatch) requestHeaders.set("x-middleware-auth", authMatch[1]);
+      console.log(`[MIDDLEWARE] API subdomain tenantSlug=${tenantSlug}, path=${url.pathname}`);
+      return NextResponse.next({ request: { headers: requestHeaders } });
     }
-  }
-
-  if (tenantSlug && isTenantRoute) {
+    if (isTenantPage) {
+      // Pagina tenant: rewrite su /t/<slug>/...
+      url.pathname = `/t/${tenantSlug}${url.pathname === "/" ? "" : url.pathname}`;
+      console.log(`[MIDDLEWARE] REWRITE tenantSlug=${tenantSlug}, from=${request.nextUrl.pathname}, to=${url.pathname}`);
+      return NextResponse.rewrite(url);
+    }
+    // Altri path (cancel, ecc.): passa solo header
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-middleware-tenant", tenantSlug);
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
 
-    const cookieHeader = request.headers.get("cookie") || "";
-    const authMatch = cookieHeader.match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
-    if (authMatch) {
-      requestHeaders.set("x-middleware-auth", authMatch[1]);
-    }
+  // Fallback root domain: estrae tenant dal cookie admin_auth
+  if (!tenantSlug && (isApi || isTenantPage)) {
+    const adminCookieMatch = (request.headers.get("cookie") || "").match(/admin_auth_([^=]+)=/);
+    if (adminCookieMatch) tenantSlug = adminCookieMatch[1];
+  }
 
-    console.log(`[MIDDLEWARE] tenantSlug=${tenantSlug}, path=${url.pathname}, host=${request.headers.get("host")}`);
+  if (tenantSlug && (isApi || isTenantPage)) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-middleware-tenant", tenantSlug);
+    const authMatch = (request.headers.get("cookie") || "").match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
+    if (authMatch) requestHeaders.set("x-middleware-auth", authMatch[1]);
+    console.log(`[MIDDLEWARE] root domain tenantSlug=${tenantSlug}, path=${url.pathname}`);
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 

@@ -1,5 +1,6 @@
 // test-e2e.mjs — NEATX FULL E2E
 const BASE = process.env.BASE_URL || "https://www.neatx.store";
+const ROOT = "neatx.store";
 const SUFFIX = Date.now();
 const email = `test-${SUFFIX}@neatx-test.dev`;
 
@@ -37,15 +38,15 @@ async function run() {
       phone: "393312345678", address: "Via Test 1, Roma",
     }),
   });
-  check("Registrazione", reg.status === 200 && reg.data.success, reg.status + ' ' + JSON.stringify(reg.data).slice(0, 80));
-  const { slug } = reg.data;
+  check("Registrazione", reg.status === 200 && reg.data.success, reg.status + '');
+  const { slug, publicUrl, adminUrl } = reg.data;
 
   // ─────────────────────────────────────────────
   // 2. RECUPERA TENANT
   // ─────────────────────────────────────────────
   console.log("\n2️⃣  RECUPERA TENANT");
   const ten = await jsonFetch(`${BASE}/api/tenant/${slug}`);
-  check("GET tenant", ten.status === 200 && ten.data.id, JSON.stringify(ten.data).slice(0, 80));
+  check("API tenant pubblica", ten.status === 200 && ten.data.id, JSON.stringify(ten.data).slice(0, 80));
   const tenantId = ten.data.id;
 
   // ─────────────────────────────────────────────
@@ -56,17 +57,17 @@ async function run() {
     method: "POST",
     body: JSON.stringify({ slug, password: "TestPass123!" }),
   });
-  check("Login", login.status === 200, login.status + '');
+  check("Login", login.status === 200);
   const setCookie = login.headers.get("set-cookie");
   const cookie = setCookie?.split(";")[0] || "";
   check("Cookie ricevuto", !!setCookie);
 
   // ─────────────────────────────────────────────
-  // 4. SERVIZI (CRUD)
+  // 4. SERVIZI CRUD
   // ─────────────────────────────────────────────
   console.log("\n4️⃣  SERVIZI CRUD");
   const s1 = await jsonFetch(`${BASE}/api/services`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({ name: "Taglio", duration: 30, price: 25 }) });
-  check("Crea servizio", s1.status === 200, s1.status + '');
+  check("Crea servizio", s1.status === 200);
   const s2 = await jsonFetch(`${BASE}/api/services`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({ name: "Barba", duration: 15, price: 10 }) });
   check("Crea servizio 2", s2.status === 200);
   const svcId = s1.data.service.id;
@@ -78,11 +79,11 @@ async function run() {
   check("Modifica servizio", svcUpd.status === 200 && svcUpd.data.service?.name === "Taglio Uomo");
 
   // ─────────────────────────────────────────────
-  // 5. STAFF (CRUD)
+  // 5. STAFF CRUD
   // ─────────────────────────────────────────────
   console.log("\n5️⃣  STAFF CRUD");
   const staff = await jsonFetch(`${BASE}/api/staff`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({ name: "Mario", tenantId, services: [svcId] }) });
-  check("Crea staff", staff.status === 200, staff.status + ' ' + JSON.stringify(staff.data).slice(0, 60));
+  check("Crea staff", staff.status === 200);
   const staffId = staff.data.id;
 
   const staffList = await jsonFetch(`${BASE}/api/staff?tenantId=${tenantId}`);
@@ -105,7 +106,7 @@ async function run() {
     Sunday: { active: false, blocks: [] },
   };
   const orari = await jsonFetch(`${BASE}/api/staff/schedule`, { method: "PUT", headers: { Cookie: cookie }, body: JSON.stringify({ staffId, baseSchedule }) });
-  check("Imposta orari", orari.status === 200, orari.status + '');
+  check("Imposta orari", orari.status === 200);
   const orariGet = await jsonFetch(`${BASE}/api/staff/schedule?staffId=${staffId}`);
   check("Leggi orari", orariGet.status === 200 && Object.keys(orariGet.data.baseSchedule || {}).length > 0);
 
@@ -142,7 +143,7 @@ async function run() {
   // ─────────────────────────────────────────────
   console.log("\n🔟  CLIENTI");
   const cust = await jsonFetch(`${BASE}/api/customers?tenantId=${tenantId}`);
-  check("Lista clienti", cust.status === 200, cust.status + ' ' + JSON.stringify(cust.data).slice(0, 80));
+  check("Lista clienti", cust.status === 200);
 
   // ─────────────────────────────────────────────
   // 11. ELIMINA SERVIZIO
@@ -150,6 +151,32 @@ async function run() {
   console.log("\n1️⃣1️⃣  ELIMINA SERVIZIO");
   const del = await jsonFetch(`${BASE}/api/services?id=${svcId}`, { method: "DELETE", headers: { Cookie: cookie } });
   check("Elimina servizio", del.status === 200 && del.data.success);
+
+  // ─────────────────────────────────────────────
+  // 12. PAGINA PUBBLICA (subdomain)
+  // ─────────────────────────────────────────────
+  console.log("\n1️⃣2️⃣  PAGINA PUBBLICA (subdomain)");
+  const pubRes = await fetch(publicUrl, { redirect: "manual" });
+  const pubOk = pubRes.status === 200 && pubRes.headers.get("content-type")?.includes("text/html");
+  check(`GET ${publicUrl}`, pubOk, `${pubRes.status} ${pubRes.headers.get("content-type") || ''}`);
+
+  // ─────────────────────────────────────────────
+  // 13. ADMIN PAGE (subdomain)
+  // ─────────────────────────────────────────────
+  console.log("\n1️⃣3️⃣  ADMIN PAGE (subdomain)");
+  const adminRes = await fetch(adminUrl, { redirect: "manual", headers: { Cookie: cookie } });
+  const adminOk = adminRes.status === 200 && adminRes.headers.get("content-type")?.includes("text/html");
+  check(`GET ${adminUrl}`, adminOk, `${adminRes.status} ${adminRes.headers.get("content-type") || ''}`);
+
+  // ─────────────────────────────────────────────
+  // 14. ACCOUNT LOGIN (superadmin)
+  // ─────────────────────────────────────────────
+  console.log("\n1️⃣4️⃣  ACCOUNT LOGIN (superadmin)");
+  const accLogin = await jsonFetch(`${BASE}/api/account-login`, {
+    method: "POST",
+    body: JSON.stringify({ email: "assistenza.neatx@gmail.com", password: "wrong!" }),
+  });
+  check("Login superadmin (wrong pw)", accLogin.status === 401, accLogin.status + '');
 
   // ─────────────────────────────────────────────
   // SOMMARIO
