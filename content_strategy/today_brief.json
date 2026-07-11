@@ -1,18 +1,18 @@
 {
   "date": "2026-07-11",
-  "niche": "Personal Trainer",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "5 STELLE AUTOMATICHE",
-  "hook_hint": "Se sei un personal trainer e hai clienti soddisfatti che non lasciano recensioni, stai perdendo visibilità e fatturato.",
-  "blog_topic": "Personal Trainer: Recensioni Automatiche con NeatX",
+  "niche": "Tatuatori",
+  "feature": "multi_staff",
+  "feature_label": "Gestione Staff",
+  "pain": "turni complessi e clienti mal assegnati",
+  "promise": "ogni staff gestito con precisione e clienti sempre soddisfatti",
+  "cover_title": "GESTIONE TEAM",
+  "hook_hint": "Tatuatori, se gestisci turni complessi e clienti mal assegnati, stai lasciando soldi sul tavolo.",
+  "blog_topic": "Tatuatori: Gestione Staff con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
