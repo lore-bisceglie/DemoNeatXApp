@@ -28,21 +28,26 @@ export function middleware(request: NextRequest) {
   const isRoot = url.pathname === "/";
   const isTenantRoute = isApi || isAdmin || url.pathname === "/";
 
-  if (isTenantSubdomain && tenantSlug && isTenantRoute) {
-    // NON fare rewrite - aggiungo solo header per passare info al tenant
+  if (!tenantSlug && isTenantRoute) {
+    const cookieHeader = request.headers.get("cookie") || "";
+    const adminCookieMatch = cookieHeader.match(/admin_auth_([^=]+)=/);
+    if (adminCookieMatch) {
+      tenantSlug = adminCookieMatch[1];
+    }
+  }
+
+  if (tenantSlug && isTenantRoute) {
     const response = NextResponse.next();
     response.headers.set("x-middleware-tenant", tenantSlug);
-    
-    const authCookie = request.headers.get("cookie");
-    if (authCookie) {
-      const authMatch = authCookie.match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
-      if (authMatch) {
-        response.headers.set("x-middleware-auth", authMatch[1]);
-      }
+
+    const cookieHeader = request.headers.get("cookie") || "";
+    const authMatch = cookieHeader.match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
+    if (authMatch) {
+      response.headers.set("x-middleware-auth", authMatch[1]);
     }
-    
+
     console.log(`[MIDDLEWARE] tenantSlug=${tenantSlug}, path=${url.pathname}, host=${request.headers.get("host")}`);
-    return NextResponse.next();
+    return response;
   }
 
   return NextResponse.next();

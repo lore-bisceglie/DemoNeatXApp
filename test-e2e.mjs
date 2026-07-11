@@ -1,97 +1,83 @@
 // test-e2e.mjs
-const BASE = "http://localhost:3000";
+const BASE = process.env.BASE_URL || "https://neatx.store";
+const SUFFIX = Date.now();
+const email = `test-${SUFFIX}@neatx-test.dev`;
 
-async function post(path, body, cookie = "") {
-  const res = await fetch(`http://localhost:3000/api${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...(cookie ? { Cookie: cookie } : {}) },
-    body: JSON.stringify(body),
+async function jsonFetch(url, opts = {}) {
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json", ...opts.headers },
+    ...opts,
   });
-  const t = await res.text();
-  try { return JSON.parse(t); } catch { return { raw: t }; }
-}
-
-async function get(path, cookie = "") {
-  const res = await fetch(`http://localhost:3000/api${path}`, { headers: cookie ? { Cookie: cookie } : {} });
-  return res.json().catch(() => ({}));
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { raw: text }; }
+  return { status: res.status, data, headers: res.headers };
 }
 
 async function run() {
   console.log("=".repeat(50));
-  console.log("TEST FLUSSO COMPLETO NEATX (LOCALHOST)");
+  console.log("TEST E2E NEATX — PRODUZIONE");
   console.log("=".repeat(50));
 
   // 1. REGISTRAZIONE
   console.log("\n1️⃣  REGISTRAZIONE...");
-  const regRes = await fetch("http://localhost:3000/api/onboarding", {
+  const reg = await jsonFetch(`${BASE}/api/onboarding`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      businessName: "Test " + Date.now(),
-      category: "barber",
-      city: "Roma",
-      ownerName: "Mario Test",
-      email: "assistenza.neatx@gmail.com",
-      password: "TestPass123!",
-      phone: "393312345678",
+      businessName: "Test " + SUFFIX,
+      category: "barber", city: "Roma",
+      ownerName: "Mario Test", email,
+      password: "TestPass123!", phone: "393312345678",
       address: "Via Test 1, Roma",
     }),
   });
-  const regJson = await regRes.json();
-  console.log("Status:", regRes.status, regJson.success ? "✅" : "❌");
-  if (!regJson.success) return;
-  const tenant = regJson;
-  console.log("✅ Tenant:", tenant.slug);
+  console.log("Status:", reg.status, reg.data.success ? "✅" : "❌");
+  if (!reg.data.success) { console.error(reg.data); return; }
+  const tenant = reg.data;
+  console.log("Tenant slug:", tenant.slug, "id:", tenant.id);
 
-  // LOGIN
+  // 2. LOGIN
   console.log("\n2️⃣  LOGIN...");
-  const loginRes = await fetch("http://localhost:3000/api/tenant-login", {
+  const login = await jsonFetch(`${BASE}/api/tenant-login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ slug: tenant.slug, password: "TestPass123!" }),
   });
-  const loginText = await loginRes.text();
-  const loginJson = JSON.parse(loginText);
-  console.log("Login:", loginRes.status);
-  const setCookie = loginRes.headers.get("set-cookie");
-  if (!setCookie) return console.error("❌ Nessun cookie");
-  const cookie = setCookie.split(";")[0].trim();
-  console.log("Cookie OK:", setCookie.substring(0, 60) + "...");
+  console.log("Login:", login.status);
+  const setCookie = login.headers.get("set-cookie");
+  if (!setCookie) { console.error("❌ Nessun cookie"); return; }
+  const cookie = setCookie.split(";")[0];
+  console.log("Cookie OK");
 
-  // TEST COOKIE
-  console.log("\n🔍 TEST COOKIE...");
-  const testCookie = await fetch(`http://localhost:3000/api/referral?tenantId=${tenant.slug}`, {
-    headers: { Cookie: cookie },
-  }).then(r => r.json());
-  console.log("Test cookie:", testCookie);
-
-  // SERVIZI
+  // 3. SERVIZI
   console.log("\n3️⃣  SERVIZI...");
   const services = [
     { name: "Taglio", duration: 30, price: 25 },
     { name: "Barba", duration: 15, price: 10 },
-    { name: "Taglio + Barba", duration: 45, price: 30 },
   ];
+  const createdServices = [];
   for (const s of services) {
-    const r = await fetch("http://localhost:3000/api/services", {
+    const r = await jsonFetch(`${BASE}/api/services`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Cookie: cookie },
+      headers: { Cookie: cookie },
       body: JSON.stringify(s),
     });
-    console.log(`  ${s.name}:`, r.status === 200 ? "✅" : "❌ " + r.status);
+    console.log(`  ${s.name}:`, r.status === 200 ? "✅" : `❌ ${r.status} ${JSON.stringify(r.data)}`);
+    if (r.status === 200) createdServices.push(r.data.service);
   }
+  if (createdServices.length === 0) { console.error("❌ Nessun servizio creato, mi fermo"); return; }
 
-  // STAFF
-  console.log("\n4️⃣ STAFF...");
-  const staffRes = await fetch("http://localhost:3000/api/staff", {
+  // 4. STAFF
+  console.log("\n4️⃣  STAFF...");
+  const staff = await jsonFetch(`${BASE}/api/staff`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Cookie: cookie },
-    body: JSON.stringify({ name: "Mario", services: [] }),
+    headers: { Cookie: cookie },
+    body: JSON.stringify({ name: "Mario", tenantId: tenant.id, services: [] }),
   });
-  console.log("Staff:", staffRes.status === 200 ? "✅" : "❌ " + staffRes.status);
+  console.log("Staff:", staff.status === 200 ? "✅" : `❌ ${staff.status} ${JSON.stringify(staff.data)}`);
+  const staffId = staff.status === 200 ? staff.data.id : null;
 
-  // ORARI
-  console.log("\n5️⃣ ORARI...");
+  // 5. ORARI (PUT)
+  console.log("\n5️⃣  ORARI...");
   const baseSchedule = {
     Monday: { active: true, blocks: [{ start: "09:00", end: "13:00" }, { start: "14:00", end: "19:00" }] },
     Tuesday: { active: true, blocks: [{ start: "09:00", end: "13:00" }, { start: "14:00", end: "19:00" }] },
@@ -101,46 +87,42 @@ async function run() {
     Saturday: { active: true, blocks: [{ start: "09:00", end: "13:00" }] },
     Sunday: { active: false, blocks: [] },
   };
-  const sched = await fetch("http://localhost:3000/api/staff/schedule", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Cookie: cookie },
-    body: JSON.stringify({ staffId: "all", baseSchedule }),
-  });
-  console.log("Orari:", sched.status === 200 ? "✅" : "❌ " + sched.status);
+  if (staffId) {
+    const sched = await jsonFetch(`${BASE}/api/staff/schedule`, {
+      method: "PUT",
+      headers: { Cookie: cookie },
+      body: JSON.stringify({ staffId, baseSchedule }),
+    });
+    console.log("Orari:", sched.status === 200 ? "✅" : `❌ ${sched.status} ${JSON.stringify(sched.data)}`);
+  } else {
+    console.log("Orari: ⏭️ saltato (no staff)");
+  }
 
-  // DISPONIBILITÀ
-  console.log("\n6️⃣ DISPONIBILITÀ...");
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  // 6. DISPONIBILITÀ
+  console.log("\n6️⃣  DISPONIBILITÀ...");
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const dateStr = tomorrow.toISOString().split("T")[0];
-  const avail = await fetch(`http://localhost:3000/api/availability?date=${tomorrow.toISOString().split("T")[0]}&serviceId=1`, {
-    headers: { Cookie: "cookie" }
-  }).then(r => r.json());
-  console.log("Disponibilità:", avail);
+  const avail = await jsonFetch(`${BASE}/api/availability?date=${dateStr}&serviceId=${createdServices[0].id}&tenantSlug=${tenant.slug}`, {
+    headers: { Cookie: cookie }
+  });
+  console.log("Disponibilità:", avail.status === 200 ? "✅" : `❌ ${JSON.stringify(avail.data)}`);
 
-  // BOOKING
-  console.log("\n7️⃣ BOOKING...");
-  const tomorrow2 = new Date();
-  tomorrow2.setDate(tomorrow2.getDate() + 1);
-  const dateStr2 = tomorrow2.toISOString().split("T")[0];
-  const booking = await fetch("http://localhost:3000/api/book", {
+  // 7. BOOKING
+  console.log("\n7️⃣  BOOKING...");
+  const booking = await jsonFetch(`${BASE}/api/book`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { Cookie: cookie },
     body: JSON.stringify({
-      serviceId: "1",
-      date: dateStr,
-      time: "10:00",
-      customerName: "Test",
-      customerPhone: "393331234567",
-      source: "ONLINE",
+      serviceId: createdServices[0].id,
+      date: dateStr, time: "10:00",
+      customerName: "Test", customerPhone: "393331234567",
+      tenantId: tenant.id, source: "ONLINE",
     }),
-  }).then(r => r.json());
-  console.log("Booking:", booking);
+  });
+  console.log("Booking:", booking.status === 200 ? "✅" : `❌ ${JSON.stringify(booking.data)}`);
 
-  // CRON
-  console.log("\n8️⃣ CRON...");
-  const cron = await fetch("http://localhost:3000/api/cron/reminders").then(r => r.json());
-  console.log("Cron:", cron);
+  // 8. CRON (skip, richiede CRON_SECRET)
+  console.log("\n8️⃣  CRON... ⏭️ saltato (richiede CRON_SECRET)");
 
   console.log("\n" + "=".repeat(50));
   console.log("TEST COMPLETATO");
