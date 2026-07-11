@@ -67,7 +67,7 @@ STRATEGIA DI CONVERSAZIONE
 
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return Response.json({ reply: "Sistema in manutenzione. Chiave API non configurata." }, { status: 200 });
     }
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
     // Se c'è un errore 404 sui modelli, interroga l'API per scoprire quali modelli sono sbloccati per questa chiave
     if (errorMessage.includes("404 Not Found") || errorMessage.includes("not found for API version")) {
       try {
-        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
         const data = await res.json();
         const modelNames = data.models?.map((m: any) => m.name).join(", ") || "Nessun modello trovato";

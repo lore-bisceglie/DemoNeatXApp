@@ -51,7 +51,7 @@ export async function POST(req: Request) {
   if (auth) return auth;
 
   try {
-    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ reply: "Sistema in manutenzione. Chiave API mancante." }, { status: 200 });
     }
