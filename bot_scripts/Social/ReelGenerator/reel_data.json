@@ -1,13 +1,13 @@
 {
-    "niche": "Coach e Consulenti",
-    "script_text": "Sei un coach e continui a rincorrere i clienti via messaggio? Ogni chiamata persa è denaro buttato. È ora di smettere di perdere tempo! Con NeatX, le tue prenotazioni diventano automatiche. Dì addio ai no-show e ai clienti indecisi. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "BASTA NO-SHOW",
-    "cover_title": "BASTA NO-SHOW",
-    "image_prompt": "photorealistic consultant working in a modern office during a video call, with a laptop and a visible calendar, showcasing a premium business environment",
-    "gameplay_style": "block_miner",
-    "caption": "Stai ancora perdendo tempo a rispondere a messaggi? Scopri come automatizzare le tue prenotazioni e trasformare follower in clienti! Commenta AGENDA per il link! #Coaching #Consulenza #Automazione #NeatX",
-    "strategy_date": "2026-07-10",
-    "strategy_angle": "trasforma follower in clienti",
-    "strategy_pain": "call rinviate e clienti indecisi",
-    "strategy_promise": "prenotazioni automatiche e follow-up semplici"
+    "niche": "Centri Estetici",
+    "script_text": "Sei stanco di gestire turni e ferie del tuo staff come se fossi in un film d'azione? Ogni giorno è una lotta e ogni no-show è un colpo al tuo portafoglio! Con NeatX, ogni estetista ha la sua agenda, i turni si sistemano da soli e tu risparmi tempo e soldi. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "GESTIONE STAFF",
+    "cover_title": "GESTIONE STAFF",
+    "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+    "gameplay_style": "neon_racer",
+    "caption": "Stanco di gestire il caos? Scopri come ottimizzare il tuo centro estetico! Commenta AGENDA e ricevi il link in privato! #perte #fyp #foryou #viral #imprenditore #businessitalia #centriestetici",
+    "strategy_date": "2026-07-11",
+    "strategy_feature": "multi_staff",
+    "strategy_pain": "Scontrarsi con turni multipli e ferie da coordinare",
+    "strategy_promise": "Ogni staff con la propria agenda e turni automatici"
 }

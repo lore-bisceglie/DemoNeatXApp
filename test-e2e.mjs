@@ -1,5 +1,5 @@
 // test-e2e.mjs
-const BASE = process.env.BASE_URL || "https://neatx.store";
+const BASE = process.env.BASE_URL || "https://www.neatx.store";
 const SUFFIX = Date.now();
 const email = `test-${SUFFIX}@neatx-test.dev`;
 
@@ -33,14 +33,24 @@ async function run() {
   });
   console.log("Status:", reg.status, reg.data.success ? "✅" : "❌");
   if (!reg.data.success) { console.error(reg.data); return; }
-  const tenant = reg.data;
-  console.log("Tenant slug:", tenant.slug, "id:", tenant.id);
+  const { slug } = reg.data;
+  console.log("Tenant slug:", slug);
+
+  // 1b. Recupera ID tenant
+  console.log("\n1b️⃣  RECUPERO ID TENANT...");
+  const tenantInfo = await jsonFetch(`${BASE}/api/tenant/${slug}`);
+  if (tenantInfo.status !== 200 || !tenantInfo.data.id) {
+    console.error("❌ Impossibile recuperare tenant:", tenantInfo.data);
+    return;
+  }
+  const tenantId = tenantInfo.data.id;
+  console.log("ID tenant:", tenantId);
 
   // 2. LOGIN
   console.log("\n2️⃣  LOGIN...");
   const login = await jsonFetch(`${BASE}/api/tenant-login`, {
     method: "POST",
-    body: JSON.stringify({ slug: tenant.slug, password: "TestPass123!" }),
+    body: JSON.stringify({ slug, password: "TestPass123!" }),
   });
   console.log("Login:", login.status);
   const setCookie = login.headers.get("set-cookie");
@@ -71,7 +81,7 @@ async function run() {
   const staff = await jsonFetch(`${BASE}/api/staff`, {
     method: "POST",
     headers: { Cookie: cookie },
-    body: JSON.stringify({ name: "Mario", tenantId: tenant.id, services: [] }),
+    body: JSON.stringify({ name: "Mario", tenantId, services: [] }),
   });
   console.log("Staff:", staff.status === 200 ? "✅" : `❌ ${staff.status} ${JSON.stringify(staff.data)}`);
   const staffId = staff.status === 200 ? staff.data.id : null;
@@ -102,10 +112,10 @@ async function run() {
   console.log("\n6️⃣  DISPONIBILITÀ...");
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const dateStr = tomorrow.toISOString().split("T")[0];
-  const avail = await jsonFetch(`${BASE}/api/availability?date=${dateStr}&serviceId=${createdServices[0].id}&tenantSlug=${tenant.slug}`, {
+  const avail = await jsonFetch(`${BASE}/api/availability?date=${dateStr}&tenantId=${tenantId}&serviceId=${createdServices[0].id}`, {
     headers: { Cookie: cookie }
   });
-  console.log("Disponibilità:", avail.status === 200 ? "✅" : `❌ ${JSON.stringify(avail.data)}`);
+  console.log("Disponibilità:", avail.status === 200 ? `✅ (${avail.data.slots?.length || 0} slot)` : `❌ ${JSON.stringify(avail.data)}`);
 
   // 7. BOOKING
   console.log("\n7️⃣  BOOKING...");
@@ -116,7 +126,7 @@ async function run() {
       serviceId: createdServices[0].id,
       date: dateStr, time: "10:00",
       customerName: "Test", customerPhone: "393331234567",
-      tenantId: tenant.id, source: "ONLINE",
+      tenantId, source: "ONLINE", duration: createdServices[0].duration,
     }),
   });
   console.log("Booking:", booking.status === 200 ? "✅" : `❌ ${JSON.stringify(booking.data)}`);
