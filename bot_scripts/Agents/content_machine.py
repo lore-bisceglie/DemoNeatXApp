@@ -206,6 +206,25 @@ class ContentMachineAgent(BaseAgent):
             {"id": "multi_staff", "label": "Gestione Staff"},
         ]
 
+        # Legge idee AI da MarketIntelligence per avere hooks variati
+        ai_hooks = {}
+        ideas_msgs = self.bus.read("content_ideas")
+        if ideas_msgs:
+            for msg in ideas_msgs:
+                for idea in msg.get("payload", {}).get("ideas", []):
+                    niche = idea.get("niche", "")
+                    if niche:
+                        ai_hooks[niche] = idea.get("hook", "")
+
+        covers_by_feature = {
+            "no_show": ["BASTA NO-SHOW", "ACCONTO OBBLIGATORIO", "MAI PIU BUCHI", "CLIENTI FANTASMA ADDIO", "ADDIO NO-SHOW", "POSTO PAGATO", "NIENTE SCUSE"],
+            "booking": ["PRENOTA 24/7", "ADDIO TELEFONO", "LINK IN BIO", "SEMPRE APERTO", "CLICCA E PRENOTA", "AUTOBOOKING"],
+            "timesheet": ["TIMESHEET AUTO", "ADDIO EXCEL", "TURNI IN UN CLICK", "COMMERCIALISTA FELICE", "ORE TRACCIATE", "FINE DEI FOGLI"],
+            "recensioni": ["RECENSIONI AUTO", "5 STELLE AUTOMATICHE", "GOOGLE SI RIEMPIE", "PARLANO I CLIENTI", "RECENSIONI SENZA STRESS"],
+            "promemoria": ["PROMEMORIA AUTO", "MAI PIU DIMENTICANO", "WA RICORDA PER TE", "CLIENTE RICORDA", "ADDIO DIMENTICANZE"],
+            "analytics": ["DATI IN TEMPO REALE", "STATISTICHE SALONE", "SAPERE QUANTO GUADAGNI", "DASHBOARD VERA", "TUTTO SOTTO CONTROLLO"],
+            "multi_staff": ["GESTIONE TEAM", "STAFF AUTOMATICO", "TURNI STAFF FACILI", "TEAM SENZA CAOS", "COLLABORATORI IN AGENDA"],
+        }
         new_days = list(days)
         random.shuffle(niches)
         random.shuffle(features)
@@ -216,21 +235,17 @@ class ContentMachineAgent(BaseAgent):
             if not found:
                 niche = niches[i % len(niches)]
                 feature = features[i % len(features)]
-                cover_formats = {
-                    "no_show": "BASTA NO-SHOW",
-                    "booking": "PRENOTA 24/7",
-                    "timesheet": "TIMESHEET AUTO",
-                    "recensioni": "RECENSIONI AUTO",
-                    "promemoria": "PROMEMORIA AUTO",
-                    "analytics": "DATI IN TEMPO REALE",
-                    "multi_staff": "GESTIONE TEAM",
-                }
+                hook = ai_hooks.get(niche, "")
+                if hook:
+                    cover_title = hook[:30]
+                else:
+                    cover_title = random.choice(covers_by_feature.get(feature["id"], ["BASTA NO-SHOW"]))
                 new_days.append({
                     "date": check_date,
                     "niche": niche,
                     "feature": feature["id"],
                     "feature_label": feature["label"],
-                    "cover_title": cover_formats.get(feature["id"], "BASTA NO-SHOW"),
+                    "cover_title": cover_title,
                     "pain": f"perdere tempo con {niche.lower()}",
                     "promise": f"automatizzare con NeatX",
                     "platform": WEEKLY_PLAN.get((today + timedelta(days=i)).weekday(), "reel"),
