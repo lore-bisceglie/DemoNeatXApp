@@ -29,8 +29,8 @@ export function middleware(request: NextRequest) {
   const isTenantRoute = isApi || isAdmin || url.pathname === "/";
 
   if (isTenantSubdomain && tenantSlug && isTenantRoute) {
-    url.searchParams.set("tenantSlug", tenantSlug);
-    const response = NextResponse.rewrite(url);
+    // NON fare rewrite - aggiungo solo header per passare info al tenant
+    const response = NextResponse.next();
     response.headers.set("x-middleware-tenant", tenantSlug);
     
     const authCookie = request.headers.get("cookie");
@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
     }
     
     console.log(`[MIDDLEWARE] tenantSlug=${tenantSlug}, path=${url.pathname}, host=${request.headers.get("host")}`);
-    return NextResponse.rewrite(url);
+    return NextResponse.next();
   }
 
   return NextResponse.next();
