@@ -21,13 +21,13 @@ TODAY_BRIEF_JSON = OUT_DIR / "today_brief.json"
 CALENDAR_MD = OUT_DIR / "content_calendar.md"
 
 FEATURES = [
-    {"id": "no_show", "label": "Zero No-Show", "pain": "acconti automatici che filtrano i clienti che non si presentano", "promise": "ogni slot occupato da clienti che hanno già pagato", "cover_formats": ["BASTA NO-SHOW", "MAI PIU BUCHI", "ACCONTO OBBLIGATORIO", "CLIENTI FANTASMA ADDIO"]},
-    {"id": "booking", "label": "Prenotazione 24/7", "pain": "telefono che squilla tutto il giorno e messaggi senza fine", "promise": "clienti che prenotano da soli anche mentre dormi", "cover_formats": ["ADDIO TELEFONO", "PRENOTA 24/7", "LINK IN BIO"]},
-    {"id": "timesheet", "label": "Timesheet Commercialista", "pain": "ore dei dipendenti segnate a mano su fogli Excel persi", "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista", "cover_formats": ["TIMESHEET AUTOMATICO", "ADDIO EXCEL", "TURNI IN UN CLICK"]},
-    {"id": "recensioni", "label": "Recensioni Automatiche", "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche", "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta", "cover_formats": ["RECENSIONI AUTO", "5 STELLE AUTOMATICHE", "GOOGLE SI RIEMPIE DA SOLO"]},
-    {"id": "promemoria", "label": "Promemoria WhatsApp", "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono", "promise": "promemoria automatici che riducono i no-show del 90%", "cover_formats": ["PROMEMORIA AUTO", "MAI PIU DIMENTICANO", "WA RICORDA PER TE"]},
-    {"id": "analytics", "label": "Statistiche e Dati", "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti", "promise": "dashboard con incassi, trend e performance in tempo reale", "cover_formats": ["DATI IN TEMPO REALE", "STATISTICHE SALONE", "SAPERE QUANTO GUADAGNI"]},
-    {"id": "multi_staff", "label": "Gestione Staff", "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato", "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto", "cover_formats": ["STAFF AUTOMATICO", "GESTIONE TEAM", "TURNI STAFF FACILI"]},
+    {"id": "no_show", "label": "Zero No-Show", "pain": "acconti automatici che filtrano i clienti che non si presentano", "promise": "ogni slot occupato da clienti che hanno già pagato"},
+    {"id": "booking", "label": "Prenotazione 24/7", "pain": "telefono che squilla tutto il giorno e messaggi senza fine", "promise": "clienti che prenotano da soli anche mentre dormi"},
+    {"id": "timesheet", "label": "Timesheet Commercialista", "pain": "ore dei dipendenti segnate a mano su fogli Excel persi", "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista"},
+    {"id": "recensioni", "label": "Recensioni Automatiche", "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche", "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta"},
+    {"id": "promemoria", "label": "Promemoria WhatsApp", "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono", "promise": "promemoria automatici che riducono i no-show del 90%"},
+    {"id": "analytics", "label": "Statistiche e Dati", "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti", "promise": "dashboard con incassi, trend e performance in tempo reale"},
+    {"id": "multi_staff", "label": "Gestione Staff", "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato", "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto"},
 ]
 
 TARGETS = [
@@ -86,11 +86,11 @@ def gemini_calendar(seed_items):
     client = genai.Client(api_key=api_key)
     prompt = {
         "role": "NeatX content strategist",
-        "task": "Improve this 7-day Italian content calendar for short videos and SEO blog posts. Keep the same JSON shape.",
+        "task": "Generate a fresh 7-day Italian content calendar for short videos and SEO blog posts. I give you the seed structure with niche, pain, promise and feature for each day. You MUST generate a UNIQUE, ORIGINAL cover_title for each day from scratch — never repeat a title you already used in previous runs.",
         "rules": [
             "Use Italian copy.",
             "Each hook must be concrete, painful and specific to the niche.",
-            "cover_title max 4 words.",
+            "cover_title max 4 words, MUST be different from any cover_format used before, think of a new angle every time.",
             "No emojis.",
             "Keep image_prompt in English and coherent with the niche.",
         ],
@@ -111,11 +111,11 @@ def gemini_calendar(seed_items):
 def openai_calendar(seed_items):
     prompt = {
         "role": "NeatX senior content strategist",
-        "task": "Improve this 7-day Italian content calendar for short videos and SEO blog posts. Keep the same JSON shape.",
+        "task": "Generate a fresh 7-day Italian content calendar for short videos and SEO blog posts. I give you the seed structure with niche, pain, promise and feature for each day. You MUST generate a UNIQUE, ORIGINAL cover_title for each day from scratch — think of a new marketing angle, never reuse a title you have seen before.",
         "rules": [
             "Use Italian copy that sounds human and commercially sharp.",
             "Each hook must be concrete, painful and specific to the niche.",
-            "cover_title max 4 words.",
+            "cover_title max 4 words, NEVER generic, always specific to the pain of that niche.",
             "No emojis.",
             "Keep image_prompt in English and coherent with the niche.",
             "Avoid generic marketing language.",
@@ -145,7 +145,6 @@ def build_seed_calendar():
         feature = rotated_features[i % len(rotated_features)]
         date = today + timedelta(days=i)
         gameplay = GAMEPLAY_STYLES[(i + date.day) % len(GAMEPLAY_STYLES)]
-        cover_title = random.choice(feature["cover_formats"])
         items.append(
             {
                 "date": date.isoformat(),
@@ -154,7 +153,6 @@ def build_seed_calendar():
                 "feature_label": feature["label"],
                 "pain": feature["pain"],
                 "promise": feature["promise"],
-                "cover_title": cover_title,
                 "hook_hint": f"Se sei tra i {target['niche'].lower()} e {feature['pain']}, stai perdendo soldi.",
                 "blog_topic": f"{target['niche']}: {feature['label']} con NeatX",
                 "gameplay_style": gameplay,
