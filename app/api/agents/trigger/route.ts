@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+import { requireSuperAdmin } from '@/lib/auth';
 
-export async function POST() {
+export async function POST(req: Request) {
+  const auth = requireSuperAdmin(req);
+  if (auth) return auth;
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
     return NextResponse.json({ error: 'GITHUB_TOKEN non configurato' }, { status: 500 });

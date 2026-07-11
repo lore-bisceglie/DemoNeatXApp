@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { requireSuperAdmin } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
+  const auth = requireSuperAdmin(req);
+  if (auth) return auth;
+
   try {
     const { tenantId, amount } = await req.json();
 

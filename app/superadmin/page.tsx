@@ -25,6 +25,11 @@ export default function SuperAdminPage() {
   const [themeColor, setThemeColor] = useState("cyan");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Edit modal
+  const [editTarget, setEditTarget] = useState<any>(null);
+  const [editData, setEditData] = useState<any>({});
+  const [editing, setEditing] = useState(false);
+
   const [stats, setStats] = useState({ mrr: 0, payingCount: 0, trialCount: 0 });
 
   const [password, setPassword] = useState("");
@@ -56,6 +61,7 @@ export default function SuperAdminPage() {
       
       // Imposta il cookie per far apparire il Godmode Hub in tutto il sito
       document.cookie = "superadmin_god_eye=true; path=/; max-age=86400";
+      sessionStorage.setItem("superadmin_pwd", pwd);
       
       setIsAuthenticated(true);
       setAuthError("");
@@ -122,42 +128,6 @@ export default function SuperAdminPage() {
     }
   };
 
-  const handleUnlock = async (tenantId: string) => {
-    try {
-      const res = await fetch('/api/superadmin/unlock', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, days: 30 })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore durante lo sblocco');
-      fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
-  const handleUnlockAnnual = async (tenantId: string) => {
-    try {
-      const res = await fetch('/api/superadmin/unlock', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, days: 365, plan: 'annual' })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore durante lo sblocco');
-      fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
   const handleDelete = async (tenantId: string, tenantName: string) => {
     if (!confirm(`Sei sicuro di voler ELIMINARE DEFINITIVAMENTE il negozio "${tenantName}"? Questa operazione è irreversibile e cancellerà anche tutti gli appuntamenti e i servizi.`)) return;
     
@@ -192,42 +162,6 @@ export default function SuperAdminPage() {
           'x-admin-password': password
         },
         body: JSON.stringify({ tenantId, plan })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
-      fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
-  const handleSetPremium = async (tenantId: string) => {
-    try {
-      const res = await fetch('/api/superadmin/plan', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, plan: 'premium' })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
-      fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
-  const handleSetBasic = async (tenantId: string) => {
-    try {
-      const res = await fetch('/api/superadmin/plan', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, plan: 'basic' })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore');
@@ -274,6 +208,47 @@ export default function SuperAdminPage() {
     window.open(url, '_blank');
   };
 
+  const openEdit = (tenant: any) => {
+    setEditTarget(tenant);
+    setEditData({
+      name: tenant.name || '',
+      ownerEmail: tenant.ownerEmail || '',
+      phone: tenant.phone || '',
+      address: tenant.address || '',
+      instagramUrl: tenant.instagramUrl || '',
+      mapsLink: tenant.mapsLink || '',
+      description: tenant.description || '',
+      openTime: tenant.openTime || '',
+      closeTime: tenant.closeTime || '',
+      logoUrl: tenant.logoUrl || '',
+      themeColor: tenant.themeColor || 'cyan',
+      adminPassword: tenant.adminPassword || '',
+    });
+  };
+
+  const handleEditSave = async () => {
+    if (!editTarget) return;
+    setEditing(true);
+    try {
+      const res = await fetch('/api/superadmin', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ id: editTarget.id, ...editData })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore aggiornamento');
+      setEditTarget(null);
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setEditing(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
@@ -305,7 +280,7 @@ export default function SuperAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans w-full">
+    <><div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans w-full">
       <div className="w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
@@ -615,6 +590,13 @@ export default function SuperAdminPage() {
                           🕵️‍♂️ Entra
                         </button>
                         <button 
+                          onClick={() => openEdit(tenant)}
+                          title="Modifica negozio"
+                          className="text-xs font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-2 rounded-lg transition-all"
+                        >
+                          ✏️
+                        </button>
+                        <button 
                           onClick={() => handleDelete(tenant.id, tenant.name)}
                           title="Elimina negozio"
                           className="text-xs font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 px-3 py-2 rounded-lg transition-all"
@@ -676,5 +658,94 @@ export default function SuperAdminPage() {
         </div>
       </div>
     </div>
+
+    {/* Edit Tenant Modal */}
+    {editTarget && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setEditTarget(null)}>
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">Modifica {editTarget.name}</h2>
+            <button onClick={() => setEditTarget(null)} className="text-slate-400 hover:text-white text-xl">&times;</button>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Nome Attività</label>
+              <input type="text" value={editData.name} onChange={e => setEditData({...editData, name: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Email Proprietario</label>
+              <input type="email" value={editData.ownerEmail} onChange={e => setEditData({...editData, ownerEmail: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Telefono</label>
+                <input type="text" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Indirizzo</label>
+                <input type="text" value={editData.address} onChange={e => setEditData({...editData, address: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Instagram</label>
+                <input type="url" value={editData.instagramUrl} onChange={e => setEditData({...editData, instagramUrl: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Google Maps</label>
+                <input type="url" value={editData.mapsLink} onChange={e => setEditData({...editData, mapsLink: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Orario Apertura</label>
+                <input type="time" value={editData.openTime} onChange={e => setEditData({...editData, openTime: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Orario Chiusura</label>
+                <input type="time" value={editData.closeTime} onChange={e => setEditData({...editData, closeTime: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Descrizione</label>
+              <textarea value={editData.description} onChange={e => setEditData({...editData, description: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Logo URL</label>
+                <input type="url" value={editData.logoUrl} onChange={e => setEditData({...editData, logoUrl: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Tema Colore</label>
+                <select value={editData.themeColor} onChange={e => setEditData({...editData, themeColor: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500">
+                  <option value="cyan">🔵 Cyan</option>
+                  <option value="rose">🌸 Rosa</option>
+                  <option value="emerald">🌿 Smeraldo</option>
+                  <option value="amber">💛 Ambra</option>
+                  <option value="purple">💜 Viola</option>
+                  <option value="slate">🪨 Grigio</option>
+                  <option value="red">🔴 Rosso</option>
+                  <option value="indigo">🌌 Indaco</option>
+                  <option value="teal">🌊 Verde</option>
+                  <option value="fuchsia">🌺 Fucsia</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-slate-400 mb-1">Password Admin</label>
+              <input type="text" value={editData.adminPassword} onChange={e => setEditData({...editData, adminPassword: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500 font-mono tracking-wider" />
+              <p className="text-[10px] text-slate-500 mt-1">Cambia la password di accesso alla dashboard admin.</p>
+            </div>
+          </div>
+          <div className="flex gap-3 mt-6 pt-4 border-t border-slate-800">
+            <button onClick={() => setEditTarget(null)} className="flex-1 px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold text-sm transition">Annulla</button>
+            <button onClick={handleEditSave} disabled={editing} className="flex-1 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition disabled:opacity-50">
+              {editing ? "Salvataggio..." : "Salva Modifiche"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
   );
 }

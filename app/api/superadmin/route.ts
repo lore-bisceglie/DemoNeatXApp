@@ -2,12 +2,11 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendWelcomeEmail } from '@/lib/email';
 import { sendTelegramMessage } from '@/lib/telegram';
+import { requireSuperAdmin } from '@/lib/auth';
 
 export async function POST(req: Request) {
-  const auth = req.headers.get('x-admin-password');
-  if (auth !== 'godmode') {
-    return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
-  }
+  const auth = requireSuperAdmin(req);
+  if (auth) return auth;
 
   try {
     const body = await req.json();
@@ -207,5 +206,45 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Errore SuperAdmin:', error);
     return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  const auth = requireSuperAdmin(req);
+  if (auth) return auth;
+
+  try {
+    const body = await req.json();
+    const { id, ...data } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID tenant mancante' }, { status: 400 });
+    }
+
+    const allowedFields = [
+      'name', 'ownerEmail', 'phone', 'address', 'instagramUrl', 'mapsLink',
+      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor', 'adminPassword',
+    ];
+
+    const updateData: Record<string, any> = {};
+    for (const field of allowedFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: 'Nessun campo da aggiornare' }, { status: 400 });
+    }
+
+    const tenant = await prisma.tenant.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return NextResponse.json({ success: true, tenant });
+  } catch (error: any) {
+    console.error('Errore aggiornamento tenant:', error);
+    return NextResponse.json({ error: error.message || 'Errore interno' }, { status: 500 });
   }
 }

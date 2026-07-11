@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { requireSuperAdmin } from '@/lib/auth';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -46,6 +47,9 @@ REGOLE:
 };
 
 export async function POST(req: Request) {
+  const auth = requireSuperAdmin(req);
+  if (auth) return auth;
+
   try {
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {

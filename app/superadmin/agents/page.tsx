@@ -15,19 +15,62 @@ const AGENTS = [
   { id: "guardian", name: "Guardian", desc: "Report salute business + notifica Telegram", color: "amber" },
 ];
 
+const COLOR_MAP: Record<string, string> = {
+  cyan: "border-cyan-500/20 text-cyan-400",
+  emerald: "border-emerald-500/20 text-emerald-400",
+  amber: "border-amber-500/20 text-amber-400",
+  indigo: "border-indigo-500/20 text-indigo-400",
+};
+
 export default function SuperAdminAgentsPage() {
   const [status, setStatus] = useState<AgentStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
   const [log, setLog] = useState<string[]>([]);
 
+  // Auth
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState("");
+
   useEffect(() => {
-    fetchStatus();
+    const saved = sessionStorage.getItem("superadmin_pwd");
+    if (saved) {
+      setPassword(saved);
+      setIsAuthenticated(true);
+    } else {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && password) {
+      fetchStatus();
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    sessionStorage.setItem("superadmin_pwd", password);
+    setIsAuthenticated(true);
+    setAuthError("");
+    setLoading(false);
+  };
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch("/api/agents/status");
+      const res = await fetch("/api/agents/status", {
+        headers: { "x-admin-password": password },
+      });
+      if (res.status === 401) {
+        setAuthError("Password errata");
+        setIsAuthenticated(false);
+        sessionStorage.removeItem("superadmin_pwd");
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
       setStatus(data);
     } catch (e) {
@@ -40,7 +83,10 @@ export default function SuperAdminAgentsPage() {
     setRunning(agentId);
     setLog([]);
     try {
-      const res = await fetch("/api/agents/trigger", { method: "POST" });
+      const res = await fetch("/api/agents/trigger", {
+        method: "POST",
+        headers: { "x-admin-password": password },
+      });
       if (res.ok) {
         setLog(prev => [...prev, `[${agentId}] ✅ Workflow triggerato su GitHub. Controlla Actions > auto-neatx-agents.`]);
       } else {
@@ -53,6 +99,36 @@ export default function SuperAdminAgentsPage() {
     setRunning(null);
     setTimeout(fetchStatus, 3000);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
+        <form onSubmit={handleLogin} className="bg-slate-900 border border-slate-800 p-8 rounded-xl max-w-md w-full shadow-2xl">
+          <h1 className="text-2xl font-bold text-white mb-6 text-center">Super Admin Login</h1>
+          <div className="relative mb-4">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Inserisci la password segreta"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+            >
+              {showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
+          {authError && <div className="text-red-400 text-sm mb-4">{authError}</div>}
+          <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg">
+            {loading ? "Verifica..." : "Entra"}
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#050814] text-white">
@@ -90,26 +166,19 @@ export default function SuperAdminAgentsPage() {
 
         {/* Agent cards */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          {AGENTS.map(agent => {
-            const colors: Record<string, string> = {
-              cyan: "border-cyan-500/20 text-cyan-400",
-              emerald: "border-emerald-500/20 text-emerald-400",
-              amber: "border-amber-500/20 text-amber-400",
-            };
-            return (
-              <div key={agent.id} className={`rounded-2xl border ${colors[agent.color]} bg-[#0b1221] p-5 flex flex-col`}>
-                <h3 className="font-extrabold text-lg mb-1">{agent.name}</h3>
-                <p className="text-sm text-slate-400 flex-1 mb-4">{agent.desc}</p>
-                <button
-                  onClick={() => runAgent(agent.id)}
-                  disabled={running === agent.id}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-sm font-bold hover:bg-white/10 transition disabled:opacity-50"
-                >
-                  {running === agent.id ? "Avvio..." : "▶ Esegui ora"}
-                </button>
-              </div>
-            );
-          })}
+          {AGENTS.map(agent => (
+            <div key={agent.id} className={`rounded-2xl border ${COLOR_MAP[agent.color]} bg-[#0b1221] p-5 flex flex-col`}>
+              <h3 className="font-extrabold text-lg mb-1">{agent.name}</h3>
+              <p className="text-sm text-slate-400 flex-1 mb-4">{agent.desc}</p>
+              <button
+                onClick={() => runAgent(agent.id)}
+                disabled={running === agent.id}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-sm font-bold hover:bg-white/10 transition disabled:opacity-50"
+              >
+                {running === agent.id ? "Avvio..." : "▶ Esegui ora"}
+              </button>
+            </div>
+          ))}
         </div>
 
         {/* Activity log */}

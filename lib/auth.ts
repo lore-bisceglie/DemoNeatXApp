@@ -105,3 +105,14 @@ export function loginRedirectUrl(requestUrl: string, nextPath = "/dashboard") {
   url.searchParams.set("reason", "session");
   return url;
 }
+
+// ── Superadmin auth ──────────────────────────────────
+
+export function requireSuperAdmin(req: Request) {
+  const pwd = req.headers.get("x-admin-password");
+  const expected = process.env.SUPERADMIN_PASSWORD || "godmode";
+  if (pwd !== expected) {
+    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+  }
+  return null;
+}

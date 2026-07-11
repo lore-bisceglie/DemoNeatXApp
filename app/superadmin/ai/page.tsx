@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Target, Dumbbell, Shield, Lock, Bot, User, Trash2 } from "lucide-react";
+import { Send, Target, Dumbbell, Shield, Bot, User, Trash2 } from "lucide-react";
 
 type Message = { role: "user" | "model"; content: string };
 
@@ -39,6 +39,8 @@ export default function SuperadminAISuite() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   const [activeBot, setActiveBot] = useState(BOTS[0]);
   const [conversations, setConversations] = useState<Record<string, Message[]>>({});
@@ -47,12 +49,30 @@ export default function SuperadminAISuite() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === "neatx2026") {
+  useEffect(() => {
+    const saved = sessionStorage.getItem("superadmin_pwd");
+    if (saved) {
+      setPassword(saved);
       setIsAuthenticated(true);
-    } else {
-      setError("PIN errato. Riprova.");
+    }
+    setChecking(false);
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/superadmin/list", {
+        headers: { "x-admin-password": password },
+      });
+      if (res.status === 401) {
+        setError("Password errata. Riprova.");
+        return;
+      }
+      sessionStorage.setItem("superadmin_pwd", password);
+      setIsAuthenticated(true);
+      setError("");
+    } catch {
+      setError("Errore di connessione. Riprova.");
     }
   };
 
@@ -85,7 +105,10 @@ export default function SuperadminAISuite() {
     try {
       const res = await fetch("/api/superadmin/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-admin-password": password,
+        },
         body: JSON.stringify({
           botId: activeBot.id,
           messages: newHistory
@@ -112,23 +135,40 @@ export default function SuperadminAISuite() {
     setConversations(prev => ({ ...prev, [activeBot.id]: [] }));
   };
 
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-[#050814] flex items-center justify-center px-4 font-sans">
+        <div className="text-slate-400">Verifica accesso...</div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050814] flex items-center justify-center px-4 font-sans">
         <form onSubmit={handleLogin} className="bg-[#0b1221] p-8 rounded-3xl border border-[#1a2642] shadow-2xl max-w-sm w-full text-center">
           <div className="w-16 h-16 bg-[#00b4ff]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Lock className="text-[#00b4ff]" size={32} />
+            <Bot className="text-[#00b4ff]" size={32} />
           </div>
           <h1 className="text-2xl font-extrabold text-white mb-2">Accesso Riservato</h1>
           <p className="text-slate-400 text-sm mb-6">NeatX AI Suite - Solo Personale Autorizzato</p>
           
-          <input 
-            type="password" 
-            placeholder="Inserisci PIN segreto"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#131c31] border border-[#1a2642] rounded-xl px-4 py-3 text-white text-center tracking-widest focus:outline-none focus:border-[#00b4ff] mb-4"
-          />
+          <div className="relative mb-4">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Inserisci password superadmin"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-[#131c31] border border-[#1a2642] rounded-xl px-4 py-3 pr-10 text-white text-center tracking-widest focus:outline-none focus:border-[#00b4ff]"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+            >
+              {showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
           {error && <p className="text-red-400 text-xs mb-4">{error}</p>}
           
           <button type="submit" className="w-full bg-[#00b4ff] text-[#050814] font-extrabold py-3 rounded-xl hover:bg-cyan-400 transition-colors">
