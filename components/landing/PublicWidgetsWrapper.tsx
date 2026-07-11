@@ -4,36 +4,23 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export default function PublicWidgetsWrapper({ children }: { children: React.ReactNode }) {
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [shouldRender, setShouldRender] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
-    setMounted(true);
-    // Controllo se esiste il cookie segreto
-    if (document.cookie.includes("superadmin_god_eye=true")) {
-      setIsSuperAdmin(true);
+    const hostname = window.location.hostname;
+    const isMainDomain =
+      hostname === "localhost" ||
+      hostname === "neatx.store" ||
+      hostname === "www.neatx.store" ||
+      hostname.includes("vercel.app");
+
+    const isSuperAdmin = document.cookie.includes("superadmin_god_eye=true");
+
+    if (!isMainDomain || pathname?.startsWith("/t/") || isSuperAdmin) {
+      setShouldRender(false);
     }
-  }, []);
+  }, [pathname]);
 
-  // Evita hydration errors non renderizzando nulla finché non è montato
-  if (!mounted) return null;
-
-  // Sulle pagine dei clienti (sottodomini) non mostrare i widget pubblici
-  const isMainDomain = 
-    window.location.hostname === "localhost" || 
-    window.location.hostname === "neatx.store" || 
-    window.location.hostname === "www.neatx.store" ||
-    window.location.hostname.includes("vercel.app");
-
-  if (!isMainDomain) return null;
-
-  // Sulle pagine pubbliche interne (es. preview in app), non mostrare i widget della Landing Page
-  if (pathname?.startsWith("/t/")) return null;
-
-  // Se sei il SuperAdmin (hai il cookie), disattiva i widget pubblici
-  if (isSuperAdmin) return null;
-
-  // Altrimenti mostra i widget normalmente sulla Landing
-  return <>{children}</>;
+  return <div style={{ display: shouldRender ? "" : "none" }}>{children}</div>;
 }

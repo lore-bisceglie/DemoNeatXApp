@@ -95,7 +95,7 @@ export default function GoogleTranslateWidget() {
         strategy="afterInteractive" 
       />
 
-      <Script id="google-translate-init" strategy="afterInteractive">
+      <Script id="google-translate-init" strategy="beforeInteractive">
         {`
           window.googleTranslateElementInit = function() {
             new window.google.translate.TranslateElement({
