@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
+import { BarChart3, CalendarDays, Users, Receipt, Globe, CreditCard, CheckCircle } from "lucide-react";
 import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
@@ -610,32 +611,32 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               href={`/t/${slug}/admin/analytics`}
               className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm"
             >
-              <span>📊</span><span className="hidden sm:inline">Analytics</span>
+              <BarChart3 size={16} /><span className="hidden sm:inline">Analytics</span>
             </Link>
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
               className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              <span>📅</span><span className="hidden sm:inline">Export</span> Agenda
+              <CalendarDays size={16} /><span className="hidden sm:inline">Export</span> Agenda
             </a>
             <a
               href={`/api/export/customers?tenantId=${tenantId}`}
               className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              <span>👥</span><span className="hidden sm:inline">Export</span> Clienti
+              <Users size={16} /><span className="hidden sm:inline">Export</span> Clienti
             </a>
             <a
               href={`/api/export/timesheets?tenantId=${tenantId}`}
               className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              <span>🧾</span><span className="hidden sm:inline">Export</span> Presenze
+              <Receipt size={16} /><span className="hidden sm:inline">Export</span> Presenze
             </a>
             <Link
               href={`/t/${slug}`}
               target="_blank"
               className="col-span-3 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              <span>🌐</span> Pagina Clienti
+              <Globe size={16} /> Pagina Clienti
             </Link>
           </div>
         </div>
@@ -756,7 +757,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
-                <span>💳</span>
+                <CreditCard size={20} />
                 Integrazione Pagamenti (Stripe)
               </h2>
               <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
@@ -768,7 +769,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               {storeSettings?.stripeOnboardingComplete ? (
                 <div className="flex flex-col items-end gap-1">
                   <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
-                    <span>✅</span> Conto Collegato (Apri Stripe)
+                    <CheckCircle size={16} /> Conto Collegato (Apri Stripe)
                   </a>
                   <span className="text-[10px] text-slate-500 mr-2">Clicca per modificare IBAN/Conto</span>
                 </div>
@@ -1279,10 +1280,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
 
           <div className={activeTab === 'marketing' ? '' : 'hidden'}>
-{/* 🧾 ATTIVITA RECENTI */}
+{/* ATTIVITA RECENTI */}
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
             <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
-              <span>🧾</span>
+              <Receipt size={20} />
               Attività Recenti
             </h2>
 
