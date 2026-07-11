@@ -156,7 +156,7 @@ export default function CancelPage() {
             Appuntamento non trovato
           </h2>
           <p className="text-slate-400 text-sm mb-6">
-            Questo appuntamento non esiste piu o e gia stato annullato.
+            Questo appuntamento non esiste più o è già stato annullato.
           </p>
           <Link
             href="/"

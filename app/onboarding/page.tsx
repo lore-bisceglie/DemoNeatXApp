@@ -21,37 +21,37 @@ const categoryHints: Record<string, { services: string; staff: string; bookings:
   hair_women: {
     services: "Piega, taglio, colore, balayage",
     staff: "3 professionisti demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   barber: {
     services: "Taglio, barba, sfumatura",
     staff: "3 barbieri demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   beauty_center: {
     services: "Viso, corpo, epilazione",
     staff: "3 estetiste demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   nail_salon: {
     services: "Semipermanente, refill, pedicure",
     staff: "2 nail artist demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   massage: {
     services: "Relax, sportivo, decontratturante",
     staff: "2 operatori demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   personal_trainer: {
     services: "Sessioni, valutazioni, check",
     staff: "2 trainer demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   private_studio: {
     services: "Consulenze, follow-up, sessioni",
     staff: "2 professionisti demo",
-    bookings: "5 appuntamenti gia in agenda",
+    bookings: "5 appuntamenti già in agenda",
   },
   medico: {
     services: "Visite, controlli, check-up",
@@ -114,7 +114,7 @@ export default function Onboarding() {
     setError("");
 
     if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !password.trim() || !phone.trim() || !email.trim()) {
-      setError("Compila nome attivita, categoria, citta, email, nome, password e WhatsApp prenotazioni.");
+      setError("Compila nome attività, categoria, città, email, nome, password e WhatsApp prenotazioni.");
       return;
     }
 
@@ -179,9 +179,9 @@ export default function Onboarding() {
             <CheckCircle2 className="h-10 w-10 text-emerald-300" />
           </div>
           <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-emerald-300">Account creato</p>
-          <h1 className="text-3xl font-extrabold sm:text-5xl">{businessName} e online.</h1>
+          <h1 className="text-3xl font-extrabold sm:text-5xl">{businessName} è online.</h1>
           <p className="mt-4 max-w-xl text-sm font-medium leading-relaxed text-slate-400">
-            La tua registrazione e completata: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono gia configurati.
+            La tua registrazione è completata: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono già configurati.
           </p>
 
           <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
@@ -259,7 +259,7 @@ export default function Onboarding() {
             <label className="block">
               <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                 <Building2 size={14} />
-                Nome attivita
+                Nome attività
               </span>
               <input
                 value={businessName}

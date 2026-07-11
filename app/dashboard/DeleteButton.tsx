@@ -30,7 +30,7 @@ function cancellationMessage({
   time: string;
 }) {
   return (
-    `Ciao ${customerName}, ti informiamo che il tuo appuntamento del ${date} alle ${time} e stato annullato.\n\n` +
+    `Ciao ${customerName}, ti informiamo che il tuo appuntamento del ${date} alle ${time} è stato annullato.\n\n` +
     `Puoi prenotare un nuovo orario da qui:\n${getPublicBookingUrl()}`
   );
 }
@@ -86,7 +86,7 @@ export default function DeleteButton({
         const message = cancellationMessage({ customerName, date, time });
         window.location.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
       } else if (!isSpecial && phone && phone !== "0000000000") {
-        alert("Appuntamento eliminato, ma il numero WhatsApp del cliente non e valido.");
+        alert("Appuntamento eliminato, ma il numero WhatsApp del cliente non è valido.");
         window.location.reload();
       } else {
         window.location.reload();
@@ -147,7 +147,7 @@ export default function DeleteButton({
 
             <p className="text-slate-400 text-[13px] mb-6 leading-relaxed">
               Vuoi segnare <b>{customerName}</b> come assente? L'appuntamento
-              verra rimosso e il cliente entrera nello storico no-show.
+              verrà rimosso e il cliente entrerà nello storico no-show.
             </p>
 
             <div className="flex gap-3 w-full">

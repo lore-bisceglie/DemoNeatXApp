@@ -70,7 +70,7 @@ export default async function SuccessPage(props: {
               href={`/t/${slug}/admin`}
               className="block w-full py-4 bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] text-slate-300 font-bold rounded-2xl transition"
             >
-              Simulazione: Torna in Dashboard
+              {sessionId?.startsWith("mock_") ? "Torna in Dashboard (Demo)" : "Torna in Dashboard"}
             </Link>
           )}
         </div>

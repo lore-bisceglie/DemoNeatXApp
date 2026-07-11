@@ -72,7 +72,7 @@ export async function POST(
 
     if (hasOverlap) {
       return NextResponse.json(
-        { error: "Questo orario non e disponibile." },
+        { error: "Questo orario non è disponibile." },
         { status: 400 }
       );
     }

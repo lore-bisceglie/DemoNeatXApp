@@ -43,7 +43,7 @@ export default function BlogPage() {
 
         {posts.length === 0 ? (
           <div className="text-center text-slate-500 py-20 bg-[#0b1221]/70 rounded-3xl shadow-sm border border-[#1a2642]">
-            Nessun articolo pubblicato al momento. Usa la SEO Machine per generarne uno!
+            Nessun articolo pubblicato al momento. Torna presto per leggere le nostre guide!
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

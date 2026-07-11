@@ -525,7 +525,7 @@ export default function Home() {
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
   // ✅ Messaggio dinamico quando non ci sono orari disponibili
-  // Modifica qui l'orario di chiusura dell'attivita, se necessario.
+  // Modifica qui l'orario di chiusura dell'attività, se necessario.
   const closingHour = 19;
   const closingMinute = 0;
 
@@ -559,8 +559,8 @@ export default function Home() {
         badge: "SABATO COMPLETO",
         badgeClass:
           "bg-red-500/10 text-red-300 border border-red-500/20",
-        title: "Il sabato della demo e gia pieno.",
-        text: "Questo mostra come NeatX comunica i giorni piu richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa.",
+        title: "Il sabato della demo è già pieno.",
+        text: "Questo mostra come NeatX comunica i giorni più richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa.",
       }
     : {
         icon: "📅",
@@ -677,8 +677,8 @@ export default function Home() {
               </p>
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 {demoModal.paymentLabel.includes("online")
-                  ? `Nella dashboard lo vedrai gia come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
-                  : "Nella dashboard il titolare potra segnarlo pagato con un tocco."}
+                  ? `Nella dashboard lo vedrai già come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+                  : "Nella dashboard il titolare potrà segnarlo pagato con un tocco."}
               </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -1191,7 +1191,7 @@ export default function Home() {
                   </p>
                   <p className="text-slate-300 text-xs leading-relaxed">
                     Nella demo non viene aperto Stripe e non ci sono addebiti:
-                    l'appuntamento viene salvato come gia pagato per mostrare
+                    l'appuntamento viene salvato come già pagato per mostrare
                     la dashboard.
                   </p>
                 </div>

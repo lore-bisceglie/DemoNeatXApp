@@ -840,10 +840,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         badge: "SABATO COMPLETO",
         badgeClass:
           "bg-red-500/10 text-red-300 border border-red-500/20",
-        title: isPlaygroundDemo ? "Il sabato della demo e gia pieno." : "Il sabato e gia pieno.",
+        title: isPlaygroundDemo ? "Il sabato della demo è già pieno." : "Il sabato è già pieno.",
         text: isPlaygroundDemo
-          ? "Questo mostra come NeatX comunica i giorni piu richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa."
-          : "Il sabato e molto richiesto: scegli un nuovo giorno o entra in lista d'attesa.",
+          ? "Questo mostra come NeatX comunica i giorni più richiesti e spinge il cliente a scegliere un nuovo orario o la lista d'attesa."
+          : "Il sabato è molto richiesto: scegli un nuovo giorno o entra in lista d'attesa.",
       }
     : {
         icon: "📅",
@@ -991,9 +991,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
               </p>
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 {demoModal.paymentLabel.includes("online")
-                  ? `Nella dashboard lo vedrai gia come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+                  ? `Nella dashboard lo vedrai già come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
                   : isPlaygroundDemo
-                  ? "Nella dashboard il titolare potra segnarlo pagato con un tocco."
+                  ? "Nella dashboard il titolare potrà segnarlo pagato con un tocco."
                   : "La prenotazione test ora appare nella dashboard del negozio."}
               </p>
             </div>
@@ -1596,7 +1596,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                     </p>
                     <p className="text-slate-300 text-xs leading-relaxed">
                       Nella demo non viene aperto Stripe e non ci sono addebiti:
-                      l'appuntamento viene salvato come gia pagato per mostrare
+                      l'appuntamento viene salvato come già pagato per mostrare
                       la dashboard.
                     </p>
                   </div>

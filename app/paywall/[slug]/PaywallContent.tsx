@@ -18,7 +18,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
         <h1 className="text-3xl font-extrabold sm:text-5xl mb-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
           Scegli il piano per il tuo Salone
         </h1>
-        <p className="text-slate-400 font-medium">L&apos;investimento piu intelligente per la tua attivita.</p>
+        <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
       </div>
 
       {/* Toggle mensile/annuale */}

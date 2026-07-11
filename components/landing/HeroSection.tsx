@@ -31,7 +31,7 @@ export default function HeroSection() {
       <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
         Vedi il tuo negozio online <br className="hidden md:block" />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] to-purple-500 animate-pulse">
-          gia funzionante
+          già funzionante
         </span>
       </h1>
 

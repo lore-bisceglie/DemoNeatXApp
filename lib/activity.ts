@@ -15,7 +15,7 @@ type LogInput = {
 
 export async function logActivity(input: LogInput) {
   if (!input.tenantId) {
-    console.error("Errore log attivita: tenantId mancante.");
+    console.error("Errore log attività: tenantId mancante.");
     return;
   }
   
@@ -36,6 +36,6 @@ export async function logActivity(input: LogInput) {
       },
     });
   } catch (error) {
-    console.error("Errore log attivita:", error);
+    console.error("Errore log attività:", error);
   }
 }

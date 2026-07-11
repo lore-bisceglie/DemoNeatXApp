@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     if (!tenant) {
       return NextResponse.json(
-        { error: "Nessuna attivita configurata" },
+        { error: "Nessuna attività configurata" },
         { status: 400 }
       );
     }

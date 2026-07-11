@@ -397,7 +397,7 @@ export default function TrialLaunchPanel({
               value={shopDraft.name}
               onChange={(event) => setShopDraft((current) => ({ ...current, name: event.target.value }))}
               className="w-full rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan-400"
-              placeholder="Nome attivita"
+              placeholder="Nome attività"
             />
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input

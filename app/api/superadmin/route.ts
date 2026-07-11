@@ -191,7 +191,9 @@ export async function POST(req: Request) {
 
     if (ownerEmail) {
       const tenantUrl = `https://${slug}.neatx.store`;
-      await sendWelcomeEmail(ownerEmail, name, finalPassword, tenantUrl);
+      await sendWelcomeEmail(ownerEmail, name, finalPassword, tenantUrl).catch(e =>
+        console.error("[Email] Errore invio benvenuto da superadmin:", e)
+      );
     }
 
     // Notifica Telegram al SuperAdmin

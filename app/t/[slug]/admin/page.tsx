@@ -78,19 +78,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     redirect(`/paywall/${slug}`);
   }
 
-  if (false) {
-    return (
-      <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4 selection:bg-[#00b4ff]/30 text-center">
-        <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-4xl mb-6 border border-red-500/20">⚠️</div>
-        <h1 className="text-4xl font-extrabold text-white mb-4">Periodo di Prova Scaduto</h1>
-        <p className="text-slate-400 mb-8 max-w-md mx-auto">
-          I tuoi 7 giorni di prova per <strong>{tenantName}</strong> sono terminati. Attiva il piano Pro (29€/mese) per sbloccare la tua agenda.
-        </p>
-        <a href={`https://wa.me/393480480942?text=Ciao,%20voglio%20attivare%20il%20piano%20Pro%20per%20${tenantName}!`} target="_blank" className="py-4 px-8 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-green-500/25 text-lg">Attiva Abbonamento Pro</a>
-      </div>
-    );
-  }
-
+  // Redirect to paywall already handled above
 
   let storeSettings = await prisma.storeSettings.findUnique({
     where: {

@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     if (!isAdmin && isTrialExpired) {
-      return NextResponse.json({ error: "La prova gratuita e scaduta." }, { status: 402 });
+      return NextResponse.json({ error: "La prova gratuita è scaduta." }, { status: 402 });
     }
 
     if (!isAdmin && !isPlaygroundDemo) {
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
     if (!isPlaygroundDemo && !isAdmin && cleanPhone !== "0000" && cleanPhone !== "0000000000") {
       const noShowCount = await prisma.noShow.count({ where: { customerPhone: cleanPhone, tenantId } });
       if (noShowCount >= 3) {
-        return NextResponse.json({ error: "Hai mancato troppi appuntamenti. Contatta direttamente l'attivita." }, { status: 403 });
+        return NextResponse.json({ error: "Hai mancato troppi appuntamenti. Contatta direttamente l'attività." }, { status: 403 });
       }
     }
 

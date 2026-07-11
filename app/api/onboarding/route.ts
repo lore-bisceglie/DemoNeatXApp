@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
     if (!businessName || !category || !city || !ownerName || !password || !phone || !email) {
       return NextResponse.json(
-        { error: "Inserisci nome attivita, categoria, citta, email, nome, password e numero WhatsApp." },
+        { error: "Inserisci nome attività, categoria, città, email, nome, password e numero WhatsApp." },
         { status: 400 }
       );
     }
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
         },
         storeSettings: {
           create: {
-            smsCredits: referredByCode ? 75 : 50, // 25 crediti in piu' se invitato
+            smsCredits: referredByCode ? 75 : 50, // 25 crediti in più se invitato
             maxConcurrentAppointments: Math.max(1, template.staff.length),
           },
         },
@@ -220,7 +220,7 @@ export async function POST(req: Request) {
         tenantId: tenant.id,
         action: "CREATE_DEMO_SHOP",
         actor: "system",
-        message: `Negozio demo creato per ${businessName}: servizi, staff e prenotazioni sono gia pronti.`,
+        message: `Negozio demo creato per ${businessName}: servizi, staff e prenotazioni sono già pronti.`,
         metadata: JSON.stringify({ category: template.id, trialDays }),
       },
     });

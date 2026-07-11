@@ -63,7 +63,7 @@ export async function POST(req: Request) {
             `💰 <b>PAGAMENTO SAAS!</b>\n\nIl negozio <b>${updatedTenant.name}</b> ha attivato <b>${purchasedPlan.toUpperCase()}</b> (${interval === 'year' ? 'annuale' : 'mensile'})!\nMRR in aumento. 📈`
           );
 
-          // Referral reward: se e stato invitato, premia chi lo ha invitato
+          // Referral reward: se è stato invitato, premia chi lo ha invitato
           if (updatedTenant.referredByCode) {
             const referrer = await prisma.tenant.findUnique({ where: { referralCode: updatedTenant.referredByCode } });
             if (referrer) {

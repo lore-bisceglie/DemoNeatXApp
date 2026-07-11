@@ -236,7 +236,7 @@ export const demoShopTemplates: Record<DemoCategory, DemoShopTemplate> = {
     label: "Personal trainer",
     shortLabel: "Trainer",
     description:
-      "Agenda per personal trainer con sessioni singole, valutazioni e pacchetti. Il cliente sceglie lo slot e arriva gia confermato.",
+      "Agenda per personal trainer con sessioni singole, valutazioni e pacchetti. Il cliente sceglie lo slot e arriva già confermato.",
     openTime: "07:00",
     closeTime: "21:00",
     closedDays: [0],
