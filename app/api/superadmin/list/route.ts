@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireSuperAdmin } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
-  const auth = req.headers.get('x-admin-password');
-  if (auth !== 'godmode') {
-    return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
-  }
+  const auth = requireSuperAdmin(req);
+  if (auth) return auth;
 
   try {
     const tenants = await prisma.tenant.findMany({
