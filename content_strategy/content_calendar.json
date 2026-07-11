@@ -1,15 +1,69 @@
 {
-  "generated_at": "2026-07-11T08:15:50.504538",
+  "generated_at": "2026-07-11T08:27:50.959379",
   "days": [
     {
       "date": "2026-07-11",
+      "niche": "Personal Trainer",
+      "feature": "booking",
+      "feature_label": "Prenotazione 24/7",
+      "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+      "promise": "clienti che prenotano da soli anche mentre dormi",
+      "cover_title": "ADDIO TELEFONO",
+      "hook_hint": "Se sei un personal trainer e il tuo telefono squilla incessantemente, stai perdendo soldi.",
+      "blog_topic": "Personal Trainer: Prenotazione 24/7 con NeatX",
+      "gameplay_style": "neon_racer",
+      "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+      "keywords": [
+        "agenda personal trainer",
+        "prenotazioni palestra",
+        "gestionale personal trainer"
+      ]
+    },
+    {
+      "date": "2026-07-12",
+      "niche": "Fisioterapisti",
+      "feature": "no_show",
+      "feature_label": "Zero No-Show",
+      "pain": "acconti automatici che filtrano i clienti che non si presentano",
+      "promise": "ogni slot occupato da clienti che hanno già pagato",
+      "cover_title": "CLIENTI FANTASMA ADDIO",
+      "hook_hint": "Se sei un fisioterapista e i tuoi clienti non si presentano, stai perdendo soldi.",
+      "blog_topic": "Fisioterapisti: Zero No-Show con NeatX",
+      "gameplay_style": "block_miner",
+      "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+      "keywords": [
+        "agenda fisioterapista",
+        "prenotazioni fisioterapia",
+        "gestionale fisioterapisti"
+      ]
+    },
+    {
+      "date": "2026-07-13",
+      "niche": "Barbieri",
+      "feature": "timesheet",
+      "feature_label": "Timesheet Commercialista",
+      "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+      "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+      "cover_title": "TIMESHEET AUTOMATICO",
+      "hook_hint": "Se sei un barbiere e perdi tempo con fogli Excel, stai perdendo soldi.",
+      "blog_topic": "Barbieri: Timesheet Commercialista con NeatX",
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
+      "keywords": [
+        "gestionale barbiere",
+        "prenotazioni barbiere",
+        "no show barber shop"
+      ]
+    },
+    {
+      "date": "2026-07-14",
       "niche": "Tatuatori",
       "feature": "multi_staff",
       "feature_label": "Gestione Staff",
-      "pain": "turni complessi e clienti mal assegnati",
-      "promise": "ogni staff gestito con precisione e clienti sempre soddisfatti",
+      "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+      "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
       "cover_title": "GESTIONE TEAM",
-      "hook_hint": "Tatuatori, se gestisci turni complessi e clienti mal assegnati, stai lasciando soldi sul tavolo.",
+      "hook_hint": "Se sei un tatuatore e hai problemi di gestione turni, stai perdendo soldi.",
       "blog_topic": "Tatuatori: Gestione Staff con NeatX",
       "gameplay_style": "neon_racer",
       "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
@@ -20,69 +74,15 @@
       ]
     },
     {
-      "date": "2026-07-12",
-      "niche": "Barbieri",
-      "feature": "booking",
-      "feature_label": "Prenotazione 24/7",
-      "pain": "telefonate incessanti e messaggi stressanti",
-      "promise": "clienti che prenotano autonomamente, anche mentre dormi",
-      "cover_title": "PRENOTA 24/7",
-      "hook_hint": "Barbieri, se il tuo telefono squilla senza sosta, stai perdendo opportunità di guadagno.",
-      "blog_topic": "Barbieri: Prenotazione 24/7 con NeatX",
-      "gameplay_style": "block_miner",
-      "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
-      "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
-      ]
-    },
-    {
-      "date": "2026-07-13",
-      "niche": "Coach e Consulenti",
-      "feature": "promemoria",
-      "feature_label": "Promemoria WhatsApp",
-      "pain": "clienti che dimenticano gli appuntamenti",
-      "promise": "promemoria automatici per ridurre i no-show del 90%",
-      "cover_title": "MAI PIU DIMENTICANO",
-      "hook_hint": "Coach, se i tuoi clienti dimenticano gli appuntamenti, stai perdendo fatturato.",
-      "blog_topic": "Coach e Consulenti: Promemoria WhatsApp con NeatX",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
-      "keywords": [
-        "agenda consulente",
-        "prenotazioni coach",
-        "booking consulenze"
-      ]
-    },
-    {
-      "date": "2026-07-14",
-      "niche": "Personal Trainer",
-      "feature": "recensioni",
-      "feature_label": "Recensioni Automatiche",
-      "pain": "clienti soddisfatti che non lasciano feedback",
-      "promise": "recensioni Google garantite da ogni cliente felice",
-      "cover_title": "GOOGLE SI RIEMPIE DA SOLO",
-      "hook_hint": "Personal trainer, se i tuoi clienti soddisfatti non lasciano recensioni, stai perdendo visibilità.",
-      "blog_topic": "Personal Trainer: Recensioni Automatiche con NeatX",
-      "gameplay_style": "neon_racer",
-      "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
-      "keywords": [
-        "agenda personal trainer",
-        "prenotazioni palestra",
-        "gestionale personal trainer"
-      ]
-    },
-    {
       "date": "2026-07-15",
       "niche": "Parrucchieri",
-      "feature": "no_show",
-      "feature_label": "Zero No-Show",
-      "pain": "clienti che non si presentano agli appuntamenti",
-      "promise": "ogni slot occupato da clienti già paganti",
-      "cover_title": "CLIENTI FANTASMA ADDIO",
-      "hook_hint": "Parrucchieri, se hai clienti che non si presentano, stai perdendo guadagni.",
-      "blog_topic": "Parrucchieri: Zero No-Show con NeatX",
+      "feature": "analytics",
+      "feature_label": "Statistiche e Dati",
+      "pain": "non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti",
+      "promise": "dashboard con incassi, trend e performance in tempo reale",
+      "cover_title": "DATI IN TEMPO REALE",
+      "hook_hint": "Se sei un parrucchiere e non sai come ottimizzare il tuo lavoro, stai perdendo soldi.",
+      "blog_topic": "Parrucchieri: Statistiche e Dati con NeatX",
       "gameplay_style": "block_miner",
       "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
       "keywords": [
@@ -94,13 +94,13 @@
     {
       "date": "2026-07-16",
       "niche": "Centri Estetici",
-      "feature": "timesheet",
-      "feature_label": "Timesheet Commercialista",
-      "pain": "ore segnate manualmente su fogli Excel",
-      "promise": "gestione turni e permessi in un click, report CSV per il commercialista",
-      "cover_title": "TURNI IN UN CLICK",
-      "hook_hint": "Centri estetici, se segni le ore a mano, stai sprecando tempo e denaro.",
-      "blog_topic": "Centri Estetici: Timesheet Commercialista con NeatX",
+      "feature": "recensioni",
+      "feature_label": "Recensioni Automatiche",
+      "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+      "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+      "cover_title": "GOOGLE SI RIEMPIE DA SOLO",
+      "hook_hint": "Se sei un centro estetico e non ricevi recensioni dai tuoi clienti, stai perdendo soldi.",
+      "blog_topic": "Centri Estetici: Recensioni Automatiche con NeatX",
       "gameplay_style": "runner",
       "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
       "keywords": [
@@ -111,20 +111,20 @@
     },
     {
       "date": "2026-07-17",
-      "niche": "Fisioterapisti",
-      "feature": "analytics",
-      "feature_label": "Statistiche e Dati",
-      "pain": "incertezza sui guadagni e servizi più richiesti",
-      "promise": "dashboard con dati in tempo reale per decisioni informate",
-      "cover_title": "STATISTICHE SALONE",
-      "hook_hint": "Fisioterapisti, se non conosci il tuo guadagno reale, stai perdendo opportunità.",
-      "blog_topic": "Fisioterapisti: Statistiche e Dati con NeatX",
+      "niche": "Coach e Consulenti",
+      "feature": "promemoria",
+      "feature_label": "Promemoria WhatsApp",
+      "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono",
+      "promise": "promemoria automatici che riducono i no-show del 90%",
+      "cover_title": "WA RICORDA PER TE",
+      "hook_hint": "Se sei un coach e hai clienti che dimenticano gli appuntamenti, stai perdendo soldi.",
+      "blog_topic": "Coach e Consulenti: Promemoria WhatsApp con NeatX",
       "gameplay_style": "neon_racer",
-      "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
       "keywords": [
-        "agenda fisioterapista",
-        "prenotazioni fisioterapia",
-        "gestionale fisioterapisti"
+        "agenda consulente",
+        "prenotazioni coach",
+        "booking consulenze"
       ]
     }
   ]

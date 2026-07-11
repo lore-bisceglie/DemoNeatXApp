@@ -1,24 +1,33 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-10T18:24:19.273999+02:00
+Generato: 2026-07-11T10:27:58.443183+02:00
 
-## Idea 1: Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Coach e Consulenti
-- hook: Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero call rinviate e clienti indecisi.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Se sei un personal trainer e il tuo telefono squilla incessantemente, stai perdendo soldi.
+- title: ADDIO TELEFONO: Guadagna mentre dormi!
+- hook: Se sei un personal trainer e il tuo telefono squilla incessantemente, stai perdendo soldi.
+- type: video
+- content: Mostra come la prenotazione 24/7 libera i personal trainer da telefonate e messaggi, aumentando le loro entrate.
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Coach e Consulenti
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Immagina clienti che prenotano autonomamente mentre tu riposi.
+- title: Prenotazione 24/7: Il segreto per clienti felici
+- hook: Immagina clienti che prenotano autonomamente mentre tu riposi.
+- type: blog
+- content: Esplora i vantaggi della prenotazione automatica per migliorare la soddisfazione dei clienti.
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Coach e Consulenti
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Basta squilli! Scopri come un sistema automatizzato può trasformare la tua agenda.
+- title: Come risparmiare tempo e guadagnare di più
+- hook: Basta squilli! Scopri come un sistema automatizzato può trasformare la tua agenda.
+- type: video
+- content: Dimostra un confronto tra l'agenda manuale e quella automatizzata.
+
+## Idea 4: Lavori duro? È ora di far lavorare il tuo sistema di prenotazione per te.
+- title: Clienti che prenotano da soli: La tua nuova realtà
+- hook: Lavori duro? È ora di far lavorare il tuo sistema di prenotazione per te.
+- type: blog
+- content: Racconta storie di personal trainer che hanno rivoluzionato il loro business con NeatX.
+
+## Idea 5: Non lasciare che il tuo telefono ti controlli, prendi il controllo con NeatX.
+- title: Il futuro del fitness: Prenotazioni senza stress
+- hook: Non lasciare che il tuo telefono ti controlli, prendi il controllo con NeatX.
+- type: video
+- content: Visualizza come l'automazione cambia il modo di lavorare dei personal trainer.
