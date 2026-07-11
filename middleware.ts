@@ -37,17 +37,17 @@ export function middleware(request: NextRequest) {
   }
 
   if (tenantSlug && isTenantRoute) {
-    const response = NextResponse.next();
-    response.headers.set("x-middleware-tenant", tenantSlug);
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-middleware-tenant", tenantSlug);
 
     const cookieHeader = request.headers.get("cookie") || "";
     const authMatch = cookieHeader.match(new RegExp(`admin_auth_${tenantSlug}=([^;]+)`));
     if (authMatch) {
-      response.headers.set("x-middleware-auth", authMatch[1]);
+      requestHeaders.set("x-middleware-auth", authMatch[1]);
     }
 
     console.log(`[MIDDLEWARE] tenantSlug=${tenantSlug}, path=${url.pathname}, host=${request.headers.get("host")}`);
-    return response;
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   return NextResponse.next();
