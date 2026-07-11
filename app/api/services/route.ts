@@ -64,7 +64,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    console.log("[POST /api/services] tenant:", tenant.slug, "body:", body);
     const service = cleanService(body);
+    console.log("[POST /api/services] cleaned:", service);
     if (!service.name) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
@@ -76,10 +78,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log("[POST /api/services] created:", created);
     return NextResponse.json({ service: created });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Errore creazione servizio:", error);
-    return NextResponse.json({ error: "Errore interno" }, { status: 500 });
+    return NextResponse.json({ error: "Errore interno", detail: error.message }, { status: 500 });
   }
 }
 
