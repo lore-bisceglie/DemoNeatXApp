@@ -29,18 +29,29 @@ function getTenantSlugFromRequest(request: NextRequest): string | null {
 const isProd = process.env.NODE_ENV === "production";
 
 async function requireTenantAdmin(request: NextRequest) {
-  const tenantSlug = getTenantSlugFromRequest(request);
-  if (!tenantSlug) return null;
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
 
+  // Trova lo slug da qualsiasi cookie admin_auth_*
+  let tenantSlug: string | null = getTenantSlugFromRequest(request);
+  if (!tenantSlug) {
+    for (const c of allCookies) {
+      if (c.name.startsWith("admin_auth_")) {
+        tenantSlug = c.name.replace("admin_auth_", "");
+        break;
+      }
+    }
+  }
+
+  if (!tenantSlug) return null;
   const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
   if (!tenant?.adminPassword) return null;
 
-  const cookieStore = await cookies();
-  let authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
-
+  const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
   if (!authCookie) {
     const headerAuth = request.headers.get("x-middleware-auth");
-    if (headerAuth) authCookie = headerAuth;
+    if (headerAuth) return headerAuth === tenant.adminPassword ? tenant : null;
+    return null;
   }
 
   return authCookie === tenant.adminPassword ? tenant : null;
