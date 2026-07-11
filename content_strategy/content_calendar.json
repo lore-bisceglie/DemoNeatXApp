@@ -1,0 +1,131 @@
+{
+  "generated_at": "2026-07-11T23:54:02.515970",
+  "days": [
+    {
+      "date": "2026-07-12",
+      "niche": "Barbieri",
+      "feature": "booking",
+      "feature_label": "Prenotazione 24/7",
+      "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+      "promise": "clienti che prenotano da soli anche mentre dormi",
+      "cover_title": "ADDIO TELEFONO",
+      "hook_hint": "Se sei tra i barbieri e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+      "blog_topic": "Barbieri: Prenotazione 24/7 con NeatX",
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
+      "keywords": [
+        "gestionale barbiere",
+        "prenotazioni barbiere",
+        "no show barber shop"
+      ]
+    },
+    {
+      "date": "2026-07-13",
+      "niche": "Personal Trainer",
+      "feature": "analytics",
+      "feature_label": "Statistiche e Dati",
+      "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti",
+      "promise": "dashboard con incassi, trend e performance in tempo reale",
+      "cover_title": "STATISTICHE E D ORA",
+      "hook_hint": "Se sei tra i personal trainer e non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti, stai perdendo soldi.",
+      "blog_topic": "Personal Trainer: Statistiche e Dati con NeatX",
+      "gameplay_style": "neon_racer",
+      "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
+      "keywords": [
+        "agenda personal trainer",
+        "prenotazioni palestra",
+        "gestionale personal trainer"
+      ]
+    },
+    {
+      "date": "2026-07-14",
+      "niche": "Centri Estetici",
+      "feature": "multi_staff",
+      "feature_label": "Gestione Staff",
+      "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+      "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
+      "cover_title": "ADDIO TURNI",
+      "hook_hint": "Se sei tra i centri estetici e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
+      "blog_topic": "Centri Estetici: Gestione Staff con NeatX",
+      "gameplay_style": "block_miner",
+      "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+      "keywords": [
+        "gestionale centro estetico",
+        "prenotazioni estetista",
+        "agenda centro estetico"
+      ]
+    },
+    {
+      "date": "2026-07-15",
+      "niche": "Coach e Consulenti",
+      "feature": "recensioni",
+      "feature_label": "Recensioni Automatiche",
+      "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+      "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+      "cover_title": "RECENSIONI AUTO ORA",
+      "hook_hint": "Se sei tra i coach e consulenti e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+      "blog_topic": "Coach e Consulenti: Recensioni Automatiche con NeatX",
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
+      "keywords": [
+        "agenda consulente",
+        "prenotazioni coach",
+        "booking consulenze"
+      ]
+    },
+    {
+      "date": "2026-07-16",
+      "niche": "Parrucchieri",
+      "feature": "no_show",
+      "feature_label": "Zero No-Show",
+      "pain": "acconti automatici che filtrano i clienti che non si presentano",
+      "promise": "ogni slot occupato da clienti che hanno già pagato",
+      "cover_title": "ADDIO ACCONTI",
+      "hook_hint": "Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+      "blog_topic": "Parrucchieri: Zero No-Show con NeatX",
+      "gameplay_style": "neon_racer",
+      "image_prompt": "photorealistic modern hair salon, professional hairdresser working with a client, premium realistic lighting",
+      "keywords": [
+        "gestionale parrucchieri",
+        "prenotazioni parrucchiere",
+        "agenda salone"
+      ]
+    },
+    {
+      "date": "2026-07-17",
+      "niche": "Tatuatori",
+      "feature": "timesheet",
+      "feature_label": "Timesheet Commercialista",
+      "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+      "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+      "cover_title": "TIMESHEET COMME ORA",
+      "hook_hint": "Se sei tra i tatuatori e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+      "blog_topic": "Tatuatori: Timesheet Commercialista con NeatX",
+      "gameplay_style": "block_miner",
+      "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
+      "keywords": [
+        "prenotazioni tatuatore",
+        "agenda tatuatori",
+        "caparra tatuaggio"
+      ]
+    },
+    {
+      "date": "2026-07-18",
+      "niche": "Fisioterapisti",
+      "feature": "promemoria",
+      "feature_label": "Promemoria WhatsApp",
+      "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono",
+      "promise": "promemoria automatici che riducono i no-show del 90%",
+      "cover_title": "ADDIO CLIENTI",
+      "hook_hint": "Se sei tra i fisioterapisti e clienti che dimenticano l'appuntamento e non rispondono al telefono, stai perdendo soldi.",
+      "blog_topic": "Fisioterapisti: Promemoria WhatsApp con NeatX",
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+      "keywords": [
+        "agenda fisioterapista",
+        "prenotazioni fisioterapia",
+        "gestionale fisioterapisti"
+      ]
+    }
+  ]
+}
