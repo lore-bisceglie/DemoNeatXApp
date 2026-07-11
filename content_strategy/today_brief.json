@@ -1,18 +1,18 @@
 {
   "date": "2026-07-11",
-  "niche": "Tatuatori",
-  "feature": "promemoria",
-  "feature_label": "Promemoria WhatsApp",
-  "pain": "clienti che dimenticano l'appuntamento",
-  "promise": "promemoria automatici che riducono i no-show",
-  "cover_title": "MAI PIU DIMENTICANO",
-  "hook_hint": "Se sei un tatuatore e i tuoi clienti dimenticano gli appuntamenti, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: Promemoria WhatsApp con NeatX",
+  "niche": "Personal Trainer",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "BASTA NO SHOW",
+  "hook_hint": "Se sei tra i personal trainer e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: Zero No-Show con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic tattoo studio, tattoo artist working carefully, modern professional workspace",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
