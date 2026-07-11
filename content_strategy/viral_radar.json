@@ -1,41 +1,51 @@
 {
-  "generated_at": "2026-07-11T10:27:58.443183+02:00",
+  "generated_at": "2026-07-11T11:29:32.072830+02:00",
   "signals_used": {
     "reel_history_count": 17,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Personal Trainer"
+    "today_niche": "Centri Estetici"
   },
   "ideas": [
     {
-      "title": "ADDIO TELEFONO: Guadagna mentre dormi!",
-      "hook": "Se sei un personal trainer e il tuo telefono squilla incessantemente, stai perdendo soldi.",
-      "type": "video",
-      "content": "Mostra come la prenotazione 24/7 libera i personal trainer da telefonate e messaggi, aumentando le loro entrate."
+      "niche": "Centri Estetici",
+      "hook": "Se la tua dipendente va in ferie e la tua agenda continua ad accettare prenotazioni per lei, stai per fare una pessima figura con i tuoi clienti.",
+      "video_title": "GESTIONE STAFF: EVITA ERRORI",
+      "blog_title": "Centri Estetici: Come coordinare ferie e turni dello staff senza commettere errori",
+      "pain": "Sincronizzare i giorni di riposo e le ferie dello staff con le prenotazioni attive dei clienti",
+      "solution": "Gestire le agende dei singoli dipendenti in modo indipendente con aggiornamento automatico delle disponibilità su NeatX"
     },
     {
-      "title": "Prenotazione 24/7: Il segreto per clienti felici",
-      "hook": "Immagina clienti che prenotano autonomamente mentre tu riposi.",
-      "type": "blog",
-      "content": "Esplora i vantaggi della prenotazione automatica per migliorare la soddisfazione dei clienti."
+      "niche": "Centri Estetici",
+      "hook": "Un cliente prenota un trattamento specifico ma viene assegnato all'estetista che non sa farlo. Ecco come bloccare questo errore prima che succeda.",
+      "video_title": "TRATTAMENTI E OPERATORI GIUSTI",
+      "blog_title": "Gestione Centro Estetico: Come associare automaticamente i trattamenti allo staff qualificato",
+      "pain": "Assegnazione errata di servizi complessi a collaboratori non abilitati o non formati",
+      "solution": "Configurazione dei servizi su NeatX associando ciascuna prestazione solo ai membri dello staff selezionati"
     },
     {
-      "title": "Come risparmiare tempo e guadagnare di più",
-      "hook": "Basta squilli! Scopri come un sistema automatizzato può trasformare la tua agenda.",
-      "type": "video",
-      "content": "Dimostra un confronto tra l'agenda manuale e quella automatizzata."
+      "niche": "Centri Estetici",
+      "hook": "Passi la domenica sera a incastrare i turni delle tue estetiste su un foglio Excel? Stai sprecando ore che potresti dedicare alla tua vita privata.",
+      "video_title": "STOP TURNI SU EXCEL",
+      "blog_title": "Centri Estetici: Perchè usare ancora Excel per i turni dello staff ti fa perdere tempo e denaro",
+      "pain": "Gestione manuale e caotica dei turni di lavoro settimanali e dei cambi orario",
+      "solution": "Pianificazione dei turni ripetitivi e gestione delle variazioni orarie direttamente dall'agenda digitale NeatX"
     },
     {
-      "title": "Clienti che prenotano da soli: La tua nuova realtà",
-      "hook": "Lavori duro? È ora di far lavorare il tuo sistema di prenotazione per te.",
-      "type": "blog",
-      "content": "Racconta storie di personal trainer che hanno rivoluzionato il loro business con NeatX."
+      "niche": "Centri Estetici",
+      "hook": "Il telefono del tuo centro estetico squilla continuamente solo perchè le clienti vogliono sapere quando è libera la loro operatrice preferita. C'è un modo più intelligente per farlo.",
+      "video_title": "PRENOTAZIONI CON OPERATORE",
+      "blog_title": "Fidelizzazione e gestione dello staff: consenti alle clienti di scegliere la propria estetista online",
+      "pain": "Linee telefoniche intasate da richieste di prenotazione mirate per specifiche dipendenti",
+      "solution": "Interfaccia di prenotazione online NeatX che mostra i calendari singoli e permette la scelta dell'operatore preferito"
     },
     {
-      "title": "Il futuro del fitness: Prenotazioni senza stress",
-      "hook": "Non lasciare che il tuo telefono ti controlli, prendi il controllo con NeatX.",
-      "type": "video",
-      "content": "Visualizza come l'automazione cambia il modo di lavorare dei personal trainer."
+      "niche": "Centri Estetici",
+      "hook": "Due clienti si presentano alla stessa ora convinte di avere lo stesso trattamento con la stessa estetista. Se usi l'agenda cartacea, questo incubo si ripeterà ancora.",
+      "video_title": "STOP DOPPIE PRENOTAZIONI",
+      "blog_title": "Centri Estetici e Overbooking: Come eliminare i conflitti di appuntamenti tra cabine e staff",
+      "pain": "Sovrapposizione di appuntamenti sulla stessa risorsa o sullo stesso dipendente",
+      "solution": "Sincronizzazione in tempo reale multi-staff che blocca le fasce orarie già occupate ed evita conflitti"
     }
   ]
 }
