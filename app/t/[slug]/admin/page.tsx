@@ -652,8 +652,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         </div>
 
-        {/* I 3 KPI */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+        {/* Dashboard cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
           <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px]">
             <h2 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -711,14 +711,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-            <MessageRechargeCard
-              tenantId={tenantId}
-              slug={slug}
-              currentCredits={storeSettings?.smsCredits || 0}
-            />
-            <ReferralCard tenantId={tenantId} />
-          </div>
+          <MessageRechargeCard
+            tenantId={tenantId}
+            slug={slug}
+            currentCredits={storeSettings?.smsCredits || 0}
+          />
+          <ReferralCard tenantId={tenantId} />
         </div>
 
         

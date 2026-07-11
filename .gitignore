@@ -101,4 +101,5 @@ bot_scripts/Social/Social/ReelGenerator/*.mp4
 
 # Agent cache
 bot_scripts/Agents/__pycache__/
+bot_scripts/Social/ReelGenerator/__pycache__/
 bot_scripts/Agents/blackboard/*.json
