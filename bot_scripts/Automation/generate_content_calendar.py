@@ -184,11 +184,13 @@ def write_outputs(days):
 
     lines = ["# NeatX Content Calendar", ""]
     for item in days:
-        lines.append(f"## {item['date']} - {item['niche']} - {item.get('feature_label', item.get('feature', '?'))}")
-        lines.append(f"- Dolore: {item['pain']}")
-        lines.append(f"- Promessa: {item['promise']}")
-        lines.append(f"- Cover: {item['cover_title']}")
-        lines.append(f"- Blog: {item['blog_topic']}")
+        niche = item.get('niche') or item.get('target') or item.get('segment') or '?'
+        feature_label = item.get('feature_label') or item.get('feature') or item.get('service') or '?'
+        lines.append(f"## {item.get('date', '?')} - {niche} - {feature_label}")
+        lines.append(f"- Dolore: {item.get('pain', '?')}")
+        lines.append(f"- Promessa: {item.get('promise', '?')}")
+        lines.append(f"- Cover: {item.get('cover_title', '?')}")
+        lines.append(f"- Blog: {item.get('blog_topic', '?')}")
         lines.append("")
     CALENDAR_MD.write_text("\n".join(lines), encoding="utf-8")
 
@@ -199,6 +201,13 @@ def write_outputs(days):
 def main():
     seed = build_seed_calendar()
     days = openai_calendar(seed) or gemini_calendar(seed) or seed
+    # Validate days have required fields; if not, fall back to seed
+    if not isinstance(days, list) or len(days) == 0:
+        days = seed
+    else:
+        required = {"date", "niche", "pain", "promise", "cover_title"}
+        if not all(required.issubset(d.keys()) for d in days):
+            days = seed
     write_outputs(days)
 
 
