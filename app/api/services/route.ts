@@ -23,7 +23,8 @@ async function requireTenantAdmin(request: NextRequest) {
   
   // Fallback: leggi dall'header aggiunto dal middleware
   if (!authCookie) {
-    authCookie = request.headers.get("x-middleware-auth");
+    const headerAuth = request.headers.get("x-middleware-auth");
+    if (headerAuth) authCookie = headerAuth;
   }
   
   return authCookie === tenant.adminPassword ? tenant : null;
