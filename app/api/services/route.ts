@@ -63,7 +63,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
-    const body = await request.json();
+    const rawBody = await request.text();
+    console.log("[POST /api/services] tenant:", tenant.slug, "rawBody:", rawBody);
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (e) {
+      console.error("[POST /api/services] JSON parse error:", rawBody);
+      return NextResponse.json({ error: "JSON malformato" }, { status: 400 });
+    }
     console.log("[POST /api/services] tenant:", tenant.slug, "body:", body);
     const service = cleanService(body);
     console.log("[POST /api/services] cleaned:", service);
@@ -82,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ service: created });
   } catch (error: any) {
     console.error("Errore creazione servizio:", error);
-    return NextResponse.json({ error: "Errore interno", detail: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Errore interno", detail: error.message, stack: error.stack }, { status: 500 });
   }
 }
 
