@@ -711,13 +711,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </p>
           </div>
 
-          <MessageRechargeCard
-            tenantId={tenantId}
-            slug={slug}
-            currentCredits={storeSettings?.smsCredits || 0}
-          />
-
-          <div className="mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+            <MessageRechargeCard
+              tenantId={tenantId}
+              slug={slug}
+              currentCredits={storeSettings?.smsCredits || 0}
+            />
             <ReferralCard tenantId={tenantId} />
           </div>
         </div>
