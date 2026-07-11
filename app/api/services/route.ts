@@ -5,17 +5,10 @@ import { NextRequest } from "next/server";
 
 async function requireTenantAdmin(request: NextRequest) {
   const tenantSlug = request.nextUrl.searchParams.get("tenantSlug");
-  
+
   if (!tenantSlug) return null;
-  
+
   const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-  if (!tenant?.adminPassword) return null;
-
-  const cookieStore = await cookies();
-  const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
-  return authCookie === tenant.adminPassword ? tenant : null;
-}
-
   if (!tenant?.adminPassword) return null;
 
   const cookieStore = await cookies();
@@ -31,15 +24,9 @@ function cleanService(input: any) {
 }
 
 export async function GET(request: NextRequest) {
-  const tenantSlug = request.nextUrl.searchParams.get("tenantSlug");
-  
-  if (!tenantSlug) {
-    return NextResponse.json({ error: "tenantSlug mancante" }, { status: 400 });
-  }
-
-  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+  const tenant = await requireTenantAdmin(request);
   if (!tenant) {
-    return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
+    return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
   }
 
   try {
@@ -97,7 +84,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
-    const service = cleanService(body);
+    const service = cleanService(await request.json());
     if (!service.name) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
@@ -114,7 +101,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id") || "";
