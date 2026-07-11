@@ -3,30 +3,46 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
-async function requireTenantAdmin(request: NextRequest) {
-  // Prova prima il parametro query (aggiunto dal middleware)
-  let tenantSlug = request.nextUrl.searchParams.get("tenantSlug");
-  
-  // Fallback: leggi dall'header aggiunto dal middleware
-  if (!tenantSlug) {
-    tenantSlug = request.headers.get("x-middleware-tenant");
-  }
-  
-  if (!tenantSlug) return null;
-  
-  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-  if (!tenant) return null;
+function getTenantSlugFromRequest(request: NextRequest): string | null {
+  // 1. Query param (da middleware rewrite)
+  const fromQuery = request.nextUrl.searchParams.get("tenantSlug");
+  if (fromQuery) return fromQuery;
 
-  // Prova prima il cookie
+  // 2. Header middleware
+  const fromHeader = request.headers.get("x-middleware-tenant");
+  if (fromHeader) return fromHeader;
+
+  // 3. Fallback: host header (sottodominio)
+  const host = request.headers.get("host") || "";
+  if (isProd) {
+    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
+    if (host.endsWith(`.${rootDomain}`) && !host.startsWith("www.")) {
+      return host.replace(`.${rootDomain}`, "");
+    }
+  } else {
+    const slug = request.headers.get("host")?.split(".")[0] || "";
+    if (slug && slug !== "www" && slug !== "neatx") return slug;
+  }
+  return null;
+}
+
+const isProd = process.env.NODE_ENV === "production";
+
+async function requireTenantAdmin(request: NextRequest) {
+  const tenantSlug = getTenantSlugFromRequest(request);
+  if (!tenantSlug) return null;
+
+  const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
+  if (!tenant?.adminPassword) return null;
+
   const cookieStore = await cookies();
   let authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
-  
-  // Fallback: leggi dall'header aggiunto dal middleware
+
   if (!authCookie) {
     const headerAuth = request.headers.get("x-middleware-auth");
     if (headerAuth) authCookie = headerAuth;
   }
-  
+
   return authCookie === tenant.adminPassword ? tenant : null;
 }
 
