@@ -32,6 +32,9 @@ export default function SuperAdminPage() {
 
   const [stats, setStats] = useState({ mrr: 0, payingCount: 0, trialCount: 0 });
 
+  const [sortBy, setSortBy] = useState<"date" | "name" | "plan">("date");
+  const [detailTenant, setDetailTenant] = useState<any>(null);
+
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -247,6 +250,43 @@ export default function SuperAdminPage() {
     } finally {
       setEditing(false);
     }
+  };
+
+  const handleExportCsv = () => {
+    const sorted = getSortedTenants();
+    const headers = ["Nome", "Slug", "Piano", "Email", "Telefono", "Servizi", "SMS", "Stripe", "Creato il", "Trial Scade"];
+    const rows = sorted.map(t => [
+      t.name,
+      t.slug,
+      t.plan,
+      t.ownerEmail || '',
+      t.phone || '',
+      t.services?.length || 0,
+      t.storeSettings?.smsCredits || 0,
+      t.storeSettings?.stripeOnboardingComplete ? 'Si' : 'No',
+      new Date(t.createdAt).toLocaleDateString('it-IT'),
+      t.trialEndsAt ? new Date(t.trialEndsAt).toLocaleDateString('it-IT') : '-',
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `tenant-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  };
+
+  const getSortedTenants = () => {
+    const filtered = tenants.filter(t =>
+      t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (t.ownerEmail && t.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      t.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'plan') return (a.plan || 'basic').localeCompare(b.plan || 'basic');
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+    return sorted;
   };
 
   if (!isAuthenticated) {
@@ -509,14 +549,26 @@ export default function SuperAdminPage() {
           {/* Lista Clienti */}
           <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <h2 className="text-xl font-semibold text-white">Clienti Attivi ({tenants.length})</h2>
-              <input 
-                type="text" 
-                placeholder="Cerca negozio o email..." 
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="w-full sm:w-64 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-              />
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-semibold text-white">Clienti Attivi ({tenants.length})</h2>
+                <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer">
+                  <option value="date">📅 Più recenti</option>
+                  <option value="name">🔤 Nome A-Z</option>
+                  <option value="plan">📊 Per piano</option>
+                </select>
+              </div>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Cerca negozio o email..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="flex-1 sm:w-48 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+                />
+                <button onClick={handleExportCsv} className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-600/30 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap" title="Esporta CSV">
+                  📥 CSV
+                </button>
+              </div>
             </div>
             
             {loading ? (
@@ -531,11 +583,7 @@ export default function SuperAdminPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {tenants.filter(t => 
-                  t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                  (t.ownerEmail && t.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                  t.slug.toLowerCase().includes(searchTerm.toLowerCase())
-                ).map((tenant) => {
+                {getSortedTenants().map((tenant) => {
                   const now = new Date();
                   const trialEndsAt = tenant.trialEndsAt ? new Date(tenant.trialEndsAt) : null;
                   const isTrialExpired = trialEndsAt && now > trialEndsAt;
@@ -545,7 +593,7 @@ export default function SuperAdminPage() {
                   <div key={tenant.id} className="bg-slate-950 border border-slate-800 p-5 rounded-xl flex flex-col justify-between group hover:border-indigo-500/50 transition-colors gap-4">
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-white text-lg leading-tight truncate mr-2" title={tenant.name}>{tenant.name}</h3>
+                        <button onClick={() => setDetailTenant(tenant)} className="font-bold text-white text-lg leading-tight truncate mr-2 text-left hover:text-indigo-400 transition-colors" title={tenant.name}>{tenant.name}</button>
                         {(tenant.plan === 'pro' || tenant.plan === 'premium') && <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Pro</span>}
                         {tenant.plan === 'elite' && <span className="bg-fuchsia-500/20 text-fuchsia-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Elite</span>}
                       </div>
@@ -642,11 +690,7 @@ export default function SuperAdminPage() {
                   </div>
                 )})}
                 
-                {tenants.filter(t => 
-                  t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                  (t.ownerEmail && t.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                  t.slug.toLowerCase().includes(searchTerm.toLowerCase())
-                ).length === 0 && (
+                {getSortedTenants().length === 0 && (
                   <div className="text-center py-12 text-slate-500 lg:col-span-3">
                     <div className="text-4xl mb-2">👻</div>
                     Nessun cliente trovato.
@@ -742,6 +786,106 @@ export default function SuperAdminPage() {
             <button onClick={handleEditSave} disabled={editing} className="flex-1 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition disabled:opacity-50">
               {editing ? "Salvataggio..." : "Salva Modifiche"}
             </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Tenant Detail Drawer */}
+    {detailTenant && (
+      <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setDetailTenant(null)}>
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative w-full max-w-xl bg-slate-900 border-l border-slate-800 h-full overflow-y-auto shadow-2xl p-6" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-white">{detailTenant.name}</h2>
+              <p className="text-sm text-slate-400">{detailTenant.slug}.neatx.store</p>
+            </div>
+            <button onClick={() => setDetailTenant(null)} className="text-slate-400 hover:text-white text-xl">&times;</button>
+          </div>
+
+          <div className="space-y-5">
+            {/* Info generali */}
+            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Informazioni</h3>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><span className="text-slate-500">Piano:</span> <span className="text-white font-semibold capitalize">{detailTenant.plan}</span></div>
+                <div><span className="text-slate-500">Stato:</span> <span className="text-white font-semibold">{detailTenant.trialStatus}</span></div>
+                <div><span className="text-slate-500">Servizi:</span> <span className="text-white font-semibold">{detailTenant.services?.length || 0}</span></div>
+                <div><span className="text-slate-500">Stripe:</span> <span className={`font-semibold ${detailTenant.storeSettings?.stripeOnboardingComplete ? 'text-emerald-400' : 'text-red-400'}`}>{detailTenant.storeSettings?.stripeOnboardingComplete ? '✅ Collegato' : '❌ Non collegato'}</span></div>
+                <div><span className="text-slate-500">SMS Crediti:</span> <span className="text-white font-semibold">{detailTenant.storeSettings?.smsCredits || 0}</span></div>
+                <div><span className="text-slate-500">Creato il:</span> <span className="text-white font-semibold">{new Date(detailTenant.createdAt).toLocaleDateString('it-IT')}</span></div>
+              </div>
+              {detailTenant.ownerEmail && <p className="text-sm text-slate-400 mt-3">📧 {detailTenant.ownerEmail}</p>}
+              {detailTenant.phone && <p className="text-sm text-slate-400 mt-1">📞 {detailTenant.phone}</p>}
+              {detailTenant.address && <p className="text-sm text-slate-400 mt-1">📍 {detailTenant.address}</p>}
+            </div>
+
+            {/* Trial */}
+            {detailTenant.trialEndsAt && (
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Trial</h3>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-400">Scade il:</span>
+                  <span className="text-white font-semibold">{new Date(detailTenant.trialEndsAt).toLocaleDateString('it-IT')}</span>
+                  {(() => {
+                    const daysLeft = Math.ceil((new Date(detailTenant.trialEndsAt).getTime() - Date.now()) / (1000 * 3600 * 24));
+                    const expired = daysLeft <= 0;
+                    return <span className={`text-xs font-bold px-2 py-0.5 rounded ${expired ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>{expired ? 'Scaduto' : `${daysLeft} gg`}</span>;
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* Orari */}
+            {(detailTenant.openTime || detailTenant.closeTime) && (
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Orari</h3>
+                <div className="flex items-center gap-4 text-sm">
+                  {detailTenant.openTime && <span className="text-slate-400">Apertura: <span className="text-white font-semibold">{detailTenant.openTime}</span></span>}
+                  {detailTenant.closeTime && <span className="text-slate-400">Chiusura: <span className="text-white font-semibold">{detailTenant.closeTime}</span></span>}
+                </div>
+              </div>
+            )}
+
+            {/* Servizi */}
+            {detailTenant.services && detailTenant.services.length > 0 && (
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Servizi ({detailTenant.services.length})</h3>
+                <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+                  {detailTenant.services.map((svc: any) => (
+                    <div key={svc.id} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-lg hover:bg-slate-900/50">
+                      <span className="text-slate-300">{svc.name}</span>
+                      <span className="text-slate-500 font-mono">{svc.duration}min · €{svc.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Social */}
+            {(detailTenant.instagramUrl || detailTenant.mapsLink) && (
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Link</h3>
+                <div className="flex flex-col gap-2 text-sm">
+                  {detailTenant.instagramUrl && <a href={detailTenant.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 truncate">📸 {detailTenant.instagramUrl}</a>}
+                  {detailTenant.mapsLink && <a href={detailTenant.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 truncate">🗺️ {detailTenant.mapsLink}</a>}
+                </div>
+              </div>
+            )}
+
+            {/* Azioni rapide */}
+            <div className="flex gap-3 pt-2">
+              <a href={`https://${detailTenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-sm font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 px-4 py-2.5 rounded-lg hover:bg-indigo-600/30 transition">
+                🌐 Sito Pubblico
+              </a>
+              <button onClick={() => { handleImpersonate(detailTenant.slug, detailTenant.adminPassword); }} className="flex-1 text-sm font-bold bg-amber-600/20 text-amber-400 border border-amber-600/30 px-4 py-2.5 rounded-lg hover:bg-amber-600/30 transition">
+                🕵️ Entra come Admin
+              </button>
+              <button onClick={() => { setDetailTenant(null); openEdit(detailTenant); }} className="flex-1 text-sm font-bold bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 px-4 py-2.5 rounded-lg hover:bg-cyan-600/30 transition">
+                ✏️ Modifica
+              </button>
+            </div>
           </div>
         </div>
       </div>
