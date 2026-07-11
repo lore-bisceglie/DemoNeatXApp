@@ -105,7 +105,7 @@
         "title": "BARBIERI: BASTA NO-SHOW",
         "hook": "BARBIERI: BASTA NO-SHOW",
         "date": "2026-07-09",
-        "views": 296,
+        "views": 429,
         "likes": 1
     },
     {
@@ -120,7 +120,7 @@
         "title": "FISIOTERAPISTI: NO-SHOW STOP",
         "hook": "FISIOTERAPISTI: NO-SHOW STOP",
         "date": "2026-07-10",
-        "views": 120,
+        "views": 122,
         "likes": 1
     },
     {
@@ -128,7 +128,14 @@
         "title": "BASTA NO-SHOW",
         "hook": "BASTA NO-SHOW",
         "date": "2026-07-10",
-        "views": 140,
+        "views": 142,
         "likes": 1
+    },
+    {
+        "youtube_id": "y1fPCMhGG8Y",
+        "title": "BASTA NO SHOW",
+        "hook": "BASTA NO SHOW",
+        "date": "2026-07-11",
+        "views": 0
     }
 ]

@@ -82,6 +82,35 @@ def get_caption():
             return data.get("caption", "Scopri come automatizzare il tuo business con NeatX! #perte #fyp #foryou #viral #imprenditore #businessitalia")
     return "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione"
 
+def upload_video_fallback():
+    services = [
+        {
+            "url": "https://tmpfiles.org/api/v1/upload",
+            "files_name": "file",
+            "parse": lambda r: r.json().get("data", {}).get("url", "").replace("tmpfiles.org/dl", "tmpfiles.org/api/v1/download"),
+        },
+        {
+            "url": "https://file.io",
+            "files_name": "file",
+            "parse": lambda r: r.json().get("link", ""),
+        },
+    ]
+    for svc in services:
+        try:
+            print(f"    Provo {svc['url']}...")
+            r = requests.post(
+                svc["url"],
+                files={svc["files_name"]: open(VIDEO_FILE, "rb")},
+                timeout=120
+            )
+            url = svc["parse"](r)
+            if url.startswith("http"):
+                print(f"    [+] URL alternativo: {url}")
+                return url
+        except Exception as e:
+            print(f"    [!] Fallito: {e}")
+    return None
+
 def publish_to_instagram():
     if not META_ACCESS_TOKEN or not IG_ACCOUNT_ID:
         message = "META_ACCESS_TOKEN o IG_ACCOUNT_ID mancanti."
@@ -100,45 +129,64 @@ def publish_to_instagram():
 
     caption = get_caption()
     
-    # 1. Caricamento temporaneo del video (per permettere a Meta di scaricarlo)
+    # 1. Caricamento temporaneo del video (per permettere a Meta di scaricarlo) con retry
     print(f"[*] Caricamento del video {VIDEO_FILE} su server temporaneo per Meta...")
-    try:
-        r_upload = requests.post(
-            "https://litterbox.catbox.moe/resources/internals/api.php", 
-            data={"reqtype": "fileupload", "time": "1h"}, 
-            files={"fileToUpload": open(VIDEO_FILE, "rb")}
-        )
-        video_url = r_upload.text.strip()
-        print(f"[+] URL temporaneo generato: {video_url}")
+    video_url = None
+    max_retries = 5
+    for attempt in range(1, max_retries + 1):
+        try:
+            r_upload = requests.post(
+                "https://litterbox.catbox.moe/resources/internals/api.php",
+                data={"reqtype": "fileupload", "time": "24h"},
+                files={"fileToUpload": open(VIDEO_FILE, "rb")},
+                timeout=120
+            )
+            video_url = r_upload.text.strip()
+            print(f"[+] URL temporaneo generato: {video_url}")
+
+            if not video_url.startswith("http"):
+                raise Exception(f"Risposta non valida dal server temporaneo: {video_url[:200]}")
+            break
+        except Exception as e:
+            print(f"[!] Tentativo {attempt}/{max_retries} fallito: {e}")
+            if attempt < max_retries:
+                wait = min(2 ** attempt, 30)
+                print(f"    Nuovo tentativo tra {wait}s...")
+                time.sleep(wait)
+            else:
+                print(f"[!] catbox.moe fallito dopo {max_retries} tentativi, provo upload alternativo...")
+                video_url = upload_video_fallback()
+                if not video_url:
+                    message = f"Errore durante il caricamento temporaneo dopo {max_retries} tentativi."
+                    print("[!]", message)
+                    return platform_result(False, message)
         
-        if not video_url.startswith("http"):
-            raise Exception(f"Risposta non valida dal server temporaneo: {video_url}")
-            
-    except Exception as e:
-        message = f"Errore durante il caricamento temporaneo: {e}"
-        print("[!]", message)
-        return platform_result(False, message)
-        
-    # 2. Caricamento temporaneo della copertina
+    # 2. Caricamento temporaneo della copertina (con retry)
     cover_url = ""
     path_cover = "assets/cover.png"
     if os.path.exists(path_cover):
         print(f"[*] Caricamento della copertina {path_cover} su server temporaneo...")
-        try:
-            r_cover = requests.post(
-                "https://litterbox.catbox.moe/resources/internals/api.php", 
-                data={"reqtype": "fileupload", "time": "1h"}, 
-                files={"fileToUpload": open(path_cover, "rb")}
-            )
-            cover_url = r_cover.text.strip()
-            print(f"[+] URL copertina generato: {cover_url}")
-            
-            if not cover_url.startswith("http"):
-                print(f"[!] Avviso: Risposta copertina non valida: {cover_url}")
-                cover_url = ""
-                
-        except Exception as e:
-            print("[!] Errore durante il caricamento della copertina:", e)
+        for attempt in range(1, 4):
+            try:
+                r_cover = requests.post(
+                    "https://litterbox.catbox.moe/resources/internals/api.php",
+                    data={"reqtype": "fileupload", "time": "24h"},
+                    files={"fileToUpload": open(path_cover, "rb")},
+                    timeout=60
+                )
+                cover_url = r_cover.text.strip()
+                print(f"[+] URL copertina generato: {cover_url}")
+
+                if not cover_url.startswith("http"):
+                    print(f"[!] Avviso: Risposta copertina non valida: {cover_url[:200]}")
+                    cover_url = ""
+                break
+            except Exception as e:
+                print(f"[!] Tentativo copertina {attempt}/3 fallito: {e}")
+                if attempt < 3:
+                    time.sleep(2 ** attempt)
+                else:
+                    print("[!] Caricamento copertina fallito dopo 3 tentativi, proseguo senza.")
     
     # 3. Creazione Container (Fase 1 Meta API)
     print("[*] Invio richiesta di caricamento a Instagram...")

@@ -89,26 +89,44 @@ def inventa_argomento():
         print(f"[!] Errore generazione argomento: {e}")
         return f"Come gestire al meglio gli appuntamenti per {target}"
 
+def post_process(testo):
+    testo = re.sub(r'(?m)^\*\*(H[12]|Titolo|Introduzione|Corpo|Presentazione|Call to Action)[:\s]*\*\*', '', testo)
+    testo = re.sub(r'(?m)^(H[12]:)\s*', '', testo)
+    testo = re.sub(r'(?m)^\d+\.\s*\*\*(.+?)\*\*[:*]?\s*$', r'## \1', testo)
+    testo = re.sub(r'\n{3,}', '\n\n', testo)
+    return testo.strip()
+
 def genera_articolo_seo(argomento):
     print(f"[*] IA: Sto scrivendo un articolo SEO approfondito su '{argomento}'...")
     
     prompt = f"""
-Sei un Copywriter SEO esperto di posizionamento su Google e un venditore persuasivo.
+Sei un Copywriter SEO esperto di posizionamento su Google.
 Scrivi un articolo di blog completo e ottimizzato per i motori di ricerca sull'argomento: "{argomento}".
 
-Il tuo obiettivo finale è convincere il lettore che 'NeatX' (un'app per la gestione automatica degli appuntamenti 24/7, promemoria WhatsApp integrati, incassi anticipati) è la soluzione definitiva ai loro problemi.
+Il tuo obiettivo finale è convincere il lettore che 'NeatX' è la soluzione definitiva.
+Ecco le funzionalità reali di NeatX da menzionare (non inventare altro):
+- **Gestione orari** — blocco orari e ferie, disponibilità personalizzata per giorno
+- **Fogli presenze** — timesheet esportabile in CSV per il commercialista, ore lavorate per ogni collaboratore
+- **Pacchetti messaggi** — crediti SMS/WhatsApp ricaricabili (da 39€ per 500 messaggi)
+- **Invita clienti** — link referral brandizzato per invitare nuovi clienti tramite messaggio
+- **Recupero clienti** — invio automatico di messaggi con sconto integrati ai clienti che non tornano da 30+ giorni
 
-Struttura richiesta (Markdown):
-1. **Titolo SEO (H1):** Accattivante, che includa la parola chiave principale.
-2. **Introduzione:** Usa la tecnica PAS (Problem, Agitation, Solution).
-3. **Corpo dell'articolo (H2 e H3):** Dai consigli REALI e utili.
-4. **Presentazione di NeatX (H2):** Spiega come NeatX risolve tutti i problemi menzionati (senza commissioni, a differenza dei competitor).
-5. **Call to Action (H2):** Un forte invito a richiedere la propria App su NeatX.
+Struttura richiesta in Markdown (usa esattamente questo formato, mai label come "H1:" o "H2:"):
+# Titolo SEO accattivante
+## Introduzione
+Testo introduttivo...
+## [Titolo sezione corpo]
+Testo del corpo...
+## [Titolo sezione funzionalità]
+Testo su una funzionalità specifica...
+## Call to Action
+Testo finale...
 
 Regole:
-- Scrivi in italiano, tono professionale ma molto coinvolgente ed empatico.
+- Scrivi SOLO in Markdown puro (usa # e ## veri, mai "H1:" o "H2:").
+- Scrivi in italiano, tono professionale ma coinvolgente.
 - Almeno 400 parole.
-- Non includere frontmatter, restituisci solo il Markdown pulito partendo da # Titolo.
+- Non includere frontmatter, nessun preambolo, solo il Markdown.
 """
     openai_article = openai_text(
         prompt,
@@ -117,13 +135,13 @@ Regole:
     )
     if openai_article:
         print("[+] Articolo SEO scritto con OpenAI.")
-        return openai_article.strip()
+        return post_process(openai_article.strip())
 
     try:
         if not setup_gemini():
             return None
         response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
-        return response.text.strip()
+        return post_process(response.text.strip())
     except Exception as e:
         print(f"[!] Errore scrittura articolo: {e}")
         return None
@@ -138,7 +156,8 @@ def salva_articolo(testo, argomento):
     data_odierna = datetime.now().strftime("%Y-%m-%d")
     nome_file = f"{slug}.md"
     
-    frontmatter = f"---\ntitle: \"{argomento}\"\ndate: \"{data_odierna}\"\ndescription: \"Guida SEO e soluzioni avanzate per professionisti.\"\nslug: \"{slug}\"\n---\n\n"
+    desc = argomento[:120] if len(argomento) > 120 else argomento
+    frontmatter = f"---\ntitle: \"{argomento}\"\ndate: \"{data_odierna}\"\ndescription: \"{desc}\"\nslug: \"{slug}\"\n---\n\n"
     
     path_completo = os.path.join(BLOG_DIR, nome_file)
     with open(path_completo, "w", encoding="utf-8") as f:
