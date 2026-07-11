@@ -34,7 +34,9 @@ export function middleware(request: NextRequest) {
     // Rewrite interno: /api/xyz -> /api/xyz?tenantSlug=xxx (passa slug via query)
     // Le API useranno il parametro tenantSlug se presente, altrimenti leggono dal cookie
     url.searchParams.set("tenantSlug", tenantSlug);
-    return NextResponse.rewrite(url);
+    const response = NextResponse.rewrite(url);
+    response.headers.set("x-middleware-tenant", tenantSlug);
+    return response;
   }
 
   // Cookie domain sharing per root domain
