@@ -145,6 +145,13 @@ def build_seed_calendar():
         feature = rotated_features[i % len(rotated_features)]
         date = today + timedelta(days=i)
         gameplay = GAMEPLAY_STYLES[(i + date.day) % len(GAMEPLAY_STYLES)]
+        hook_angles = [
+            f"ADDIO {feature['pain'].split()[0].upper()}",
+            f"{target['niche'].upper()}: {feature['promise'][:20].upper()}",
+            f"{feature['label'][:15].upper()} ORA",
+            f"BASTA {feature['id'].upper().replace('_', ' ')}",
+        ]
+        fallback_cover = hook_angles[(i + date.day) % len(hook_angles)]
         items.append(
             {
                 "date": date.isoformat(),
@@ -153,6 +160,7 @@ def build_seed_calendar():
                 "feature_label": feature["label"],
                 "pain": feature["pain"],
                 "promise": feature["promise"],
+                "cover_title": fallback_cover,
                 "hook_hint": f"Se sei tra i {target['niche'].lower()} e {feature['pain']}, stai perdendo soldi.",
                 "blog_topic": f"{target['niche']}: {feature['label']} con NeatX",
                 "gameplay_style": gameplay,
