@@ -1,7 +1,13 @@
-// test-e2e.mjs
+// test-e2e.mjs — NEATX FULL E2E
 const BASE = process.env.BASE_URL || "https://www.neatx.store";
 const SUFFIX = Date.now();
 const email = `test-${SUFFIX}@neatx-test.dev`;
+
+let ok = 0, fail = 0;
+function check(label, pass, detail) {
+  if (pass) { ok++; console.log(`  ✅ ${label}`); }
+  else { fail++; console.log(`  ❌ ${label}${detail ? ': ' + detail : ''}`); }
+}
 
 async function jsonFetch(url, opts = {}) {
   const res = await fetch(url, {
@@ -15,79 +21,80 @@ async function jsonFetch(url, opts = {}) {
 }
 
 async function run() {
-  console.log("=".repeat(50));
-  console.log("TEST E2E NEATX — PRODUZIONE");
-  console.log("=".repeat(50));
+  console.log("=".repeat(55));
+  console.log("  NEATX — TEST COMPLETO SU PRODUZIONE");
+  console.log("=".repeat(55));
 
-  // 1. REGISTRAZIONE
-  console.log("\n1️⃣  REGISTRAZIONE...");
+  // ─────────────────────────────────────────────
+  // 1. ONBOARDING
+  // ─────────────────────────────────────────────
+  console.log("\n1️⃣  ONBOARDING");
   const reg = await jsonFetch(`${BASE}/api/onboarding`, {
     method: "POST",
     body: JSON.stringify({
-      businessName: "Test " + SUFFIX,
-      category: "barber", city: "Roma",
-      ownerName: "Mario Test", email,
-      password: "TestPass123!", phone: "393312345678",
-      address: "Via Test 1, Roma",
+      businessName: "Test " + SUFFIX, category: "barber", city: "Roma",
+      ownerName: "Mario Test", email, password: "TestPass123!",
+      phone: "393312345678", address: "Via Test 1, Roma",
     }),
   });
-  console.log("Status:", reg.status, reg.data.success ? "✅" : "❌");
-  if (!reg.data.success) { console.error(reg.data); return; }
+  check("Registrazione", reg.status === 200 && reg.data.success, reg.status + ' ' + JSON.stringify(reg.data).slice(0, 80));
   const { slug } = reg.data;
-  console.log("Tenant slug:", slug);
 
-  // 1b. Recupera ID tenant
-  console.log("\n1b️⃣  RECUPERO ID TENANT...");
-  const tenantInfo = await jsonFetch(`${BASE}/api/tenant/${slug}`);
-  if (tenantInfo.status !== 200 || !tenantInfo.data.id) {
-    console.error("❌ Impossibile recuperare tenant:", tenantInfo.data);
-    return;
-  }
-  const tenantId = tenantInfo.data.id;
-  console.log("ID tenant:", tenantId);
+  // ─────────────────────────────────────────────
+  // 2. RECUPERA TENANT
+  // ─────────────────────────────────────────────
+  console.log("\n2️⃣  RECUPERA TENANT");
+  const ten = await jsonFetch(`${BASE}/api/tenant/${slug}`);
+  check("GET tenant", ten.status === 200 && ten.data.id, JSON.stringify(ten.data).slice(0, 80));
+  const tenantId = ten.data.id;
 
-  // 2. LOGIN
-  console.log("\n2️⃣  LOGIN...");
+  // ─────────────────────────────────────────────
+  // 3. LOGIN
+  // ─────────────────────────────────────────────
+  console.log("\n3️⃣  LOGIN");
   const login = await jsonFetch(`${BASE}/api/tenant-login`, {
     method: "POST",
     body: JSON.stringify({ slug, password: "TestPass123!" }),
   });
-  console.log("Login:", login.status);
+  check("Login", login.status === 200, login.status + '');
   const setCookie = login.headers.get("set-cookie");
-  if (!setCookie) { console.error("❌ Nessun cookie"); return; }
-  const cookie = setCookie.split(";")[0];
-  console.log("Cookie OK");
+  const cookie = setCookie?.split(";")[0] || "";
+  check("Cookie ricevuto", !!setCookie);
 
-  // 3. SERVIZI
-  console.log("\n3️⃣  SERVIZI...");
-  const services = [
-    { name: "Taglio", duration: 30, price: 25 },
-    { name: "Barba", duration: 15, price: 10 },
-  ];
-  const createdServices = [];
-  for (const s of services) {
-    const r = await jsonFetch(`${BASE}/api/services`, {
-      method: "POST",
-      headers: { Cookie: cookie },
-      body: JSON.stringify(s),
-    });
-    console.log(`  ${s.name}:`, r.status === 200 ? "✅" : `❌ ${r.status} ${JSON.stringify(r.data)}`);
-    if (r.status === 200) createdServices.push(r.data.service);
-  }
-  if (createdServices.length === 0) { console.error("❌ Nessun servizio creato, mi fermo"); return; }
+  // ─────────────────────────────────────────────
+  // 4. SERVIZI (CRUD)
+  // ─────────────────────────────────────────────
+  console.log("\n4️⃣  SERVIZI CRUD");
+  const s1 = await jsonFetch(`${BASE}/api/services`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({ name: "Taglio", duration: 30, price: 25 }) });
+  check("Crea servizio", s1.status === 200, s1.status + '');
+  const s2 = await jsonFetch(`${BASE}/api/services`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({ name: "Barba", duration: 15, price: 10 }) });
+  check("Crea servizio 2", s2.status === 200);
+  const svcId = s1.data.service.id;
 
-  // 4. STAFF
-  console.log("\n4️⃣  STAFF...");
-  const staff = await jsonFetch(`${BASE}/api/staff`, {
-    method: "POST",
-    headers: { Cookie: cookie },
-    body: JSON.stringify({ name: "Mario", tenantId, services: [] }),
-  });
-  console.log("Staff:", staff.status === 200 ? "✅" : `❌ ${staff.status} ${JSON.stringify(staff.data)}`);
-  const staffId = staff.status === 200 ? staff.data.id : null;
+  const svcList = await jsonFetch(`${BASE}/api/services`, { headers: { Cookie: cookie } });
+  check("Lista servizi", svcList.status === 200 && svcList.data.services?.length >= 2);
 
-  // 5. ORARI (PUT)
-  console.log("\n5️⃣  ORARI...");
+  const svcUpd = await jsonFetch(`${BASE}/api/services`, { method: "PUT", headers: { Cookie: cookie }, body: JSON.stringify({ id: svcId, name: "Taglio Uomo", duration: 30, price: 30 }) });
+  check("Modifica servizio", svcUpd.status === 200 && svcUpd.data.service?.name === "Taglio Uomo");
+
+  // ─────────────────────────────────────────────
+  // 5. STAFF (CRUD)
+  // ─────────────────────────────────────────────
+  console.log("\n5️⃣  STAFF CRUD");
+  const staff = await jsonFetch(`${BASE}/api/staff`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({ name: "Mario", tenantId, services: [svcId] }) });
+  check("Crea staff", staff.status === 200, staff.status + ' ' + JSON.stringify(staff.data).slice(0, 60));
+  const staffId = staff.data.id;
+
+  const staffList = await jsonFetch(`${BASE}/api/staff?tenantId=${tenantId}`);
+  check("Lista staff", staffList.status === 200 && staffList.data?.length >= 1);
+
+  const svcLink = await jsonFetch(`${BASE}/api/staff`, { method: "PUT", headers: { Cookie: cookie }, body: JSON.stringify({ staffId, serviceIds: [svcId] }) });
+  check("Collega servizio a staff", svcLink.status === 200);
+
+  // ─────────────────────────────────────────────
+  // 6. ORARI
+  // ─────────────────────────────────────────────
+  console.log("\n6️⃣  ORARI");
   const baseSchedule = {
     Monday: { active: true, blocks: [{ start: "09:00", end: "13:00" }, { start: "14:00", end: "19:00" }] },
     Tuesday: { active: true, blocks: [{ start: "09:00", end: "13:00" }, { start: "14:00", end: "19:00" }] },
@@ -97,46 +104,60 @@ async function run() {
     Saturday: { active: true, blocks: [{ start: "09:00", end: "13:00" }] },
     Sunday: { active: false, blocks: [] },
   };
-  if (staffId) {
-    const sched = await jsonFetch(`${BASE}/api/staff/schedule`, {
-      method: "PUT",
-      headers: { Cookie: cookie },
-      body: JSON.stringify({ staffId, baseSchedule }),
-    });
-    console.log("Orari:", sched.status === 200 ? "✅" : `❌ ${sched.status} ${JSON.stringify(sched.data)}`);
-  } else {
-    console.log("Orari: ⏭️ saltato (no staff)");
-  }
+  const orari = await jsonFetch(`${BASE}/api/staff/schedule`, { method: "PUT", headers: { Cookie: cookie }, body: JSON.stringify({ staffId, baseSchedule }) });
+  check("Imposta orari", orari.status === 200, orari.status + '');
+  const orariGet = await jsonFetch(`${BASE}/api/staff/schedule?staffId=${staffId}`);
+  check("Leggi orari", orariGet.status === 200 && Object.keys(orariGet.data.baseSchedule || {}).length > 0);
 
-  // 6. DISPONIBILITÀ
-  console.log("\n6️⃣  DISPONIBILITÀ...");
+  // ─────────────────────────────────────────────
+  // 7. DISPONIBILITÀ
+  // ─────────────────────────────────────────────
+  console.log("\n7️⃣  DISPONIBILITÀ");
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const dateStr = tomorrow.toISOString().split("T")[0];
-  const avail = await jsonFetch(`${BASE}/api/availability?date=${dateStr}&tenantId=${tenantId}&serviceId=${createdServices[0].id}`, {
-    headers: { Cookie: cookie }
-  });
-  console.log("Disponibilità:", avail.status === 200 ? `✅ (${avail.data.slots?.length || 0} slot)` : `❌ ${JSON.stringify(avail.data)}`);
+  const avail = await jsonFetch(`${BASE}/api/availability?date=${dateStr}&tenantId=${tenantId}&serviceId=${svcId}`, { headers: { Cookie: cookie } });
+  check("Calcola disponibilità", avail.status === 200 && Array.isArray(avail.data.slots), JSON.stringify(avail.data).slice(0, 60));
 
-  // 7. BOOKING
-  console.log("\n7️⃣  BOOKING...");
-  const booking = await jsonFetch(`${BASE}/api/book`, {
-    method: "POST",
-    headers: { Cookie: cookie },
-    body: JSON.stringify({
-      serviceId: createdServices[0].id,
-      date: dateStr, time: "10:00",
-      customerName: "Test", customerPhone: "393331234567",
-      tenantId, source: "ONLINE", duration: createdServices[0].duration,
-    }),
-  });
-  console.log("Booking:", booking.status === 200 ? "✅" : `❌ ${JSON.stringify(booking.data)}`);
+  // ─────────────────────────────────────────────
+  // 8. BOOKING
+  // ─────────────────────────────────────────────
+  console.log("\n8️⃣  BOOKING");
+  const slotTime = avail.data.slots?.[0] || "10:00";
+  const book = await jsonFetch(`${BASE}/api/book`, { method: "POST", headers: { Cookie: cookie }, body: JSON.stringify({
+    serviceId: svcId, date: dateStr, time: slotTime,
+    customerName: "Test", customerPhone: "393331234567",
+    tenantId, source: "ONLINE", duration: 30,
+  })});
+  check("Crea prenotazione", book.status === 200 && book.data.success, JSON.stringify(book.data).slice(0, 80));
 
-  // 8. CRON (skip, richiede CRON_SECRET)
-  console.log("\n8️⃣  CRON... ⏭️ saltato (richiede CRON_SECRET)");
+  // ─────────────────────────────────────────────
+  // 9. REFERRAL
+  // ─────────────────────────────────────────────
+  console.log("\n9️⃣  REFERRAL");
+  const ref = await jsonFetch(`${BASE}/api/referral?tenantId=${tenantId}`, { headers: { Cookie: cookie } });
+  check("Referral", ref.status === 200 && ref.data.referralCode, JSON.stringify(ref.data).slice(0, 80));
 
-  console.log("\n" + "=".repeat(50));
-  console.log("TEST COMPLETATO");
-  console.log("=".repeat(50));
+  // ─────────────────────────────────────────────
+  // 10. CLIENTI
+  // ─────────────────────────────────────────────
+  console.log("\n🔟  CLIENTI");
+  const cust = await jsonFetch(`${BASE}/api/customers?tenantId=${tenantId}`);
+  check("Lista clienti", cust.status === 200, cust.status + ' ' + JSON.stringify(cust.data).slice(0, 80));
+
+  // ─────────────────────────────────────────────
+  // 11. ELIMINA SERVIZIO
+  // ─────────────────────────────────────────────
+  console.log("\n1️⃣1️⃣  ELIMINA SERVIZIO");
+  const del = await jsonFetch(`${BASE}/api/services?id=${svcId}`, { method: "DELETE", headers: { Cookie: cookie } });
+  check("Elimina servizio", del.status === 200 && del.data.success);
+
+  // ─────────────────────────────────────────────
+  // SOMMARIO
+  // ─────────────────────────────────────────────
+  console.log("\n" + "=".repeat(55));
+  console.log(`  RISULTATO: ${ok} ✅  ${fail} ❌  ${ok + fail} totali`);
+  console.log("=".repeat(55));
+  process.exit(fail > 0 ? 1 : 0);
 }
 
-run().catch(e => { console.error("❌", e); process.exit(1); });
+run().catch(e => { console.error("❌ FATALE:", e.message); process.exit(1); });

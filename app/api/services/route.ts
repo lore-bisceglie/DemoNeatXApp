@@ -136,7 +136,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
-    const service = cleanService(await request.json());
+    const service = cleanService(body);
     if (!service.name) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
