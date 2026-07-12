@@ -57,17 +57,74 @@ def load_today_brief():
         print(f"[!] Strategia del giorno non leggibile: {e}")
         return {}
 
+FEATURE_LIST = [
+    "timesheet", "recensioni", "analytics", "multi_staff",
+    "booking", "promemoria", "no_show", "messaggi", "referral",
+]
+
+FEATURE_LABELS = {
+    "timesheet": "Timesheet Automatici",
+    "recensioni": "Recensioni Automatiche",
+    "analytics": "Statistiche e Analisi",
+    "multi_staff": "Gestione Staff e Turni",
+    "booking": "Prenotazioni 24/7",
+    "promemoria": "Promemoria WhatsApp",
+    "no_show": "Zero No-Show",
+    "messaggi": "Pacchetti Messaggi",
+    "referral": "Invita Clienti",
+}
+
+FEATURE_PAINS = {
+    "timesheet": "ancora segni i turni su Excel a mano",
+    "recensioni": "i clienti soddisfatti non lasciano recensioni",
+    "analytics": "non sai quanto guadagni davvero ogni mese",
+    "multi_staff": "gestire piu collaboratori e un caos",
+    "booking": "ancora bloccato al telefono per dare appuntamenti",
+    "promemoria": "i clienti dimenticano e non si presentano",
+    "no_show": "perdi tempo e soldi con appuntamenti saltati",
+    "messaggi": "devi comprare costosi piani SMS che non usi mai",
+    "referral": "i tuoi clienti non ti portano nuovi clienti",
+}
+
+FEATURE_PROMISES = {
+    "timesheet": "timesheet automatici per il commercialista in un click",
+    "recensioni": "recensioni Google inviate in automatico dopo ogni appuntamento",
+    "analytics": "statistiche in tempo reale su guadagni e performance",
+    "multi_staff": "ogni collaboratore con la propria agenda e i propri servizi",
+    "booking": "prenotazioni 24/7 senza dover rispondere al telefono",
+    "promemoria": "promemoria WhatsApp che riducono i no-show del 90%",
+    "no_show": "acconti automatici che filtrano i clienti seri",
+    "messaggi": "crediti SMS/WhatsApp ricaricabili senza vincoli",
+    "referral": "link referral brandizzato per far pubblicizzare i tuoi clienti",
+}
+
+FEATURE_COVERS = {
+    "timesheet": "BASTA EXCEL",
+    "recensioni": "RECENSIONI AUTOMATICHE",
+    "analytics": "SAPER QUANTO GUADAGNI",
+    "multi_staff": "GESTIONE STAFF FACILE",
+    "booking": "APPUNTAMENTI 24/7",
+    "promemoria": "ADDIO NO-SHOW",
+    "no_show": "BASTA NO-SHOW",
+    "messaggi": "MESSAGGI ILLIMITATI",
+    "referral": "CLIENTI CHE PORTANO CLIENTI",
+}
+
 def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
     strategy = strategy or {}
-    pain = strategy.get("pain") or "perdere tempo tra messaggi, telefonate e appuntamenti saltati"
-    promise = strategy.get("promise") or "prenotazioni automatiche e meno no-show"
-    cover_title = strategy.get("cover_title") or "BASTA NO-SHOW"
+
+    if not strategy.get("feature"):
+        strategy["feature"] = random.choice(FEATURE_LIST)
+
+    feature = strategy["feature"]
+    pain = strategy.get("pain") or FEATURE_PAINS.get(feature, "perdere tempo tra messaggi, telefonate e appuntamenti saltati")
+    promise = strategy.get("promise") or FEATURE_PROMISES.get(feature, "prenotazioni automatiche e meno no-show")
+    cover_title = strategy.get("cover_title") or FEATURE_COVERS.get(feature, "BASTA NO-SHOW")
     image_prompt = strategy.get("image_prompt") or f"photorealistic {target} professional working in a modern real workplace"
 
     if reason:
         print(f"[!] Uso contenuto fallback per il reel: {reason}")
-
-    feature = strategy.get("feature", "")
+    print(f"[*] Feature del giorno: {FEATURE_LABELS.get(feature, feature)}")
     if feature == "timesheet":
         script_text = (
             f"Se sei tra i {target.lower()} e ancora segni i turni su Excel, "
@@ -168,13 +225,17 @@ def generate_daily_content():
         except:
             pass
 
+    if not strategy.get("feature"):
+        strategy["feature"] = random.choice(FEATURE_LIST)
+
     strategy_context = ""
     pain_focus = ""
     if strategy:
+        feature_label = FEATURE_LABELS.get(strategy.get("feature", ""), strategy.get("feature_label", ""))
         strategy_context = f"""
 [STRATEGIA DEL GIORNO]
 Target: {target}
-Feature: {strategy.get("feature_label", "")} ({strategy.get("feature", "")})
+Feature: {feature_label} ({strategy.get("feature", "")})
 Dolore: {strategy.get("pain", "")}
 Promessa: {strategy.get("promise", "")}
 Titolo copertina suggerito: {strategy.get("cover_title", "")}
@@ -183,25 +244,19 @@ Argomento blog collegato: {strategy.get("blog_topic", "")}
 """
         pain_focus = strategy.get("pain", "")
 
-    # Determina il pain/focus dinamico per il prompt
-    feature = (strategy or {}).get("feature", "")
-    hook_instruction = ""
-    if feature == "no_show":
-        hook_instruction = "Fai capire che stanno perdendo soldi con clienti che non si presentano. Parla di acconti obbligatori e no-show azzerati."
-    elif feature == "booking":
-        hook_instruction = "Fai capire che stanno perdendo tempo a rispondere su WhatsApp o al telefono. Parla di prenotazioni automatiche 24/7."
-    elif feature == "timesheet":
-        hook_instruction = "Fai capire che perdono ore a gestire turni su Excel. Parla di CSV pronto per il commercialista, ferie e permessi automatici."
-    elif feature == "recensioni":
-        hook_instruction = "Fai capire che perdono recensioni Google preziose. Parla del sistema automatico che raccoglie 5 stelle da ogni cliente soddisfatto."
-    elif feature == "promemoria":
-        hook_instruction = "Fai capire che i clienti dimenticano gli appuntamenti. Parla di promemoria WhatsApp automatici che riducono i no-show del 90%."
-    elif feature == "analytics":
-        hook_instruction = "Fai capire che non sanno quanto guadagnano davvero. Parla di statistiche in tempo reale su incassi, performance e trend."
-    elif feature == "multi_staff":
-        hook_instruction = "Fai capire che gestire piu collaboratori e un caos. Parla di agenda separata per ogni staff, turni e ferie automatici."
-    else:
-        hook_instruction = "Fai capire che stanno perdendo tempo e soldi con sistemi manuali. Parla di automazione con NeatX."
+    feature = strategy.get("feature", "")
+    hook_instructions_map = {
+        "no_show": "Fai capire che stanno perdendo soldi con clienti che non si presentano. Parla di acconti obbligatori e no-show azzerati.",
+        "booking": "Fai capire che stanno perdendo tempo a rispondere su WhatsApp o al telefono. Parla di prenotazioni automatiche 24/7.",
+        "timesheet": "Fai capire che perdono ore a gestire turni su Excel. Parla di CSV pronto per il commercialista, ferie e permessi automatici.",
+        "recensioni": "Fai capire che perdono recensioni Google preziose. Parla del sistema automatico che raccoglie 5 stelle da ogni cliente soddisfatto.",
+        "promemoria": "Fai capire che i clienti dimenticano gli appuntamenti. Parla di promemoria WhatsApp automatici che riducono i no-show del 90%.",
+        "analytics": "Fai capire che non sanno quanto guadagnano davvero. Parla di statistiche in tempo reale su incassi, performance e trend.",
+        "multi_staff": "Fai capire che gestire piu collaboratori e un caos. Parla di agenda separata per ogni staff, turni e ferie automatici.",
+        "messaggi": "Fai capire che comprano piani SMS costosi che non usano mai. Parla di crediti WhatsApp ricaricabili da 39€ per 500 messaggi.",
+        "referral": "Fai capire che ogni cliente soddisfatto potrebbe portarne altri. Parla del link referral brandizzato che trasforma i clienti in venditori.",
+    }
+    hook_instruction = hook_instructions_map.get(feature, "Fai capire che stanno perdendo tempo e soldi con sistemi manuali. Parla di automazione con NeatX.")
 
     prompt = f"""
 Sei un esperto di marketing virale su Instagram e TikTok (stile ADHD retention).
