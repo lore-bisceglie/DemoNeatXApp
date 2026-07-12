@@ -7,23 +7,17 @@ import TrustMarquee from "@/components/landing/TrustMarquee";
 import BeforeAfterSlider from "@/components/landing/BeforeAfterSlider";
 import ComparisonTable from "@/components/landing/ComparisonTable";
 import FeaturesSection from "@/components/landing/FeaturesSection";
-import WhatsAppFeatureSection from "@/components/landing/WhatsAppFeatureSection";
 import TimesheetFeatureSection from "@/components/landing/TimesheetFeatureSection";
 import OperatingSteps from "@/components/landing/OperatingSteps";
-import NoShowSimulator from "@/components/landing/NoShowSimulator";
-import ReviewSimulator from "@/components/landing/ReviewSimulator";
 import PricingSection from "@/components/landing/PricingSection";
-import EmailCapture from "@/components/landing/EmailCapture";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
-import StripeMockup from "@/components/landing/StripeMockup";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
-  const [showStripe, setShowStripe] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -36,16 +30,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050814] text-slate-200 font-sans selection:bg-[#00b4ff]/30 overflow-x-hidden relative">
-      
-      {showStripe && (
-        <StripeMockup 
-          amount={10.00} 
-          onSuccess={() => {
-            setShowStripe(false);
-          }}
-          onCancel={() => setShowStripe(false)}
-        />
-      )}
       
       <style>{`
         .glow-card {
@@ -77,15 +61,11 @@ export default function Home() {
       <HeroSection />
       <TrustMarquee />
       <BeforeAfterSlider />
-      <ComparisonTable />
       <FeaturesSection />
-      <WhatsAppFeatureSection />
       <TimesheetFeatureSection />
       <OperatingSteps />
-      <NoShowSimulator onOpenStripe={() => setShowStripe(true)} />
-      <ReviewSimulator />
       <PricingSection />
-      <EmailCapture />
+      <ComparisonTable />
       <FAQSection />
       <FinalCTA />
       <Footer />
