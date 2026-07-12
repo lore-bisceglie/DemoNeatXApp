@@ -1,13 +1,13 @@
 {
-    "niche": "Personal Trainer",
-    "script_text": "Ehi Personal Trainer, sei stanco di perdere soldi con clienti che non si presentano? Ogni no-show è un colpo al tuo portafoglio! Con NeatX, puoi impostare acconti automatici che filtrano i clienti inaffidabili. Ogni slot occupato da chi ha già pagato! Non lasciare che il tuo lavoro venga rovinato da chi non rispetta gli impegni. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "BASTA NO SHOW",
-    "cover_title": "BASTA NO SHOW",
-    "image_prompt": "photorealistic personal trainer coaching a client in a modern gym, energetic and professional scene",
-    "gameplay_style": "neon_racer",
-    "caption": "Sei un Personal Trainer? Non perdere più soldi con i no-show! Scopri come NeatX può aiutarti a garantire ogni appuntamento. Commenta AGENDA per il link! #perte #fyp #foryou #viral #imprenditore #businessitalia #personaltrainer",
-    "strategy_date": "2026-07-11",
-    "strategy_feature": "no_show",
-    "strategy_pain": "acconti automatici che filtrano i clienti che non si presentano",
-    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato"
+    "niche": "Coach e Consulenti",
+    "script_text": "Sei stanco di rispondere al telefono e ai messaggi senza fine? Ogni minuto perso è denaro buttato! Con NeatX, i tuoi clienti possono prenotare 247, anche mentre dormi. Stop ai no-show e ai messaggi che ti distraggono. Finalmente puoi concentrarti su ciò che ami davvero far crescere il tuo business. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "ADDIO TELEFONO",
+    "cover_title": "ADDIO TELEFONO",
+    "image_prompt": "photorealistic consultant in a sleek modern office, engaged in a video call, laptop calendar visible, showcasing an efficient business environment",
+    "gameplay_style": "runner",
+    "caption": "Dì addio al caos delle prenotazioni! Con NeatX, i tuoi clienti prenotano 24/7. Non sprecare più tempo! Commenta AGENDA per scoprire di più! #perte #fyp #foryou #viral #imprenditore #businessitalia #coaching #consulting",
+    "strategy_date": "2026-07-12",
+    "strategy_feature": "booking",
+    "strategy_pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+    "strategy_promise": "clienti che prenotano da soli anche mentre dormi"
 }

@@ -279,6 +279,7 @@ Regole:
 - La caption di Instagram deve essere persuasiva, includere hashtag VIRALI come #perte #fyp #foryou #viral #imprenditore #businessitalia + hashtag di nicchia e l'invito a commentare la parola AGENDA.
 - Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante.
 - Il "image_prompt" deve essere in INGLESE e descrivere una scena fotografica coerente con {target}, con un professionista vero al lavoro nel suo ambiente.
+- Scrivi SEMPRE "24/7" con lo slash, mai "247" o "24 ore su 24" o "24 7".
 
 Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtick):
 {{

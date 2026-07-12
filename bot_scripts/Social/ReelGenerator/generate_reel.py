@@ -345,9 +345,9 @@ def get_gameplay_clip(duration):
     if gameplay_path:
         print(f"[*] Uso gameplay locale: {gameplay_path}")
         clip = VideoFileClip(gameplay_path).without_audio()
-        if clip.duration > duration:
-            max_start = max(0, clip.duration - duration - 0.1)
-            start_t = random.uniform(0, max_start)
+        if clip.duration > duration + 15:
+            max_start = max(15, clip.duration - duration - 0.1)
+            start_t = random.uniform(15, max_start)
             clip = clip.subclip(start_t, start_t + duration)
         else:
             clip = clip.fx(vfx.loop, duration=duration)

@@ -120,7 +120,7 @@
         "title": "FISIOTERAPISTI: NO-SHOW STOP",
         "hook": "FISIOTERAPISTI: NO-SHOW STOP",
         "date": "2026-07-10",
-        "views": 122,
+        "views": 124,
         "likes": 1
     },
     {
@@ -128,7 +128,7 @@
         "title": "BASTA NO-SHOW",
         "hook": "BASTA NO-SHOW",
         "date": "2026-07-10",
-        "views": 142,
+        "views": 143,
         "likes": 1
     },
     {
@@ -136,6 +136,14 @@
         "title": "BASTA NO SHOW",
         "hook": "BASTA NO SHOW",
         "date": "2026-07-11",
+        "views": 17,
+        "likes": 0
+    },
+    {
+        "youtube_id": "NW-_dx0yAv8",
+        "title": "ADDIO TELEFONO",
+        "hook": "ADDIO TELEFONO",
+        "date": "2026-07-12",
         "views": 0
     }
 ]

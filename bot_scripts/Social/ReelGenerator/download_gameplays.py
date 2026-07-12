@@ -31,13 +31,13 @@ def download_gameplays():
             
         print(f"[*] Sto cercando e scaricando: {game}...")
         
-        # Cerchiamo un gameplay senza commento, possibilmente in formato verticale (shorts) o generico corto (max 3 min)
-        query = f"ytsearch1:{game} gameplay no commentary shorts"
+        # Cerchiamo gameplay lungo senza commento e senza UI/menu iniziali (longplay = già in game)
+        query = f"ytsearch1:{game} longplay gameplay no commentary"
         output_template = f"{output_dir}/{safe_name}.%(ext)s"
         
         command = [
             yt_dlp_exe,
-            "--match-filter", "duration < 300",  # Max 5 minuti per evitare file enormi
+            "--match-filter", "duration > 120 & duration < 600",  # Tra 2 e 10 minuti (evita短片 con menu)
             "-f", "bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4][height<=1080]/best",
             "-o", output_template,
             query
