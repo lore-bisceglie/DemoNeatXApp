@@ -66,6 +66,19 @@ jobs:
         run: |
           cd bot_scripts/Social/ReelGenerator
           python auto_bot.py
+      - name: Youtube Comment Bot (rispondi ai commenti)
+        if: steps.gate.outputs.should_run == 'true'
+        continue-on-error: true
+        env:
+          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+        run: |
+          cd bot_scripts/Social/ReelGenerator
+          python youtube_comment_bot.py || true
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        if: steps.gate.outputs.should_run == 'true'
+        with:
+          commit_message: "Auto-reel: aggiorna commenti YouTube processati"
+          file_pattern: "bot_scripts/Social/ReelGenerator/youtube_replied.json"
       - name: Upload generated reel artifact
         if: steps.gate.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
