@@ -761,7 +761,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 Integrazione Pagamenti (Stripe)
               </h2>
               <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                Ricevi caparre e pagamenti direttamente sul tuo IBAN. Zero commissioni NeatX (solo ~1.5% di Stripe). Stripe ti chiederà solo nome, cognome, data di nascita e IBAN — niente partita IVA o documenti se sei un privato. I soldi arrivano direttamente a te.
+                I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. NeatX non trattiene, non manovra e non vede i tuoi soldi — è Stripe (il circuito dietro PayPal) a gestire il trasferimento. NeatX non salva né il tuo IBAN né i tuoi dati bancari. Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Ti serviranno solo nome, cognome, data di nascita e IBAN.
               </p>
             </div>
             
@@ -769,9 +769,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               {storeSettings?.stripeOnboardingComplete ? (
                 <div className="flex flex-col items-end gap-1">
                   <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
-                    <CheckCircle size={16} /> Conto Collegato (Apri Stripe)
+                    <CheckCircle size={16} /> IBAN Collegato (Gestisci su Stripe)
                   </a>
-                  <span className="text-[10px] text-slate-500 mr-2">Clicca per modificare IBAN/Conto</span>
+                  <span className="text-[10px] text-slate-500 mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
                 </div>
               ) : (
                 <a
