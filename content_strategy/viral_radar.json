@@ -1,66 +1,76 @@
 {
-  "generated_at": "2026-07-12T10:53:42.011446+02:00",
+  "generated_at": "2026-07-12T11:50:30.244491+02:00",
   "signals_used": {
     "reel_history_count": 18,
     "viral_hits_count": 0,
-    "blog_titles_count": 0,
+    "blog_titles_count": 1,
     "today_niche": "Coach e Consulenti"
   },
   "ideas": [
     {
-      "cover_title": "ADDIO ORE",
-      "hook": "Se sei un coach o un consulente e usi ancora i fogli Excel per segnare le ore dei dipendenti, stai perdendo tempo e soldi ogni mese.",
-      "blog_title": "Coach e Consulenti: Timesheet Commercialista con NeatX",
-      "description": "Video in stile runner che mostra il caos dei fogli Excel persi dai collaboratori contro la semplicità di NeatX, che organizza turni, ferie e permessi con un click.",
+      "title": "ADDIO TELEFONO",
+      "hook": "Se sei un coach o un consulente e passi la giornata a rispondere a messaggi e chiamate per fissare appuntamenti, stai perdendo ore di lavoro pagato.",
+      "concept": "Video stile runner in cui il personaggio evita ostacoli che rappresentano notifiche WhatsApp e chiamate perse, raccogliendo icone di calendari sincronizzati fino al traguardo.",
+      "blog_title": "Coach e Consulenti: Come attivare la prenotazione 24/7 con NeatX e liberare il tuo tempo",
       "keywords": [
         "agenda consulente",
         "prenotazioni coach",
         "booking consulenze"
-      ]
+      ],
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup"
     },
     {
-      "cover_title": "EXCEL TI UCCIDE",
-      "hook": "Smetti di rincorrere i tuoi collaboratori a fine mese per farti mandare i fogli presenza: ecco come avere tutto pronto in un click.",
-      "blog_title": "Come eliminare i fogli presenza manuali nel tuo studio di consulenza",
-      "description": "Analisi del tempo perso dai titolari di studi di coaching nel calcolare manualmente le ore lavorate dal team, con focus sull'esportazione immediata in CSV.",
+      "title": "CLIENTI MENTRE DORMI",
+      "hook": "Per tutti i consulenti stanchi di rincorrere i clienti su WhatsApp: ecco il metodo per riempire l'agenda di sessioni confermate anche mentre state dormendo.",
+      "concept": "Gameplay runner in cui il giocatore salta sopra ostacoli a forma di messaggi vocali infiniti e raccoglie notifiche di pagamento e prenotazione automatica.",
+      "blog_title": "Automazione per coach: come ricevere prenotazioni di consulenza anche di notte",
       "keywords": [
-        "agenda consulente",
-        "timesheet commercialista",
-        "booking consulenze"
-      ]
+        "automazione consulenza",
+        "prenotazioni automatiche coach",
+        "agenda online consulenti"
+      ],
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic tired coach looking at a clean digital calendar on a tablet, modern minimalist home office background"
     },
     {
-      "cover_title": "ZERO ERRORI",
-      "hook": "Un errore di trascrizione sul foglio ore dei tuoi dipendenti può costarti caro. Ecco come automatizzare i report per il tuo commercialista.",
-      "blog_title": "La guida definitiva al timesheet automatico per società di consulenza",
-      "description": "Focalizzato sulla precisione fiscale. Mostra come NeatX generi un file CSV accurato senza errori umani, pronto da inviare direttamente allo studio commerciale.",
+      "title": "ABBIAMO UN PROBLEMA",
+      "hook": "Coach e consulenti, fare avanti e indietro tra email e chat per trovare un'ora libera vi costa centinaia di euro di tempo perso ogni singolo mese.",
+      "concept": "Runner 3D veloce dove il personaggio accumula monete che rappresentano ore fatturate ogni volta che evita una telefonata di disturbo grazie al link NeatX.",
+      "blog_title": "Quanto ti costa non avere un sistema di prenotazione online per le tue consulenze?",
       "keywords": [
-        "prenotazioni coach",
-        "agenda consulente",
-        "booking consulenze"
-      ]
+        "gestione tempo coach",
+        "piattaforma booking consulenti",
+        "ottimizzare agenda consulenza"
+      ],
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic split screen showing a stressed consultant answering calls versus a relaxed consultant with a booked calendar on screen"
     },
     {
-      "cover_title": "CSV IN UN CLICK",
-      "hook": "Se gestisci un team di consulenti e perdi ore a calcolare ferie e permessi, stai bloccando la crescita della tua agenzia.",
-      "blog_title": "Come ottimizzare la gestione dei collaboratori nel coaching senza micro-management",
-      "description": "Spiegazione di come i collaboratori possano registrare i propri turni in autonomia sulla piattaforma, liberando il titolare da inutili compiti di controllo.",
+      "title": "ZERO MESSAGGI",
+      "hook": "Se i tuoi potenziali clienti devono scriverti in privato solo per conoscere le tue disponibilità e prenotare, ne stai perdendo la metà prima ancora di iniziare.",
+      "concept": "Il runner accelera progressivamente superando i muri dell'attrito di prenotazione, mostrando come un link NeatX velocizzi l'acquisizione clienti.",
+      "blog_title": "Come migliorare l'esperienza cliente per coach e consulenti con la prenotazione diretta",
       "keywords": [
-        "agenda consulente",
-        "booking consulenze",
-        "prenotazioni coach"
-      ]
+        "calendario online coach",
+        "booking immediato consulenza",
+        "software prenotazione NeatX"
+      ],
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic corporate coach smiling, pointing to a smartphone screen with a clean booking confirmation interface"
     },
     {
-      "cover_title": "STOP FOGLI PERSI",
-      "hook": "Quanti fogli di calcolo hai perso quest'anno? Per i tuoi dipendenti serve un sistema che si integra direttamente con la tua agenda.",
-      "blog_title": "Perché i fogli Excel stanno rallentando il tuo studio di coaching",
-      "description": "Video comparativo che mette in evidenza la vulnerabilità dei file locali rispetto a un cloud sicuro integrato con le prenotazioni dei clienti e i turni dello staff.",
+      "title": "BASTA CHIAMATE SÌ",
+      "hook": "Sei un consulente professionista, non un centralinista. Smetti di usare il tuo tempo per confermare manualmente ogni singola sessione di lavoro.",
+      "concept": "Personaggio runner che distrugge barriere fatte di vecchie agende cartacee e telefoni squillanti usando lo scudo della prenotazione automatica NeatX.",
+      "blog_title": "Da centralinista a consulente: come stabilire confini professionali grazie all'agenda digitale",
       "keywords": [
-        "prenotazioni coach",
-        "booking consulenze",
-        "agenda consulente"
-      ]
+        "agenda digitale consulenti",
+        "gestione appuntamenti coach",
+        "NeatX prenotazioni"
+      ],
+      "gameplay_style": "runner",
+      "image_prompt": "photorealistic modern office setup, a high-end laptop open displaying a fully booked NeatX calendar interface, bright lighting"
     }
   ]
 }
