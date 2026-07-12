@@ -129,12 +129,6 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
         </div>
 
         <div className="p-4 border-b border-[#1e2b4a] bg-[#0b1221] space-y-3">
-          <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-3">
-            <p className="text-cyan-200 text-xs leading-relaxed">
-              Demo CRM: prova note e preferenze con nomi e numeri finti. In una
-              agenda reale queste informazioni restano private del negozio.
-            </p>
-          </div>
           <input
             type="text"
             placeholder="Cerca nome, numero o servizio..."
