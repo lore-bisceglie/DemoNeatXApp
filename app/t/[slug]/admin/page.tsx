@@ -31,7 +31,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   noStore();
 
   const searchParams = await props.searchParams;
-  const activeTab = searchParams?.tab || 'agenda';
+  const activeTab = searchParams?.tab || (searchParams?.stripe ? 'stripe' : 'agenda');
 
   
   const { slug } = await props.params;
@@ -761,7 +761,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 Integrazione Pagamenti (Stripe)
               </h2>
               <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                Collega il tuo conto bancario per richiedere caparre online. Zero commissioni da parte di NeatX (Stripe trattiene solo i costi vivi del ~1.5%). I soldi arrivano direttamente sul tuo IBAN.
+                Ricevi caparre e pagamenti direttamente sul tuo IBAN. Zero commissioni NeatX (solo ~1.5% di Stripe). Stripe ti chiederà solo nome, cognome, data di nascita e IBAN — niente partita IVA o documenti se sei un privato. I soldi arrivano direttamente a te.
               </p>
             </div>
             
@@ -778,7 +778,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   href={`/api/stripe/connect?tenantId=${tenantId}`}
                   className="bg-[#007aff] hover:bg-[#00b4ff] text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap"
                 >
-                  Collega Conto Bancario
+                  Collega IBAN (Solo 2 minuti)
                 </a>
               )}
             </div>

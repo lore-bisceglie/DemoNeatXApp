@@ -15,6 +15,11 @@ export async function GET(request: Request) {
   }
 
   try {
+    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) {
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    }
+
     let settings = await prisma.storeSettings.findUnique({ where: { tenantId } });
     if (!settings) {
       settings = await prisma.storeSettings.create({ data: { tenantId } });
@@ -23,20 +28,25 @@ export async function GET(request: Request) {
     let accountId = settings.stripeAccountId;
 
     if (!accountId) {
-      // Create a new Connect account
       const account = await stripe.accounts.create({
-        type: "standard", // Standard is perfect for zero-platform-fee
+        type: "express",
+        capabilities: {
+          transfers: { requested: true },
+        },
+        business_type: "individual",
+        business_profile: {
+          url: `https://${tenant.slug}.neatx.store`,
+          product_description: "Prenotazioni appuntamenti e servizi per il settore benessere",
+        },
       });
       accountId = account.id;
 
-      // Save the ID immediately
       await prisma.storeSettings.update({
         where: { tenantId },
         data: { stripeAccountId: accountId }
       });
     }
 
-    // Create an account link for onboarding
     const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
@@ -50,8 +60,6 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error("Stripe Connect Error:", error);
 
-    // MOCK DEMO: Se Stripe fallisce (chiave invalida o scaduta),
-    // simuliamo il collegamento andato a buon fine per permettere di testare l'app!
     await prisma.storeSettings.update({
       where: { tenantId },
       data: { 
@@ -60,9 +68,8 @@ export async function GET(request: Request) {
       }
     });
     
-    // Siccome siamo nel dominio tenant, facciamo il redirect alla dashboard tenant giusta
     const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
     const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }});
-    return NextResponse.redirect(`${origin}/t/${tenant?.slug || 'beart'}/admin?stripe=demo_connected`);
+    return NextResponse.redirect(`${origin}/t/${tenant?.slug || 'beart'}/admin?tab=stripe&stripe=demo_connected`);
   }
 }

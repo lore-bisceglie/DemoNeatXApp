@@ -19,12 +19,10 @@ export async function GET(request: Request) {
   const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
   
   if (refresh === "true") {
-    // L'utente è uscito prima di finire, lo rimandiamo al pannello admin o gli diamo un nuovo link
-    return NextResponse.redirect(new URL(`/t/${tenant?.slug || 'demo'}/admin?stripe=incomplete`, request.url));
+    return NextResponse.redirect(new URL(`/t/${tenant?.slug || 'demo'}/admin?tab=stripe&stripe=incomplete`, request.url));
   }
 
   if (success === "true") {
-    // Controlliamo su Stripe se ha davvero finito (anti-furbetti)
     const settings = await prisma.storeSettings.findUnique({ where: { tenantId } });
     if (settings?.stripeAccountId) {
       try {
@@ -34,7 +32,7 @@ export async function GET(request: Request) {
             where: { tenantId },
             data: { stripeOnboardingComplete: true }
           });
-          return NextResponse.redirect(new URL(`/t/${tenant?.slug || 'demo'}/admin?stripe=connected`, request.url));
+          return NextResponse.redirect(new URL(`/t/${tenant?.slug || 'demo'}/admin?tab=stripe&stripe=connected`, request.url));
         }
       } catch (error) {
         console.error("Error retrieving Stripe account:", error);
@@ -42,6 +40,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // Fallback
-  return NextResponse.redirect(new URL(`/t/${tenant?.slug || 'demo'}/admin?stripe=incomplete`, request.url));
+  return NextResponse.redirect(new URL(`/t/${tenant?.slug || 'demo'}/admin?tab=stripe&stripe=incomplete`, request.url));
 }

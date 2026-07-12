@@ -15,7 +15,7 @@ export async function PUT(request: Request) {
         paymentStrategy,
         paymentFixedAmount: paymentFixedAmount ? parseFloat(paymentFixedAmount) : null,
         paymentPercentage: paymentPercentage ? parseInt(paymentPercentage, 10) : null,
-        
+        paymentMandatory: typeof paymentMandatory === "boolean" ? paymentMandatory : undefined,
       },
     });
 
