@@ -70,7 +70,7 @@ export default function ReferralCard({ tenantId }: Props) {
           </div>
 
           <p className="text-[10px] text-slate-600 leading-relaxed">
-            Ogni amico che si registra col tuo link e attiva un abbonamento ti regala <strong className="text-emerald-400">100 crediti WhatsApp</strong>.
+            Ogni amico che si registra col tuo link e attiva un abbonamento ti regala <strong className="text-emerald-400">75 crediti WhatsApp</strong>.
             Nessun limite. Più inviti, più messaggi gratis.
           </p>
         </>

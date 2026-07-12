@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 
 // ContentSid del template WhatsApp approvato su Twilio
-const WHATSAPP_TEMPLATE_SID = process.env.TWILIO_WHATSAPP_TEMPLATE_SID || "HX0d6f6b033f662296acf240e5531eb7aa";
+const WHATSAPP_TEMPLATE_SID = process.env.TWILIO_WHATSAPP_TEMPLATE_SID || "";
 
 interface WhatsAppTemplateVars {
   storeName: string;      // {{1}}

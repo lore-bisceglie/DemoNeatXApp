@@ -2,17 +2,16 @@ export const dynamic = "force-dynamic";
 
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-// import { cookies } from "next/headers"; // Riattivare per la login admin
 import { redirect } from "next/navigation";
 import DeleteButton from "./DeleteButton";
 import WalkInButton from "./WalkInButton";
 import AppointmentBlock from "./AppointmentBlock";
+import { DEMO_TENANT_ID } from "@/lib/demoService";
 import { unstable_noStore as noStore } from "next/cache";
 
 import AutoRefreshMonitor from "./AutoRefreshMonitor";
 import SwipeableAgenda from "./SwipeableAgenda";
 import CustomerDrawer from "./CustomerDrawer";
-import WaitlistDashboard from "./WaitlistDashboard";
 import ResetDemoButton from "./ResetDemoButton";
 
 export default async function Dashboard(props: {
@@ -21,8 +20,6 @@ export default async function Dashboard(props: {
   noStore();
 
   const searchParams = await props.searchParams;
-
-  const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
 
   // 1. CARICAMENTO DEL NEGOZIO E DEI SERVIZI
   const tenant = await prisma.tenant.findUnique({
@@ -573,7 +570,7 @@ export default async function Dashboard(props: {
             Demo condivisibile NeatX
           </h2>
           <p className="text-cyan-100 text-sm leading-relaxed">
-            Questa dashboard e pensata per far provare l'agenda a barbieri,
+            Questa dashboard è pensata per far provare l'agenda a barbieri,
             centri beauty, nails, studi, tattoo, massaggiatori e consulenti.
             Usa nomi e numeri finti: puoi bloccare, spostare, annullare,
             segnare pagato, aprire la rubrica e simulare avvisi senza uscire
@@ -803,7 +800,7 @@ export default async function Dashboard(props: {
                   scroll={false}
                   className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
                 >
-                  Pros →
+                  Pross →
                 </Link>
               </div>
             </div>

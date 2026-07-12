@@ -13,7 +13,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
           🔒
         </div>
         <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-amber-300">
-          Il tuo periodo di prova e terminato
+          Il tuo periodo di prova è terminato
         </p>
         <h1 className="text-3xl font-extrabold sm:text-5xl mb-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
           Scegli il piano per il tuo Salone
@@ -31,7 +31,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
         {/* CARD PRO */}
         <div className="flex-1 relative bg-[#0b1221] border border-cyan-500/50 rounded-3xl p-8 shadow-[0_0_30px_rgba(6,182,212,0.15)] flex flex-col">
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-            PIU SCELTO
+            PIÙ SCELTO
           </div>
           <h2 className="text-cyan-400 font-bold text-xl mb-4">Pro</h2>
           <div className="flex items-end gap-2 mb-2">
@@ -78,7 +78,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
 
       <div className="mt-12 text-center">
         <a href={publicUrl} className="text-slate-500 text-sm font-medium hover:text-cyan-400 transition-colors">
-          Visualizza il sito del tuo salone (Modalita Cliente)
+          Visualizza il sito del tuo salone (Modalità Cliente)
         </a>
       </div>
     </main>

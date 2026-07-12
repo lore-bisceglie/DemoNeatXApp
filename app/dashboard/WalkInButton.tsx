@@ -60,7 +60,7 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full h-full py-2 text-slate-500 hover:text-slate-300 font-bold text-xs bg-transparent hover:bg-[#131c31] rounded-xl border border-dashed border-[#1e2b4a] hover:border-slate-500 transition-all flex items-center justify-center min-h-[35px]"
+        className="group w-full h-full py-2 text-slate-500 hover:text-slate-300 font-bold text-xs bg-transparent hover:bg-[#131c31] rounded-xl border border-dashed border-[#1e2b4a] hover:border-slate-500 transition-all flex items-center justify-center min-h-[35px]"
       >
         <span className="text-[10px] font-medium tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Libero</span>
       </button>

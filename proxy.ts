@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
 const isProd = process.env.NODE_ENV === "production";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
   const url = request.nextUrl.clone();
 

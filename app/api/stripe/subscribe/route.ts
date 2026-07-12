@@ -64,19 +64,8 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("Stripe Subscription Checkout Error:", error);
 
-    const { tenantId: fallbackId, slug: fallbackSlug, plan: fallbackPlan = 'pro' } = await request.json().catch(() => ({}));
-    if (fallbackId && fallbackSlug) {
-       await prisma.tenant.update({
-         where: { id: fallbackId },
-         data: { plan: fallbackPlan, trialStatus: 'converted', trialEndsAt: null }
-       });
-       const host = request.headers.get("host") || "localhost:3000";
-       const protocol = host.includes("localhost") ? "http" : "https";
-       return NextResponse.json({ url: `${protocol}://${host}/t/${fallbackSlug}/admin?payment=demo_mock_success` });
-    }
-
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Errore nel processare il pagamento. Il tuo piano non è stato attivato. " + (error?.message || "Riprova più tardi.") },
       { status: 500 }
     );
   }

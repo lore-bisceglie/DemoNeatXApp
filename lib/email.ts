@@ -1,5 +1,9 @@
 import nodemailer from "nodemailer";
 
+function esc(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
 function getTransporter() {
   const user = process.env.SMTP_EMAIL;
   const pass = process.env.SMTP_PASSWORD;
@@ -30,19 +34,20 @@ async function send(options: { to: string; subject: string; html: string }) {
 }
 
 export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, adminPassword: string, tenantUrl: string) {
+  const safeName = esc(ownerName);
   return send({
     to: tenantEmail,
     subject: `Benvenuto in NeatX, ${ownerName}! Il tuo gestionale è pronto 🎉`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-        <h1 style="color: #00b4ff;">Ciao ${ownerName}, benvenuto in NeatX! 🎉</h1>
+        <h1 style="color: #00b4ff;">Ciao ${safeName}, benvenuto in NeatX! 🎉</h1>
         <p>Sono Lorenzo, ho creato NeatX per aiutare professionisti come te a liberarsi dal caos delle prenotazioni via telefono e WhatsApp.</p>
         <p>Ho già preparato tutto per te: servizi, staff e una pagina di prenotazione funzionante. Entra e provala subito.</p>
         <div style="background: #f4f4f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
           <p><strong>🔗 Link del tuo negozio:</strong><br/><a href="${tenantUrl}" style="color: #00b4ff;">${tenantUrl}</a></p>
-          <p><strong>🔑 Password admin:</strong> <code style="background: #e2e4e8; padding: 3px 8px; border-radius: 4px; font-size: 14px;">${adminPassword}</code></p>
         </div>
         <p>Hai 7 giorni di prova gratuita per testare tutto. Se hai dubbi o vuoi un consiglio, rispondi pure a questa email: ti leggo di persona.</p>
+        <p>Per accedere alla dashboard, usa il link qui sopra e inserisci la password che hai scelto in registrazione.</p>
         <p>A presto,<br/><strong>Lorenzo — NeatX</strong></p>
         <hr style="border: none; border-top: 1px solid #e2e4e8; margin: 20px 0;"/>
         <p style="font-size: 12px; color: #999;">
@@ -54,14 +59,16 @@ export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, a
 }
 
 export async function sendTrialReminder3Days(tenantEmail: string, tenantName: string, ownerName: string, adminUrl: string) {
+  const safeOwner = esc(ownerName);
+  const safeTenant = esc(tenantName);
   return send({
     to: tenantEmail,
     subject: `NeatX: la prova di ${tenantName} scade tra 3 giorni`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <h2 style="color: #f59e0b;">⏳ Il tuo trial sta per scadere</h2>
-        <p>Ciao ${ownerName},</p>
-        <p>La prova gratuita di <strong>${tenantName}</strong> scade tra <strong>3 giorni</strong>.</p>
+        <p>Ciao ${safeOwner},</p>
+        <p>La prova gratuita di <strong>${safeTenant}</strong> scade tra <strong>3 giorni</strong>.</p>
         <p>Se non attivi un abbonamento, perderai l'accesso al gestionale e i tuoi clienti non potranno più prenotare.</p>
         <div style="text-align: center; margin: 30px 0;">
           <a href="${adminUrl}" style="background: #10b981; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">Attiva piano da 29€</a>
@@ -72,14 +79,16 @@ export async function sendTrialReminder3Days(tenantEmail: string, tenantName: st
 }
 
 export async function sendTrialReminder1Day(tenantEmail: string, tenantName: string, ownerName: string, adminUrl: string) {
+  const safeOwner = esc(ownerName);
+  const safeTenant = esc(tenantName);
   return send({
     to: tenantEmail,
     subject: `ULTIMO GIORNO - La prova NeatX di ${tenantName} scade domani`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <h2 style="color: #ef4444;">🚨 Ultimo giorno!</h2>
-        <p>Ciao ${ownerName},</p>
-        <p>Domani scade la prova gratuita di <strong>${tenantName}</strong>.</p>
+        <p>Ciao ${safeOwner},</p>
+        <p>Domani scade la prova gratuita di <strong>${safeTenant}</strong>.</p>
         <p><strong>Se non attivi ora, perderai:</strong></p>
         <ul>
           <li>Il link di prenotazione dei tuoi clienti</li>
@@ -95,14 +104,16 @@ export async function sendTrialReminder1Day(tenantEmail: string, tenantName: str
 }
 
 export async function sendTrialExpiredOffer(tenantEmail: string, tenantName: string, ownerName: string, paywallUrl: string) {
+  const safeOwner = esc(ownerName);
+  const safeTenant = esc(tenantName);
   return send({
     to: tenantEmail,
     subject: `NeatX: ${tenantName} è ancora in tempo per riattivare`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <h2 style="color: #00b4ff;">Il tuo gestionale ti aspetta</h2>
-        <p>Ciao ${ownerName},</p>
-        <p>La prova di <strong>${tenantName}</strong> è scaduta, ma i tuoi dati sono ancora lì.</p>
+        <p>Ciao ${safeOwner},</p>
+        <p>La prova di <strong>${safeTenant}</strong> è scaduta, ma i tuoi dati sono ancora lì.</p>
         <p>Attivando l'abbonamento riparti subito senza perdere nulla:</p>
         <ul>
           <li>Servizi, staff e orari già configurati</li>

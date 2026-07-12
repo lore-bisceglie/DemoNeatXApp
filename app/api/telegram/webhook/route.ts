@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { sendTelegramMessage } from "@/lib/telegram";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 // Invia una risposta al click di un bottone inline per far smettere di caricare l'orologino
 async function answerCallbackQuery(callbackQueryId: string, text?: string) {
@@ -111,7 +109,7 @@ export async function POST(req: Request) {
         // Calcolo rapido statistiche
         const tenantsCount = await prisma.tenant.count();
         const appointmentsCount = await prisma.appointment.count();
-        const mrr = tenantsCount * 29.99; // Stima di 30€ al mese per salone
+        const mrr = tenantsCount * 29; // Stima di 30€ al mese per salone
         
         const reply = `📊 <b>STATISTICHE NEATX</b>\n\n🏢 <b>Saloni iscritti:</b> ${tenantsCount}\n📅 <b>Prenotazioni totali:</b> ${appointmentsCount}\n💰 <b>MRR Stimato:</b> ${mrr.toFixed(2)}€`;
         await sendTelegramMessage(reply);
@@ -148,7 +146,7 @@ export async function POST(req: Request) {
               let reply = `🏢 <b>${r.name}</b> (${r.city})\n`;
               if (r.phone) reply += `📞 ${r.phone}\n`;
               if (r.ownerEmail) reply += `✉️ ${r.ownerEmail}\n`;
-              reply += `🔗 demo-neatx.vercel.app/t/${r.slug}`;
+              reply += `🔗 neatx.store/t/${r.slug}`;
               
               const markup = {
                 inline_keyboard: [
@@ -176,7 +174,7 @@ export async function POST(req: Request) {
           if (!tenant) {
             await sendTelegramMessage(`Nessun salone trovato per "<b>${query}</b>"`);
           } else {
-            const magicLink = `https://demo-neatx.vercel.app/api/telegram/magic?slug=${tenant.slug}&secret=${tenant.adminPassword}`;
+            const magicLink = `https://www.neatx.store/api/telegram/magic?slug=${tenant.slug}&secret=${tenant.adminPassword}`;
             await sendTelegramMessage(`🕵️‍♂️ <b>Login Magico per ${tenant.name}</b>\n\nClicca qui sotto per entrare nel suo gestionale scavalcando la password:\n🔗 ${magicLink}`);
           }
         }

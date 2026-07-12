@@ -104,7 +104,7 @@ export const demoShopTemplates: Record<DemoCategory, DemoShopTemplate> = {
     label: "Barbiere",
     shortLabel: "Barbiere",
     description:
-      "Barber shop con taglio, barba e servizi rapidi. La pagina mostra disponibilita reali e riduce i messaggi avanti e indietro.",
+      "Barber shop con taglio, barba e servizi rapidi. La pagina mostra disponibilità reali e riduce i messaggi avanti e indietro.",
     openTime: "09:00",
     closeTime: "20:00",
     breakStart: "13:00",

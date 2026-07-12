@@ -344,6 +344,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             if (capableStaff) defaultStaff = capableStaff.id;
           }
           setSelectedStaffId(defaultStaff);
+        } else {
+          setInitialLoad(false);
+          setDateError("Nessun servizio configurato per questo negozio.");
         }
         setLoadingTenant(false);
       })
@@ -441,24 +444,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
-
-  useEffect(() => {
-    fetch(`/api/services?tenantId=${tenantInfo.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.services && data.services.length > 0) {
-          setServices(data.services);
-          setSelectedService(data.services[0]);
-        } else {
-          setInitialLoad(false);
-          setDateError("Nessun servizio configurato per questo negozio.");
-        }
-      })
-      .catch((err) => {
-        console.error("Errore servizi:", err);
-        setInitialLoad(false);
-      });
-  }, [tenantInfo.id]);
 
   useEffect(() => {
     if (!date || !selectedService) return;
@@ -1476,7 +1461,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 </select>
 
                 <button
-                  onClick={() => setSelectedService(null)}
+                  onClick={handleFirstAvailable}
                   className={`w-full text-xs font-semibold transition ${th.textMain} ${th.textHover}`}
                 >
                   [+] Primo disponibile
@@ -1666,7 +1651,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           <p>
             Powered by <span className="font-bold text-white">Neat</span><span className="font-bold text-[#007aff]">X</span>
             <br />
-            Developed by <span className="text-[#007aff] font-semibold">Bisceglie Lorenzo</span>
+            Powered by <span className="text-[#007aff] font-semibold">NeatX</span>
           </p>
           <Link 
             href={getTenantAdminUrl(params.slug)}

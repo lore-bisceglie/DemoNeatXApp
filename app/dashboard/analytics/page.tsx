@@ -177,9 +177,6 @@ export default async function AnalyticsPage() {
   let avgDailyRevenue =
     uniqueDays.size > 0 ? Math.round(totalRevenue / uniqueDays.size) : 0;
 
-  // =========================================
-  // 💉 MOCK DATA PER LA DEMO (Se non ci sono appuntamenti)
-  // =========================================
   let finalWeeklyRevenue = weeklyRevenue;
   let finalDayOfWeekCounts = dayOfWeekCounts;
   let finalTimeSlotCounts = timeSlotCounts;

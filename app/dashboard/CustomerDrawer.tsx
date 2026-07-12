@@ -266,7 +266,7 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
                       Spesa stimata
                     </p>
                     <p className="text-2xl font-extrabold text-emerald-400">
-                      EUR {selectedCustomer.totalSpent}
+                      €{selectedCustomer.totalSpent}
                     </p>
                   </div>
                   <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-3">
