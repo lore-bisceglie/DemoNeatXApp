@@ -1,0 +1,66 @@
+name: NeatX Daily Report
+on:
+  schedule:
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - run: pip install requests python-dotenv
+      - name: Genera report giornaliero
+        id: report
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd bot_scripts
+
+          TODAY=$(date +%Y-%m-%d)
+
+          # Reel pubblicati oggi
+          REEL_COUNT=$(grep -l "$TODAY" ../bot_scripts/Social/ReelGenerator/reel_data.json 2>/dev/null && echo "1" || echo "0")
+
+          # Articoli SEO oggi
+          SEO_COUNT=$(ls ../content/blog/*.md 2>/dev/null | wc -l)
+
+          # Lead oggi
+          LEAD_COUNT=$(ls ../leads/lead_messages_$TODAY.md 2>/dev/null && echo "1" || echo "0")
+
+          # Negozio creato oggi
+          STORE_COUNT=$(grep -c "$TODAY" ../super_logs.json 2>/dev/null || echo "0")
+
+          # Errori oggi (ultimo report reel)
+          IG_STATUS="?"
+          if [ -f ../publish_report.json ]; then
+            IG_STATUS=$(python -c "
+import json
+with open('../publish_report.json') as f:
+    r=json.load(f)
+for k,v in r.get('results',{}).items():
+    print(f'{k}: {\"✅\" if v.get(\"ok\") else \"❌\"}')
+" 2>&1 | tr '\n' ' | ')
+          fi
+
+          DATE_IT=$(TZ=Europe/Rome date +'%d/%m/%Y')
+          REPORT="📅 *Report $DATE_IT*
+
+📹 Reel pubblicati: $REEL_COUNT
+📝 Articoli SEO: $SEO_COUNT
+👥 Lead raccolti: $LEAD_COUNT
+🏪 Nuovi negozi: $STORE_COUNT
+
+$IG_STATUS"
+
+          python -c "
+import sys
+sys.path.insert(0, '.')
+from notify_telegram import send
+send('Report Giornaliero', '''$REPORT''', '📊')
+" 2>&1 || python notify_telegram.py "Report Giornaliero" "$REPORT" "📊"

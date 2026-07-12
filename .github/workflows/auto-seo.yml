@@ -1,42 +1,48 @@
 name: NeatX Auto-SEO Machine
 on:
   schedule:
-    # Esegue ogni giorno alle 08:00 UTC
-    - cron: '0 8 * * *'
-  workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
+    - cron: '0 7 * * *'
+  workflow_dispatch:
 permissions:
   contents: write
 concurrency:
-  group: neatx-content-writes
+  group: neatx-seo
   cancel-in-progress: false
 jobs:
-  run-seo-bot:
+  generate-blog-post:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: true
-      - name: Setup Python
-        uses: actions/setup-python@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install google-genai
-      - name: Run Auto-SEO Machine & Impero Mediatico
+      - run: pip install google-genai python-dotenv requests
+      - name: Genera articolo SEO
+        continue-on-error: true
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_ACTIONS: "true"
         run: |
           cd bot_scripts/SEO_Machine
-          python auto_seo_machine.py
-          python impero_mediatico.py || true
-      - name: Commit & Push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
+          python auto_seo_machine.py || true
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "Auto-SEO: Nuovo articolo generato dall'IA 🤖"
+          commit_message: "Auto-SEO: nuovo articolo blog"
           file_pattern: "content/blog/*.md bot_scripts/SEO_Machine/satellites_content/*.md"
-          pull_options: '--rebase'
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd bot_scripts
+          POSTS=$(ls -t ../content/blog/*.md 2>/dev/null | head -1)
+          if [ -n "$POSTS" ]; then
+            TITLE=$(head -1 "$POSTS" 2>/dev/null | sed 's/.*"//;s/".*//')
+            python notify_telegram.py "SEO Blog" "Articolo pubblicato: $TITLE" "📝"
+          else
+            python notify_telegram.py "SEO Blog" "Nessun articolo generato oggi" "⚠️"
+          fi
