@@ -60,16 +60,9 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error("Stripe Connect Error:", error);
 
-    await prisma.storeSettings.update({
-      where: { tenantId },
-      data: { 
-        stripeAccountId: "acct_demo_" + Math.floor(Math.random()*1000), 
-        stripeOnboardingComplete: true 
-      }
-    });
-    
-    const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
-    const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }});
-    return NextResponse.redirect(`${origin}/t/${tenant?.slug || 'beart'}/admin?tab=stripe&stripe=demo_connected`);
+    return NextResponse.json(
+      { error: "Errore nel collegamento a Stripe. Il conto non è stato collegato. " + (error?.message || "Riprova più tardi.") },
+      { status: 500 }
+    );
   }
 }
