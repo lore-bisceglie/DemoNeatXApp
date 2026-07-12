@@ -30,7 +30,7 @@ export default function InstagramFloatingBtn({ compact = false }: InstagramFloat
       href={compact ? appUrl : webUrl}
       onClick={handleClick}
       aria-label="Apri Instagram NeatX"
-      className={`flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-bold shadow-lg shadow-pink-500/30 hover:scale-105 transition-transform cursor-pointer ${
+      className={`flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-bold shadow-lg shadow-pink-500/30 hover:scale-105 transition-transform cursor-pointer transform-gpu will-change-transform ${
         compact ? "h-14 w-14" : "px-5 py-3"
       }`}
     >

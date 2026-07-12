@@ -2,7 +2,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 import { requireSuperAdmin } from '@/lib/auth';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 

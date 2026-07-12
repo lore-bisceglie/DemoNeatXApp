@@ -1,14 +1,27 @@
 import { prisma } from "./prisma";
+import twilio from "twilio";
 
-// ContentSid del template WhatsApp approvato su Twilio
 const WHATSAPP_TEMPLATE_SID = process.env.TWILIO_WHATSAPP_TEMPLATE_SID || "";
+const WHATSAPP_MSG_SVC_SID = process.env.TWILIO_WHATSAPP_MSG_SVC_SID || "";
 
 interface WhatsAppTemplateVars {
-  storeName: string;      // {{1}}
-  customerName: string;   // {{2}}
-  date: string;           // {{3}}
-  time: string;           // {{4}}
-  cancelUrl: string;      // {{5}}
+  storeName: string;
+  customerName: string;
+  date: string;
+  time: string;
+}
+
+function formatPhone(raw: string): string {
+  let p = raw.replace(/[^0-9+]/g, "");
+  if (!p.startsWith("+")) p = `+39${p}`;
+  return p;
+}
+
+async function deductCredit(tenantId: string) {
+  await prisma.storeSettings.update({
+    where: { tenantId },
+    data: { smsCredits: { decrement: 1 } },
+  });
 }
 
 export async function sendTenantMessage(
@@ -17,137 +30,68 @@ export async function sendTenantMessage(
   smsBody: string,
   whatsappVars?: WhatsAppTemplateVars
 ) {
-  // 1. Controlla se Twilio è configurato
   const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
   const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
   const TWILIO_FROM = process.env.TWILIO_PHONE_NUMBER;
 
   if (!TWILIO_SID || !TWILIO_TOKEN || !TWILIO_FROM) {
-    console.error("❌ Credenziali Twilio mancanti nel file .env!");
+    console.error("[sms] Credenziali Twilio mancanti");
     return { success: false, error: "Twilio non configurato" };
   }
 
   try {
-    // 2. Controlla i crediti del salone nel database
-    const storeSettings = await prisma.storeSettings.findUnique({
-      where: { tenantId },
-    });
-
-    if (!storeSettings || storeSettings.smsCredits <= 0) {
-      console.warn(
-        `⚠️ Tentativo di invio bloccato: Il salone (tenantId: ${tenantId}) non ha crediti sufficienti (${storeSettings?.smsCredits || 0}).`
-      );
-      return { success: false, error: "Crediti esauriti o non trovati" };
+    const store = await prisma.storeSettings.findUnique({ where: { tenantId } });
+    if (!store || store.smsCredits <= 0) {
+      console.warn(`[sms] Salone ${tenantId} crediti esauriti (${store?.smsCredits || 0})`);
+      return { success: false, error: "Crediti esauriti" };
     }
 
-    // 3. Formatta il numero di telefono
-    let formattedPhone = toPhone.replace(/[^0-9+]/g, "");
-    if (!formattedPhone.startsWith("+")) {
-      formattedPhone = `+39${formattedPhone}`;
-    }
+    const phone = formatPhone(toPhone);
+    const client = twilio(TWILIO_SID, TWILIO_TOKEN);
 
-    const auth = Buffer.from(`${TWILIO_SID}:${TWILIO_TOKEN}`).toString("base64");
-
-    // 4. TENTATIVO 1: WhatsApp Business con template approvato
-    let sent = false;
-    let messageId = "";
-    let channel = "sms";
-
-    if (whatsappVars) {
+    // TRY 1: WhatsApp via MessagingService + template approvato
+    if (whatsappVars && WHATSAPP_TEMPLATE_SID && WHATSAPP_MSG_SVC_SID) {
       try {
-        console.log(`📱 Tentativo WhatsApp (template) per ${formattedPhone}...`);
-
-        // Usa ContentSid + ContentVariables per il template approvato da Meta
-        const whatsappBody = new URLSearchParams({
-          To: `whatsapp:${formattedPhone}`,
-          From: `whatsapp:${TWILIO_FROM}`,
-          ContentSid: WHATSAPP_TEMPLATE_SID,
-          ContentVariables: JSON.stringify({
+        const msg = await client.messages.create({
+          contentSid: WHATSAPP_TEMPLATE_SID,
+          contentVariables: JSON.stringify({
             "1": whatsappVars.storeName,
             "2": whatsappVars.customerName,
             "3": whatsappVars.date,
             "4": whatsappVars.time,
-            "5": whatsappVars.cancelUrl,
           }),
+          messagingServiceSid: WHATSAPP_MSG_SVC_SID,
+          to: `whatsapp:${phone}`,
         });
-
-        const whatsappResponse = await fetch(
-          `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Basic ${auth}`,
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: whatsappBody.toString(),
-          }
-        );
-
-        const whatsappData = await whatsappResponse.json();
-
-        if (whatsappResponse.ok && !whatsappData.error_code) {
-          console.log(`✅ WhatsApp inviato a ${formattedPhone} per il tenant ${tenantId}`);
-          sent = true;
-          messageId = whatsappData.sid;
-          channel = "whatsapp";
-        } else {
-          console.warn(`⚠️ WhatsApp fallito (${whatsappData.error_code || whatsappData.status}): ${whatsappData.message || ""}, provo SMS...`);
+        if (!msg.errorCode) {
+          await deductCredit(tenantId);
+          console.log(`[WHATSAPP] Inviato a ${phone} (sid: ${msg.sid})`);
+          return { success: true, messageId: msg.sid, channel: "whatsapp" as const };
         }
-      } catch (whatsappError) {
-        console.warn(`⚠️ WhatsApp errore di rete, provo SMS...`, whatsappError);
+        console.warn(`[sms] WhatsApp fallito (${msg.errorCode}), passo a SMS...`);
+      } catch (waErr: any) {
+        console.warn(`[sms] WhatsApp eccezione: ${waErr.message}, passo a SMS...`);
       }
     }
 
-    // 5. TENTATIVO 2 (Fallback): SMS classico
-    if (!sent) {
-      console.log(`📨 ${whatsappVars ? "Fallback" : "Invio"} SMS per ${formattedPhone}...`);
-
-      const smsResponse = await fetch(
-        `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Basic ${auth}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            To: formattedPhone,
-            From: TWILIO_FROM,
-            Body: smsBody,
-          }).toString(),
-        }
-      );
-
-      const smsData = await smsResponse.json();
-
-      if (!smsResponse.ok) {
-        console.error("❌ Errore API Twilio (SMS):", smsData);
-        return { success: false, error: smsData.message || "Errore sconosciuto Twilio" };
-      }
-
-      console.log(`✅ SMS inviato a ${formattedPhone} per il tenant ${tenantId}`);
-      messageId = smsData.sid;
-      channel = "sms";
+    // PIANO B: SMS classico
+    try {
+      const msg = await client.messages.create({
+        body: smsBody,
+        from: TWILIO_FROM,
+        to: phone,
+      });
+      await deductCredit(tenantId);
+      console.log(`[SMS] Inviato a ${phone} (sid: ${msg.sid})`);
+      return { success: true, messageId: msg.sid, channel: "sms" as const };
+    } catch (smsErr: any) {
+      console.error(`[sms] SMS fallito: ${smsErr.message}`);
+      return { success: false, error: smsErr.message || "Errore SMS" };
     }
-
-    // 6. Scala 1 credito dal saldo del salone
-    await prisma.storeSettings.update({
-      where: { tenantId },
-      data: {
-        smsCredits: { decrement: 1 },
-      },
-    });
-
-    console.log(
-      `💰 [${channel.toUpperCase()}] Crediti residui per ${tenantId}: ${storeSettings.smsCredits - 1}`
-    );
-
-    return { success: true, messageId, channel };
-  } catch (error) {
-    console.error("❌ Errore critico nel motore messaggi:", error);
-    return { success: false, error: "Errore interno del motore messaggi" };
+  } catch (err: any) {
+    console.error("[sms] Errore critico:", err);
+    return { success: false, error: err.message || "Errore interno" };
   }
 }
 
-// Alias retrocompatibile per i file che usano ancora il vecchio nome
 export const sendTenantSms = sendTenantMessage;

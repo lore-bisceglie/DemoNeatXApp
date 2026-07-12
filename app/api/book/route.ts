@@ -2,8 +2,6 @@ import crypto from "crypto";
 import { sendTenantSms } from "@/lib/sms";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
 import { cookies } from "next/headers";
 import { logActivity } from "@/lib/activity";
 import { revalidatePath } from "next/cache";
@@ -11,15 +9,7 @@ import { revalidatePath } from "next/cache";
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
-});
-
-const ratelimit = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.slidingWindow(5, "24 h"),
-});
+const hasUpstash = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN;
 
 export async function POST(request: Request) {
   try {
@@ -62,7 +52,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "La prova gratuita è scaduta." }, { status: 402 });
     }
 
-    if (!isAdmin && !isPlaygroundDemo) {
+    if (!isAdmin && !isPlaygroundDemo && hasUpstash) {
+      const { Ratelimit } = await import("@upstash/ratelimit");
+      const { Redis } = await import("@upstash/redis");
+      const redis = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      });
+      const ratelimit = new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(5, "24 h"),
+      });
       try {
         const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
         const { success } = await ratelimit.limit(ip);
@@ -156,16 +156,22 @@ export async function POST(request: Request) {
       tenantId: tenantId,
     });
 
-    // 🌟 INVIO SMS CON MOTORE REALE
+    // 🌟 INVIO SMS/WHATSAPP CON MOTORE REALE
     if (cleanPhone !== "0000000000") {
       const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
       const service = await prisma.service.findUnique({ where: { id: serviceId } });
       
       if (tenant && service) {
         const smsBody = `✅ ${tenant.name} - Prenotazione Confermata!\n${customerName.trim()}, ti aspettiamo il ${date.split('-').reverse().join('/')} alle ${time} per ${service.name}.\n\nPer disdire o spostare clicca qui: https://${tenant.slug}.neatx.store/cancel/${newCancelToken}`;
+        const formattedDate = date.split('-').reverse().join('/');
+        const cancelUrl = `https://${tenant.slug}.neatx.store/cancel/${newCancelToken}`;
         
-        // Invio tramite il motore SMS (che scala i crediti in automatico)
-        await sendTenantSms(tenantId, cleanPhone, smsBody);
+        await sendTenantSms(
+          tenantId,
+          cleanPhone,
+          smsBody,
+          { storeName: tenant.name, customerName: customerName.trim(), date: formattedDate, time }
+        );
       }
     }
 

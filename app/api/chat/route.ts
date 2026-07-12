@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 

@@ -14,7 +14,7 @@ export default function EmailFloatingBtn({ compact = false }: EmailFloatingBtnPr
     <a 
       href={emailUrl}
       aria-label="Invia un'email a NeatX"
-      className={`flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full font-bold shadow-lg shadow-cyan-500/30 hover:scale-105 transition-transform cursor-pointer ${
+      className={`flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full font-bold shadow-lg shadow-cyan-500/30 hover:scale-105 transition-transform cursor-pointer transform-gpu will-change-transform ${
         compact ? "h-14 w-14" : "px-5 py-3"
       }`}
     >

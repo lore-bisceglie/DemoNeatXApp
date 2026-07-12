@@ -58,13 +58,11 @@ export async function GET(request: Request) {
         // Testo SMS di fallback
         const smsBody = `⏰ Promemoria da ${appt.tenant.name}\nCiao ${appt.customerName.trim()}, ti ricordiamo l'appuntamento di domani alle ${appt.time} per ${appt.service?.name || 'il tuo servizio'}.\n\nSe non puoi venire, disdici qui: ${cancelUrl}`;
         
-        // Variabili per il template WhatsApp approvato da Meta
         const whatsappVars = {
           storeName: appt.tenant.name,
           customerName: appt.customerName.trim(),
           date: tomorrowString,
           time: appt.time,
-          cancelUrl,
         };
         
         const result = await sendTenantSms(appt.tenantId, appt.customerPhone, smsBody, whatsappVars);
