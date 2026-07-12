@@ -22,11 +22,14 @@ function cleanText(value: unknown, fallback = "") {
 async function uniqueSlug(base: string) {
   const root = sanitizeSlug(base);
 
+  const existing = await prisma.tenant.findUnique({ where: { slug: root } });
+  if (!existing) return root;
+
   for (let attempt = 0; attempt < 10; attempt += 1) {
     const suffix = Math.random().toString(36).substring(2, 6);
     const slug = `${root}-${suffix}`;
-    const existing = await prisma.tenant.findUnique({ where: { slug } });
-    if (!existing) return slug;
+    const trial = await prisma.tenant.findUnique({ where: { slug } });
+    if (!trial) return slug;
   }
 
   return `${root}-${Date.now().toString(36)}`;
@@ -100,7 +103,7 @@ export async function POST(req: Request) {
     }
 
     const template = getDemoShopTemplate(category);
-    const slug = await uniqueSlug(`${businessName}-${city}`);
+    const slug = await uniqueSlug(businessName);
     const adminPassword = `${sanitizeSlug(ownerName).slice(0, 4) || "demo"}${Math.floor(
       1000 + Math.random() * 9000
     )}`;
