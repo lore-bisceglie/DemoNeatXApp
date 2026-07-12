@@ -4,15 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
 function getTenantSlugFromRequest(request: NextRequest): string | null {
-  // 1. Query param (da middleware rewrite)
   const fromQuery = request.nextUrl.searchParams.get("tenantSlug");
   if (fromQuery) return fromQuery;
 
-  // 2. Header middleware
   const fromHeader = request.headers.get("x-middleware-tenant");
   if (fromHeader) return fromHeader;
 
-  // 3. Fallback: host header (sottodominio)
   const host = request.headers.get("host") || "";
   if (isProd) {
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
@@ -32,7 +29,6 @@ async function requireTenantAdmin(request: NextRequest) {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
 
-  // Trova lo slug da qualsiasi cookie admin_auth_*
   let tenantSlug: string | null = getTenantSlugFromRequest(request);
   if (!tenantSlug) {
     for (const c of allCookies) {
@@ -57,13 +53,6 @@ async function requireTenantAdmin(request: NextRequest) {
   return authCookie === tenant.adminPassword ? tenant : null;
 }
 
-function cleanService(input: any) {
-  const name = typeof input?.name === "string" ? input.name.trim() : "";
-  const duration = Math.max(5, Math.min(480, Number(input?.duration) || 30));
-  const price = Math.max(0, Number(input?.price) || 0);
-  return { name, duration, price };
-}
-
 export async function GET(request: NextRequest) {
   const tenant = await requireTenantAdmin(request);
   if (!tenant) {
@@ -71,12 +60,33 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const { searchParams } = new URL(request.url);
+    const locationId = searchParams.get("locationId");
+
     const services = await prisma.service.findMany({
       where: { tenantId: tenant.id },
+      include: {
+        locations: locationId ? {
+          where: { locationId },
+          select: { price: true, isActive: true, locationId: true },
+        } : {
+          select: { price: true, isActive: true, locationId: true },
+        },
+      },
       orderBy: [{ duration: "asc" }, { price: "asc" }, { name: "asc" }],
     });
 
-    return NextResponse.json({ services });
+    // Se locationId specificato, aggiungi info per-sede
+    const servicesWithLocation = services.map((s) => {
+      const loc = s.locations.find((l) => !locationId || l.locationId === locationId);
+      return {
+        ...s,
+        isActiveInLocation: loc?.isActive ?? true,
+        priceInLocation: loc?.price ?? s.price,
+      };
+    });
+
+    return NextResponse.json({ services: servicesWithLocation });
   } catch (error) {
     return NextResponse.json({ error: "Errore di connessione" }, { status: 500 });
   }
@@ -180,4 +190,11 @@ export async function DELETE(request: NextRequest) {
     console.error("Errore eliminazione servizio:", error);
     return NextResponse.json({ error: "Errore interno" }, { status: 500 });
   }
+}
+
+function cleanService(input: any) {
+  const name = typeof input?.name === "string" ? input.name.trim() : "";
+  const duration = Math.max(5, Math.min(480, Number(input?.duration) || 30));
+  const price = Math.max(0, Number(input?.price) || 0);
+  return { name, duration, price };
 }

@@ -1,0 +1,283 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Plus, Trash2, Edit, MapPin, Phone, Calendar, Settings, ToggleLeft, ToggleRight, ExternalLink, MapPin as MapPinIcon, Phone as PhoneIcon, Globe, Wrench, Activity, Trash2 as Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import LocationForm from "./LocationForm";
+import LocationSettingsForm from "./LocationSettingsForm";
+
+interface LocationTabsProps {
+  tenantId: string;
+  tenantSlug: string;
+  tenantName: string;
+}
+
+const CARD_BASE = "bg-[#0b1221] rounded-xl border ";
+const CARD_ACTIVE = "border-[#1e2b4a]";
+const CARD_INACTIVE = "border-[#1a2642] opacity-60";
+
+const BADGE_BASE = "px-2 py-0.5 text-xs font-bold rounded-full ";
+const BADGE_ACTIVE = "bg-emerald-500/20 text-emerald-400";
+const BADGE_INACTIVE = "bg-slate-500/20 text-slate-500";
+
+const TOGGLE_BASE = "p-2 rounded-lg transition-colors ";
+const TOGGLE_ACTIVE = "text-emerald-400 hover:bg-emerald-500/10";
+const TOGGLE_INACTIVE = "text-slate-500 hover:bg-slate-500/10";
+
+function LocationCard({ location, tenantSlug, tenantName, onEdit, onSettings, onToggle, onDelete, isInactive }: any) {
+  var cardClass = CARD_BASE + (isInactive ? CARD_INACTIVE : CARD_ACTIVE);
+  var badgeClass = BADGE_BASE + (location.isActive ? BADGE_ACTIVE : BADGE_INACTIVE);
+  var toggleClass = TOGGLE_BASE + (location.isActive ? TOGGLE_ACTIVE : TOGGLE_INACTIVE);
+
+  return (
+    <div className={cardClass}>
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+            <MapPinIcon size={18} className="text-white" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-bold text-white text-lg">{location.name}</h4>
+              {location.isMain && <span className="px-2 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-400 rounded-full">Principale</span>}
+              <span className={badgeClass}>
+                {location.isActive ? "Attiva" : "Disattiva"}
+              </span>
+            </div>
+            <p className="text-slate-400 text-sm mt-1 flex items-center gap-1">
+              <MapPinIcon size={14} />
+              {location.address || location.city || "Indirizzo non impostato"}
+            </p>
+          </div>
+          <div className="flex items-center gap-1">
+            <button onClick={onToggle} className={toggleClass} title={location.isActive ? "Disattiva" : "Attiva"}>
+              <ToggleRight size={18} />
+            </button>
+            <button onClick={onSettings} className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors" title="Impostazioni">
+              <Settings size={16} />
+            </button>
+            <button onClick={onEdit} className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="Modifica">
+              <Edit size={16} />
+            </button>
+            <button onClick={function () { onDelete(); }} className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Elimina">
+              <Trash2Icon size={16} />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="bg-[#050814] rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+              <PhoneIcon size={12} /> Telefono
+            </div>
+            <p className="text-white font-medium">{location.phone || "Non impostato"}</p>
+          </div>
+          <div className="bg-[#050814] rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+              <Activity size={12} /> Staff
+            </div>
+            <p className="text-white font-medium">{location._count ? location._count.staff || 0 : 0} dipendenti</p>
+          </div>
+          <div className="bg-[#050814] rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+              <MapPinIcon size={12} /> Servizi
+            </div>
+            <p className="text-white font-medium">{location._count ? location._count.services || 0 : 0} servizi</p>
+          </div>
+          <div className="bg-[#050814] rounded-xl p-3">
+            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+              <Activity size={12} /> Appuntamenti
+            </div>
+            <p className="text-white font-medium">{location._count ? location._count.appointments || 0 : 0}</p>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-4 pt-3 border-t border-[#1a2642]">
+          <button onClick={onEdit} className="flex-1 px-3 py-2 text-xs font-medium bg-[#131c31] hover:bg-[#1a2642] text-slate-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <Edit size={12} /> Modifica
+          </button>
+          <button onClick={onSettings} className="px-3 py-2 text-xs font-medium bg-[#131c31] hover:bg-[#1a2642] text-slate-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <Settings size={12} /> Impostazioni
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LocationTabs({ tenantId, tenantSlug, tenantName }: LocationTabsProps) {
+  const [locations, setLocations] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"list" | "create" | "edit" | "settings">("list");
+  const [editingLocation, setEditingLocation] = useState<any | null>(null);
+  const [settingsLocationId, setSettingsLocationId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(function () {
+    fetchLocations();
+  }, []);
+
+  async function fetchLocations() {
+    try {
+      var res = await fetch("/api/locations?slug=" + tenantSlug);
+      if (res.ok) {
+        var data = await res.json();
+        setLocations(data);
+      }
+    } catch (e) {
+      console.error("Errore caricamento sedi:", e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(id: string, isMain: boolean) {
+    if (isMain) {
+      alert("Impossibile eliminare la sede principale");
+      return;
+    }
+    if (!confirm("Eliminare questa sede? Gli appuntamenti storici rimarranno ma la sede verra disattivata.")) return;
+
+    try {
+      var res = await fetch("/api/locations/" + id + "?slug=" + tenantSlug, { method: "DELETE" });
+      if (res.ok) {
+        setLocations(function (prev) { return prev.filter(function (l) { return l.id !== id; }); });
+      } else {
+        var err = await res.json();
+        alert(err.error || "Errore eliminazione");
+      }
+    } catch (e) {
+      alert("Errore eliminazione");
+    }
+  }
+
+  async function handleToggleActive(location: any) {
+    try {
+      var res = await fetch("/api/locations/" + location.id + "?slug=" + tenantSlug, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: !location.isActive }),
+      });
+      if (res.ok) {
+        setLocations(function (prev) {
+          return prev.map(function (l) {
+            return l.id === location.id ? { ...l, isActive: !location.isActive } : l;
+          });
+        });
+      }
+    } catch (e) {
+      alert("Errore aggiornamento");
+    }
+  }
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-64 text-slate-400">Caricamento sedi...</div>;
+  }
+
+  var activeLocations = locations.filter(function (l) { return l.isActive; });
+  var inactiveLocations = locations.filter(function (l) { return !l.isActive; });
+  var hasLocations = activeLocations.length > 0 || inactiveLocations.length > 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Gestione Sedi</h2>
+          <p className="text-slate-400 text-sm mt-1">Gestisci le sedi del tuo salone: orari, staff, servizi e impostazioni per sede</p>
+        </div>
+        <button
+          onClick={function () { setActiveTab("create"); }}
+          className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2"
+        >
+          <Plus size={18} /> Nuova Sede
+        </button>
+      </div>
+
+      <div className="bg-[#0b1221] rounded-2xl border border-[#1a2642] overflow-hidden">
+        {!hasLocations && (
+          <div className="text-center py-16">
+            <h3 className="text-xl font-bold text-white mb-2">Nessuna sede configurata</h3>
+            <p className="text-slate-400 mb-6">Crea la tua prima sede per iniziare a gestire gli orari e lo staff per sede</p>
+            <button onClick={function () { setActiveTab("create"); }} className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-bold">Crea Prima Sede</button>
+          </div>
+        )}
+
+        {hasLocations && (
+          <div>
+            {activeLocations.length > 0 && (
+              <div className="p-4 border-b border-[#1a2642]">
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Sedi Attive ({activeLocations.length})</h3>
+                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {activeLocations.map(function (location) {
+                    return (
+                      <LocationCard
+                        key={location.id}
+                        location={location}
+                        tenantSlug={tenantSlug}
+                        tenantName={tenantName}
+                        onEdit={function () { setEditingLocation(location); }}
+                        onSettings={function () { setSettingsLocationId(location.id); }}
+                        onToggle={function () { handleToggleActive(location); }}
+                        onDelete={function () { handleDelete(location.id, location.isMain); }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {inactiveLocations.length > 0 && (
+              <div className="p-4">
+                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Sedi Disattivate ({inactiveLocations.length})</h3>
+                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {inactiveLocations.map(function (location) {
+                    return (
+                      <LocationCard
+                        key={location.id}
+                        location={location}
+                        tenantSlug={tenantSlug}
+                        tenantName={tenantName}
+                        onEdit={function () { setEditingLocation(location); }}
+                        onSettings={function () { setSettingsLocationId(location.id); }}
+                        onToggle={function () { handleToggleActive(location); }}
+                        onDelete={function () { handleDelete(location.id, location.isMain); }}
+                        isInactive
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "create" && (
+          <LocationForm
+            tenantId={tenantId}
+            tenantSlug={tenantSlug}
+            onClose={function () { setActiveTab("list"); }}
+            onSuccess={function () { setActiveTab("list"); fetchLocations(); }}
+          />
+        )}
+
+        {editingLocation && (
+          <LocationForm
+            tenantId={tenantId}
+            tenantSlug={tenantSlug}
+            initialData={editingLocation}
+            onClose={function () { setEditingLocation(null); }}
+            onSuccess={function () { setEditingLocation(null); fetchLocations(); }}
+          />
+        )}
+
+        {settingsLocationId && (
+          <LocationSettingsForm
+            locationId={settingsLocationId}
+            tenantSlug={tenantSlug}
+            onClose={function () { setSettingsLocationId(null); }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}

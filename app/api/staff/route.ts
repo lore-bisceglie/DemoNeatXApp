@@ -4,14 +4,28 @@ import { prisma } from "@/lib/prisma";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const tenantId = searchParams.get("tenantId");
+  const locationId = searchParams.get("locationId");
+  const serviceId = searchParams.get("serviceId");
 
   if (!tenantId) {
     return NextResponse.json({ error: "tenantId mancante" }, { status: 400 });
   }
 
   try {
+    let where: any = { tenantId };
+
+    // Filtra per locationId (null = lavora ovunque, oppure match esatto)
+    if (locationId) {
+      where.OR = [{ locationId: null }, { locationId }];
+    }
+
+    // Se serviceId specificato, filtra staff che ha quel servizio
+    if (serviceId) {
+      where.services = { some: { id: serviceId } };
+    }
+
     const staff = await prisma.staff.findMany({
-      where: { tenantId },
+      where,
       include: {
         services: true,
       },
@@ -27,7 +41,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name, tenantId } = await req.json();
+    const { name, tenantId, locationId } = await req.json();
 
     if (!name || !tenantId) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
@@ -37,6 +51,7 @@ export async function POST(req: Request) {
       data: {
         name,
         tenantId,
+        locationId: locationId || null,
       },
       include: {
         services: true,
@@ -52,19 +67,25 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { staffId, serviceIds } = await req.json();
+    const { staffId, serviceIds, locationId } = await req.json();
 
     if (!staffId || !Array.isArray(serviceIds)) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
     }
 
+    const data: any = {
+      services: {
+        set: serviceIds.map((id: string) => ({ id })),
+      },
+    };
+
+    if (locationId !== undefined) {
+      data.locationId = locationId || null;
+    }
+
     const updatedStaff = await prisma.staff.update({
       where: { id: staffId },
-      data: {
-        services: {
-          set: serviceIds.map((id: string) => ({ id })),
-        },
-      },
+      data,
       include: {
         services: true,
       }
@@ -86,7 +107,6 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "ID mancante" }, { status: 400 });
     }
 
-    // Per sicurezza, se l'operatore ha appuntamenti li scolleghiamo (staffId = null)
     await prisma.appointment.updateMany({
       where: { staffId: id },
       data: { staffId: null }
