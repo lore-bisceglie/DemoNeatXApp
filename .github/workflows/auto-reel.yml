@@ -16,6 +16,11 @@ jobs:
         id: gate
         shell: bash
         run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping: push-triggered (solo schedule/workflow_dispatch)."
+            exit 0
+          fi
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             echo "Manual run: publishing now."
@@ -76,7 +81,7 @@ jobs:
           commit_message: "Auto-reel: aggiorna commenti YouTube processati"
           file_pattern: "bot_scripts/Social/ReelGenerator/youtube_replied.json"
       - name: Invia notifica Telegram
-        if: always() && steps.gate.outputs.should_run == 'true'
+        if: steps.gate.outputs.should_run == 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
