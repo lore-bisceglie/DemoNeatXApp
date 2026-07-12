@@ -6,7 +6,7 @@ const OPERATING_STEPS = [
   {
     icon: Sparkles,
     title: "Crea profilo, servizi e turni",
-    text: "Inserisci servizi e orari base. Se hai uno staff, colleghi un Foglio Google con turni, riposi e ferie: NeatX lo usa per costruire l'agenda reale.",
+    text: "Inserisci servizi e orari base. Se hai uno staff, colleghi un Google Sheet con turni, riposi e ferie: NeatX lo usa per costruire l'agenda reale.",
   },
   {
     icon: CalendarCheck2,

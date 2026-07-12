@@ -216,7 +216,7 @@ export default function TeamDrawer({
 
         <div className="p-4 border-b border-[#1e2b4a] bg-[#0b1221]">
           <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
-            Link Orari (Fogli Google)
+            Link Orari (Google Sheet)
           </label>
           <div className="flex gap-2">
             <input

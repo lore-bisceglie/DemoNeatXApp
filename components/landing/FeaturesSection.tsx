@@ -31,7 +31,7 @@ const FEATURE_CARDS = [
     icon: CalendarSync,
     title: "Turni da Google Sheets",
     description:
-      "Compila il Foglio Google con gli orari di ogni dipendente. NeatX sincronizza tutto: l'agenda mostra solo gli slot liberi di ciascuno.",
+      "Compila il Google Sheet con gli orari di ogni dipendente. NeatX sincronizza tutto: l'agenda mostra solo gli slot liberi di ciascuno.",
     accent: "text-blue-400",
     border: "hover:border-blue-400/50",
   },
