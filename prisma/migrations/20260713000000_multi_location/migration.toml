@@ -1,0 +1,6 @@
+# Multi-Location migration
+# Added Location, LocationSettings, ServiceLocation tables
+# Added locationId to Appointment and Staff
+# Added foreign keys and indexes
+
+provider = "postgresql"

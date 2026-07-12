@@ -24,7 +24,7 @@ model Tenant {
   logoUrl       String?       // URL immagine logo del negozio
   themeColor    String        @default("cyan") // Tema colore del negozio es. "cyan", "rose", "emerald"
   description   String?       // Descrizione pubblica generata dal template
-  phone         String?       // Numero WhatsApp del salone per ricevere notifiche
+  phone         String?       // Numero WhatsApp del salone per ricevere notifiche (fallback)
   address       String?       // Indirizzo dell'attività es. "Via Roma 1, Milano"
   instagramUrl  String?       // Link profilo Instagram
   facebookUrl   String?       // Link profilo Facebook
@@ -32,7 +32,7 @@ model Tenant {
   websiteUrl    String?       // Sito esterno dell'attivita
   mapsLink      String?       // Link Google Maps
   bookingUrl    String?       // Link prenotazione esterno. Se vuoto usa WhatsApp
-  openTime      String?       // Orario apertura es. "09:00"
+  openTime      String?       // Orario apertura es. "09:00" (fallback se sede non ha orari)
   closeTime     String?       // Orario chiusura es. "19:00"
   breakStart    String?       // Inizio pausa pranzo es. "13:00" (null = nessuna pausa)
   breakEnd      String?       // Fine pausa pranzo es. "14:00"
@@ -47,7 +47,7 @@ model Tenant {
   convertedAt   DateTime?
   plan          String        @default("basic") // "basic" o "premium"
   createdAt     DateTime      @default(now())
-  staffSheetUrl String?       // Link al Google Sheet per gli orari dei dipendenti
+  staffSheetUrl String?       // Link al Google Sheet per gli orari dei dipendenti (fallback globale)
 
   // Email verification
   emailVerified       Boolean   @default(false)
@@ -67,11 +67,66 @@ model Tenant {
   customerNotes CustomerNote[]
   activityLogs  ActivityLog[]
   staff         Staff[]
+  locations     Location[]
 
   // Referral System
   referralCode   String?   @unique
   referredByCode String?
   referredAt     DateTime?
+}
+
+// ------------------------------------------------------
+// 1b. SEDE / LOCATION (MULTI-SEDE)
+// ------------------------------------------------------
+model Location {
+  id            String        @id @default(cuid())
+  name          String        // Es. "Sede Centro", "Sede Roma Nord"
+  slug          String        // Es. "centro", "roma-nord" (per URL: /sede/centro)
+  address       String?       // Indirizzo specifico sede
+  city          String?       // Città sede
+  phone         String?       // WhatsApp dedicato sede (fallback a Tenant.phone)
+  mapsLink      String?       // Link Google Maps specifico sede
+  isMain        Boolean       @default(false) // Sede principale
+  isActive      Boolean       @default(true)
+
+  // Orari specifici sede (vincolanti per disponibilità)
+  openTime      String?       
+  closeTime     String?
+  breakStart    String?
+  breakEnd      String?
+  closedDays    String?       // JSON array
+
+  // Google Sheets per questa sede
+  staffSheetUrl String?
+
+  tenantId      String
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+
+  // Relazioni
+  staff         Staff[]
+  services      ServiceLocation[]
+  appointments  Appointment[]
+  settings      LocationSettings?
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+}
+
+model LocationSettings {
+  id                String  @id @default(cuid())
+  smsCredits        Int     @default(0) // Crediti SMS separati per sede
+  stripeAccountId   String? // Futuro: Stripe Connect per-sede se serve
+
+  // Regole pagamento specifiche sede (override StoreSettings)
+  paymentStrategy   String  @default("OFF") // "OFF", "FIXED", "PERCENTAGE", "FULL"
+  paymentFixedAmount Float?  @default(5.0)
+  paymentPercentage Int?    @default(20)
+  paymentMandatory  Boolean @default(false)
+
+  locationId        String  @unique
+  location          Location @relation(fields: [locationId], references: [id])
+
+  updatedAt         DateTime @updatedAt
 }
 
 // ------------------------------------------------------
@@ -81,7 +136,7 @@ model Service {
   id           String        @id @default(cuid())
   name         String        // Es. "Pulizia Viso Premium", "Massaggio Relax"
   duration     Int           // Durata in minuti (Es. 30, 45, 60, 90)
-  price        Float?        // Prezzo del servizio per calcolo incassi reale
+  price        Float?        // Prezzo base del servizio
 
   // Collegamento al Tenant
   tenantId     String
@@ -91,6 +146,21 @@ model Service {
 
   // Membri dello staff che possono eseguire questo servizio
   staff        Staff[]
+
+  // Disponibilità per sede con prezzo override
+  locations    ServiceLocation[]
+}
+
+model ServiceLocation {
+  id         String   @id @default(cuid())
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id])
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+  price      Float?   // Override prezzo per questa sede (null = usa Service.price)
+  isActive   Boolean  @default(true)
+
+  @@unique([serviceId, locationId])
 }
 
 // ------------------------------------------------------
@@ -125,6 +195,12 @@ model Appointment {
   // Relazione con il Negozio
   tenantId      String?
   tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+
+  // Relazione con la Sede (NUOVO - opzionale per retrocompatibilità)
+  locationId    String?
+  location      Location? @relation(fields: [locationId], references: [id])
+
+  @@index([locationId])
 }
 
 // ------------------------------------------------------
@@ -142,11 +218,11 @@ model BlockedSlot {
 }
 
 // ------------------------------------------------------
-// 5. IMPOSTAZIONI SALONE & PORTAFOGLIO SMS
+// 5. IMPOSTAZIONI SALONE & PORTAFOGLIO SMS (GLOBALI TENANT)
 // ------------------------------------------------------
 model StoreSettings {
   id                        String   @id @default(cuid())
-  smsCredits                Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone
+  smsCredits                Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone (fallback)
   maxConcurrentAppointments Int      @default(1) // Numero massimo di appuntamenti sovrapposti (Multi-staff)
   
   // Stripe Connect
@@ -255,7 +331,7 @@ model ActivityLog {
 }
 
 // ------------------------------------------------------
-// 9. STAFF E SPECIALIZZAZIONI
+// 10. STAFF E SPECIALIZZAZIONI
 // ------------------------------------------------------
 model Staff {
   id           String        @id @default(cuid())
@@ -266,11 +342,17 @@ model Staff {
   // Servizi che questo dipendente può svolgere
   services     Service[]
 
-  // Turni e Orari
+  // Turni e Orari (globali - staff gira tra sedi)
   baseSchedule    String? @default("{}") // JSON: Orari fissi settimanali
   shiftExceptions String? @default("[]") // JSON: Ferie, malattie, cambi turno
   commissionRate  Int     @default(0)    // Provvigione fissa in percentuale (es. 20)
 
+  // Sede di riferimento (nullable = lavora in tutte le sedi dove ha servizi)
+  locationId      String?
+  location        Location? @relation(fields: [locationId], references: [id])
+
   // Appuntamenti assegnati a questo dipendente
   appointments Appointment[]
+
+  @@index([locationId])
 }

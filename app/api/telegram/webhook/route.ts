@@ -133,7 +133,7 @@ export async function POST(req: Request) {
           await sendTelegramMessage("⚠️ Inserisci almeno 2 lettere per cercare.");
         } else {
           const results = await prisma.tenant.findMany({
-            where: { name: { contains: query, mode: "insensitive" } },
+            where: { name: { contains: query } },
             take: 5,
             select: { id: true, name: true, phone: true, ownerEmail: true, city: true, slug: true }
           });
@@ -167,8 +167,8 @@ export async function POST(req: Request) {
         if (query.length < 2) {
           await sendTelegramMessage("⚠️ Inserisci almeno 2 lettere del negozio in cui vuoi entrare.");
         } else {
-          const tenant = await prisma.tenant.findFirst({
-            where: { name: { contains: query, mode: "insensitive" } }
+const tenant = await prisma.tenant.findFirst({
+              where: { name: { contains: query } }
           });
           
           if (!tenant) {
@@ -194,7 +194,7 @@ export async function POST(req: Request) {
       }
       else if (text.startsWith("/pro ")) {
         const query = text.replace("/pro ", "").trim();
-        const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query, mode: "insensitive" } } });
+        const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
         if (tenant) {
           await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "premium" } });
           await sendTelegramMessage(`✅ <b>${tenant.name}</b> promosso al piano <b>PRO</b> (59€)!\nI lucchetti sono stati sbloccati.`);
@@ -204,7 +204,7 @@ export async function POST(req: Request) {
       }
       else if (text.startsWith("/basic ")) {
         const query = text.replace("/basic ", "").trim();
-        const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query, mode: "insensitive" } } });
+        const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
         if (tenant) {
           await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "basic" } });
           await sendTelegramMessage(`🔒 <b>${tenant.name}</b> retrocesso al piano <b>BASIC</b> (29€)!\nI lucchetti sono stati riattivati.`);
@@ -219,7 +219,7 @@ export async function POST(req: Request) {
           const amount = parseInt(parts[1], 10);
           
           if (!isNaN(amount) && amount > 0) {
-            const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query, mode: "insensitive" } } });
+const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
             if (tenant) {
               const storeSettings = await prisma.storeSettings.upsert({
                 where: { tenantId: tenant.id },
