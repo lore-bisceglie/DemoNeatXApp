@@ -92,6 +92,12 @@ bot_scripts/Social/ReelGenerator/*.mp4
 bot_scripts/Social/ReelGenerator/*.exe
 bot_scripts/Social/ReelGenerator/logs/
 bot_scripts/Social/ReelGenerator/publish_report.json
+bot_scripts/Social/ReelGenerator/assets/*.png
+bot_scripts/Social/ReelGenerator/assets/*.vtt
+bot_scripts/Social/ReelGenerator/assets/*.mp3
+bot_scripts/Social/ReelGenerator/history.json
+bot_scripts/Social/ReelGenerator/reel_data.json
+bot_scripts/Social/ReelGenerator/token.json
 bot_scripts/Social/Social/ReelGenerator/assets/*.mp4
 bot_scripts/Social/Social/ReelGenerator/*.mp4
 *.mp4
