@@ -164,7 +164,7 @@ export default function Onboarding() {
           <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-cyan-300">Creazione negozio</p>
           <h1 className="text-3xl font-extrabold sm:text-5xl">Sto preparando la tua pagina online.</h1>
           <p className="mt-4 text-sm font-medium leading-relaxed text-slate-400">
-            Genero servizi, prezzi, staff, orari, disponibilita e prenotazioni demo coerenti con {selectedCategory.label}.
+            Genero servizi, prezzi, staff, orari, disponibilità e prenotazioni demo coerenti con {selectedCategory.label}.
           </p>
         </div>
       </main>
@@ -291,7 +291,7 @@ export default function Onboarding() {
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                   <MapPin size={14} />
-                  Citta
+                  Città
                 </span>
                 <input
                   value={city}

@@ -24,7 +24,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps) {
       </div>
 
       <div className="hidden md:flex gap-8 text-sm font-bold text-slate-400">
-        <a href="#features" className="hover:text-white transition-colors">Funzionalita</a>
+        <a href="#features" className="hover:text-white transition-colors">Funzionalità</a>
         <button onClick={onOpenRoi} className="hover:text-white transition-colors font-extrabold text-[#00b4ff]">Calcola ROI</button>
         <a href="#pricing" className="hover:text-white transition-colors">Prezzi</a>
         <Link href="/blog" className="hover:text-white transition-colors text-purple-400">Blog</Link>
@@ -42,7 +42,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps) {
 
       <div className="grid grid-cols-2 gap-2 w-full md:hidden text-xs font-extrabold">
         <a href="#features" className="rounded-2xl border border-[#1a2642] bg-[#0b1221]/80 px-4 py-3 text-center text-slate-300">
-          Funzionalita
+          Funzionalità
         </a>
         <button
           type="button"

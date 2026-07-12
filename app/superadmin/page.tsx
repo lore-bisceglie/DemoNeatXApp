@@ -263,7 +263,7 @@ export default function SuperAdminPage() {
       t.phone || '',
       t.services?.length || 0,
       t.storeSettings?.smsCredits || 0,
-      t.storeSettings?.stripeOnboardingComplete ? 'Si' : 'No',
+      t.storeSettings?.stripeOnboardingComplete ? 'Sì' : 'No',
       new Date(t.createdAt).toLocaleDateString('it-IT'),
       t.trialEndsAt ? new Date(t.trialEndsAt).toLocaleDateString('it-IT') : '-',
     ]);

@@ -126,7 +126,7 @@ export default function Home() {
 
   const [tenantInfo] = useState({
     id: "cmqtds1840000yyqbd23x1jdj",
-    name: "Demo NeatX Multi-Attivita",
+    name: "Demo NeatX Multi-Attività",
     address:
       "Agenda demo per barbieri, beauty, nails, massaggi, tattoo, studi e consulenze",
     phone: "393480480942",
@@ -356,7 +356,7 @@ export default function Home() {
         title: "Ultimi incastri disponibili",
         message:
           slots.length === 1
-            ? `E rimasto solo l'orario delle ${slots[0]}.`
+            ? `È rimasto solo l'orario delle ${slots[0]}.`
             : `Sono rimasti solo questi orari: ${slotSummary}.`,
         tone: "red" as const,
       }
