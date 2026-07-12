@@ -45,6 +45,7 @@ export async function GET(request: Request) {
       include: {
         service: true,
         tenant: true,
+        location: { select: { id: true } },
       },
     });
 
@@ -65,7 +66,7 @@ export async function GET(request: Request) {
           time: appt.time,
         };
         
-        const result = await sendTenantSms(appt.tenantId, appt.customerPhone, smsBody, whatsappVars);
+        const result = await sendTenantSms(appt.tenantId, appt.customerPhone, smsBody, whatsappVars, appt.locationId || undefined);
         if (result.success) {
           successCount++;
         } else {

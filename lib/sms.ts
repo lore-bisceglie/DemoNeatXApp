@@ -17,18 +17,39 @@ function formatPhone(raw: string): string {
   return p;
 }
 
-async function deductCredit(tenantId: string) {
+async function deductCredit(tenantId: string, locationId?: string) {
+  if (locationId) {
+    const locSettings = await prisma.locationSettings.findUnique({ where: { locationId } });
+    if (locSettings && locSettings.smsCredits > 0) {
+      await prisma.locationSettings.update({
+        where: { locationId },
+        data: { smsCredits: { decrement: 1 } },
+      });
+      return;
+    }
+    // Fallback: LocationSettings doesn't exist or has 0 credits
+  }
   await prisma.storeSettings.update({
     where: { tenantId },
     data: { smsCredits: { decrement: 1 } },
   });
 }
 
+async function checkCredits(tenantId: string, locationId?: string): Promise<boolean> {
+  if (locationId) {
+    const locSettings = await prisma.locationSettings.findUnique({ where: { locationId } });
+    if (locSettings && locSettings.smsCredits > 0) return true;
+  }
+  const store = await prisma.storeSettings.findUnique({ where: { tenantId } });
+  return !!store && store.smsCredits > 0;
+}
+
 export async function sendTenantMessage(
   tenantId: string,
   toPhone: string,
   smsBody: string,
-  whatsappVars?: WhatsAppTemplateVars
+  whatsappVars?: WhatsAppTemplateVars,
+  locationId?: string
 ) {
   const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
   const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
@@ -40,9 +61,9 @@ export async function sendTenantMessage(
   }
 
   try {
-    const store = await prisma.storeSettings.findUnique({ where: { tenantId } });
-    if (!store || store.smsCredits <= 0) {
-      console.warn(`[sms] Salone ${tenantId} crediti esauriti (${store?.smsCredits || 0})`);
+    const hasCredits = await checkCredits(tenantId, locationId);
+    if (!hasCredits) {
+      console.warn(`[sms] Salone ${tenantId} crediti esauriti`);
       return { success: false, error: "Crediti esauriti" };
     }
 
@@ -64,7 +85,7 @@ export async function sendTenantMessage(
           to: `whatsapp:${phone}`,
         });
         if (!msg.errorCode) {
-          await deductCredit(tenantId);
+          await deductCredit(tenantId, locationId);
           console.log(`[WHATSAPP] Inviato a ${phone} (sid: ${msg.sid})`);
           return { success: true, messageId: msg.sid, channel: "whatsapp" as const };
         }
@@ -81,7 +102,7 @@ export async function sendTenantMessage(
         from: TWILIO_FROM,
         to: phone,
       });
-      await deductCredit(tenantId);
+      await deductCredit(tenantId, locationId);
       console.log(`[SMS] Inviato a ${phone} (sid: ${msg.sid})`);
       return { success: true, messageId: msg.sid, channel: "sms" as const };
     } catch (smsErr: any) {

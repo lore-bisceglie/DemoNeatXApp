@@ -282,7 +282,8 @@ export async function POST(request: Request) {
           tenantId,
           cleanPhone,
           smsBody,
-          { storeName: tenant.name, customerName: customerName.trim(), date: formattedDate, time }
+          { storeName: tenant.name, customerName: customerName.trim(), date: formattedDate, time },
+          targetLocationId || undefined
         );
       }
     }

@@ -75,7 +75,7 @@ export async function POST(
         const tenant = await prisma.tenant.findUnique({ where: { id: appointment.tenantId } });
         if (tenant) {
           const smsBody = `❌ ${tenant.name} - Cancellazione Confermata\nCiao ${appointment.customerName.trim()}, abbiamo cancellato il tuo appuntamento del ${appointment.date.split('-').reverse().join('/')} alle ${appointment.time}. Alla prossima!`;
-          await sendTenantSms(appointment.tenantId, appointment.customerPhone, smsBody);
+          await sendTenantSms(appointment.tenantId, appointment.customerPhone, smsBody, undefined, appointment.locationId || undefined);
         }
       }
     }

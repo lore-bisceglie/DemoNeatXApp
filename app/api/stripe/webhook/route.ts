@@ -37,15 +37,32 @@ export async function POST(req: Request) {
         if (tenantId && metadataType === 'message_package') {
           const creditsToAdd = parseInt(session.metadata?.credits || '0', 10);
           const packageId = session.metadata?.packageId || 'unknown';
+          const locationId = session.metadata?.locationId || null;
           if (creditsToAdd > 0) {
-            const storeSettings = await prisma.storeSettings.upsert({
-              where: { tenantId },
-              create: { tenantId, smsCredits: creditsToAdd },
-              update: { smsCredits: { increment: creditsToAdd } },
-            });
+            let newTotal: number;
+            if (locationId) {
+              const ls = await prisma.locationSettings.upsert({
+                where: { locationId },
+                create: { locationId, smsCredits: creditsToAdd },
+                update: { smsCredits: { increment: creditsToAdd } },
+              });
+              newTotal = ls.smsCredits;
+            } else {
+              const ss = await prisma.storeSettings.upsert({
+                where: { tenantId },
+                create: { tenantId, smsCredits: creditsToAdd },
+                update: { smsCredits: { increment: creditsToAdd } },
+              });
+              newTotal = ss.smsCredits;
+            }
             const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+            const locationName = locationId
+              ? (await prisma.location.findUnique({ where: { id: locationId }, select: { name: true } }))?.name
+              : null;
             await sendTelegramMessage(
-              `💬 <b>VENDITA MESSAGGI!</b>\n\nIl negozio <b>${tenant?.name || tenantId}</b> ha acquistato il pacchetto <b>${packageId}</b>.\n+${creditsToAdd} crediti. Totale: <b>${storeSettings.smsCredits}</b> 📈`
+              `💬 <b>VENDITA MESSAGGI!</b>\n\nIl negozio <b>${tenant?.name || tenantId}</b>` +
+              (locationName ? ` — sede <b>${locationName}</b>` : '') +
+              ` ha acquistato il pacchetto <b>${packageId}</b>.\n+${creditsToAdd} crediti. Totale: <b>${newTotal}</b> 📈`
             );
           }
         } else if (tenantId) {

@@ -1,3 +1,5 @@
+import { prisma } from "./prisma";
+
 export type StaffShift = {
   start: string; // e.g., "09:00"
   end: string;   // e.g., "13:00"
@@ -25,6 +27,66 @@ function getColumnIndexForDate(dateStr: string): number {
   
   if (dayOfWeek === 0) return 7; // Sunday
   return dayOfWeek;
+}
+
+export async function syncStaffFromSheet(url: string, tenantId: string, locationId?: string) {
+  const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  if (!match) throw new Error("URL Google Sheets non valido");
+  const docId = match[1];
+  const csvUrl = `https://docs.google.com/spreadsheets/d/${docId}/export?format=csv`;
+  const response = await fetch(csvUrl);
+  if (!response.ok) throw new Error("Impossibile accedere al foglio. Assicurati che sia pubblico.");
+  const csvText = await response.text();
+  const lines = csvText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (lines.length < 2) throw new Error("Il foglio sembra vuoto o non ha il formato corretto.");
+  const daysOfWeek = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+    const staffName = cols[0];
+    if (!staffName || staffName.toLowerCase() === 'dipendente') continue;
+    const scheduleObj: any = {};
+    for (let d = 0; d < 7; d++) {
+      const dayName = daysOfWeek[d];
+      const cellValue = cols[d + 1] ? cols[d + 1].toLowerCase().trim() : "riposo";
+      const offKeywords = ["riposo", "off", "libero", "ferie", "chiuso", "rest", "free", ""];
+      if (offKeywords.includes(cellValue)) {
+        scheduleObj[dayName] = { active: false };
+      } else {
+        const timeBlocks = cellValue.split(',').map(b => b.trim());
+        const blocks: { start: string; end: string }[] = [];
+        for (const block of timeBlocks) {
+          let start: string | undefined, end: string | undefined;
+          if (block.includes('-')) {
+            [start, end] = block.split('-');
+          } else {
+            const parts = block.trim().split(/\s+/);
+            if (parts.length === 2) [start, end] = parts;
+          }
+          if (start && end) blocks.push({ start: start.trim(), end: end.trim() });
+        }
+        scheduleObj[dayName] = { active: true, blocks };
+      }
+    }
+    const existingStaff = locationId
+      ? await prisma.staff.findFirst({ where: { tenantId, name: staffName, locationId } })
+      : await prisma.staff.findFirst({ where: { tenantId, name: staffName } });
+    if (existingStaff) {
+      await prisma.staff.update({
+        where: { id: existingStaff.id },
+        data: { baseSchedule: JSON.stringify(scheduleObj) },
+      });
+    } else {
+      await prisma.staff.create({
+        data: {
+          tenantId,
+          name: staffName,
+          baseSchedule: JSON.stringify(scheduleObj),
+          ...(locationId ? { locationId } : {}),
+        },
+      });
+    }
+  }
+  return { success: true, message: "Orari sincronizzati con successo!" };
 }
 
 export async function fetchStaffSchedule(sheetUrl: string, staffName: string, dateStr: string): Promise<StaffDaySchedule | null> {

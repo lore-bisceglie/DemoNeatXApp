@@ -198,6 +198,30 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleLocationSms = async (locationId: string, tenantId: string) => {
+    const amountStr = prompt("Quanti crediti SMS vuoi aggiungere a questa sede?");
+    if (!amountStr) return;
+    const amount = parseInt(amountStr, 10);
+    if (isNaN(amount) || amount <= 0) return;
+
+    try {
+      const res = await fetch('/api/superadmin/sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': password
+        },
+        body: JSON.stringify({ tenantId, amount, locationId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Errore');
+      alert(`Fatto! Ora questa sede ha ${data.newTotal} crediti SMS.`);
+      fetchTenants(password);
+    } catch (e: any) {
+      alert(e.message);
+    }
+  };
+
   const handleImpersonate = (slug: string, adminPassword: string | null) => {
     if (!adminPassword) {
       alert("Questo tenant non ha ancora una password admin generata.");
@@ -857,6 +881,32 @@ export default function SuperAdminPage() {
                     <div key={svc.id} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-lg hover:bg-slate-900/50">
                       <span className="text-slate-300">{svc.name}</span>
                       <span className="text-slate-500 font-mono">{svc.duration}min · €{svc.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sedi */}
+            {detailTenant.locations && detailTenant.locations.length > 0 && (
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Sedi ({detailTenant.locations.length})</h3>
+                <div className="space-y-2">
+                  {detailTenant.locations.map((loc: any) => (
+                    <div key={loc.id} className="bg-slate-900/50 border border-slate-800/50 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-semibold text-white">{loc.isMain ? '⭐' : '📍'} {loc.name}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded ${loc.isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{loc.isActive ? 'Attiva' : 'Disattiva'}</span>
+                      </div>
+                      <div className="text-xs text-slate-400 space-y-0.5">
+                        {loc.address && <div>📍 {loc.address}</div>}
+                        {loc.phone && <div>📞 {loc.phone}</div>}
+                        {loc.openTime && loc.closeTime && <div>🕐 {loc.openTime} - {loc.closeTime}</div>}
+                        <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-slate-800/50">
+                          <span className="text-slate-500">💬 {loc.settings?.smsCredits || 0} SMS</span>
+                          <button onClick={() => handleLocationSms(loc.id, detailTenant.id)} className="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">+ CARICA</button>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

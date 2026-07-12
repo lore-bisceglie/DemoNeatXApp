@@ -237,6 +237,109 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
           await sendTelegramMessage("⚠️ Formato errato. Usa: /sms [nome] [crediti] (es. /sms beart 100)");
         }
       }
+      else if (text.startsWith("/sedi ")) {
+        const query = text.replace("/sedi ", "").trim();
+        if (query.length < 2) {
+          await sendTelegramMessage("⚠️ Inserisci almeno 2 lettere del nome del salone.");
+        } else {
+          const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
+          if (!tenant) {
+            await sendTelegramMessage(`❌ Nessun salone trovato per "<b>${query}</b>"`);
+          } else {
+            const locations = await prisma.location.findMany({
+              where: { tenantId: tenant.id },
+              include: { settings: true },
+              orderBy: { isMain: 'desc' },
+            });
+            if (locations.length === 0) {
+              await sendTelegramMessage(`🏢 <b>${tenant.name}</b>\nNessuna sede configurata. Usa /nuova-sede per crearne una.`);
+            } else {
+              let reply = `🏢 <b>${tenant.name}</b> — <b>${locations.length} sedi</b>\n\n`;
+              for (const loc of locations) {
+                reply += `${loc.isMain ? '⭐' : '📍'} <b>${loc.name}</b> (/${loc.slug})\n`;
+                if (loc.address) reply += `   📍 ${loc.address}\n`;
+                if (loc.phone) reply += `   📞 ${loc.phone}\n`;
+                if (loc.openTime && loc.closeTime) reply += `   🕐 ${loc.openTime} - ${loc.closeTime}\n`;
+                reply += `   ${loc.isActive ? '✅ Attiva' : '❌ Disattiva'}`;
+                reply += ` · 💬 ${loc.settings?.smsCredits || 0} SMS\n\n`;
+              }
+              await sendTelegramMessage(reply);
+            }
+          }
+        }
+      }
+      else if (text.startsWith("/sms-sede ")) {
+        const parts = text.replace("/sms-sede ", "").trim().split(" ");
+        if (parts.length === 3) {
+          const query = parts[0];
+          const slug = parts[1];
+          const amount = parseInt(parts[2], 10);
+          if (!isNaN(amount) && amount > 0) {
+            const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
+            if (!tenant) {
+              await sendTelegramMessage("❌ Nessun salone trovato.");
+            } else {
+              const location = await prisma.location.findFirst({
+                where: { tenantId: tenant.id, slug },
+              });
+              if (!location) {
+                await sendTelegramMessage(`❌ Sede "/${slug}" non trovata per ${tenant.name}. Usa /sedi per vedere le sedi.`);
+              } else {
+                const ls = await prisma.locationSettings.upsert({
+                  where: { locationId: location.id },
+                  create: { locationId: location.id, smsCredits: amount },
+                  update: { smsCredits: { increment: amount } },
+                });
+                await sendTelegramMessage(`✅ <b>${tenant.name}</b> — <b>${location.name}</b> ricaricata di <b>${amount} SMS</b>!\nNuovo saldo sede: ${ls.smsCredits} messaggi.`);
+              }
+            }
+          } else {
+            await sendTelegramMessage("⚠️ Inserisci un importo valido (es. /sms-sede beart principale 100).");
+          }
+        } else {
+          await sendTelegramMessage("⚠️ Formato errato. Usa: /sms-sede [nome] [slug-sede] [crediti] (es. /sms-sede beart principale 100)");
+        }
+      }
+      else if (text.startsWith("/nuova-sede ")) {
+        const parts = text.replace("/nuova-sede ", "").trim().split(" ");
+        if (parts.length >= 2) {
+          const query = parts[0];
+          const slug = parts[1].toLowerCase().replace(/[^a-z0-9-]/g, '');
+          const phone = parts.slice(2).join(' ') || undefined;
+          if (slug.length < 2) {
+            await sendTelegramMessage("⚠️ Slug non valido. Usa solo lettere, numeri e trattini (es. /nuova-sede beart centro).");
+          } else {
+            const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
+            if (!tenant) {
+              await sendTelegramMessage("❌ Nessun salone trovato.");
+            } else {
+              const existing = await prisma.location.findFirst({ where: { tenantId: tenant.id, slug } });
+              if (existing) {
+                await sendTelegramMessage(`❌ Slug "/${slug}" già esistente per ${tenant.name}.`);
+              } else {
+                const location = await prisma.location.create({
+                  data: {
+                    name: slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' '),
+                    slug,
+                    phone,
+                    tenantId: tenant.id,
+                  },
+                });
+                await prisma.locationSettings.create({ data: { locationId: location.id } });
+                const services = await prisma.service.findMany({ where: { tenantId: tenant.id } });
+                if (services.length > 0) {
+                  await prisma.serviceLocation.createMany({
+                    data: services.map(s => ({ serviceId: s.id, locationId: location.id, price: s.price })),
+                  });
+                }
+                await sendTelegramMessage(`✅ <b>${tenant.name}</b> — Nuova sede creata!\n🏪 <b>${location.name}</b> (/${slug})\n📞 ${phone || 'Non specificato'}\n📎 Servizi collegati: ${services.length}`);
+              }
+            }
+          }
+        } else {
+          await sendTelegramMessage("⚠️ Formato errato. Usa: /nuova-sede [nome] [slug] [telefono?] (es. /nuova-sede beart centro +393331234567)");
+        }
+      }
       else if (text === "/agents") {
         let totalLeads = 0, newLeads = 0;
         try { totalLeads = await prisma.lead.count(); } catch {}
@@ -281,6 +384,9 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
           `/pro [nome] - Promuove un negozio al piano PRO\n` +
           `/basic [nome] - Retrocede un negozio al piano BASIC\n` +
           `/sms [nome] [crediti] - Ricarica pacchetto messaggi WhatsApp (es. /sms beart 100)\n` +
+          `/sedi [nome] - Elenca tutte le sedi di un salone\n` +
+          `/sms-sede [nome] [slug] [crediti] - Ricarica SMS per una sede specifica (es. /sms-sede beart principale 100)\n` +
+          `/nuova-sede [nome] [slug] [telefono?] - Crea una nuova sede per un salone\n` +
           `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
           `/agents - Mostra lo stato degli agenti automatici\n` +
           `/agent run - Esegue tutti gli agenti ora su GitHub\n` +

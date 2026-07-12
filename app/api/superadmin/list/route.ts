@@ -13,7 +13,11 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' },
       include: {
         services: true,
-        storeSettings: true
+        storeSettings: true,
+        locations: {
+          include: { settings: true },
+          orderBy: { isMain: 'desc' },
+        },
       }
     });
 

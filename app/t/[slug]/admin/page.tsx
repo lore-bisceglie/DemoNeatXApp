@@ -96,6 +96,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     });
   }
 
+  const locations = await prisma.location.findMany({
+    where: { tenantId, isActive: true },
+    include: { settings: true },
+    orderBy: { isMain: 'desc' },
+  });
+
   
   const now = new Date();
   
@@ -710,6 +716,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             tenantId={tenantId}
             slug={slug}
             currentCredits={storeSettings?.smsCredits || 0}
+            locations={locations.map(l => ({ id: l.id, name: l.name, settings: l.settings ? { smsCredits: l.settings.smsCredits } : null }))}
           />
           <ReferralCard tenantId={tenantId} />
         </div>

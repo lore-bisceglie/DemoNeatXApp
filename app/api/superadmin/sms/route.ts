@@ -7,13 +7,22 @@ export async function POST(req: Request) {
   if (auth) return auth;
 
   try {
-    const { tenantId, amount } = await req.json();
+    const { tenantId, amount, locationId } = await req.json();
 
     if (!tenantId || !amount || isNaN(amount)) {
       return NextResponse.json({ error: "Dati mancanti o invalidi" }, { status: 400 });
     }
 
     const creditsToAdd = parseInt(amount, 10);
+
+    if (locationId) {
+      const ls = await prisma.locationSettings.upsert({
+        where: { locationId },
+        create: { locationId, smsCredits: creditsToAdd },
+        update: { smsCredits: { increment: creditsToAdd } },
+      });
+      return NextResponse.json({ success: true, newTotal: ls.smsCredits, locationId });
+    }
 
     const storeSettings = await prisma.storeSettings.upsert({
       where: { tenantId },
