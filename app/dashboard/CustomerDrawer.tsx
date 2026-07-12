@@ -209,10 +209,10 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
           <div className="p-5 overflow-y-auto custom-scrollbar">
             {!selectedCustomer ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-slate-500">
-                <span className="text-4xl mb-3">CRM</span>
+                <span className="text-4xl mb-3">📋</span>
                 <p className="text-sm font-bold">Seleziona un cliente</p>
                 <p className="text-xs mt-1">
-                  Qui trovi storico, preferenze e note interne.
+                  Storico visite, preferenze e note interne.
                 </p>
               </div>
             ) : (
