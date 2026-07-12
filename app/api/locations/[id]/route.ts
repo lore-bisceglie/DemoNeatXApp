@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
-async function getTenantId(slug?: string): Promise<string | null> {
+async function getTenantId(slug?: string): Promise<{ id: string; plan: string } | null> {
   if (!slug) return null;
-  const tenant = await prisma.tenant.findUnique({ where: { slug }, select: { id: true } });
-  return tenant?.id || null;
+  const tenant = await prisma.tenant.findUnique({ where: { slug }, select: { id: true, plan: true } });
+  return tenant || null;
 }
 
 export async function GET(
@@ -16,13 +16,13 @@ export async function GET(
     const cookieStore = await cookies();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug') || cookieStore.get('neatx_tenant_slug')?.value;
-    const tenantId = await getTenantId(slug);
-    if (!tenantId) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
+    const tenant = await getTenantId(slug);
+    if (!tenant) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
 
     const { id } = await params;
 
     const location = await prisma.location.findFirst({
-      where: { id, tenantId },
+      where: { id, tenantId: tenant.id },
       include: {
         settings: true,
         services: { include: { service: true } },
@@ -50,8 +50,8 @@ export async function PUT(
     const cookieStore = await cookies();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug') || cookieStore.get('neatx_tenant_slug')?.value;
-    const tenantId = await getTenantId(slug);
-    if (!tenantId) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
+    const tenant = await getTenantId(slug);
+    if (!tenant) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
 
     const { id } = await params;
     const body = await request.json();
@@ -72,22 +72,34 @@ export async function PUT(
       staffSheetUrl,
     } = body;
 
-    const location = await prisma.location.findFirst({ where: { id, tenantId } });
+    const location = await prisma.location.findFirst({ where: { id, tenantId: tenant.id } });
     if (!location) return NextResponse.json({ error: 'Sede non trovata' }, { status: 404 });
+
+    // Check Elite plan for multi-location (if activating another location)
+    if (isActive === true && tenant.plan !== 'elite') {
+      const otherActive = await prisma.location.count({ where: { tenantId: tenant.id, isActive: true, NOT: { id } } });
+      if (otherActive > 0) {
+        return NextResponse.json({ 
+          error: 'Multi-sede disponibile solo per piano Elite',
+          code: 'PLAN_UPGRADE_REQUIRED',
+          requiredPlan: 'elite'
+        }, { status: 403 });
+      }
+    }
 
     if (locationSlug && locationSlug !== location.slug) {
       const sanitizedSlug = locationSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
       if (!sanitizedSlug) return NextResponse.json({ error: 'Slug non valido' }, { status: 400 });
 
       const existing = await prisma.location.findFirst({
-        where: { tenantId, slug: sanitizedSlug, NOT: { id } },
+        where: { tenantId: tenant.id, slug: sanitizedSlug, NOT: { id } },
       });
       if (existing) return NextResponse.json({ error: 'Slug già esistente' }, { status: 400 });
     }
 
     if (isMain && !location.isMain) {
       await prisma.location.updateMany({
-        where: { tenantId, isMain: true },
+        where: { tenantId: tenant.id, isMain: true },
         data: { isMain: false },
       });
     }
@@ -128,12 +140,12 @@ export async function DELETE(
     const cookieStore = await cookies();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug') || cookieStore.get('neatx_tenant_slug')?.value;
-    const tenantId = await getTenantId(slug);
-    if (!tenantId) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
+    const tenant = await getTenantId(slug);
+    if (!tenant) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
 
     const { id } = await params;
 
-    const location = await prisma.location.findFirst({ where: { id, tenantId } });
+    const location = await prisma.location.findFirst({ where: { id, tenantId: tenant.id } });
     if (!location) return NextResponse.json({ error: 'Sede non trovata' }, { status: 404 });
 
     if (location.isMain) {

@@ -64,7 +64,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
           {!annual && <div className="text-slate-500 text-sm font-semibold mb-8">590&euro;/anno (risparmi 118&euro;)</div>}
 
           <div className="space-y-4 mb-8 flex-1">
-            {['Tutto del piano Pro', 'Mini-Marketing (Recupero Clienti)', 'Autopilota Recensioni Google', 'Multi-Staff illimitato', 'Statistiche ed Esportazione Dati', 'Onboarding VIP dedicato'].map((f, i) => (
+            {['Tutto del piano Pro', 'Mini-Marketing (Recupero Clienti)', 'Autopilota Recensioni Google', 'Multi-Staff illimitato', 'Doppie Sedi / Multi-Location', 'Statistiche ed Esportazione Dati', 'Onboarding VIP dedicato'].map((f, i) => (
               <div key={i} className="flex items-center gap-3">
                 <span className="text-emerald-400">&#10003;</span>
                 <span className="text-slate-300 text-sm font-medium">{f}</span>

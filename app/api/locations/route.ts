@@ -52,11 +52,21 @@ export async function POST(request: Request) {
 
     const tenant = await prisma.tenant.findUnique({
       where: { slug },
-      select: { id: true },
+      select: { id: true, plan: true },
     });
 
     if (!tenant) {
       return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
+    }
+
+    // Check Elite plan for multi-location
+    const locationCount = await prisma.location.count({ where: { tenantId: tenant.id } });
+    if (locationCount > 0 && tenant.plan !== 'elite') {
+      return NextResponse.json({ 
+        error: 'Multi-sede disponibile solo per piano Elite',
+        code: 'PLAN_UPGRADE_REQUIRED',
+        requiredPlan: 'elite'
+      }, { status: 403 });
     }
 
     const body = await request.json();
@@ -94,7 +104,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Slug già esistente per questo tenant' }, { status: 400 });
     }
 
-    const locationCount = await prisma.location.count({ where: { tenantId: tenant.id } });
     const isFirst = locationCount === 0;
     const shouldBeMain = isFirst || isMain;
 
