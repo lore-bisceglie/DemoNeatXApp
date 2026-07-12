@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Scope richiesti per caricare video
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+# Scope: upload + commenti, playlist, canale
+SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 
 CLIENT_SECRETS_FILE = "client_secrets.json"
 TOKEN_FILE = "token.json"
