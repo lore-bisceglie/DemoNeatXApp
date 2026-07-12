@@ -184,27 +184,33 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     }
   }
 
-  const rawAppointments = await prisma.appointment.findMany({
+  // Fetch only data needed for the active tab
+  const isAgendaTab = activeTab === 'agenda';
+  const isServiziTab = activeTab === 'servizi';
+
+  const rawAppointments = isAgendaTab || isServiziTab ? await prisma.appointment.findMany({
     where: {
       date: { gte: todayItaly },
       tenantId,
     },
     orderBy: [ { date: "asc" }, { time: "asc" } ],
     include: { service: true, staff: true },
-  });
+  }) : [];
 
   const columns = staffList.length > 0 ? staffList.map(s => s.id) : ["unassigned"];
   const maxConcurrent = columns.length;
   const radarMap: Record<string, Record<string, Record<string, any>>> = {};
 
-  weekDatesArray.forEach((d) => {
-    radarMap[d] = {};
-    for (const colId of columns) {
-      radarMap[d][colId] = {};
-    }
-  });
+  if (isAgendaTab) {
+    weekDatesArray.forEach((d) => {
+      radarMap[d] = {};
+      for (const colId of columns) {
+        radarMap[d][colId] = {};
+      }
+    });
+  }
 
-  const radarAppointments = await prisma.appointment.findMany({
+  const radarAppointments = isAgendaTab ? await prisma.appointment.findMany({
     where: {
       date: {
         in: weekDatesArray,
@@ -214,18 +220,18 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     include: {
       service: true,
     },
-  });
+  }) : [];
 
-  const recentActivities = await prisma.activityLog.findMany({
+  const recentActivities = isAgendaTab ? await prisma.activityLog.findMany({
     where: { tenantId },
     orderBy: { createdAt: "desc" },
     take: 20,
-  });
+  }) : [];
 
-  const waitlistItems = await prisma.waitlist.findMany({
+  const waitlistItems = isAgendaTab ? await prisma.waitlist.findMany({
     where: { tenantId, date: { gte: todayItaly } },
     orderBy: { createdAt: "desc" },
-  });
+  }) : [];
 
   radarAppointments.forEach((app) => {
     let durationMins = 15;

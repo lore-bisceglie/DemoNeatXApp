@@ -8,7 +8,8 @@ import {
 } from "@/lib/demoShopTemplates";
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
-import { sendWelcomeEmail } from "@/lib/email";
+import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
+import crypto from "crypto";
 
 import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
@@ -120,6 +121,11 @@ export async function POST(req: Request) {
       if (referrer) referredByCode = refCode;
     }
 
+    const emailVerifyToken = crypto.randomUUID();
+    const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    const verifyUrl = `${protocol}://${ROOT_DOMAIN}/api/verify-email?token=${emailVerifyToken}&slug=${slug}`;
+
     const tenant = await prisma.tenant.create({
       data: {
         name: businessName,
@@ -129,6 +135,8 @@ export async function POST(req: Request) {
         ownerName,
         ownerEmail: email,
         ownerPasswordHash: hashPassword(password),
+        emailVerifyToken,
+        emailVerified: false,
         description: description || template.description,
         phone,
         address,
@@ -231,6 +239,11 @@ export async function POST(req: Request) {
     // 🚀 Invia notifica Telegram al founder
     await sendTelegramNotification(tenant, ownerName, template.id);
 
+    // 🚀 Invia email verifica indirizzo
+    await sendVerificationEmail(email, ownerName, verifyUrl).catch(e =>
+      console.error("[Email] Errore invio verifica:", e)
+    );
+
     // 🚀 Invia Email di Benvenuto
     await sendWelcomeEmail(email, ownerName, adminPassword, getTenantAdminUrl(tenant.slug)).catch(e =>
       console.error("[Email] Errore invio benvenuto:", e)
@@ -241,6 +254,7 @@ export async function POST(req: Request) {
       slug: tenant.slug,
       publicUrl: getTenantPublicUrl(tenant.slug),
       adminUrl: getTenantAdminUrl(tenant.slug),
+      needsVerification: true,
     });
   } catch (error) {
     console.error("Errore Onboarding:", error);

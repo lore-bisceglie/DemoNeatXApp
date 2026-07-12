@@ -12,7 +12,7 @@ const HERO_METRICS = [
 
 const TRUST_POINTS = [
   "Pagina prenotazioni generata in automatico",
-  "Turni staff sincronizzati da Google Fogli",
+  "Turni staff sincronizzati da Google Sheet",
   "Ore scaricabili per il commercialista",
 ];
 

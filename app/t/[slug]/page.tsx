@@ -98,7 +98,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateError, setDateError] = useState("");
+  const [honey, setHoney] = useState("");
   const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<string[]>([]);
   const [isBooking, setIsBooking] = useState(false);
   const [demoModal, setDemoModal] = useState({
     show: false,
@@ -112,7 +114,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     price: 0,
   });
   const [showCancelBanner, setShowCancelBanner] = useState(false);
-  const [honey, setHoney] = useState("");
   const [isHoliday, setIsHoliday] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   
@@ -592,15 +593,22 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
   const handleBook = async () => {
     setFormError("");
+    const errors: string[] = [];
 
-    if (!name || !selectedSlot || !selectedService || (!isPlaygroundDemo && !phone)) {
-      setFormError(
-        isPlaygroundDemo
-          ? "Per favore, seleziona un servizio, un orario e inserisci il tuo nome."
-          : "Per favore, seleziona un servizio, un orario e inserisci Nome e Telefono."
-      );
+    if (!selectedService) errors.push("servizio");
+    if (!selectedSlot) errors.push("orario");
+    if (!name || !name.trim()) errors.push("nome");
+    if (!isPlaygroundDemo && !phone) errors.push("telefono");
+
+    if (errors.length > 0) {
+      setFieldErrors(errors);
+      const labels: Record<string, string> = { servizio: "un servizio", orario: "un orario", nome: "il nome", telefono: "il telefono" };
+      const missing = errors.map(e => labels[e] || e);
+      setFormError(`Mancano dati: inserisci ${missing.join(", ")}.`);
       return;
     }
+
+    setFieldErrors([]);
 
     if (!privacyAccepted) {
       setFormError("Per prenotare devi accettare il trattamento dati.");
@@ -616,14 +624,14 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       else if (cifre.length === 14 && cifre.startsWith("0039")) isValid = true;
 
       if (!isValid) {
-        setFormError(
-          "Il numero non è valido. Un cellulare italiano deve avere 10 cifre. Riprova!"
-        );
+        setFieldErrors(["telefono"]);
+        setFormError("Il numero non è valido. Un cellulare italiano deve avere 10 cifre.");
         return;
       }
     }
 
     if (dateError || isHoliday) return;
+    if (!selectedService || !selectedSlot) return;
 
     setIsBooking(true);
 
@@ -1300,9 +1308,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 
                 setSlots([]);
                 setSelectedSlot("");
-                setFormError("");
+                setFormError(""); setFieldErrors([]);
               }}
-              className={`w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer`}
+              className={`w-full bg-[#131c31] border ${
+                fieldErrors.includes("servizio") ? "border-red-500" : "border-[#1e2b4a]"
+              } text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer`}
             >
               {visibleServices.map((srv) => (
                 <option key={srv.id} value={srv.id}>
@@ -1448,9 +1458,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   value={selectedSlot}
                   onChange={(e) => {
                     setSelectedSlot(e.target.value);
-                    setFormError("");
+                    setFormError(""); setFieldErrors([]);
                   }}
-                  className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer"
+                  className={`w-full bg-[#131c31] border ${
+                    fieldErrors.includes("orario") ? "border-red-500" : "border-[#1e2b4a]"
+                  } text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer`}
                 >
                   <option value="">-- Seleziona un orario --</option>
                   {slots.map((slot) => (
@@ -1476,9 +1488,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
-                  setFormError("");
+                  setFormError(""); setFieldErrors([]);
                 }}
-                className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
+                className={`w-full bg-[#131c31] border ${
+                  fieldErrors.includes("nome") ? "border-red-500" : "border-[#1e2b4a]"
+                } text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition`}
               />
 
               <input
@@ -1487,9 +1501,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 value={phone}
                 onChange={(e) => {
                   setPhone(e.target.value);
-                  setFormError("");
+                  setFormError(""); setFieldErrors([]);
                 }}
-                className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition"
+                className={`w-full bg-[#131c31] border ${
+                  fieldErrors.includes("telefono") ? "border-red-500" : "border-[#1e2b4a]"
+                } text-white rounded-xl px-4 py-3 placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition`}
               />
 
               {isPlaygroundDemo && (

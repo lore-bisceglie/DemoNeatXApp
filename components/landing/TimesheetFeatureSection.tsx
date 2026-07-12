@@ -159,7 +159,7 @@ export default function TimesheetFeatureSection() {
             Solo su NeatX
           </div>
           <h2 className="mx-auto max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
-            I turni su Google Fogli.{" "}
+            I turni su Google Sheet.{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
               Il commercialista ringrazia.
             </span>
@@ -380,14 +380,14 @@ export default function TimesheetFeatureSection() {
               {
                 icon: FileSpreadsheet,
                 color: "emerald",
-                title: "Usi già Google Fogli?",
+                title: "Usi già Google Sheet?",
                 body: "Incolla il link. NeatX legge i turni in automatico — nessun doppio inserimento, nessun gestionale nuovo da imparare.",
               },
               {
                 icon: CalendarCheck2,
                 color: "cyan",
                 title: "L'agenda si aggiorna da sola",
-                body: "Luca ha preso ferie? I clienti non vedono più i suoi slot. Riposi, permessi e chiusure bloccano tutto in tempo reale.",
+                body: "Se un dipendente è in ferie, i suoi slot vengono nascosti automaticamente. Riposi, permessi e chiusure aggiornano l'agenda in tempo reale.",
               },
               {
                 icon: Download,

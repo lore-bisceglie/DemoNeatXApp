@@ -102,6 +102,7 @@ export default function Onboarding() {
     slug: string;
     publicUrl: string;
     adminUrl: string;
+    needsVerification?: boolean;
   } | null>(null);
 
   const selectedCategory = useMemo(
@@ -183,6 +184,16 @@ export default function Onboarding() {
           <p className="mt-4 max-w-xl text-sm font-medium leading-relaxed text-slate-400">
             La tua registrazione è completata: pagina pubblica, servizi, staff, agenda e prenotazioni demo sono già configurati.
           </p>
+
+          {successData.needsVerification && (
+            <div className="mt-4 w-full rounded-xl border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-left">
+              <p className="text-sm font-bold text-amber-300">Verifica la tua email</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Ti abbiamo inviato un link di conferma a <strong className="text-slate-300">{email}</strong>. 
+                Cliccalo per attivare l'accesso alla dashboard. Se non lo trovi, controlla la cartella spam.
+              </p>
+            </div>
+          )}
 
           <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
             <Link

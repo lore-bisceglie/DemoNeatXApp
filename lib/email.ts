@@ -33,6 +33,25 @@ async function send(options: { to: string; subject: string; html: string }) {
   }
 }
 
+export async function sendVerificationEmail(tenantEmail: string, ownerName: string, verifyUrl: string) {
+  const safeName = esc(ownerName);
+  return send({
+    to: tenantEmail,
+    subject: `Conferma la tua email per attivare NeatX`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <h1 style="color: #00b4ff;">Ciao ${safeName}, conferma la tua email ✅</h1>
+        <p>Prima di iniziare, verifica che questo indirizzo email sia tuo. Basta un click:</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verifyUrl}" style="background: #00b4ff; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Conferma la mia email</a>
+        </div>
+        <p style="color: #666; font-size: 13px;">Se non hai creato un account su NeatX, ignora questa email.</p>
+        <hr style="border: none; border-top: 1px solid #e2e4e8; margin: 20px 0;"/>
+        <p style="font-size: 12px; color: #999;">NeatX Software · Agenda online per professionisti</p>
+      </div>`,
+  });
+}
+
 export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, adminPassword: string, tenantUrl: string) {
   const safeName = esc(ownerName);
   return send({

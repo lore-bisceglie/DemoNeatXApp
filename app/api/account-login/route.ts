@@ -39,6 +39,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email o password non valide." }, { status: 401 });
     }
 
+    if (!tenant.emailVerified) {
+      return NextResponse.json({ error: "Email non verificata. Controlla la tua casella di posta e clicca sul link di conferma.", needsVerification: true }, { status: 403 });
+    }
+
     const response = NextResponse.json({
       success: true,
       slug: tenant.slug,
