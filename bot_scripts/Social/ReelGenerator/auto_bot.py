@@ -73,11 +73,11 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
             f"Se sei tra i {target.lower()} e ancora segni i turni su Excel, "
             f"stai perdendo ore preziose. Il problema e' {pain}. "
             f"Con NeatX puoi avere {promise}, senza fogli ne calcoli a mano. "
-            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+            "Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!"
         )
         caption = (
             f"{target}: timesheet automatici per il commercialista. "
-            "Commenta AGENDA e ti mando la demo NeatX. "
+            "Commenta INFO o AGENDA e ti mando la demo NeatX. "
             "#NeatX #timesheet #turni #commercialista #automazione"
         )
     elif feature == "recensioni":
@@ -85,11 +85,11 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
             f"Se sei tra i {target.lower()} e i clienti soddisfatti non lasciano recensioni, "
             f"stai perdendo visibilità. Il problema e' {pain}. "
             f"Con NeatX puoi avere {promise}, in automatico dopo ogni appuntamento. "
-            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+            "Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!"
         )
         caption = (
             f"{target}: recensioni Google automatiche. "
-            "Commenta AGENDA e ti mando la demo NeatX. "
+            "Commenta INFO o AGENDA e ti mando la demo NeatX. "
             "#NeatX #recensioni #google #automazione #business"
         )
     elif feature == "analytics":
@@ -97,11 +97,11 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
             f"Se sei tra i {target.lower()} e non sai quanto guadagni davvero ogni mese, "
             f"stai lavorando al buio. Il problema e' {pain}. "
             f"Con NeatX puoi avere {promise}, senza fogli ne calcoli. "
-            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+            "Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!"
         )
         caption = (
             f"{target}: statistiche in tempo reale. "
-            "Commenta AGENDA e ti mando la demo NeatX. "
+            "Commenta INFO o AGENDA e ti mando la demo NeatX. "
             "#NeatX #statistiche #analytics #dati #business"
         )
     elif feature == "multi_staff":
@@ -109,11 +109,11 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
             f"Se sei tra i {target.lower()} e gestire piu collaboratori e un caos, "
             f"stai perdendo clienti e soldi. Il problema e' {pain}. "
             f"Con NeatX puoi avere {promise}, ogni staff con la propria agenda. "
-            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+            "Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!"
         )
         caption = (
             f"{target}: gestione staff e turni automatici. "
-            "Commenta AGENDA e ti mando la demo NeatX. "
+            "Commenta INFO o AGENDA e ti mando la demo NeatX. "
             "#NeatX #staff #turni #team #gestione"
         )
     else:
@@ -121,11 +121,11 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
             f"Se sei tra i {target.lower()} e stai ancora gestendo appuntamenti su WhatsApp, "
             f"stai perdendo tempo e soldi. Il problema e' {pain}. "
             f"Con NeatX puoi avere {promise}, senza rincorrere clienti tutto il giorno. "
-            "Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!"
+            "Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!"
         )
         caption = (
             f"{target}: basta agenda gestita a mano. "
-            "Commenta AGENDA e ti mando la demo NeatX. "
+            "Commenta INFO o AGENDA e ti mando la demo NeatX. "
             "#perte #fyp #foryou #viral #imprenditore #businessitalia #crescita"
         )
 

@@ -1,0 +1,41 @@
+name: NeatX DM Concierge
+on:
+  schedule:
+    - cron: '*/20 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: neatx-dm
+  cancel-in-progress: false
+jobs:
+  scan-and-dm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install instagrapi python-dotenv
+      - name: Scan commenti e invia DM
+        continue-on-error: true
+        env:
+          INSTA_USER: ${{ secrets.INSTA_USER }}
+          INSTA_PASS: ${{ secrets.INSTA_PASS }}
+        run: |
+          cd bot_scripts/Social/ReelGenerator
+          python auto_dm.py || true
+      - name: Follow-up 24h/72h
+        continue-on-error: true
+        env:
+          INSTA_USER: ${{ secrets.INSTA_USER }}
+          INSTA_PASS: ${{ secrets.INSTA_PASS }}
+        run: |
+          cd bot_scripts/Social/ReelGenerator
+          python auto_followup.py || true
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Auto-DM: aggiorna commenti processati"
+          file_pattern: "bot_scripts/Social/ReelGenerator/processed_comments.json"

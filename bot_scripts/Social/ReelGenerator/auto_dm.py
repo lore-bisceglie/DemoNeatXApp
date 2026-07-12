@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import random
 from instagrapi import Client
 from dotenv import load_dotenv
 
@@ -10,22 +11,50 @@ SESSION_FILE = "session.json"
 PROCESSED_COMMENTS_FILE = "processed_comments.json"
 
 # ==========================================
-# CONFIGURAZIONI (Modifica queste liberamente)
+# CONFIGURAZIONI
 # ==========================================
-# Le credenziali arrivano dai GitHub Secrets o dal file .env locale.
 IG_USERNAME = os.environ.get("INSTA_USER", "")
 IG_PASSWORD = os.environ.get("INSTA_PASS", "")
 
-# Se un commento contiene una di queste parole, il bot si attiva
-TRIGGER_WORDS = ["agenda"]
+TRIGGER_WORDS = [
+    "agenda", "info", "prezzo", "costo", "link", "demo", "provare",
+    "funziona", "come si fa", "interessato", "voglio", "aiuto",
+    "contatt", "disponibile", "consigli", "consiglio", "cos'è",
+    "neatx", "appuntament", "prenot", "prova", "gratis",
+    "gratuito", "provarlo", "funzione", "come funziona", "messaggio",
+    "whatsapp", "prezzi", "costa", "quanto",
+]
 
-# Il messaggio che verrà inviato in PRIVATO (DM) all'utente
-DM_MESSAGE_TEXT = "Ciao! Ho visto il tuo commento. Ecco il link per scaricare e provare NeatX gratuitamente per la tua attività: https://www.neatx.store/ \n\nFammi sapere se ti serve aiuto o hai domande!"
+DM_TEMPLATES = [
+    (
+        "Ciao! Ho visto il tuo commento su NeatX. "
+        "Qui trovi la demo gratuita: https://www.neatx.store/\n\n"
+        "Se mi dici che attività hai, posso mostrarti esattamente come funziona per te!"
+    ),
+    (
+        "Grazie per l'interesse! 👋\n"
+        "Ecco il link per provare NeatX gratis: https://www.neatx.store/\n\n"
+        "Se hai dubbi su prezzi o funzioni, scrivimi pure qui!"
+    ),
+    (
+        "Ciao! Ecco il link diretto per la demo gratuita: https://www.neatx.store/\n\n"
+        "Lo uso per automatizzare appuntamenti 24/7, promemoria WhatsApp, timesheet e incassi.\n"
+        "Se vuoi vedere come si adatta alla tua attività, dimmi che settore sei!"
+    ),
+    (
+        "Ecco il link per provare NeatX: https://www.neatx.store/\n\n"
+        "Niente commissioni, prenotazioni 24/7, promemoria WhatsApp automatici e timesheet per il commercialista.\n"
+        "Fammi sapere se hai domande!"
+    ),
+]
 
-# La risposta pubblica che apparirà sotto al suo commento
-PUBLIC_REPLY_TEXT = "Ti ho inviato il link in messaggio privato (DM)! 🚀"
+PUBLIC_REPLIES = [
+    "Ti ho scritto in DM con il link! 📩",
+    "Ti ho inviato il link in privato! Controlla la richiesta 💬",
+    "Guarda le richieste messaggi, ti ho inviato tutto li! ✅",
+    "Risposto in DM! Se non vedi il messaggio, controlla le richieste 📥",
+]
 
-# Quanti degli ultimi Reel vuoi che vengano tenuti sotto controllo?
 CHECK_LATEST_N_POSTS = 5
 # ==========================================
 
@@ -109,9 +138,13 @@ def main():
             if any(trigger in text_lower for trigger in TRIGGER_WORDS):
                 print(f"  [+] Trovato commento target da @{comment.user.username}: '{comment.text}'")
                 
+                # Scegli template random per variare
+                dm_text = random.choice(DM_TEMPLATES)
+                pub_text = random.choice(PUBLIC_REPLIES)
+                
                 # 1. Invia il DM
                 try:
-                    cl.direct_send(DM_MESSAGE_TEXT, user_ids=[comment.user.pk])
+                    cl.direct_send(dm_text, user_ids=[comment.user.pk])
                     print(f"    -> DM inviato a @{comment.user.username}")
                 except Exception as e:
                     print(f"    [!] Errore invio DM: {e}")
@@ -125,13 +158,12 @@ def main():
                 
                 # 3. Rispondi pubblicamente
                 try:
-                    cl.media_comment(media.id, PUBLIC_REPLY_TEXT, replied_to_comment_id=comment.pk)
+                    cl.media_comment(media.id, pub_text, replied_to_comment_id=comment.pk)
                     print(f"    -> Risposta pubblica inserita sotto il commento")
                 except Exception as e:
                     print(f"    [!] Errore risposta commento: {e}")
-                    # Ripiego se replied_to_comment_id non funziona
                     try:
-                        cl.media_comment(media.id, f"@{comment.user.username} {PUBLIC_REPLY_TEXT}")
+                        cl.media_comment(media.id, f"@{comment.user.username} {pub_text}")
                         print(f"    -> Risposta pubblica inserita (con @menzione classica)")
                     except:
                         pass

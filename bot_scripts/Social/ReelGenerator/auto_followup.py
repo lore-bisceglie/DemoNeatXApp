@@ -1,11 +1,19 @@
 import os
 import json
 import time
+import random
 from instagrapi import Client
 from auto_dm import IG_USERNAME, IG_PASSWORD, SESSION_FILE, PROCESSED_COMMENTS_FILE, load_processed_comments, save_processed_comments
 
-FOLLOWUP_MESSAGE = "Ciao! Sei riuscito a provare la Demo di NeatX? Se hai domande o ti serve una versione su misura per la tua attività scrivimi pure qui!"
-HOURS_WAIT = 24
+FOLLOWUP_TEMPLATES = [
+    "Ciao! Sei riuscito a dare un'occhiata alla demo NeatX? Se hai domande o vuoi una versione personalizzata per la tua attività, scrivimi pure!",
+    "Hey! Hai già provato la demo? Se ti serve una mano a configurarla per il tuo business, sono qui!",
+    "Ci hai fatto un pensiero? Se vuoi vedere come NeatX funziona per la tua categoria specifica, fammi sapere che ti mostro!",
+    "Ancora nessuna domanda? Se hai avuto problemi con la demo o vuoi chiarimenti, basta un messaggio!",
+]
+
+INITIAL_HOURS = 24
+REMINDER_HOURS = 72
 
 def main():
     print("=========================================")
@@ -15,23 +23,32 @@ def main():
     processed_ids = load_processed_comments()
     
     # Cerchiamo utenti che devono ricevere il follow-up
-    to_follow_up = []
+    to_follow_up_24 = []
+    to_follow_up_72 = []
     current_time = time.time()
     
     for item in processed_ids:
-        # Se è un vecchio record senza timestamp, lo skippiamo (già segnato come followed_up=True dalla migrazione)
-        if type(item) is dict and not item.get("followed_up", True):
-            elapsed_seconds = current_time - item.get("timestamp", 0)
-            if elapsed_seconds >= (HOURS_WAIT * 3600):
-                to_follow_up.append(item)
-                
-    if not to_follow_up:
+        if type(item) is not dict:
+            continue
+        
+        # Primo follow-up dopo 24h (segna come followed_up=False all'inizio)
+        if not item.get("followed_up", True):
+            elapsed = current_time - item.get("timestamp", 0)
+            if elapsed >= (INITIAL_HOURS * 3600):
+                to_follow_up_24.append(item)
+        
+        # Secondo follow-up dopo 72h (segna come reminder=True)
+        if item.get("followed_up", False) and not item.get("reminder_sent", False):
+            elapsed = current_time - item.get("followed_up_at", item.get("timestamp", 0))
+            if elapsed >= (REMINDER_HOURS * 3600):
+                to_follow_up_72.append(item)
+
+    if not to_follow_up_24 and not to_follow_up_72:
         print("[*] Nessun utente necessita di Follow-Up al momento.")
         return
-        
-    print(f"[*] Trovati {len(to_follow_up)} utenti da ricontattare!")
+
+    print(f"[*] Follow-up 24h: {len(to_follow_up_24)} utenti | Follow-up 72h: {len(to_follow_up_72)} utenti")
     
-    # Login a Instagram
     cl = Client()
     cl.delay_range = [2, 5]
     
@@ -45,19 +62,31 @@ def main():
     else:
         cl.login(IG_USERNAME, IG_PASSWORD)
         cl.dump_settings(SESSION_FILE)
-        
-    for user in to_follow_up:
-        print(f"[*] Invio Follow-up a @{user['username']}...")
+
+    for user in to_follow_up_24:
+        msg = random.choice(FOLLOWUP_TEMPLATES)
         try:
-            cl.direct_send(FOLLOWUP_MESSAGE, user_ids=[int(user["user_id"])])
-            print(f"  [+] Follow-up inviato con successo!")
+            cl.direct_send(msg, user_ids=[int(user["user_id"])])
             user["followed_up"] = True
+            user["followed_up_at"] = time.time()
             save_processed_comments(processed_ids)
-            time.sleep(15) # Attesa per non sembrare spam
+            print(f"  [+] Follow-up 24h inviato a @{user['username']}")
+            time.sleep(15)
         except Exception as e:
-            print(f"  [!] Errore durante l'invio a @{user['username']}: {e}")
-            
-    print("\n[+] Operazione Follow-Up Completata.")
+            print(f"  [!] Errore follow-up 24h @{user['username']}: {e}")
+
+    for user in to_follow_up_72:
+        msg = random.choice(FOLLOWUP_TEMPLATES) + "\n\nOfferta speciale per te: se attivi oggi, il primo mese è gratis! 🎁"
+        try:
+            cl.direct_send(msg, user_ids=[int(user["user_id"])])
+            user["reminder_sent"] = True
+            save_processed_comments(processed_ids)
+            print(f"  [+] Follow-up 72h inviato a @{user['username']}")
+            time.sleep(15)
+        except Exception as e:
+            print(f"  [!] Errore follow-up 72h @{user['username']}: {e}")
+
+    print("\n[+] Follow-Up Completato.")
 
 if __name__ == "__main__":
     main()
