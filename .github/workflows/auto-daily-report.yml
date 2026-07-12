@@ -39,28 +39,10 @@ jobs:
           # Errori oggi (ultimo report reel)
           IG_STATUS="?"
           if [ -f ../publish_report.json ]; then
-            IG_STATUS=$(python -c "
-import json
-with open('../publish_report.json') as f:
-    r=json.load(f)
-for k,v in r.get('results',{}).items():
-    print(f'{k}: {\"✅\" if v.get(\"ok\") else \"❌\"}')
-" 2>&1 | tr '\n' ' | ')
+            IG_STATUS=$(python Social/ReelGenerator/publish_report_summary.py "../publish_report.json" 2>&1 | tr '\n' ' | ')
           fi
 
           DATE_IT=$(TZ=Europe/Rome date +'%d/%m/%Y')
-          REPORT="📅 *Report $DATE_IT*
+          REPORT=$(printf "\360\237\223\205 *Report %s*\n\n\360\237\223\271 Reel pubblicati: %s\n\360\237\223\235 Articoli SEO: %s\n\360\237\221\245 Lead raccolti: %s\n\360\237\217\252 Nuovi negozi: %s\n\n%s" "$DATE_IT" "$REEL_COUNT" "$SEO_COUNT" "$LEAD_COUNT" "$STORE_COUNT" "$IG_STATUS")
 
-📹 Reel pubblicati: $REEL_COUNT
-📝 Articoli SEO: $SEO_COUNT
-👥 Lead raccolti: $LEAD_COUNT
-🏪 Nuovi negozi: $STORE_COUNT
-
-$IG_STATUS"
-
-          python -c "
-import sys
-sys.path.insert(0, '.')
-from notify_telegram import send
-send('Report Giornaliero', '''$REPORT''', '📊')
-" 2>&1 || python notify_telegram.py "Report Giornaliero" "$REPORT" "📊"
+          python notify_telegram.py "Report Giornaliero" "$REPORT" "📊"

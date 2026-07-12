@@ -105,7 +105,7 @@
         "title": "BARBIERI: BASTA NO-SHOW",
         "hook": "BARBIERI: BASTA NO-SHOW",
         "date": "2026-07-09",
-        "views": 429,
+        "views": 428,
         "likes": 1
     },
     {
@@ -136,11 +136,19 @@
         "title": "BASTA NO SHOW",
         "hook": "BASTA NO SHOW",
         "date": "2026-07-11",
-        "views": 17,
+        "views": 21,
         "likes": 0
     },
     {
         "youtube_id": "NW-_dx0yAv8",
+        "title": "ADDIO TELEFONO",
+        "hook": "ADDIO TELEFONO",
+        "date": "2026-07-12",
+        "views": 112,
+        "likes": 0
+    },
+    {
+        "youtube_id": true,
         "title": "ADDIO TELEFONO",
         "hook": "ADDIO TELEFONO",
         "date": "2026-07-12",

@@ -87,18 +87,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           cd bot_scripts
-          python notify_telegram.py "Auto-Reel" "$(python -c "
-import json, os
-path='Social/ReelGenerator/publish_report.json'
-if os.path.exists(path):
-    with open(path) as f:
-        r=json.load(f)
-    for k,v in r.get('results',{}).items():
-        icon='✅' if v.get('ok') else '❌'
-        print(f'{icon} {k}: {v.get(\"message\",\"\")}')
-else:
-    print('Nessun report trovato')
-" 2>&1)" "🎬"
+          python notify_telegram.py "Auto-Reel" "$(python Social/ReelGenerator/publish_report_summary.py 2>&1)" "🎬"
       - name: Upload generated reel artifact
         if: steps.gate.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
