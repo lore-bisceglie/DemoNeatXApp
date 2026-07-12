@@ -1,18 +1,18 @@
 {
   "date": "2026-07-12",
-  "niche": "Centri Estetici",
-  "feature": "promemoria",
-  "feature_label": "Promemoria WhatsApp",
-  "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono",
-  "promise": "promemoria automatici che riducono i no-show del 90%",
-  "cover_title": "RIMEMBRANZA SICURA",
-  "hook_hint": "Se sei tra i centri estetici e clienti che dimenticano l'appuntamento e non rispondono al telefono, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: Promemoria WhatsApp con NeatX",
+  "niche": "Coach e Consulenti",
+  "feature": "timesheet",
+  "feature_label": "Timesheet Commercialista",
+  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+  "cover_title": "ADDIO ORE",
+  "hook_hint": "Se sei tra i coach e consulenti e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Coach e Consulenti: Timesheet Commercialista con NeatX",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic beauty center, esthetician performing facial treatment, clean premium spa room",
+  "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "agenda consulente",
+    "prenotazioni coach",
+    "booking consulenze"
   ]
 }
