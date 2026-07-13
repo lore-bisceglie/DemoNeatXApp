@@ -386,7 +386,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   // WAITLIST FETCH
   const waitlistData = await prisma.waitlist.findMany({
     where: { tenantId },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'asc' }
   });
 
 
