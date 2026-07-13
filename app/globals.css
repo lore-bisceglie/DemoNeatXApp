@@ -10,8 +10,21 @@
 }
 
 /* ===== FIX IUBENDA COOKIE BADGE ===== */
-#iubenda-cs-badge {
+#iubenda-cs-badge,
+.iubenda-cs-badge,
+.iubenda-badge,
+.iubenda-widget,
+[iubenda-badge],
+[class*="iubenda"][style*="fixed"],
+[class*="iubenda"][style*="bottom"],
+div[id*="iubenda"],
+div[class*="iubenda"] {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 @keyframes marquee {
