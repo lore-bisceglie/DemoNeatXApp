@@ -135,8 +135,8 @@ export default function Chatbot() {
           {/* Pulse ring */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 animate-ping opacity-20" />
           {/* Main button */}
-          <div className="relative p-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300">
-            <MessageCircle size={28} />
+          <div className="relative flex items-center justify-center h-14 w-14 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-transform duration-300 transform-gpu will-change-transform">
+            <MessageCircle size={20} />
           </div>
           {/* New message badge */}
           {hasNewMessage && (

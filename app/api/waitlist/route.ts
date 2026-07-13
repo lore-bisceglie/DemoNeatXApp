@@ -45,7 +45,7 @@ export async function GET(req: Request) {
     const waitlist = await prisma.waitlist.findMany({
       where: tenantId ? { tenantId } : {},
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
     });
 

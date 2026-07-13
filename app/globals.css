@@ -11,16 +11,7 @@
 
 /* ===== FIX IUBENDA COOKIE BADGE ===== */
 #iubenda-cs-badge {
-  left: 16px !important;
-  right: auto !important;
-  bottom: 80px !important;
-  z-index: 40 !important;
-}
-
-@media (max-width: 640px) {
-  #iubenda-cs-badge {
-    bottom: 90px !important;
-  }
+  display: none !important;
 }
 
 @keyframes marquee {

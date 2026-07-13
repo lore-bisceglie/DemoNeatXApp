@@ -263,7 +263,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   const waitlistItems = await prisma.waitlist.findMany({
     where: { tenantId, date: { gte: todayItaly } },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: "asc" },
   });
 
   radarAppointments.forEach((app) => {
