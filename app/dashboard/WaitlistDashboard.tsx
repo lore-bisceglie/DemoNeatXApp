@@ -45,7 +45,16 @@ export default function WaitlistDashboard({ initialData, tenantId }: { initialDa
     }
   };
 
-  if (waitlist.length === 0) return null;
+  if (waitlist.length === 0) {
+    return (
+      <div className="bg-[#0b1221] border border-[#1a2642] p-6 rounded-3xl shadow-xl mb-6">
+        <h2 className="text-slate-500 font-extrabold flex items-center gap-2 mb-2 text-lg">
+          <span>⏳</span> Lista d&apos;Attesa
+        </h2>
+        <p className="text-slate-500 text-sm italic">Nessun cliente in lista d&apos;attesa.</p>
+      </div>
+    );
+  }
 
   return (
     <>

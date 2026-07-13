@@ -18,7 +18,8 @@ export default function TabbedArea({
   slug: string;
   children: ReactNode;
 }) {
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const validTab = tabConfig.some((t) => t.id === initialTab) ? initialTab : tabConfig[0]?.id || "agenda";
+  const [activeTab, setActiveTab] = useState(validTab);
 
   const handleTabClick = useCallback(
     (tabId: string) => {
