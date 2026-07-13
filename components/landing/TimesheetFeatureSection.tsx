@@ -180,8 +180,8 @@ export default function TimesheetFeatureSection() {
 
         {/* Layout principale: mockup + pannello fasi */}
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_420px]">
-          {/* Mockup animato con altezza minima fissa per evitare layout shift tra le fasi */}
-          <div className="relative rounded-3xl border border-white/10 bg-[#050c16] p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-xl min-h-[480px] sm:min-h-[420px]">
+          {/* Mockup animato con altezza FISSA assoluta per sradicare alla radice ogni microscatto su mobile */}
+          <div className="relative rounded-3xl border border-white/10 bg-[#050c16] p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-xl h-[580px] sm:h-[480px]">
             {/* Tab fasi */}
             <div className="mb-5 flex gap-2">
               {(["sheet", "agenda", "csv"] as Phase[]).map((p) => (
