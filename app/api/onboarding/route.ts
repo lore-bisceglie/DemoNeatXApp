@@ -982,6 +982,50 @@ export async function POST(req: Request) {
       staffByName.set(member.name, staff);
     }
 
+    // CREA SEDE PRINCIPALE DI DEFAULT
+    const mainLocation = await prisma.location.create({
+      data: {
+        name: "Sede Principale",
+        slug: slug + "-sede-principale",
+        phone,
+        address,
+        city,
+        openTime: template.openTime,
+        closeTime: template.closeTime,
+        breakStart: template.breakStart || null,
+        breakEnd: template.breakEnd || null,
+        closedDays: JSON.stringify(template.closedDays),
+        isMain: true,
+        isActive: true,
+        tenantId: tenant.id,
+        settings: {
+          create: {
+            smsCredits: referredByCode ? 75 : 50,
+          },
+        },
+      },
+    });
+
+    // COLLEGA SERVIZI ALLA SEDE PRINCIPALE
+    for (const service of tenant.services) {
+      await prisma.serviceLocation.create({
+        data: {
+          serviceId: service.id,
+          locationId: mainLocation.id,
+          price: service.price,
+          isActive: true,
+        },
+      });
+    }
+
+    // COLLEGA STAFF ALLA SEDE PRINCIPALE
+    for (const [, staff] of staffByName) {
+      await prisma.staff.update({
+        where: { id: staff.id },
+        data: { locationId: mainLocation.id },
+      });
+    }
+
     // IL CICLO SOTTOSTANTE È STATO RIMOSSO PER MANTENERE L'AGENDA VUOTA SUI NUOVI NEGOZI
     /*
     for (const seed of template.bookings) {

@@ -93,6 +93,12 @@ export async function POST(request: Request) {
 
     // 🌟 VALIDAZIONE LOCATION
     let targetLocationId: string | null = null;
+    const activeLocations = await prisma.location.findMany({
+      where: { tenantId, isActive: true },
+      select: { id: true },
+      take: 2,
+    });
+
     if (locationId) {
       const location = await prisma.location.findUnique({
         where: { id: locationId },
@@ -103,15 +109,9 @@ export async function POST(request: Request) {
       }
       targetLocationId = location.id;
     } else {
-      // Auto-seleziona sede se tenant ha una sola sede attiva
-      const locations = await prisma.location.findMany({
-        where: { tenantId, isActive: true },
-        select: { id: true },
-        take: 2,
-      });
-      if (locations.length === 1) {
-        targetLocationId = locations[0].id;
-      } else if (locations.length > 1) {
+      if (activeLocations.length === 1) {
+        targetLocationId = activeLocations[0].id;
+      } else if (activeLocations.length > 1) {
         return NextResponse.json({ error: "Specifica la sede (locationId)" }, { status: 400 });
       }
     }
@@ -119,13 +119,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Nessuna sede disponibile per questo tenant" }, { status: 400 });
     }
 
-    // 🌟 VALIDAZIONE SERVIZIO IN SEDE
-    const serviceLocation = await prisma.serviceLocation.findUnique({
-      where: { serviceId_locationId: { serviceId, locationId: targetLocationId } },
-      select: { isActive: true, price: true },
-    });
-    if (!serviceLocation || !serviceLocation.isActive) {
-      return NextResponse.json({ error: "Servizio non disponibile in questa sede" }, { status: 400 });
+    // 🌟 VALIDAZIONE SERVIZIO IN SEDE (solo se tenant ha sedi configurate)
+    if (activeLocations.length > 0) {
+      const serviceLocation = await prisma.serviceLocation.findUnique({
+        where: { serviceId_locationId: { serviceId, locationId: targetLocationId } },
+        select: { isActive: true, price: true },
+      });
+      if (!serviceLocation || !serviceLocation.isActive) {
+        return NextResponse.json({ error: "Servizio non disponibile in questa sede" }, { status: 400 });
+      }
     }
 
     // 🌟 VALIDAZIONE STAFF IN SEDE

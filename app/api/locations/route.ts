@@ -151,7 +151,6 @@ export async function POST(request: Request) {
     });
 
     if (services.length > 0) {
-      // Ignore duplicate errors from createMany
       try {
         await prisma.serviceLocation.createMany({
           data: services.map((s) => ({
@@ -163,6 +162,20 @@ export async function POST(request: Request) {
         });
       } catch (e) {
         // Ignore duplicates
+      }
+    }
+
+    // Collega staff esistente alla sede (solo se prima sede)
+    if (isFirst) {
+      const staffList = await prisma.staff.findMany({
+        where: { tenantId: tenant.id, locationId: null },
+        select: { id: true },
+      });
+      if (staffList.length > 0) {
+        await prisma.staff.updateMany({
+          where: { id: { in: staffList.map((s) => s.id) } },
+          data: { locationId: location.id },
+        });
       }
     }
 
