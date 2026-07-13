@@ -52,9 +52,30 @@ export default function Chatbot() {
   const [showQuickReplies, setShowQuickReplies] = useState(true);
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const [proactiveSent, setProactiveSent] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasOpenedRef = useRef(false);
+  const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Tooltip "Sono un bot" dopo 5s (o al primo scroll) se non ha aperto
+  useEffect(() => {
+    const show = () => {
+      if (!hasOpenedRef.current && !isOpen) {
+        setShowTooltip(true);
+        tooltipTimerRef.current = setTimeout(() => setShowTooltip(false), 6000);
+      }
+      window.removeEventListener('scroll', onScroll);
+    };
+    const onScroll = () => show();
+    const timer = setTimeout(show, 5000);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [isOpen]);
 
   // Messaggio proattivo dopo 15s se non ha aperto la chat e non ha messaggi
   useEffect(() => {
@@ -83,6 +104,7 @@ export default function Chatbot() {
   useEffect(() => {
     if (isOpen) {
       hasOpenedRef.current = true;
+      setShowTooltip(false);
       setTimeout(() => inputRef.current?.focus(), 300);
       setHasNewMessage(false);
     }
@@ -164,6 +186,19 @@ export default function Chatbot() {
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-bounce">
               1
             </span>
+          )}
+          {/* Tooltip "Sono un bot" */}
+          {showTooltip && !isOpen && (
+            <div className="absolute right-14 top-1/2 -translate-y-1/2 sm:right-16 z-50 animate-fade-in">
+              <div className="bg-[#0a0e1a] border border-blue-500/40 rounded-xl px-4 py-2.5 shadow-2xl shadow-blue-900/30 flex items-center gap-2 whitespace-nowrap">
+                <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                  <Sparkles size={14} className="text-white" />
+                </span>
+                <span className="text-white text-sm font-medium">Ciao! Sono <span className="text-blue-300">NeatBot</span> 🤖</span>
+                <span className="text-xs text-gray-400 px-2 py-0.5 bg-blue-500/20 rounded-full">Assistente AI</span>
+              </div>
+              <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-left-blue-500/40" />
+            </div>
           )}
         </div>
       </button>
