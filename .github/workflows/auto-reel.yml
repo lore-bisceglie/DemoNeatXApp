@@ -11,6 +11,8 @@ concurrency:
 jobs:
   run-reel-bot:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check Italian posting window
         id: gate
