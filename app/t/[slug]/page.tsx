@@ -100,6 +100,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const [loading, setLoading] = useState(false);
   const [dateError, setDateError] = useState("");
   const [honey, setHoney] = useState("");
+  const [emailCopied, setEmailCopied] = useState(false);
   const [formError, setFormError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<string[]>([]);
   const [isBooking, setIsBooking] = useState(false);
@@ -1759,20 +1760,20 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         
         <Link href="https://www.neatx.store"
               target="_blank"
-              className="mt-2 w-full py-3 bg-gradient-to-r from-[#007aff] to-[#00b4ff] hover:from-[#0066cc] hover:to-[#0099ee] text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_20px_rgba(0,122,255,0.4)] flex items-center justify-center gap-2">
-          <span>🚀</span> Scopri Neat<span className="text-[#002b59]">X</span>
+              className="mt-2 w-full py-3 bg-gradient-to-r from-[#1e40af] to-[#06b6d4] hover:from-[#1e3a8a] hover:to-[#0891b2] text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_25px_rgba(6,182,212,0.35)] flex items-center justify-center gap-2">
+          <span>🚀</span> Scopri di più
         </Link>
       </div>
 
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl p-6 mt-2 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1e2b4a] shadow-lg">
         <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
           <p>
-            Powered by <span className="font-bold text-white">Neat</span><span className="text-[#007aff] font-bold">X</span>
+            Powered by <span className="font-bold text-white">Neat<span className="text-[#007aff]">X</span></span>
           </p>
           <p className="text-[10px]">
-            <a href="mailto:neatx.info@gmail.com" className="hover:text-white transition-colors">neatx.info@gmail.com</a>
+            <button onClick={() => { navigator.clipboard.writeText('neatx.info@gmail.com').then(() => { setEmailCopied(true); setTimeout(() => setEmailCopied(false), 2000); }); }} className="hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer font-inherit text-inherit text-[10px]">{emailCopied ? 'Copiato! ✓' : 'neatx.info@gmail.com'}</button>
             <span className="mx-2 text-slate-600">·</span>
-            <span>© 2026 NeatX</span>
+            <span>© 2026</span>
           </p>
           <Link 
             href={getTenantAdminUrl(params.slug)}
