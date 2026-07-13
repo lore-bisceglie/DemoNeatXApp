@@ -1,18 +1,18 @@
 {
   "date": "2026-07-13",
-  "niche": "Coach e Consulenti",
-  "feature": "booking",
-  "feature_label": "Prenotazione 24/7",
-  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-  "promise": "clienti che prenotano da soli anche mentre dormi",
-  "cover_title": "CLIENTI IN AUTOMATICO",
-  "hook_hint": "Se sei tra i coach e consulenti e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
-  "blog_topic": "Coach e Consulenti: Prenotazione 24/7 con NeatX",
+  "niche": "Personal Trainer",
+  "feature": "recensioni",
+  "feature_label": "Recensioni Automatiche",
+  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+  "cover_title": "RECENSIONI DA CLIENTI FELICI",
+  "hook_hint": "Se sei tra i personal trainer e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: Recensioni Automatiche con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
+  "image_prompt": "photorealistic personal trainer coaching client in modern gym, energetic professional scene",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
