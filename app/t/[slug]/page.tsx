@@ -1753,9 +1753,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
       {/* Banner Promozionale NeatX (Marketing Virale) */}
       <div className="bg-[#131c31] max-w-md w-full rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-[#1e2b4a] p-6 mt-6 text-center flex flex-col items-center gap-2 relative z-10">
-        <h3 className="text-white font-extrabold text-lg mb-1 tracking-wide">Sei un professionista?</h3>
-        <p className="text-slate-300 text-xs font-medium">Azzera i no-show e riempi la tua agenda in automatico.</p>
-        <p className="text-slate-300 text-xs font-medium mb-3">Scopri il software che usa questo salone.</p>
+        <h3 className="text-white font-extrabold text-lg mb-1 tracking-wide">I clienti dimenticano.</h3>
+        <p className="text-slate-300 text-xs font-medium"><span className="font-bold text-white">NeatX</span> ricorda. La tua agenda si riempie.</p>
+        <p className="text-slate-400 text-[11px] mb-2">Il software che usa questo salone.</p>
         
         <Link href="https://www.neatx.store"
               target="_blank"
@@ -1768,8 +1768,6 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-2">
           <p>
             Powered by <span className="font-bold text-white">Neat</span><span className="font-bold text-[#007aff]">X</span>
-            <br />
-            Powered by <span className="text-[#007aff] font-semibold">NeatX</span>
           </p>
           <Link 
             href={getTenantAdminUrl(params.slug)}
