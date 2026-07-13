@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export default function PublicWidgetsWrapper({ children }: { children: React.ReactNode }) {
-  const [shouldRender, setShouldRender] = useState(true);
   const pathname = usePathname();
+
+  if (pathname?.startsWith("/t/")) return null;
+
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     const hostname = window.location.hostname;
@@ -14,13 +17,10 @@ export default function PublicWidgetsWrapper({ children }: { children: React.Rea
       hostname === "neatx.store" ||
       hostname === "www.neatx.store" ||
       hostname.includes("vercel.app");
-
     const isSuperAdmin = document.cookie.includes("superadmin_god_eye=true");
+    setShow(isMainDomain && !isSuperAdmin);
+  }, []);
 
-    if (!isMainDomain || pathname?.startsWith("/t/") || isSuperAdmin) {
-      setShouldRender(false);
-    }
-  }, [pathname]);
-
-  return <div style={{ display: shouldRender ? "" : "none" }}>{children}</div>;
+  if (!show) return <div style={{ display: "none" }}>{children}</div>;
+  return <>{children}</>;
 }

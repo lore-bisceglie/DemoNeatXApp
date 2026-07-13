@@ -2,9 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { Mail } from "lucide-react";
-import InstagramFloatingBtn from "@/components/InstagramFloatingBtn";
-import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
-import EmailFloatingBtn from "@/components/EmailFloatingBtn";
+import SocialFloatingGroup from "@/components/landing/SocialFloatingGroup";
 import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";
 import PublicWidgetsWrapper from "@/components/landing/PublicWidgetsWrapper";
@@ -62,26 +60,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Chatbot AI */}
           <Chatbot />
 
-          {/* Nuova Pila di Bottoni (In Basso a Sinistra) */}
-          <div className="fixed bottom-16 left-4 sm:bottom-20 sm:left-6 z-[9998] flex flex-col items-start gap-3 pointer-events-none">
-            {/* I bottoni devono avere pointer-events-auto per essere cliccabili */}
-
-            <div className="pointer-events-auto">
-              {/* Pulsante Fluttuante Email */}
-              <div className="sm:hidden"><EmailFloatingBtn compact /></div>
-              <div className="hidden sm:block"><EmailFloatingBtn /></div>
-            </div>
-
-            <div className="pointer-events-auto">
-              {/* Pulsante Fluttuante Instagram */}
-              <div className="sm:hidden"><InstagramFloatingBtn compact /></div>
-              <div className="hidden sm:block"><InstagramFloatingBtn /></div>
-            </div>
-
-            <div className="hidden sm:block pointer-events-auto">
-              {/* Pulsante Fluttuante WhatsApp (solo desktop, in coda) */}
-              <WhatsAppFloatingBtn />
-            </div>
+          {/* Social bar — compatta, glass, orizzontale */}
+          <div className="fixed bottom-20 sm:bottom-8 left-1/2 -translate-x-1/2 z-[9998] pointer-events-auto">
+            <SocialFloatingGroup />
           </div>
         </PublicWidgetsWrapper>
 
