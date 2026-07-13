@@ -57,7 +57,8 @@ export default function DeleteButton({
     const noCache = Date.now();
 
     const res = await fetch(
-      `/api/actions/delete?id=${appointmentId}&t=${noCache}`
+      `/api/actions/delete?id=${appointmentId}&t=${noCache}`,
+      { method: "POST" }
     );
 
     if (!res.ok) {

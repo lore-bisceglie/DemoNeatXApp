@@ -36,7 +36,7 @@ function playNotificationSound() {
 
 function TypingDots() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3">
+    <div className="flex items-center gap-1 px-3 py-2.5">
       <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
       <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
       <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -135,8 +135,8 @@ export default function Chatbot() {
           {/* Pulse ring */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 animate-ping opacity-20" />
           {/* Main button */}
-          <div className="relative flex items-center justify-center h-14 w-14 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-transform duration-300 transform-gpu will-change-transform">
-            <MessageCircle size={20} />
+          <div className="relative flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-transform duration-300 transform-gpu will-change-transform">
+            <MessageCircle size={18} />
           </div>
           {/* New message badge */}
           {hasNewMessage && (
@@ -151,28 +151,28 @@ export default function Chatbot() {
       <div
         className={`fixed z-[9999999] transition-all duration-500 ease-out origin-bottom-right
           bottom-0 right-0 sm:bottom-6 sm:right-6
-          w-full h-full sm:w-[400px] sm:h-[600px] sm:max-h-[85vh] sm:rounded-2xl
+          w-full h-full sm:w-[360px] sm:h-[520px] sm:max-h-[80vh] sm:rounded-2xl
           ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}
         `}
       >
         <div className="w-full h-full flex flex-col bg-[#0a0e1a] sm:rounded-2xl border border-gray-800/50 shadow-2xl shadow-blue-900/20 overflow-hidden backdrop-blur-xl">
           
-          {/* ═══ HEADER ═══ */}
-          <div className="relative px-5 py-4 border-b border-gray-800/50">
+           {/* ═══ HEADER ═══ */}
+          <div className="relative px-4 py-3 border-b border-gray-800/50">
             {/* Background gradient */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20" />
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {/* Animated avatar */}
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <Sparkles size={20} className="text-white" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <Sparkles size={16} className="text-white" />
                   </div>
-                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-[#0a0e1a]" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-blue-400 border-2 border-[#0a0e1a]" />
                 </div>
                 <div>
                   <h3 className="text-white font-semibold text-sm tracking-wide">NeatBot</h3>
-                  <p className="text-green-400 text-xs font-medium">Online adesso</p>
+                  <p className="text-blue-300 text-xs font-medium">Assistente AI · 24/7</p>
                 </div>
               </div>
               <button
@@ -184,16 +184,16 @@ export default function Chatbot() {
             </div>
           </div>
 
-          {/* ═══ MESSAGES ═══ */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scroll-smooth" style={{ scrollbarWidth: 'thin', scrollbarColor: '#1e293b transparent' }}>
+           {/* ═══ MESSAGES ═══ */}
+          <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 scroll-smooth" style={{ scrollbarWidth: 'thin', scrollbarColor: '#1e293b transparent' }}>
             {/* Welcome message */}
             <div className="flex justify-start animate-fade-in">
               <div className="flex gap-2 max-w-[88%]">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-blue-500/20">
-                  <Bot size={14} className="text-white" />
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md shadow-blue-500/20">
+                  <Bot size={12} className="text-white" />
                 </div>
-                <div className="bg-gray-800/60 backdrop-blur-sm text-gray-200 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed border border-gray-700/30">
-                  Ciao! 👋 Sono <strong>NeatBot</strong>, il consulente virtuale di NeatX. Sono qui per aiutarti a scoprire come automatizzare il tuo salone e dire addio ai no-show. Che tipo di attività gestisci?
+                <div className="bg-gray-800/60 backdrop-blur-sm text-gray-200 rounded-2xl rounded-tl-md px-3 py-2 text-xs leading-relaxed border border-gray-700/30">
+                  Ciao! 👋 Sono <strong>NeatBot</strong>, l'assistente AI di NeatX. Come posso aiutarti?
                 </div>
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function Chatbot() {
                   <button
                     key={qr.label}
                     onClick={() => handleQuickReply(qr.message)}
-                    className="px-3 py-1.5 text-xs font-medium rounded-full border border-blue-500/40 text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 hover:border-blue-400 transition-all duration-200 hover:scale-105 active:scale-95"
+                    className="px-2.5 py-1 text-[11px] font-medium rounded-full border border-blue-500/40 text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 hover:border-blue-400 transition-all duration-200 hover:scale-105 active:scale-95"
                   >
                     {qr.label}
                   </button>
@@ -221,16 +221,16 @@ export default function Chatbot() {
               >
                 {m.role === 'assistant' ? (
                   <div className="flex gap-2 max-w-[88%]">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-blue-500/20">
-                      <Bot size={14} className="text-white" />
-                    </div>
-                    <div className="bg-gray-800/60 backdrop-blur-sm text-gray-200 rounded-2xl rounded-tl-md px-4 py-3 text-sm leading-relaxed border border-gray-700/30">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md shadow-blue-500/20">
+                    <Bot size={12} className="text-white" />
+                  </div>
+                  <div className="bg-gray-800/60 backdrop-blur-sm text-gray-200 rounded-2xl rounded-tl-md px-3 py-2 text-xs leading-relaxed border border-gray-700/30">
                       {m.content}
                     </div>
                   </div>
                 ) : (
                   <div className="max-w-[85%]">
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-tr-md px-4 py-3 text-sm leading-relaxed shadow-md shadow-blue-500/20">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-tr-md px-3 py-2.5 text-xs leading-relaxed shadow-md shadow-blue-500/20">
                       {m.content}
                     </div>
                   </div>
@@ -242,8 +242,8 @@ export default function Chatbot() {
             {isLoading && (
               <div className="flex justify-start animate-slide-up">
                 <div className="flex gap-2">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-md shadow-blue-500/20">
-                    <Bot size={14} className="text-white" />
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md shadow-blue-500/20">
+                    <Bot size={12} className="text-white" />
                   </div>
                   <div className="bg-gray-800/60 backdrop-blur-sm rounded-2xl rounded-tl-md border border-gray-700/30">
                     <TypingDots />
@@ -257,7 +257,7 @@ export default function Chatbot() {
               <div className="flex justify-center animate-fade-in pt-2">
                 <a
                   href="/registrazione"
-                  className="px-5 py-2.5 text-sm font-semibold rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                  className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105 transition-all duration-300 flex items-center gap-2"
                 >
                   🚀 Inizia la Prova Gratuita
                 </a>
@@ -267,28 +267,25 @@ export default function Chatbot() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* ═══ INPUT ═══ */}
-          <form onSubmit={handleSubmit} className="p-3 border-t border-gray-800/50 bg-[#0a0e1a]">
+           {/* ═══ INPUT ═══ */}
+          <form onSubmit={handleSubmit} className="p-2.5 border-t border-gray-800/50 bg-[#0a0e1a]">
             <div className="flex items-center gap-2 relative">
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Scrivi un messaggio..."
-                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[16px] sm:text-sm rounded-full px-4 py-3 pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
+                placeholder="Scrivi..."
+                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[14px] rounded-full px-3.5 py-2 pr-10 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="absolute right-1.5 p-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 disabled:opacity-30 disabled:hover:shadow-none transition-all duration-300 active:scale-90"
+                className="absolute right-1 p-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 disabled:opacity-30 disabled:hover:shadow-none transition-all duration-300 active:scale-90"
               >
-                <Send size={16} />
+                <Send size={14} />
               </button>
             </div>
-            <p className="text-center text-gray-600 text-[10px] mt-2">
-              Powered by NeatX AI · Risponde 24/7
-            </p>
           </form>
         </div>
       </div>

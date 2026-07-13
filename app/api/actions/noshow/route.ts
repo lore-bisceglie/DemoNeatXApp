@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
+import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
@@ -18,8 +19,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const cookieStore = await cookies();
     const appointment = await prisma.appointment.findUnique({
-      where: { id }
+      where: { id },
+      select: { id: true, tenantId: true, tenant: { select: { slug: true, adminPassword: true } } },
     });
 
     if (!appointment) {
@@ -27,6 +30,11 @@ export async function POST(request: Request) {
         { error: "Appuntamento non trovato" },
         { status: 404 }
       );
+    }
+
+    const authCookie = cookieStore.get("admin_auth_" + appointment.tenant?.slug)?.value;
+    if (authCookie !== appointment.tenant?.adminPassword) {
+      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 
     await prisma.noShow.create({

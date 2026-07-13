@@ -17,11 +17,11 @@ export async function POST(req: Request) {
 
   try {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    if (webhookSecret) {
-      event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
-    } else {
-      event = JSON.parse(payload);
+    if (!webhookSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET non configurato');
+      return NextResponse.json({ error: 'Webhook non configurato' }, { status: 500 });
     }
+    event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (err: any) {
     console.error('Webhook signature verification failed.', err.message);
     return NextResponse.json({ error: 'Firma non valida' }, { status: 400 });

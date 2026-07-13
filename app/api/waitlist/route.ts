@@ -42,8 +42,12 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const tenantId = searchParams.get("tenantId");
 
+    if (!tenantId) {
+      return NextResponse.json({ error: "Tenant ID mancante" }, { status: 400 });
+    }
+
     const waitlist = await prisma.waitlist.findMany({
-      where: tenantId ? { tenantId } : {},
+      where: { tenantId },
       orderBy: {
         createdAt: "asc",
       },

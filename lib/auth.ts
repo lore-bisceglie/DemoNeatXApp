@@ -110,8 +110,8 @@ export function loginRedirectUrl(requestUrl: string, nextPath = "/dashboard") {
 
 export function requireSuperAdmin(req: Request) {
   const pwd = req.headers.get("x-admin-password");
-  const expected = process.env.SUPERADMIN_PASSWORD || "godmode";
-  if (pwd !== expected) {
+  const expected = process.env.SUPERADMIN_PASSWORD;
+  if (!expected || pwd !== expected) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
   return null;

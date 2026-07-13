@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, dayIndexToName } from "@/lib/schedule";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +16,18 @@ export async function GET(request: Request) {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      include: { staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
+      select: { id: true, slug: true, adminPassword: true, name: true, openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true, staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
     });
+
+    if (!tenant) {
+      return new NextResponse("Tenant non trovato", { status: 404 });
+    }
+
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
+    if (authCookie !== tenant.adminPassword) {
+      return new NextResponse("Non autorizzato", { status: 401 });
+    }
 
     if (!tenant) {
       return new NextResponse("Tenant non trovato", { status: 404 });
