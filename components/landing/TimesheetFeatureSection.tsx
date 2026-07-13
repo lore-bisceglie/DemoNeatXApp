@@ -334,11 +334,13 @@ export default function TimesheetFeatureSection() {
                     Pronto per il commercialista
                   </span>
                 </div>
-                <div className="rounded-2xl border border-[#1a2642] bg-[#030810] p-4 font-mono text-[11px]">
-                  {CSV_LINES.slice(0, csvLine + 1).map((line, i) => (
+                <div className="relative rounded-2xl border border-[#1a2642] bg-[#030810] p-4 font-mono text-[11px]">
+                  {CSV_LINES.map((line, i) => (
                     <div
                       key={i}
                       className={`leading-6 transition-all duration-200 ${
+                        i > csvLine ? "opacity-0" : "opacity-100"
+                      } ${
                         i === 0
                           ? "font-bold text-slate-400"
                           : line === "..."
@@ -349,26 +351,26 @@ export default function TimesheetFeatureSection() {
                       } ${i === csvLine ? "text-white" : ""}`}
                     >
                       {line}
+                      {i === csvLine && i < CSV_LINES.length - 1 && (
+                        <span className="ml-1 inline-block h-3.5 w-1.5 animate-pulse bg-emerald-400 align-middle" />
+                      )}
                     </div>
                   ))}
-                  {csvLine < CSV_LINES.length - 1 && (
-                    <span className="inline-block h-3.5 w-1.5 animate-pulse bg-emerald-400 align-middle" />
-                  )}
                 </div>
-                {csvLine >= CSV_LINES.length - 1 && (
-                  <div className="mt-4 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/8 px-4 py-3">
-                    <Download size={18} className="shrink-0 text-emerald-400" />
-                    <div>
-                      <p className="text-sm font-bold text-white">File pronto</p>
-                      <p className="text-xs text-slate-400">
-                        168 ore, 3 dipendenti — Luglio 2026
-                      </p>
-                    </div>
-                    <span className="ml-auto rounded-xl bg-emerald-500/20 px-3 py-1.5 text-xs font-black text-emerald-300">
-                      Scarica
-                    </span>
+                <div className={`mt-4 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/8 px-4 py-3 transition-opacity duration-300 ${
+                  csvLine >= CSV_LINES.length - 1 ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}>
+                  <Download size={18} className="shrink-0 text-emerald-400" />
+                  <div>
+                    <p className="text-sm font-bold text-white">File pronto</p>
+                    <p className="text-xs text-slate-400">
+                      168 ore, 3 dipendenti — Luglio 2026
+                    </p>
                   </div>
-                )}
+                  <span className="ml-auto rounded-xl bg-emerald-500/20 px-3 py-1.5 text-xs font-black text-emerald-300">
+                    Scarica
+                  </span>
+                </div>
               </div>
             )}
           </div>
