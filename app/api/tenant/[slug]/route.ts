@@ -14,6 +14,10 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
         storeSettings: true,
         staff: {
           include: { services: true }
+        },
+        locations: {
+          where: { isActive: true },
+          orderBy: { isMain: 'desc' },
         }
       }
     });

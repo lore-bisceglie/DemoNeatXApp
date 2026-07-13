@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export default function DayNavigator({ currentDate, slug, isMultiStaff }: { currentDate: string, slug: string, isMultiStaff: boolean }) {
+export default function DayNavigator({ currentDate, slug, isMultiStaff, locationId }: { currentDate: string, slug: string, isMultiStaff: boolean, locationId?: string }) {
   if (!isMultiStaff) return null; // In Single Staff mostriamo l'agenda orizzontale classica
 
   const d = new Date(currentDate);
@@ -26,7 +26,7 @@ export default function DayNavigator({ currentDate, slug, isMultiStaff }: { curr
   return (
     <div className="flex items-center justify-between bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 mb-6 shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
       <Link 
-        href={`/t/${slug}/admin?date=${format(prevDate)}`}
+        href={`/t/${slug}/admin?date=${format(prevDate)}${locationId ? `&locationId=${locationId}` : ''}`}
         className="px-4 py-2 bg-[#0b1221] hover:bg-cyan-500/10 hover:text-cyan-400 text-slate-300 font-bold rounded-xl transition-colors border border-transparent hover:border-cyan-500/30"
       >
         &larr; Ieri
@@ -38,7 +38,7 @@ export default function DayNavigator({ currentDate, slug, isMultiStaff }: { curr
       </div>
 
       <Link 
-        href={`/t/${slug}/admin?date=${format(nextDate)}`}
+        href={`/t/${slug}/admin?date=${format(nextDate)}${locationId ? `&locationId=${locationId}` : ''}`}
         className="px-4 py-2 bg-[#0b1221] hover:bg-cyan-500/10 hover:text-cyan-400 text-slate-300 font-bold rounded-xl transition-colors border border-transparent hover:border-cyan-500/30"
       >
         Domani &rarr;

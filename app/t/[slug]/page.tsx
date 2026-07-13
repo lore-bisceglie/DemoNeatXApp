@@ -123,6 +123,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const [paymentMethod, setPaymentMethod] = useState<"salon" | "online">("salon");
   const [selectedActivityId, setSelectedActivityId] = useState("all");
   const [showActivityModal, setShowActivityModal] = useState(true);
+  const [locations, setLocations] = useState<any[]>([]);
+  const [selectedLocationId, setSelectedLocationId] = useState("");
   
   const router = useRouter();
 
@@ -335,6 +337,13 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           storeSettings: data.storeSettings || null,
         });
         setServices(data.services || []);
+        const locs = data.locations || [];
+        setLocations(locs);
+        if (locs.length === 1) {
+          setSelectedLocationId(locs[0].id);
+        } else if (locs.length > 0) {
+          setSelectedLocationId("");
+        }
         if (data.services && data.services.length > 0) {
           const firstService = data.services[0];
           setSelectedService(firstService);
@@ -504,9 +513,15 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     setDateError("");
     setLoading(true);
 
-    fetch(
-      `/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}&serviceId=${selectedService.id}`
-    )
+    const params = new URLSearchParams({
+      date,
+      tenantId: tenantInfo.id,
+      duration: String(selectedService.duration),
+      serviceId: selectedService.id,
+    });
+    if (selectedLocationId) params.set("locationId", selectedLocationId);
+    if (selectedStaffId && selectedStaffId !== "any") params.set("staffId", selectedStaffId);
+    fetch(`/api/availability?${params}`)
       .then((res) => res.json())
       .then((data) => {
         let fetchedSlots = data.slots || [];
@@ -539,7 +554,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         setLoading(false);
         setInitialLoad(false);
       });
-  }, [date, maxDate, selectedService, tenantInfo.id, today]);
+  }, [date, maxDate, selectedService, tenantInfo.id, today, selectedLocationId, selectedStaffId]);
 
   const handleFirstAvailable = () => {
     if (slots.length > 0) {
@@ -649,6 +664,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         tenantId: tenantInfo.id,
         serviceId: selectedService.id,
         duration: selectedService.duration,
+        locationId: selectedLocationId || undefined,
         ...(isPlaygroundDemo ? { paymentMethod } : {}),
       }),
     });
@@ -1281,6 +1297,30 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 >
                   <span>{profile.icon}</span>
                   <span>{profile.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {locations.length > 1 && (
+          <div className="mb-6">
+            <label className="block text-sm font-bold mb-2 text-slate-300">
+              Scegli la sede
+            </label>
+            <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2 snap-x">
+              {locations.map((loc: any) => (
+                <button
+                  key={loc.id}
+                  type="button"
+                  onClick={() => { setSelectedLocationId(loc.id); setSlots([]); setSelectedSlot(""); }}
+                  className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition snap-center ${
+                    selectedLocationId === loc.id
+                      ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff]"
+                      : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-slate-500"
+                  }`}
+                >
+                  {loc.name}
                 </button>
               ))}
             </div>

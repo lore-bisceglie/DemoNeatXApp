@@ -22,6 +22,7 @@ import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 import MessageRechargeCard from "./MessageRechargeCard";
 import ReferralCard from "@/components/ReferralCard";
+import LocationTabs from "@/components/admin/LocationTabs";
 
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
@@ -32,6 +33,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   const searchParams = await props.searchParams;
   const activeTab = searchParams?.tab || (searchParams?.stripe ? 'stripe' : 'agenda');
+  const filterLocationId = searchParams?.locationId || "";
 
   
   const { slug } = await props.params;
@@ -198,6 +200,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     where: {
       date: { gte: todayItaly },
       tenantId,
+      ...(filterLocationId ? { locationId: filterLocationId } : {}),
     },
     orderBy: [ { date: "asc" }, { time: "asc" } ],
     include: { service: true, staff: true },
@@ -222,6 +225,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         in: weekDatesArray,
       },
       tenantId,
+      ...(filterLocationId ? { locationId: filterLocationId } : {}),
     },
     include: {
       service: true,
@@ -728,6 +732,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           <Link href={`/t/${slug}/admin?tab=servizi`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'servizi' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>⚙️ Servizi & Setup</Link>
           <Link href={`/t/${slug}/admin?tab=marketing`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'marketing' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📈 Marketing & Dati</Link>
           <Link href={`/t/${slug}/admin?tab=stripe`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'stripe' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>💳 Pagamenti</Link>
+          <Link href={`/t/${slug}/admin?tab=sedi`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'sedi' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📍 Sedi</Link>
         </div>
 
         <div className={activeTab === 'servizi' ? '' : 'hidden'}>
@@ -818,6 +823,14 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         <div className={activeTab === 'agenda' ? '' : 'hidden'}>
+          {locations.length > 1 && (
+            <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
+              <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition snap-center ${!filterLocationId ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500'}`}>Tutte le sedi</Link>
+              {locations.map((loc: any) => (
+                <Link key={loc.id} href={`/t/${slug}/admin?tab=agenda&locationId=${loc.id}`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition snap-center ${filterLocationId === loc.id ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500'}`}>{loc.name}</Link>
+              ))}
+            </div>
+          )}
           {/* LISTA ATTESA */}
           <div className="mb-8">
             <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
@@ -860,7 +873,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
           <SwipeableAgenda>
-            <DayNavigator currentDate={targetDate} slug={slug} isMultiStaff={isMultiStaff} />
+            <DayNavigator currentDate={targetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
               <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
@@ -869,7 +882,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
               <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
                 <Link
-                  href={`/t/${slug}/admin?weekOffset=${weekOffset - 1}`}
+                  href={`/t/${slug}/admin?weekOffset=${weekOffset - 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
                   prefetch={false}
                   scroll={false}
                   className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
@@ -878,7 +891,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </Link>
 
                 <Link
-                  href={`/t/${slug}/admin`}
+                  href={`/t/${slug}/admin${filterLocationId ? `?locationId=${filterLocationId}` : ''}`}
                   prefetch={false}
                   scroll={false}
                   className={`px-4 py-2 text-sm font-bold rounded-xl transition ${
@@ -891,7 +904,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </Link>
 
                 <Link
-                  href={`/t/${slug}/admin?weekOffset=${weekOffset + 1}`}
+                  href={`/t/${slug}/admin?weekOffset=${weekOffset + 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
                   prefetch={false}
                   scroll={false}
                   className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
@@ -1008,6 +1021,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </SwipeableAgenda>
         </div>
 
+        </div>
+
+        <div className={activeTab === 'sedi' ? '' : 'hidden'}>
+          <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} />
         </div>
 
         {/* ALTRE FUNZIONI DASHBOARD */}
