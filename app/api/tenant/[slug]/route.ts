@@ -10,7 +10,13 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
     const tenant = await prisma.tenant.findUnique({
       where: { slug: slug },
       include: {
-        services: true,
+        services: {
+          include: {
+            locations: {
+              where: { isActive: true }
+            }
+          }
+        },
         storeSettings: true,
         staff: {
           include: { services: true }

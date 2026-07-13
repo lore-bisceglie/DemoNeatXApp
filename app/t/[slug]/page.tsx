@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, use, type CSSProperties } from "react";
+import { useState, useEffect, useMemo, useRef, use, type CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import WaitlistButton from "../../WaitlistButton";
@@ -12,6 +12,7 @@ type Service = {
   name: string;
   duration: number;
   price: number;
+  locations?: { locationId: string; price?: number | null }[];
 };
 
 const activityProfiles = [
@@ -285,6 +286,27 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const isPlaygroundDemo = tenantInfo.isDemo && tenantInfo.trialStatus === "demo";
   const th = themeMap[tenantInfo.themeColor] || themeMap.cyan;
 
+  const selectedLocation = useMemo(() =>
+    locations.find(l => l.id === selectedLocationId) || null,
+    [locations, selectedLocationId]
+  );
+
+  const filteredStaff = useMemo(() => {
+    if (!selectedLocationId) return tenantInfo.staff;
+    return tenantInfo.staff.filter((s: any) => !s.locationId || s.locationId === selectedLocationId);
+  }, [tenantInfo.staff, selectedLocationId]);
+
+  const effectiveCloseTime = selectedLocation?.closeTime || tenantInfo.closeTime;
+  const effectiveOpenTime = selectedLocation?.openTime || tenantInfo.openTime;
+  const effectiveBreakStart = selectedLocation?.breakStart ?? tenantInfo.breakStart;
+  const effectiveBreakEnd = selectedLocation?.breakEnd ?? tenantInfo.breakEnd;
+
+  const effectiveServicePrice = useMemo(() => {
+    if (!selectedLocation || !selectedService) return selectedService?.price ?? 0;
+    const sl = selectedService.locations?.find(l => l.locationId === selectedLocation.id);
+    return sl?.price ?? selectedService.price;
+  }, [selectedLocation, selectedService]);
+
   const shopInitials = tenantInfo.name
     .split(" ")
     .filter(Boolean)
@@ -382,6 +404,16 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
     return filtered.length > 0 ? filtered : services;
   }, [activeProfile, isPlaygroundDemo, services]);
+
+  const filteredServices = useMemo(() => {
+    if (!selectedLocationId) return visibleServices;
+    const hasLocationData = visibleServices.some(s => s.locations && s.locations.length > 0);
+    if (!hasLocationData) return visibleServices;
+    return visibleServices.filter(s =>
+      !s.locations || s.locations.length === 0 ||
+      s.locations.some(l => l.locationId === selectedLocationId)
+    );
+  }, [visibleServices, selectedLocationId]);
 
   const demoCustomers = [
     { name: "Giulia Demo", phone: "3331234567" },
@@ -555,6 +587,23 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         setInitialLoad(false);
       });
   }, [date, maxDate, selectedService, tenantInfo.id, today, selectedLocationId, selectedStaffId]);
+
+  const prevLocationIdRef = useRef(selectedLocationId);
+  useEffect(() => {
+    if (prevLocationIdRef.current === selectedLocationId) return;
+    prevLocationIdRef.current = selectedLocationId;
+    if (!selectedLocationId || !selectedService) return;
+    if (!filteredServices.some(s => s.id === selectedService.id)) {
+      const firstAvailable = filteredServices[0];
+      if (firstAvailable) {
+        setSelectedService(firstAvailable);
+        const capableStaff = filteredStaff.find((st: any) => st.services.some((srv: any) => srv.id === firstAvailable.id));
+        setSelectedStaffId(capableStaff?.id || "any");
+        setSlots([]);
+        setSelectedSlot("");
+      }
+    }
+  }, [selectedLocationId]);
 
   const handleFirstAvailable = () => {
     if (slots.length > 0) {
@@ -815,7 +864,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
   // ✅ Messaggio dinamico quando non ci sono orari disponibili
-  const [closingHourStr, closingMinuteStr] = (tenantInfo.closeTime || "19:00").split(":").map(Number);
+  const [closingHourStr, closingMinuteStr] = (effectiveCloseTime || "19:00").split(":").map(Number);
   const closingHour = closingHourStr;
   const closingMinute = closingMinuteStr;
 
@@ -1206,9 +1255,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
           <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
             <span className="text-slate-100">{tenantInfo.name}</span>
-            {selectedService && selectedService.price > 0 && (
+            {selectedService && effectiveServicePrice > 0 && (
               <span className={`px-3 py-1 rounded-full border text-sm align-middle animate-in zoom-in duration-300 ${th.badgeBg} ${th.textMain} ${th.borderMain}`}>
-                {selectedService.price}€
+                {effectiveServicePrice}€
               </span>
             )}
           </h1>
@@ -1218,13 +1267,13 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           </p>
 
           <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
-            {tenantInfo.mapsLink ? (
-              <a href={tenantInfo.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors text-sm flex items-center justify-center gap-2 animate-in fade-in duration-300 text-center font-semibold bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/20">
-                📍 {tenantInfo.address}
+            {(selectedLocation?.mapsLink || (!selectedLocation && tenantInfo.mapsLink)) ? (
+              <a href={selectedLocation?.mapsLink || tenantInfo.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors text-sm flex items-center justify-center gap-2 animate-in fade-in duration-300 text-center font-semibold bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/20">
+                📍 {selectedLocation?.address || tenantInfo.address}
               </a>
             ) : (
               <p className="text-blue-300 text-sm flex items-center justify-center gap-1 animate-in fade-in duration-300 text-center font-semibold bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
-                📍 {tenantInfo.address}
+                📍 {selectedLocation?.address || tenantInfo.address}
               </p>
             )}
 
@@ -1327,7 +1376,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           </div>
         )}
 
-        {services.length > 0 && (
+        {filteredServices.length > 0 ? (
           <div className="mb-6">
             <label className="block text-sm font-bold mb-2 text-slate-300">
               Scegli il servizio
@@ -1336,12 +1385,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <select
               value={selectedService?.id || ""}
               onChange={(e) => {
-                const s = visibleServices.find((srv) => srv.id === e.target.value);
+                const s = filteredServices.find((srv) => srv.id === e.target.value);
                 setSelectedService(s || null);
                 
                 let defaultStaff = "any";
-                if (s && tenantInfo.staff && tenantInfo.staff.length > 0) {
-                  const capableStaff = tenantInfo.staff.find((st: any) => st.services.some((srv: any) => srv.id === s.id));
+                if (s && filteredStaff && filteredStaff.length > 0) {
+                  const capableStaff = filteredStaff.find((st: any) => st.services.some((srv: any) => srv.id === s.id));
                   if (capableStaff) defaultStaff = capableStaff.id;
                 }
                 setSelectedStaffId(defaultStaff);
@@ -1354,17 +1403,26 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 fieldErrors.includes("servizio") ? "border-red-500" : "border-[#1e2b4a]"
               } text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition appearance-none cursor-pointer`}
             >
-              {visibleServices.map((srv) => (
-                <option key={srv.id} value={srv.id}>
-                  {srv.name} ({srv.duration} min) - {srv.price ? `${srv.price}€` : "Gratis"}
-                </option>
-              ))}
+              {filteredServices.map((srv) => {
+                const slPrice = selectedLocation
+                  ? srv.locations?.find(l => l.locationId === selectedLocation.id)?.price
+                  : null;
+                return (
+                  <option key={srv.id} value={srv.id}>
+                    {srv.name} ({srv.duration} min) - {slPrice ?? srv.price ? `${slPrice ?? srv.price}€` : "Gratis"}
+                  </option>
+                );
+              })}
             </select>
           </div>
-        )}
+        ) : services.length > 0 ? (
+          <div className="mb-6 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm font-medium px-4 py-3 rounded-xl text-center">
+            Nessun servizio disponibile per la sede selezionata.
+          </div>
+        ) : null}
 
         {/* STAFF PICKER - SOLO PREMIUM */}
-        {tenantInfo.isPremium && selectedService && tenantInfo.staff && tenantInfo.staff.length > 0 && (
+        {tenantInfo.isPremium && selectedService && filteredStaff && filteredStaff.length > 0 && (
           <div className="mb-6">
             <label className="block text-sm font-bold mb-2 text-slate-300">
               Scegli il professionista (Opzionale)
@@ -1372,7 +1430,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-2 snap-x">
 
               
-              {tenantInfo.staff
+              {filteredStaff
                 .filter((s: any) => s.services.some((srv: any) => srv.id === selectedService.id))
                 .map((staff: any) => (
                   <button
