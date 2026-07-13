@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, Camera, Mail, Check } from "lucide-react";
+import { MessageCircle, Camera, Mail, Check, X, Send } from "lucide-react";
 
-const WHATSAPP_NUMBER = "393480480942";
-const WHATSAPP_MSG = "Ciao! Vorrei avere maggiori informazioni su NeatX per la mia attività.";
 const EMAIL_ADDR = "info@neatx.store";
 
 const links = [
   {
-    id: "whatsapp",
-    label: "WhatsApp",
+    id: "contact",
+    label: "Contattaci",
     icon: MessageCircle,
     href: null,
     gradient: "from-green-500 to-emerald-600",
@@ -41,12 +39,14 @@ function isMobile() {
 
 export default function SocialFloatingGroup() {
   const [copied, setCopied] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [sent, setSent] = useState(false);
 
   const handleClick = (id: string, e: React.MouseEvent) => {
-    if (id === "whatsapp") {
+    if (id === "contact") {
       e.preventDefault();
-      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MSG)}`;
-      window.open(url, "_blank");
+      setShowModal(true);
       return;
     }
 
@@ -62,29 +62,103 @@ export default function SocialFloatingGroup() {
     }
   };
 
-  return (
-    <div className="flex items-center gap-1.5 sm:gap-2 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-3 py-2 sm:px-4 sm:py-2.5 shadow-2xl shadow-black/50">
-      {links.map((link) => {
-        const isActiveCopied = link.id === "email" && copied;
-        const Icon = isActiveCopied ? Check : link.icon;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      setSent(true);
+      setForm({ name: "", email: "", message: "" });
+      setTimeout(() => { setShowModal(false); setSent(false); }, 1500);
+    } catch {
+      // silent
+    }
+  };
 
-        return (
-          <a
-            key={link.id}
-            href={link.href || undefined}
-            target={link.href ? "_blank" : undefined}
-            rel={link.href ? "noopener noreferrer" : undefined}
-            onClick={(e) => handleClick(link.id, e)}
-            aria-label={link.label}
-            className={`flex items-center justify-center gap-1.5 bg-gradient-to-r ${link.gradient} text-white rounded-full font-semibold shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform px-2.5 py-2 sm:px-4 sm:py-2`}
-          >
-            <Icon size={15} />
-            <span className="hidden sm:inline text-[11px] leading-none">
-              {isActiveCopied ? "Copiato! ✓" : link.label}
-            </span>
-          </a>
-        );
-      })}
-    </div>
+  return (
+    <>
+      <div className="flex items-center gap-1.5 sm:gap-2 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-3 py-2 sm:px-4 sm:py-2.5 shadow-2xl shadow-black/50">
+        {links.map((link) => {
+          const isActiveCopied = link.id === "email" && copied;
+          const Icon = isActiveCopied ? Check : link.icon;
+
+          return (
+            <a
+              key={link.id}
+              href={link.href || undefined}
+              target={link.href ? "_blank" : undefined}
+              rel={link.href ? "noopener noreferrer" : undefined}
+              onClick={(e) => handleClick(link.id, e)}
+              aria-label={link.label}
+              className={`flex items-center justify-center gap-1.5 bg-gradient-to-r ${link.gradient} text-white rounded-full font-semibold shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform px-2.5 py-2 sm:px-4 sm:py-2`}
+            >
+              <Icon size={15} />
+              <span className="hidden sm:inline text-[11px] leading-none">
+                {isActiveCopied ? "Copiato! ✓" : link.label}
+              </span>
+            </a>
+          );
+        })}
+      </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#0b1221] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors"
+            >
+              <X size={18} />
+            </button>
+
+            <h3 className="text-white font-extrabold text-lg mb-1">Contattaci</h3>
+            <p className="text-slate-400 text-xs mb-5">
+              Ti risponderemo via email al più presto.
+            </p>
+
+            {sent ? (
+              <div className="flex items-center justify-center gap-2 text-emerald-400 font-bold py-8">
+                <Check size={20} /> Richiesta inviata ✓
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <input
+                  required
+                  placeholder="Il tuo nome"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00b4ff]"
+                />
+                <input
+                  required
+                  type="email"
+                  placeholder="La tua email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00b4ff]"
+                />
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="Il tuo messaggio"
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00b4ff] resize-none"
+                />
+                <button
+                  type="submit"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl px-4 py-2.5 font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-green-500/25"
+                >
+                  <Send size={15} /> Invia richiesta
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
