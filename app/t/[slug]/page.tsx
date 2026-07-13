@@ -1755,19 +1755,24 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       <div className="bg-[#131c31] max-w-md w-full rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-[#1e2b4a] p-6 mt-6 text-center flex flex-col items-center gap-2 relative z-10">
         <h3 className="text-white font-extrabold text-lg mb-1 tracking-wide">La tua attività. Senza limiti.</h3>
         <p className="text-slate-300 text-xs font-medium">I clienti dimenticano. <span className="font-bold text-white">Neat<span className="text-[#007aff]">X</span></span> ricorda. La tua agenda si riempie.</p>
-        <p className="text-slate-400 text-[11px] mb-2">Il software usato da questo salone.</p>
+        <p className="text-slate-400 text-[11px] mb-2">C'è un motivo se funziona.</p>
         
         <Link href="https://www.neatx.store"
               target="_blank"
-              className="mt-2 w-full py-3 bg-[#007aff] hover:bg-[#0066cc] text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_20px_rgba(0,122,255,0.4)] flex items-center justify-center gap-2">
-          <span>🚀</span> Scopri NeatX
+              className="mt-2 w-full py-3 bg-gradient-to-r from-[#007aff] to-[#00b4ff] hover:from-[#0066cc] hover:to-[#0099ee] text-white rounded-xl font-bold text-sm transition-all shadow-[0_0_20px_rgba(0,122,255,0.4)] flex items-center justify-center gap-2">
+          <span>🚀</span> Scopri Neat<span className="text-[#002b59]">X</span>
         </Link>
       </div>
 
       <div className="bg-[#0b1221] max-w-md w-full rounded-3xl p-6 mt-2 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1e2b4a] shadow-lg">
-        <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-2">
+        <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
           <p>
             Powered by <span className="font-bold text-white">Neat</span><span className="text-[#007aff] font-bold">X</span>
+          </p>
+          <p className="text-[10px]">
+            <a href="mailto:neatx.info@gmail.com" className="hover:text-white transition-colors">neatx.info@gmail.com</a>
+            <span className="mx-2 text-slate-600">·</span>
+            <span>© 2026 NeatX</span>
           </p>
           <Link 
             href={getTenantAdminUrl(params.slug)}
