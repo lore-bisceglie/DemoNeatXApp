@@ -294,7 +294,13 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
   const filteredStaff = useMemo(() => {
     if (!selectedLocationId) return tenantInfo.staff;
-    return tenantInfo.staff.filter((s: any) => !s.locationId || s.locationId === selectedLocationId);
+    return tenantInfo.staff.filter((s: any) => {
+      if (s.locations && s.locations.length > 0) {
+        return s.locations.some((l: any) => l.locationId === selectedLocationId);
+      }
+      if (s.locationId) return s.locationId === selectedLocationId;
+      return true;
+    });
   }, [tenantInfo.staff, selectedLocationId]);
 
   const effectiveCloseTime = selectedLocation?.closeTime || tenantInfo.closeTime;

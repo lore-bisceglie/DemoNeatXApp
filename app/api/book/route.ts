@@ -134,24 +134,34 @@ export async function POST(request: Request) {
     if (explicitStaffId) {
       const staff = await prisma.staff.findUnique({
         where: { id: explicitStaffId },
-        select: { id: true, tenantId: true, locationId: true, services: { select: { id: true } } },
+        select: { id: true, tenantId: true, locationId: true, services: { select: { id: true } }, locations: { select: { locationId: true } } },
       });
       if (!staff || staff.tenantId !== tenantId || !staff.services.some(s => s.id === serviceId)) {
         return NextResponse.json({ error: "Staff non valido per questo servizio" }, { status: 400 });
       }
-      // Staff deve lavorare in questa sede (locationId null = ovunque, o match)
-      if (staff.locationId && staff.locationId !== targetLocationId) {
+      // Staff deve lavorare in questa sede (StaffLocation, locationId null = ovunque, o match legacy)
+      const worksHere = staff.locations?.some((l: any) => l.locationId === targetLocationId)
+        || (!staff.locations?.length && !staff.locationId)
+        || (!staff.locations?.length && staff.locationId === targetLocationId);
+      if (!worksHere) {
         return NextResponse.json({ error: "Staff non opera in questa sede" }, { status: 400 });
       }
       chosenStaffId = explicitStaffId;
     } else {
       // Auto-assegna staff disponibile in questa sede per questo servizio
+      const staffWhere: any = {
+        tenantId,
+        services: { some: { id: serviceId } },
+      };
+      if (targetLocationId) {
+        staffWhere.OR = [
+          { locations: { some: { locationId: targetLocationId } } },
+          { AND: [{ locations: { none: {} } }, { locationId: null }] },
+          { AND: [{ locations: { none: {} } }, { locationId: targetLocationId }] },
+        ];
+      }
       const capableStaff = await prisma.staff.findMany({
-        where: {
-          tenantId,
-          services: { some: { id: serviceId } },
-          OR: [{ locationId: null }, { locationId: targetLocationId }],
-        },
+        where: staffWhere,
         select: { id: true },
       });
       if (capableStaff.length > 0) {

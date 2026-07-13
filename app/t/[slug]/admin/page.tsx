@@ -650,7 +650,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </h1>
 
           <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} />
+            <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} />
             <CustomerDrawer tenantId={tenantId} />
             <Link
               href={`/t/${slug}/admin/analytics`}

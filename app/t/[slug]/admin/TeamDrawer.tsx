@@ -9,10 +9,16 @@ type Service = {
   name: string;
 };
 
+type Location = {
+  id: string;
+  name: string;
+};
+
 type StaffMember = {
   id: string;
   name: string;
   services: Service[];
+  locations: { locationId: string }[];
 };
 
 export default function TeamDrawer({
@@ -20,36 +26,51 @@ export default function TeamDrawer({
   isPremium,
   allServices,
   initialStaffSheetUrl,
+  locations: initialLocations,
 }: {
   tenantId: string;
   isPremium: boolean;
   allServices: Service[];
   initialStaffSheetUrl: string | null;
+  locations?: Location[];
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [staffList, setStaffList] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(false);
-  
+
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
   const [staffSheetUrl, setStaffSheetUrl] = useState(initialStaffSheetUrl || "");
   const [savingUrl, setSavingUrl] = useState(false);
-  
-  // Per l'aggiunta di un nuovo membro
+
   const [newStaffName, setNewStaffName] = useState("");
   const [adding, setAdding] = useState(false);
-  
-  // Per l'editor turni
+
   const [scheduleEditorStaff, setScheduleEditorStaff] = useState<StaffMember | null>(null);
-  
-  // Per l'aggiornamento dei servizi
+
   const [savingServices, setSavingServices] = useState(false);
+  const [savingLocations, setSavingLocations] = useState(false);
+
+  const [allLocations, setAllLocations] = useState<Location[]>(initialLocations || []);
 
   useEffect(() => {
     if (isOpen) {
       fetchStaff();
+      if (!initialLocations) fetchLocations();
     }
   }, [isOpen, tenantId]);
+
+  const fetchLocations = async () => {
+    try {
+      const res = await fetch(`/api/locations?tenantId=${tenantId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setAllLocations(data);
+      }
+    } catch (e) {
+      console.error("Errore caricamento sedi:", e);
+    }
+  };
 
   const fetchStaff = async () => {
     setLoading(true);
@@ -100,7 +121,7 @@ export default function TeamDrawer({
 
   const handleDeleteStaff = async (staffId: string) => {
     if (!confirm("Sei sicuro di voler eliminare questo collaboratore?")) return;
-    
+
     try {
       const res = await fetch(`/api/staff?id=${staffId}`, {
         method: "DELETE",
@@ -118,14 +139,12 @@ export default function TeamDrawer({
   const handleToggleService = async (serviceId: string, hasService: boolean) => {
     if (!selectedStaff) return;
     setSavingServices(true);
-    
+
     const currentServiceIds = selectedStaff.services.map((s) => s.id);
     let newServiceIds = [];
     if (hasService) {
-      // Remove
       newServiceIds = currentServiceIds.filter((id) => id !== serviceId);
     } else {
-      // Add
       newServiceIds = [...currentServiceIds, serviceId];
     }
 
@@ -150,6 +169,40 @@ export default function TeamDrawer({
     setSavingServices(false);
   };
 
+  const handleToggleLocation = async (locationId: string) => {
+    if (!selectedStaff) return;
+    setSavingLocations(true);
+
+    const currentLocationIds = selectedStaff.locations.map((l) => l.locationId);
+    let newLocationIds: string[];
+    if (currentLocationIds.includes(locationId)) {
+      newLocationIds = currentLocationIds.filter((id) => id !== locationId);
+    } else {
+      newLocationIds = [...currentLocationIds, locationId];
+    }
+
+    try {
+      const res = await fetch("/api/staff", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          staffId: selectedStaff.id,
+          serviceIds: selectedStaff.services.map((s) => s.id),
+          locationIds: newLocationIds,
+        }),
+      });
+
+      if (res.ok) {
+        const updatedStaff = await res.json();
+        setSelectedStaff(updatedStaff);
+        setStaffList(current => current.map(s => s.id === updatedStaff.id ? updatedStaff : s));
+      }
+    } catch (error) {
+      console.error("Errore salvataggio sedi", error);
+    }
+    setSavingLocations(false);
+  };
+
   const handleSaveSheetUrl = async () => {
     setSavingUrl(true);
     try {
@@ -170,6 +223,8 @@ export default function TeamDrawer({
     }
     setSavingUrl(false);
   };
+
+  const selectedLocationIds = selectedStaff?.locations?.map((l) => l.locationId) || [];
 
   return (
     <>
@@ -296,6 +351,9 @@ export default function TeamDrawer({
                       </div>
                       <div className="text-slate-500 text-xs mt-1">
                         {staff.services.length} {staff.services.length === 1 ? 'servizio' : 'servizi'}
+                        {allLocations.length > 0 && staff.locations && staff.locations.length > 0 && (
+                          <span> · {staff.locations.length} {staff.locations.length === 1 ? 'sede' : 'sedi'}</span>
+                        )}
                       </div>
                     </button>
                     <button
@@ -339,7 +397,9 @@ export default function TeamDrawer({
                   </p>
                 </div>
 
+                {/* SERVIZI */}
                 <div className="space-y-2 relative">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Servizi</h4>
                   {savingServices && (
                     <div className="absolute inset-0 bg-[#070b14]/50 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-xl">
                       <span className="text-indigo-400 font-bold animate-pulse">Salvataggio...</span>
@@ -351,7 +411,7 @@ export default function TeamDrawer({
                   ) : (
                     allServices.map((service) => {
                       const hasService = selectedStaff.services.some((s) => s.id === service.id);
-                      
+
                       return (
                         <label
                           key={service.id}
@@ -364,8 +424,7 @@ export default function TeamDrawer({
                           <span className={`font-bold text-sm ${hasService ? "text-indigo-300" : "text-slate-300"}`}>
                             {service.name}
                           </span>
-                          
-                          {/* Toggle Switch */}
+
                           <div className={`w-12 h-6 rounded-full relative transition-colors ${hasService ? "bg-indigo-500" : "bg-[#1e2b4a]"}`}>
                             <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${hasService ? "left-7" : "left-1"}`} />
                           </div>
@@ -383,6 +442,51 @@ export default function TeamDrawer({
                     })
                   )}
                 </div>
+
+                {/* SEDI (multi-location) */}
+                {allLocations.length > 1 && (
+                  <div className="space-y-2 relative">
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                      Sedi <span className="text-slate-600 font-normal normal-case">(seleziona dove lavora)</span>
+                    </h4>
+                    {savingLocations && (
+                      <div className="absolute inset-0 bg-[#070b14]/50 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-xl">
+                        <span className="text-cyan-400 font-bold animate-pulse">Salvataggio...</span>
+                      </div>
+                    )}
+                    <p className="text-xs text-slate-600 mb-2 -mt-1">
+                      Se nessuna sede selezionata, lavora in <strong className="text-slate-400">tutte</strong> le sedi.
+                    </p>
+                    {allLocations.map((loc) => {
+                      const hasLocation = selectedLocationIds.includes(loc.id);
+                      return (
+                        <label
+                          key={loc.id}
+                          className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition border ${
+                            hasLocation
+                              ? "bg-cyan-500/10 border-cyan-500/30"
+                              : "bg-[#131c31] border-[#1e2b4a] hover:border-cyan-500/30 opacity-70 hover:opacity-100"
+                          }`}
+                        >
+                          <span className={`font-bold text-sm ${hasLocation ? "text-cyan-300" : "text-slate-300"}`}>
+                            {loc.name}
+                          </span>
+
+                          <div className={`w-12 h-6 rounded-full relative transition-colors ${hasLocation ? "bg-cyan-500" : "bg-[#1e2b4a]"}`}>
+                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${hasLocation ? "left-7" : "left-1"}`} />
+                          </div>
+
+                          <input
+                            type="checkbox"
+                            className="hidden"
+                            checked={hasLocation}
+                            onChange={() => handleToggleLocation(loc.id)}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>

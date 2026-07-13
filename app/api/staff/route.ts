@@ -14,9 +14,13 @@ export async function GET(req: Request) {
   try {
     let where: any = { tenantId };
 
-    // Filtra per locationId (null = lavora ovunque, oppure match esatto)
+    // Filtra per locationId (considera StaffLocation + locationId legacy)
     if (locationId) {
-      where.OR = [{ locationId: null }, { locationId }];
+      where.OR = [
+        { locations: { some: { locationId } } },
+        { AND: [{ locations: { none: {} } }, { locationId: null }] },
+        { AND: [{ locations: { none: {} } }, { locationId }] },
+      ];
     }
 
     // Se serviceId specificato, filtra staff che ha quel servizio
@@ -28,6 +32,7 @@ export async function GET(req: Request) {
       where,
       include: {
         services: true,
+        locations: { select: { locationId: true } },
       },
       orderBy: { name: "asc" },
     });
@@ -41,20 +46,26 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name, tenantId, locationId } = await req.json();
+    const { name, tenantId, locationId, locationIds } = await req.json();
 
     if (!name || !tenantId) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
     }
+
+    const selectedLocations = locationIds || (locationId ? [locationId] : []);
 
     const newStaff = await prisma.staff.create({
       data: {
         name,
         tenantId,
         locationId: locationId || null,
+        locations: selectedLocations.length > 0
+          ? { create: selectedLocations.map((lid: string) => ({ locationId: lid })) }
+          : undefined,
       },
       include: {
         services: true,
+        locations: { select: { locationId: true } },
       }
     });
 
@@ -67,7 +78,7 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { staffId, serviceIds, locationId } = await req.json();
+    const { staffId, serviceIds, locationId, locationIds } = await req.json();
 
     if (!staffId || !Array.isArray(serviceIds)) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
@@ -83,11 +94,20 @@ export async function PUT(req: Request) {
       data.locationId = locationId || null;
     }
 
+    if (locationIds !== undefined) {
+      const selectedLocations = Array.isArray(locationIds) ? locationIds : [];
+      data.locations = {
+        deleteMany: {},
+        create: selectedLocations.map((lid: string) => ({ locationId: lid })),
+      };
+    }
+
     const updatedStaff = await prisma.staff.update({
       where: { id: staffId },
       data,
       include: {
         services: true,
+        locations: { select: { locationId: true } },
       }
     });
 

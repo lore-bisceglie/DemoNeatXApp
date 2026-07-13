@@ -104,6 +104,7 @@ model Location {
 
   // Relazioni
   staff         Staff[]
+  staffLocations StaffLocation[]
   services      ServiceLocation[]
   appointments  Appointment[]
   settings      LocationSettings?
@@ -351,8 +352,24 @@ model Staff {
   locationId      String?
   location        Location? @relation(fields: [locationId], references: [id])
 
+  // Sedi specifiche per staff multi-sede (relazione molti-a-molti)
+  locations       StaffLocation[]
+
   // Appuntamenti assegnati a questo dipendente
   appointments Appointment[]
 
+  @@index([locationId])
+}
+
+// Tabella ponte per staff che lavora in più sedi
+model StaffLocation {
+  id         String   @id @default(cuid())
+  staffId    String
+  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, locationId])
+  @@index([staffId])
   @@index([locationId])
 }

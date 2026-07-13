@@ -83,6 +83,7 @@ model Location {
   tenantId      String
   tenant        Tenant        @relation(fields: [tenantId], references: [id])
   staff         Staff[]
+  staffLocations StaffLocation[]
   services      ServiceLocation[]
   appointments  Appointment[]
   settings      LocationSettings?
@@ -249,6 +250,18 @@ model Staff {
   commissionRate  Int     @default(0)
   locationId   String?
   location     Location? @relation(fields: [locationId], references: [id])
+  locations    StaffLocation[]
   appointments Appointment[]
+  @@index([locationId])
+}
+
+model StaffLocation {
+  id         String   @id @default(cuid())
+  staffId    String
+  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  @@unique([staffId, locationId])
+  @@index([staffId])
   @@index([locationId])
 }

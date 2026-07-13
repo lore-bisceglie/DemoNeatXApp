@@ -26,14 +26,47 @@ export async function GET(request: Request) {
       where: { tenantId: tenant.id },
       include: {
         settings: true,
+        staff: { select: { id: true } },
+        staffLocations: { select: { staffId: true } },
         _count: {
-          select: { staff: true, services: true, appointments: true },
+          select: { services: true, appointments: true },
         },
       },
       orderBy: [{ isMain: 'desc' }, { name: 'asc' }],
     });
 
-    return NextResponse.json(locations);
+    // Deduplica staff: locationId diretta + StaffLocation
+    const enriched = locations.map((loc) => {
+      const staffIds = new Set<string>();
+      loc.staff.forEach((s: any) => staffIds.add(s.id));
+      loc.staffLocations.forEach((sl: any) => staffIds.add(sl.staffId));
+      return {
+        id: loc.id,
+        name: loc.name,
+        slug: loc.slug,
+        address: loc.address,
+        city: loc.city,
+        phone: loc.phone,
+        mapsLink: loc.mapsLink,
+        isMain: loc.isMain,
+        isActive: loc.isActive,
+        openTime: loc.openTime,
+        closeTime: loc.closeTime,
+        breakStart: loc.breakStart,
+        breakEnd: loc.breakEnd,
+        closedDays: loc.closedDays,
+        staffSheetUrl: loc.staffSheetUrl,
+        tenantId: loc.tenantId,
+        settings: loc.settings,
+        _count: {
+          staff: staffIds.size,
+          services: loc._count.services,
+          appointments: loc._count.appointments,
+        },
+      };
+    });
+
+    return NextResponse.json(enriched);
   } catch (error) {
     console.error('Errore GET /api/locations:', error);
     return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
@@ -165,16 +198,16 @@ export async function POST(request: Request) {
       }
     }
 
-    // Collega staff esistente alla sede (solo se prima sede)
+    // Collega staff esistente alla sede (solo se prima sede, via StaffLocation)
     if (isFirst) {
       const staffList = await prisma.staff.findMany({
-        where: { tenantId: tenant.id, locationId: null },
+        where: { tenantId: tenant.id, locationId: null, locations: { none: {} } },
         select: { id: true },
       });
       if (staffList.length > 0) {
-        await prisma.staff.updateMany({
-          where: { id: { in: staffList.map((s) => s.id) } },
-          data: { locationId: location.id },
+        await prisma.staffLocation.createMany({
+          data: staffList.map((s) => ({ staffId: s.id, locationId: location.id })),
+          skipDuplicates: true,
         });
       }
     }

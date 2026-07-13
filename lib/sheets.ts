@@ -75,8 +75,15 @@ export async function syncStaffFromSheet(url: string, tenantId: string, location
         where: { id: existingStaff.id },
         data: { baseSchedule: JSON.stringify(scheduleObj) },
       });
+      if (locationId) {
+        await prisma.staffLocation.upsert({
+          where: { staffId_locationId: { staffId: existingStaff.id, locationId } },
+          create: { staffId: existingStaff.id, locationId },
+          update: {},
+        });
+      }
     } else {
-      await prisma.staff.create({
+      const created = await prisma.staff.create({
         data: {
           tenantId,
           name: staffName,
@@ -84,6 +91,11 @@ export async function syncStaffFromSheet(url: string, tenantId: string, location
           ...(locationId ? { locationId } : {}),
         },
       });
+      if (locationId) {
+        await prisma.staffLocation.create({
+          data: { staffId: created.id, locationId },
+        });
+      }
     }
   }
   return { success: true, message: "Orari sincronizzati con successo!" };

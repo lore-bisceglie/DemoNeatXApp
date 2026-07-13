@@ -111,13 +111,17 @@ export async function GET(request: Request) {
         where: { id: serviceId },
         include: {
           staff: {
-            select: { id: true, name: true, baseSchedule: true, shiftExceptions: true, locationId: true },
+            select: { id: true, name: true, baseSchedule: true, shiftExceptions: true, locationId: true, locations: { select: { locationId: true } } },
           },
         },
       });
       if (serviceWithStaff && serviceWithStaff.staff.length > 0) {
-        // Filtra staff per locationId (null = lavora ovunque, oppure match esatto)
-        const filteredStaff = serviceWithStaff.staff.filter((s) => !s.locationId || s.locationId === locationId);
+        // Filtra staff per locationId (StaffLocation + backward compat)
+        const filteredStaff = serviceWithStaff.staff.filter((s) => {
+          const hasExplicitLocation = s.locations && s.locations.length > 0;
+          if (hasExplicitLocation) return s.locations.some((l: any) => l.locationId === locationId);
+          return !s.locationId || s.locationId === locationId;
+        });
         if (filteredStaff.length > 0) {
           capableStaffIds = filteredStaff.map((s) => s.id);
           allStaff = filteredStaff;
@@ -127,11 +131,16 @@ export async function GET(request: Request) {
 
     if (capableStaffIds.length === 0) {
       // Fallback: tutto lo staff del tenant che lavora in questa sede
+      const allStaffWhere: any = { tenantId };
+      if (locationId) {
+        allStaffWhere.OR = [
+          { locations: { some: { locationId } } },
+          { AND: [{ locations: { none: {} } }, { locationId: null }] },
+          { AND: [{ locations: { none: {} } }, { locationId }] },
+        ];
+      }
       const allStaffResult = await prisma.staff.findMany({
-        where: {
-          tenantId,
-          OR: [{ locationId: null }, { locationId: locationId }],
-        },
+        where: allStaffWhere,
         select: { id: true, name: true, baseSchedule: true, shiftExceptions: true },
       });
       if (allStaffResult.length > 0) {

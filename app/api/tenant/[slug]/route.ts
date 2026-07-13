@@ -19,7 +19,7 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
         },
         storeSettings: true,
         staff: {
-          include: { services: true }
+          include: { services: true, locations: { select: { locationId: true } } }
         },
         locations: {
           where: { isActive: true },
