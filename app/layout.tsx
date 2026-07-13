@@ -51,6 +51,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         
         {children}
         
+        {/* Kill iubenda floating badge/widget on mobile */}
+        <Script id="kill-iubenda" strategy="afterInteractive">
+          {`(() => {
+            const kill = () => {
+              // Selectors for iubenda floating elements
+              const selectors = [
+                '#iubenda-cookie-banner',
+                '.iubenda-cs-banner',
+                '.iubenda-cs-floating-button',
+                '.iubenda-cs-close-btn',
+                '[id^="iubenda-"]',
+                '[class*="iubenda"]',
+                'iframe[src*="iubenda"]',
+              ];
+              selectors.forEach(sel => {
+                document.querySelectorAll(sel).forEach(el => {
+                  if (el.tagName === 'IFRAME' || el.offsetWidth > 0 || el.offsetHeight > 0) {
+                    el.style.display = 'none !important';
+                    el.style.visibility = 'hidden !important';
+                    el.style.opacity = '0 !important';
+                    el.style.pointerEvents = 'none !important';
+                    el.style.position = 'absolute !important';
+                    el.style.left = '-9999px !important';
+                  }
+                });
+              });
+            };
+            // Run immediately
+            kill();
+            // Observe for late-injected elements
+            const obs = new MutationObserver(kill);
+            obs.observe(document.body, { childList: true, subtree: true });
+            // Re-run periodically for 10s
+            let t = 0;
+            const iv = setInterval(() => { kill(); if (++t > 20) clearInterval(iv); }, 500);
+          })();`}
+        </Script>
+        
         {/* Traduttore Universale di Google (Sempre Visibile) */}
         <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[9999] pointer-events-auto">
           <GoogleTranslateWidget />
