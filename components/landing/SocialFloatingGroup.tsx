@@ -80,7 +80,8 @@ export default function SocialFloatingGroup() {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-2 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-2 py-2 sm:px-2.5 sm:py-2.5 shadow-2xl shadow-black/50">
+      {/* Mobile: pill verticale larga quanto il mappamondo */}
+      <div className="sm:hidden flex flex-col items-center gap-1.5 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-1.5 py-2 shadow-2xl shadow-black/50">
         {links.map((link) => {
           const isActiveCopied = link.id === "email" && copied;
           const Icon = isActiveCopied ? Check : link.icon;
@@ -93,13 +94,36 @@ export default function SocialFloatingGroup() {
               rel={link.href ? "noopener noreferrer" : undefined}
               onClick={(e) => handleClick(link.id, e)}
               aria-label={link.label}
-              className={`flex items-center justify-center gap-1.5 bg-gradient-to-r ${link.gradient} text-white rounded-full font-semibold shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform w-9 h-9 sm:w-auto sm:h-auto sm:px-4 sm:py-2`}
+              className={`flex items-center justify-center bg-gradient-to-r ${link.gradient} text-white rounded-full shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform w-8 h-8`}
             >
-              <Icon size={15} />
-              <span className="hidden sm:inline text-[11px] leading-none">
+              <Icon size={13} />
+            </a>
+          );
+        })}
+      </div>
+
+      {/* Desktop: 3 cerchi separati (stessa misura del mappamondo) con tooltip hover */}
+      <div className="hidden sm:flex flex-col items-center gap-2">
+        {links.map((link) => {
+          const isActiveCopied = link.id === "email" && copied;
+          const Icon = isActiveCopied ? Check : link.icon;
+
+          return (
+            <div key={link.id} className="relative group">
+              <a
+                href={link.href || undefined}
+                target={link.href ? "_blank" : undefined}
+                rel={link.href ? "noopener noreferrer" : undefined}
+                onClick={(e) => handleClick(link.id, e)}
+                aria-label={link.label}
+                className={`flex items-center justify-center bg-gradient-to-r ${link.gradient} text-white rounded-full shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform w-11 h-11`}
+              >
+                <Icon size={18} />
+              </a>
+              <span className="absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-[#0b1221]/90 backdrop-blur-md border border-white/10 text-white text-xs font-semibold px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg">
                 {isActiveCopied ? "Copiato! ✓" : link.label}
               </span>
-            </a>
+            </div>
           );
         })}
       </div>

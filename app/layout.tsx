@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Chatbot />
 
           {/* Social bar — verticale, glass, a sinistra */}
-          <div className="fixed bottom-16 sm:bottom-20 left-4 z-[9998] pointer-events-auto">
+          <div className="fixed bottom-16 sm:bottom-20 left-4 sm:left-6 z-[9998] pointer-events-auto">
             <SocialFloatingGroup />
           </div>
         </PublicWidgetsWrapper>
