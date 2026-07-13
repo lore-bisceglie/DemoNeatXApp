@@ -136,7 +136,7 @@
         "title": "BASTA NO SHOW",
         "hook": "BASTA NO SHOW",
         "date": "2026-07-11",
-        "views": 21,
+        "views": 26,
         "likes": 0
     },
     {
@@ -144,7 +144,7 @@
         "title": "ADDIO TELEFONO",
         "hook": "ADDIO TELEFONO",
         "date": "2026-07-12",
-        "views": 112,
+        "views": 116,
         "likes": 0
     },
     {
@@ -152,6 +152,13 @@
         "title": "ADDIO TELEFONO",
         "hook": "ADDIO TELEFONO",
         "date": "2026-07-12",
+        "views": 0
+    },
+    {
+        "youtube_id": "oXd35Kv2JMI",
+        "title": "CLIENTI IN AUTOMATICO",
+        "hook": "CLIENTI IN AUTOMATICO",
+        "date": "2026-07-13",
         "views": 0
     }
 ]
