@@ -172,14 +172,14 @@ export default function Chatbot() {
       {/* ═══════════ FLOATING BUTTON ═══════════ */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-[9999999] group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-6 right-4 z-[9999999] group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
         <div className="relative">
           {/* Pulse ring */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 animate-ping opacity-20" />
-          {/* Main button */}
-          <div className="relative flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-transform duration-300 transform-gpu will-change-transform">
-            <MessageCircle size={18} />
+          {/* Main button - larger touch target on mobile */}
+          <div className="relative flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 active:scale-95 transition-transform duration-150 transform-gpu will-change-transform">
+            <MessageCircle size={18} className="sm:size-20" />
           </div>
           {/* New message badge */}
           {hasNewMessage && (
@@ -187,18 +187,32 @@ export default function Chatbot() {
               1
             </span>
           )}
-          {/* Tooltip "Sono un bot" */}
+          {/* Tooltip "Sono un bot" - responsive */}
           {showTooltip && !isOpen && (
-            <div className="absolute right-14 top-1/2 -translate-y-1/2 sm:right-16 z-50 animate-fade-in">
-              <div className="bg-[#0a0e1a] border border-blue-500/40 rounded-xl px-4 py-2.5 shadow-2xl shadow-blue-900/30 flex items-center gap-2 whitespace-nowrap">
-                <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                  <Sparkles size={14} className="text-white" />
-                </span>
-                <span className="text-white text-sm font-medium">Ciao! Sono <span className="text-blue-300">NeatBot</span> 🤖</span>
-                <span className="text-xs text-gray-400 px-2 py-0.5 bg-blue-500/20 rounded-full">Assistente AI</span>
+            <>
+              {/* Desktop: a destra del pulsante */}
+              <div className="absolute right-14 top-1/2 -translate-y-1/2 sm:right-16 z-50 animate-fade-in hidden sm:block">
+                <div className="bg-[#0a0e1a] border border-blue-500/40 rounded-xl px-4 py-2.5 shadow-2xl shadow-blue-900/30 flex items-center gap-2 whitespace-nowrap">
+                  <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                    <Sparkles size={14} className="text-white" />
+                  </span>
+                  <span className="text-white text-sm font-medium">Ciao! Sono <span className="text-blue-300">NeatBot</span> 🤖</span>
+                  <span className="text-xs text-gray-400 px-2 py-0.5 bg-blue-500/20 rounded-full">Assistente AI</span>
+                </div>
+                <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-left-blue-500/40" />
               </div>
-              <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-left-blue-500/40" />
-            </div>
+              {/* Mobile: sopra il pulsante, centrato */}
+              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-50 animate-fade-in sm:hidden">
+                <div className="bg-[#0a0e1a] border border-blue-500/40 rounded-xl px-3 py-2 shadow-2xl shadow-blue-900/30 flex items-center gap-1.5 whitespace-nowrap">
+                  <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                    <Sparkles size={12} className="text-white" />
+                  </span>
+                  <span className="text-white text-xs font-medium">Ciao! Sono <span className="text-blue-300">NeatBot</span> 🤖</span>
+                  <span className="text-[10px] text-gray-400 px-1.5 py-0.5 bg-blue-500/20 rounded-full">Assistente AI</span>
+                </div>
+                <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-0 h-0 border-3 border-transparent border-top-blue-500/40" />
+              </div>
+            </>
           )}
         </div>
       </button>
@@ -233,7 +247,8 @@ export default function Chatbot() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                className="p-2 sm:p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all touch-target"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <X size={20} />
               </button>
@@ -324,22 +339,24 @@ export default function Chatbot() {
           </div>
 
            {/* ═══ INPUT ═══ */}
-          <form onSubmit={handleSubmit} className="p-2.5 border-t border-gray-800/50 bg-[#0a0e1a]">
+          <form onSubmit={handleSubmit} className="p-2.5 sm:p-3 border-t border-gray-800/50 bg-[#0a0e1a] pb-[env(safe-area-inset-bottom)]">
             <div className="flex items-center gap-2 relative">
               <input
                 ref={inputRef}
                 type="text"
+                inputMode="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Scrivi..."
-                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[14px] rounded-full px-3.5 py-2 pr-10 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
+                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[16px] sm:text-[14px] rounded-full px-3.5 py-3 sm:py-2 pr-10 sm:pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="absolute right-1 p-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 disabled:opacity-30 disabled:hover:shadow-none transition-all duration-300 active:scale-90"
+                className="absolute right-1 sm:right-1.5 p-2 sm:p-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/30 disabled:opacity-30 disabled:hover:shadow-none transition-all duration-300 active:scale-90 touch-target"
+                style={{ minWidth: '44px', minHeight: '44px' }}
               >
-                <Send size={14} />
+                <Send size={16} className="sm:size-14" />
               </button>
             </div>
           </form>
@@ -358,6 +375,8 @@ export default function Chatbot() {
         }
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0.5rem); }
+        .touch-target { min-width: 44px; min-height: 44px; }
       `}</style>
     </>
   );
