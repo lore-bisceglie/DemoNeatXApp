@@ -625,32 +625,32 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             <CustomerDrawer tenantId={tenantId} />
             <Link
               href={`/t/${slug}/admin/analytics`}
-              className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm"
+              className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
             >
               <BarChart3 size={16} /><span className="hidden sm:inline">Analytics</span>
             </Link>
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
-              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
+              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"
             >
               <CalendarDays size={16} /><span className="hidden sm:inline">Export</span> Agenda
             </a>
             <a
               href={`/api/export/customers?tenantId=${tenantId}`}
-              className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
+              className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"
             >
               <Users size={16} /><span className="hidden sm:inline">Export</span> Clienti
             </a>
             <a
               href={`/api/export/timesheets?tenantId=${tenantId}`}
-              className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
+              className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"
             >
               <Receipt size={16} /><span className="hidden sm:inline">Export</span> Presenze
             </a>
             <Link
               href={`/t/${slug}`}
               target="_blank"
-              className="col-span-3 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
+              className="col-span-3 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-150 flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 hover:scale-[1.03]"
             >
               <Globe size={16} /> Pagina Clienti
             </Link>
@@ -728,11 +728,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         
         {/* --- TAB NAVIGATION BAR --- */}
         <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-6 border-b border-[#1e2b4a] custom-scrollbar snap-x">
-          <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'agenda' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📅 Agenda & Orari</Link>
-          <Link href={`/t/${slug}/admin?tab=servizi`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'servizi' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>⚙️ Servizi & Setup</Link>
-          <Link href={`/t/${slug}/admin?tab=marketing`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'marketing' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📈 Marketing & Dati</Link>
-          <Link href={`/t/${slug}/admin?tab=stripe`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'stripe' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>💳 Pagamenti</Link>
-          <Link href={`/t/${slug}/admin?tab=sedi`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition ${activeTab === 'sedi' ? 'bg-[#00b4ff] text-[#050814]' : 'bg-[#131c31] text-slate-400 hover:text-white'}`}>📍 Sedi</Link>
+          <Link href={`/t/${slug}/admin?tab=agenda`}  className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'agenda'    ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📅 Agenda & Orari</Link>
+          <Link href={`/t/${slug}/admin?tab=servizi`}  className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'servizi'   ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>⚙️ Servizi & Setup</Link>
+          <Link href={`/t/${slug}/admin?tab=marketing`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'marketing' ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📈 Marketing & Dati</Link>
+          <Link href={`/t/${slug}/admin?tab=stripe`}    className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'stripe'    ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>💳 Pagamenti</Link>
+          <Link href={`/t/${slug}/admin?tab=sedi`}      className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'sedi'      ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📍 Sedi</Link>
         </div>
 
         <div className={activeTab === 'servizi' ? '' : 'hidden'}>
@@ -825,9 +825,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         <div className={activeTab === 'agenda' ? '' : 'hidden'}>
           {locations.length > 1 && (
             <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
-              <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition snap-center ${!filterLocationId ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500'}`}>Tutte le sedi</Link>
+              <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${!filterLocationId ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>Tutte le sedi</Link>
               {locations.map((loc: any) => (
-                <Link key={loc.id} href={`/t/${slug}/admin?tab=agenda&locationId=${loc.id}`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition snap-center ${filterLocationId === loc.id ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500'}`}>{loc.name}</Link>
+                <Link key={loc.id} href={`/t/${slug}/admin?tab=agenda&locationId=${loc.id}`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${filterLocationId === loc.id ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>{loc.name}</Link>
               ))}
             </div>
           )}
@@ -885,7 +885,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   href={`/t/${slug}/admin?weekOffset=${weekOffset - 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
                   prefetch={false}
                   scroll={false}
-                  className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
+                  className="px-4 py-2 text-sm text-cyan-300 hover:text-white bg-cyan-500/5 hover:bg-cyan-500/15 rounded-xl transition-all duration-150 font-medium border border-cyan-500/10 hover:border-cyan-500/30 active:scale-95"
                 >
                   ← Prec
                 </Link>
@@ -894,10 +894,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   href={`/t/${slug}/admin${filterLocationId ? `?locationId=${filterLocationId}` : ''}`}
                   prefetch={false}
                   scroll={false}
-                  className={`px-4 py-2 text-sm font-bold rounded-xl transition ${
+                  className={`px-4 py-2 text-sm font-bold rounded-xl transition-all duration-150 active:scale-95 ${
                     weekOffset === 0
                       ? "bg-[#00b4ff] text-[#050814] shadow-lg shadow-cyan-500/20"
-                      : "text-slate-300 hover:bg-[#1e2b4a]"
+                      : "text-slate-300 hover:bg-[#1e2b4a] hover:scale-[1.05]"
                   }`}
                 >
                   Oggi
@@ -907,7 +907,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   href={`/t/${slug}/admin?weekOffset=${weekOffset + 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
                   prefetch={false}
                   scroll={false}
-                  className="px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-[#1e2b4a] rounded-xl transition font-medium"
+                  className="px-4 py-2 text-sm text-cyan-300 hover:text-white bg-cyan-500/5 hover:bg-cyan-500/15 rounded-xl transition-all duration-150 font-medium border border-cyan-500/10 hover:border-cyan-500/30 active:scale-95"
                 >
                   Pros →
                 </Link>

@@ -953,7 +953,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   }
 
   return (
-    <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-500">
+    <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-200">
       {tenantInfo.isDemo && !isPlaygroundDemo && tenantInfo.trialEndsAt && (
         <div className="mb-5 w-full max-w-md rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center text-xs font-extrabold uppercase tracking-widest text-emerald-300">
           Prova gratuita attiva fino al{" "}
@@ -983,7 +983,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   key={profile.id}
                   type="button"
                   onClick={() => chooseActivity(profile.id)}
-                  className="bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] hover:border-[#00b4ff]/60 rounded-2xl px-3 py-3 text-left transition"
+                  className="bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] hover:border-[#00b4ff]/60 rounded-2xl px-3 py-3 text-left transition-all duration-150 active:scale-95 hover:scale-[1.03]"
                 >
                   <span className="block text-2xl mb-2">{profile.icon}</span>
                   <span className="block text-sm font-extrabold text-white">
@@ -1106,7 +1106,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         )}
 
         {showCancelBanner && (
-          <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl text-center animate-in fade-in zoom-in duration-300">
+          <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl text-center animate-in fade-in zoom-in duration-150">
             <span className="block text-2xl mb-1">✅</span>
             <span className="font-bold block text-sm">Appuntamento annullato</span>
             <span className="text-xs text-emerald-200">
@@ -1247,7 +1247,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             </button>
 
             {logoClicked && (
-              <div className="absolute -bottom-8 text-sm font-bold text-[#00b4ff] animate-in fade-in slide-in-from-top-2 zoom-in duration-500 z-10 whitespace-nowrap">
+              <div className="absolute -bottom-8 text-sm font-bold text-[#00b4ff] animate-in fade-in slide-in-from-top-2 zoom-in duration-200 z-10 whitespace-nowrap">
                 {isPlaygroundDemo ? "Demo pronta da provare" : `${tenantInfo.name} online`}
               </div>
             )}
@@ -1266,7 +1266,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             {tenantInfo.description || "Il tuo stile impeccabile, a portata di click. ✂️"}
           </p>
 
-          <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-500">
+          <div className="mb-6 flex flex-col items-center justify-center gap-4 transition-all duration-200">
             {(selectedLocation?.mapsLink || (!selectedLocation && tenantInfo.mapsLink)) ? (
               <a href={selectedLocation?.mapsLink || tenantInfo.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors text-sm flex items-center justify-center gap-2 animate-in fade-in duration-300 text-center font-semibold bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/20">
                 📍 {selectedLocation?.address || tenantInfo.address}
@@ -1279,12 +1279,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
             <div className="flex flex-wrap gap-2 justify-center">
               {tenantInfo.instagramUrl && (
-                <a
-                  href={tenantInfo.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 hover:from-orange-300 hover:via-pink-400 hover:to-purple-500 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-pink-500/30 transition transform hover:scale-105"
-                >
+                  <a
+                    href={tenantInfo.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600 hover:from-orange-300 hover:via-pink-400 hover:to-purple-500 text-white px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-pink-500/30 transition-all duration-150 active:scale-90 hover:scale-105"
+                  >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="15"
@@ -1308,7 +1308,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   href={tenantInfo.tiktokUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-[#050814] px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-black/30 transition transform hover:scale-105"
+                  className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-[#050814] px-5 py-2.5 rounded-full text-sm font-extrabold shadow-lg shadow-black/30 transition-all duration-150 active:scale-90 hover:scale-105"
                 >
                   TikTok
                 </a>
@@ -1338,10 +1338,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   key={profile.id}
                   type="button"
                   onClick={() => chooseActivity(profile.id)}
-                  className={`rounded-xl border px-2 py-2 text-xs font-extrabold transition flex items-center justify-center gap-1.5 ${
+                  className={`rounded-xl border px-2 py-2 text-xs font-extrabold transition-all duration-150 flex items-center justify-center gap-1.5 active:scale-90 ${
                     selectedActivityId === profile.id
-                      ? `bg-[#00b4ff]/10 border-[#00b4ff] ${th.textMain}`
-                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500 hover:text-white"
+                      ? `bg-[#00b4ff]/10 border-[#00b4ff] ${th.textMain} shadow-[0_0_10px_rgba(0,180,255,0.2)]`
+                      : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500 hover:text-white hover:scale-[1.05]"
                   }`}
                 >
                   <span>{profile.icon}</span>
@@ -1363,10 +1363,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                   key={loc.id}
                   type="button"
                   onClick={() => { setSelectedLocationId(loc.id); setSlots([]); setSelectedSlot(""); }}
-                  className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition snap-center ${
+                  className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition-all duration-150 snap-center active:scale-95 ${
                     selectedLocationId === loc.id
-                      ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff]"
-                      : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-slate-500"
+                      ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.35)]"
+                      : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642] hover:scale-[1.03]"
                   }`}
                 >
                   {loc.name}
@@ -1437,10 +1437,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                     key={staff.id}
                     type="button"
                     onClick={() => { setSelectedStaffId(staff.id); setSlots([]); setSelectedSlot(""); }}
-                    className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition snap-center ${
+                    className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold border transition-all duration-150 snap-center active:scale-95 ${
                       selectedStaffId === staff.id
-                        ? `bg-[#00b4ff] text-[#050814] border-[#00b4ff]`
-                        : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-slate-500"
+                        ? `bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.35)]`
+                        : "bg-[#131c31] text-slate-300 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642] hover:scale-[1.03]"
                     }`}
                   >
                     {staff.name}
@@ -1478,7 +1478,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         </div>
 
         {isHoliday ? (
-          <div className="bg-orange-500/10 border border-orange-500/20 text-orange-400 p-6 rounded-2xl text-center shadow-inner animate-in fade-in zoom-in duration-300">
+          <div className="bg-orange-500/10 border border-orange-500/20 text-orange-400 p-6 rounded-2xl text-center shadow-inner animate-in fade-in zoom-in duration-150">
             <span className="text-4xl mb-2 block">🏖️</span>
             <h3 className="font-extrabold text-lg mb-1 text-white">Siamo in Ferie!</h3>
             <p className="text-sm font-medium">
@@ -1514,7 +1514,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <WaitlistButton selectedDate={date} selectedService={selectedService} tenantId={tenantInfo.id} />
           </div>
         ) : (
-          <div className="animate-in fade-in duration-300">
+          <div className="animate-in fade-in duration-150">
             {demandMode && (
               <div
                 className={`mb-5 bg-gradient-to-r ${demandClass} border rounded-xl p-4 animate-in zoom-in duration-300`}
@@ -1572,7 +1572,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
                 <button
                   onClick={handleFirstAvailable}
-                  className={`w-full text-xs font-semibold transition ${th.textMain} ${th.textHover}`}
+                  className={`w-full text-xs font-bold py-2 rounded-xl border transition-all duration-150 active:scale-95 ${
+                    slots.length > 0
+                      ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-400 shadow-[0_0_10px_rgba(0,180,255,0.12)]"
+                      : "bg-[#131c31] text-slate-600 border-[#1e2b4a] cursor-not-allowed"
+                  }`}
                 >
                   [+] Primo disponibile
                 </button>
@@ -1625,7 +1629,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
                 autoComplete="off"
               />
               
-              <div className="flex items-center gap-3 py-2 animate-in fade-in duration-300">
+              <div className="flex items-center gap-3 py-2 animate-in fade-in duration-150">
                 <input
                   type="checkbox"
                   id="privacy"
@@ -1713,11 +1717,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             <button
               onClick={handleBook}
               disabled={isButtonDisabled}
-              className={`w-full font-bold py-3 rounded-xl transition shadow-lg ${
+              className={`w-full font-bold py-3 rounded-xl transition-all duration-150 shadow-lg active:scale-[0.97] ${
                 isButtonDisabled
                   ? "bg-[#131c31] text-slate-500 cursor-not-allowed shadow-none border border-[#1e2b4a]"
                   : isSelectedLastMinute
-                  ? "bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white shadow-red-500/30"
+                  ? "bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 text-white shadow-red-500/30 hover:shadow-red-500/40 hover:scale-[1.02]"
                   : `${th.btnBg} shadow-cyan-500/20`
               }`}
             >
