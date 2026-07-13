@@ -51,8 +51,28 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const [proactiveSent, setProactiveSent] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hasOpenedRef = useRef(false);
+
+  // Messaggio proattivo dopo 15s se non ha aperto la chat e non ha messaggi
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasOpenedRef.current && !proactiveSent && messages.length === 0) {
+        const proactiveMsg: ChatMessage = {
+          id: `proactive-${Date.now()}`,
+          role: 'assistant',
+          content: "Psst... 👋 Sono NeatBot, l'assistente AI. Hai domande su NeatX? Chiedi pure!",
+        };
+        setMessages([proactiveMsg]);
+        setHasNewMessage(true);
+        playNotificationSound();
+        setProactiveSent(true);
+      }
+    }, 15000);
+    return () => clearTimeout(timer);
+  }, [proactiveSent, messages.length]);
 
   // Auto-scroll
   useEffect(() => {
@@ -62,6 +82,7 @@ export default function Chatbot() {
   // Focus input quando si apre
   useEffect(() => {
     if (isOpen) {
+      hasOpenedRef.current = true;
       setTimeout(() => inputRef.current?.focus(), 300);
       setHasNewMessage(false);
     }

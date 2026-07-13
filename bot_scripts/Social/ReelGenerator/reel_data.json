@@ -1,13 +1,13 @@
 {
-    "niche": "Coach e Consulenti",
-    "script_text": "Sei stanco di perdere tempo al telefono? Ogni squillo ti ruba minuti preziosi! I tuoi clienti devono poter prenotare senza disturbarti, anche mentre dormi! Con NeatX, hai prenotazioni automatiche 247. Dì addio a WhatsApp e ai messaggi infiniti. Non lasciare che il tuo tempo venga sprecato. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "CLIENTI IN AUTOMATICO",
-    "cover_title": "CLIENTI IN AUTOMATICO",
-    "image_prompt": "photorealistic consultant in modern office during video call, laptop calendar visible, premium business setup",
+    "niche": "Personal Trainer",
+    "script_text": "Sei un personal trainer e perdi tempo e denaro perché i tuoi clienti soddisfatti non lasciano recensioni? Ogni stella conta! Con NeatX, ottieni recensioni Google automatiche da ogni cliente felice e feedback privato per chi ha lamentele. Non lasciare che i tuoi sforzi vadano sprecati! Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "RECENSIONI DA CLIENTI FELICI",
+    "cover_title": "RECENSIONI DA CLIENTI FELICI",
+    "image_prompt": "a dynamic and engaging scene of a personal trainer enthusiastically coaching a client in a modern gym, with a visible smartphone displaying glowing 5-star reviews to emphasize the promise of automatic reviews",
     "gameplay_style": "block_miner",
-    "caption": "Stanco di rispondere a telefonate e messaggi? Scopri come automatizzare le tue prenotazioni! Commenta AGENDA! #perte #fyp #foryou #viral #imprenditore #businessitalia #coach #consulente",
+    "caption": "Stai perdendo recensioni vitali? Scopri come avere recensioni automatiche con NeatX! #perte #fyp #foryou #viral #imprenditore #businessitalia Commenta AGENDA per info!",
     "strategy_date": "2026-07-13",
-    "strategy_feature": "booking",
-    "strategy_pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-    "strategy_promise": "clienti che prenotano da soli anche mentre dormi"
+    "strategy_feature": "recensioni",
+    "strategy_pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+    "strategy_promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta"
 }
