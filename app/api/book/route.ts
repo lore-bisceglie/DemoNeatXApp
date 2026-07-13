@@ -99,30 +99,29 @@ export async function POST(request: Request) {
       take: 2,
     });
 
-    if (locationId) {
-      const location = await prisma.location.findUnique({
-        where: { id: locationId },
-        select: { id: true, tenantId: true, isActive: true },
-      });
-      if (!location || location.tenantId !== tenantId || !location.isActive) {
-        return NextResponse.json({ error: "Sede non valida o non attiva" }, { status: 400 });
+    if (activeLocations.length > 0) {
+      if (locationId) {
+        const location = await prisma.location.findUnique({
+          where: { id: locationId },
+          select: { id: true, tenantId: true, isActive: true },
+        });
+        if (!location || location.tenantId !== tenantId || !location.isActive) {
+          return NextResponse.json({ error: "Sede non valida o non attiva" }, { status: 400 });
+        }
+        targetLocationId = location.id;
+      } else {
+        if (activeLocations.length === 1) {
+          targetLocationId = activeLocations[0].id;
+        } else if (activeLocations.length > 1) {
+          return NextResponse.json({ error: "Specifica la sede (locationId)" }, { status: 400 });
+        }
       }
-      targetLocationId = location.id;
-    } else {
-      if (activeLocations.length === 1) {
-        targetLocationId = activeLocations[0].id;
-      } else if (activeLocations.length > 1) {
-        return NextResponse.json({ error: "Specifica la sede (locationId)" }, { status: 400 });
-      }
-    }
-    if (!targetLocationId) {
-      return NextResponse.json({ error: "Nessuna sede disponibile per questo tenant" }, { status: 400 });
     }
 
     // 🌟 VALIDAZIONE SERVIZIO IN SEDE (solo se tenant ha sedi configurate)
     if (activeLocations.length > 0) {
       const serviceLocation = await prisma.serviceLocation.findUnique({
-        where: { serviceId_locationId: { serviceId, locationId: targetLocationId } },
+        where: { serviceId_locationId: { serviceId, locationId: targetLocationId! } },
         select: { isActive: true, price: true },
       });
       if (!serviceLocation || !serviceLocation.isActive) {
@@ -183,10 +182,10 @@ export async function POST(request: Request) {
     }
 
     // 🌟 VERIFICA ORARI SEDE
-    const location = await prisma.location.findUnique({
+    const location = targetLocationId ? await prisma.location.findUnique({
       where: { id: targetLocationId },
       select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true },
-    });
+    }) : null;
     if (location) {
       const openMins = location.openTime ? timeToMins(location.openTime) : 9 * 60;
       const closeMins = location.closeTime ? timeToMins(location.closeTime) : 19 * 60;
