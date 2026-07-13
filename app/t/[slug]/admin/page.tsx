@@ -105,6 +105,18 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   });
 
   
+  // Parse chiusura days
+  let activeClosedDays: number[] = [];
+  if (tenant.closedDays) {
+    try { activeClosedDays = JSON.parse(tenant.closedDays); } catch {}
+  }
+  if (filterLocationId) {
+    const loc = locations.find(l => l.id === filterLocationId);
+    if (loc?.closedDays) {
+      try { activeClosedDays = JSON.parse(loc.closedDays); } catch {}
+    }
+  }
+
   const now = new Date();
   
   const dateFormatter = new Intl.DateTimeFormat("it-IT", {
@@ -149,16 +161,25 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
 
 
-  let weekDays: { date: string, label: string }[] = [];
+  // Apply weekOffset (was a bug: weekOffset was read but never applied)
+  const adjustedTargetDate = (() => {
+    const d = new Date(targetDate);
+    d.setDate(d.getDate() + (isMultiStaff ? weekOffset : weekOffset * 7));
+    return d.toISOString().split("T")[0];
+  })();
+
+  let weekDays: { date: string, label: string, isClosed: boolean }[] = [];
   const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
   if (isMultiStaff) {
-    const d = new Date(targetDate);
+    const d = new Date(adjustedTargetDate);
+    const dayOfWeek = d.getDay();
+    const isClosed = activeClosedDays.includes(dayOfWeek);
     const label = `${dayNames[d.getDay()]} ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}`;
-    weekDays = [{ date: targetDate, label }];
+    weekDays = [{ date: adjustedTargetDate, label, isClosed }];
   } else {
     // Single staff fallback
-    const refDate = new Date(targetDate);
+    const refDate = new Date(adjustedTargetDate);
     const dayOfWeek = refDate.getDay();
     const diffToTue = dayOfWeek >= 2 ? 2 - dayOfWeek : -5;
     const tuesday = new Date(refDate);
@@ -170,9 +191,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
       const iso = d.toISOString().split("T")[0];
       const [, m, dayStr] = iso.split("-");
-      const label = `${dayNames[d.getDay()].substring(0, 3)} ${dayStr}/${m}`;
+      const dow = d.getDay();
+      const isClosed = activeClosedDays.includes(dow);
+      const label = `${dayNames[dow].substring(0, 3)} ${dayStr}/${m}`;
 
-      return { date: iso, label };
+      return { date: iso, label, isClosed };
     });
   }
 
@@ -873,7 +896,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
           <SwipeableAgenda>
-            <DayNavigator currentDate={targetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
+            <DayNavigator currentDate={adjustedTargetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
               <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
@@ -931,11 +954,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   return (
                     <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-2 mb-2">
                       <div className={`text-center py-2 rounded-xl border capitalize transition-colors ${
-                        isToday 
-                          ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
-                          : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
+                        d.isClosed
+                          ? "bg-red-900/20 text-red-400 border-red-800/30"
+                          : isToday 
+                            ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
+                            : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
                       }`}>
-                        {d.label}
+                        {d.label} {d.isClosed && <span className="text-[10px] ml-1 font-mono">CHIUSO</span>}
                       </div>
                       {staffList.length > 0 && (
                         <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
@@ -999,17 +1024,25 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                             return;
                           }
 
-                          cols.push(
-                            <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
-                              <WalkInButton
-                                date={d.date}
-                                time={slot}
-                                tenantId={tenantId}
-                                services={tenantServices}
-                                staff={staffList}
-                              />
-                            </div>
-                          );
+                          if (d.isClosed) {
+                            cols.push(
+                              <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px] flex items-center justify-center">
+                                <span className="text-[10px] text-red-400/40 font-mono font-bold tracking-wider">CHIUSO</span>
+                              </div>
+                            );
+                          } else {
+                            cols.push(
+                              <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
+                                <WalkInButton
+                                  date={d.date}
+                                  time={slot}
+                                  tenantId={tenantId}
+                                  services={tenantServices}
+                                  staff={staffList}
+                                />
+                              </div>
+                            );
+                          }
                         });
                         return cols;
                       })}
