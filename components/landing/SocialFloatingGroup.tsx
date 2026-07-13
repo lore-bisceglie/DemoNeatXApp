@@ -80,7 +80,7 @@ export default function SocialFloatingGroup() {
 
   return (
     <>
-      <div className="flex items-center gap-1.5 sm:gap-2 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-3 py-2 sm:px-4 sm:py-2.5 shadow-2xl shadow-black/50">
+      <div className="flex flex-col items-center gap-2 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-2 py-2 sm:px-2.5 sm:py-2.5 shadow-2xl shadow-black/50">
         {links.map((link) => {
           const isActiveCopied = link.id === "email" && copied;
           const Icon = isActiveCopied ? Check : link.icon;
@@ -93,7 +93,7 @@ export default function SocialFloatingGroup() {
               rel={link.href ? "noopener noreferrer" : undefined}
               onClick={(e) => handleClick(link.id, e)}
               aria-label={link.label}
-              className={`flex items-center justify-center gap-1.5 bg-gradient-to-r ${link.gradient} text-white rounded-full font-semibold shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform px-2.5 py-2 sm:px-4 sm:py-2`}
+              className={`flex items-center justify-center gap-1.5 bg-gradient-to-r ${link.gradient} text-white rounded-full font-semibold shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform w-9 h-9 sm:w-auto sm:h-auto sm:px-4 sm:py-2`}
             >
               <Icon size={15} />
               <span className="hidden sm:inline text-[11px] leading-none">
@@ -105,8 +105,8 @@ export default function SocialFloatingGroup() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0b1221] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative">
+        <div className="fixed inset-0 z-[10000] flex items-start sm:items-center justify-center p-4 pt-[12vh] sm:pt-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#0b1221] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors"
