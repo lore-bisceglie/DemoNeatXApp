@@ -106,9 +106,10 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Telefono WhatsApp</label>
-            <input value={phone} onChange={function (e) { setPhone(e.target.value); }} className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="+39 3XX XXXXXXX" />
+          <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-3">
+            <label className="block text-sm font-bold text-cyan-400 mb-1">📞 Telefono per Notifiche *</label>
+            <input value={phone} onChange={function (e) { setPhone(e.target.value); }} required className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="+39 3XX XXXXXXX" />
+            <p className="text-xs text-slate-500 mt-1">Le notifiche di nuove prenotazioni e cancellazioni arriveranno qui</p>
           </div>
 
           <div>

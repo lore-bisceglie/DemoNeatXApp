@@ -198,8 +198,8 @@ export default function SuperAdminPage() {
     }
   };
 
-  const handleLocationSms = async (locationId: string, tenantId: string) => {
-    const amountStr = prompt("Quanti crediti SMS vuoi aggiungere a questa sede?");
+  const handleTenantSms = async (tenantId: string) => {
+    const amountStr = prompt("Quanti crediti SMS vuoi aggiungere?");
     if (!amountStr) return;
     const amount = parseInt(amountStr, 10);
     if (isNaN(amount) || amount <= 0) return;
@@ -211,11 +211,11 @@ export default function SuperAdminPage() {
           'Content-Type': 'application/json',
           'x-admin-password': password
         },
-        body: JSON.stringify({ tenantId, amount, locationId })
+        body: JSON.stringify({ tenantId, amount })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore');
-      alert(`Fatto! Ora questa sede ha ${data.newTotal} crediti SMS.`);
+      alert(`Fatto! Crediti aggiornati: ${data.newTotal}`);
       fetchTenants(password);
     } catch (e: any) {
       alert(e.message);
@@ -837,7 +837,7 @@ export default function SuperAdminPage() {
                 <div><span className="text-slate-500">Stato:</span> <span className="text-white font-semibold">{detailTenant.trialStatus}</span></div>
                 <div><span className="text-slate-500">Servizi:</span> <span className="text-white font-semibold">{detailTenant.services?.length || 0}</span></div>
                 <div><span className="text-slate-500">Stripe:</span> <span className={`font-semibold ${detailTenant.storeSettings?.stripeOnboardingComplete ? 'text-emerald-400' : 'text-red-400'}`}>{detailTenant.storeSettings?.stripeOnboardingComplete ? '✅ Collegato' : '❌ Non collegato'}</span></div>
-                <div><span className="text-slate-500">SMS Crediti:</span> <span className="text-white font-semibold">{detailTenant.storeSettings?.smsCredits || 0}</span></div>
+                <div className="flex items-center gap-2"><span className="text-slate-500">SMS Crediti:</span> <span className="text-white font-semibold">{detailTenant.storeSettings?.smsCredits || 0}</span> <button onClick={() => handleTenantSms(detailTenant.id)} className="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">+ CARICA</button></div>
                 <div><span className="text-slate-500">Creato il:</span> <span className="text-white font-semibold">{new Date(detailTenant.createdAt).toLocaleDateString('it-IT')}</span></div>
               </div>
               {detailTenant.ownerEmail && <p className="text-sm text-slate-400 mt-3">📧 {detailTenant.ownerEmail}</p>}
@@ -902,9 +902,8 @@ export default function SuperAdminPage() {
                         {loc.address && <div>📍 {loc.address}</div>}
                         {loc.phone && <div>📞 {loc.phone}</div>}
                         {loc.openTime && loc.closeTime && <div>🕐 {loc.openTime} - {loc.closeTime}</div>}
-                        <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-slate-800/50">
-                          <span className="text-slate-500">💬 {loc.settings?.smsCredits || 0} SMS</span>
-                          <button onClick={() => handleLocationSms(loc.id, detailTenant.id)} className="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">+ CARICA</button>
+                        <div className="mt-1.5 pt-1.5 border-t border-slate-800/50">
+                          <span className="text-slate-500">📞 {loc.phone || 'Non impostato'}</span>
                         </div>
                       </div>
                     </div>

@@ -261,7 +261,7 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
                 if (loc.phone) reply += `   📞 ${loc.phone}\n`;
                 if (loc.openTime && loc.closeTime) reply += `   🕐 ${loc.openTime} - ${loc.closeTime}\n`;
                 reply += `   ${loc.isActive ? '✅ Attiva' : '❌ Disattiva'}`;
-                reply += ` · 💬 ${loc.settings?.smsCredits || 0} SMS\n\n`;
+                reply += `\n\n`;
               }
               await sendTelegramMessage(reply);
             }
@@ -279,19 +279,13 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
             if (!tenant) {
               await sendTelegramMessage("❌ Nessun salone trovato.");
             } else {
-              const location = await prisma.location.findFirst({
-                where: { tenantId: tenant.id, slug },
+              const ss = await prisma.storeSettings.upsert({
+                where: { tenantId: tenant.id },
+                create: { tenantId: tenant.id, smsCredits: amount },
+                update: { smsCredits: { increment: amount } },
               });
-              if (!location) {
-                await sendTelegramMessage(`❌ Sede "/${slug}" non trovata per ${tenant.name}. Usa /sedi per vedere le sedi.`);
-              } else {
-                const ls = await prisma.locationSettings.upsert({
-                  where: { locationId: location.id },
-                  create: { locationId: location.id, smsCredits: amount },
-                  update: { smsCredits: { increment: amount } },
-                });
-                await sendTelegramMessage(`✅ <b>${tenant.name}</b> — <b>${location.name}</b> ricaricata di <b>${amount} SMS</b>!\nNuovo saldo sede: ${ls.smsCredits} messaggi.`);
-              }
+              await sendTelegramMessage(`✅ <b>${tenant.name}</b> ricaricato di <b>${amount} SMS</b>!\nNuovo saldo totale: ${ss.smsCredits} messaggi.`);
+
             }
           } else {
             await sendTelegramMessage("⚠️ Inserisci un importo valido (es. /sms-sede beart principale 100).");

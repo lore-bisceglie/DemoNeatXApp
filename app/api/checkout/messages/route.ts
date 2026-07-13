@@ -11,7 +11,7 @@ const PACKAGES: Record<string, { credits: number; priceInCents: number; label: s
 
 export async function POST(req: Request) {
   try {
-    const { tenantId, packageId, slug, locationId } = await req.json();
+    const { tenantId, packageId, slug } = await req.json();
 
     if (!tenantId || !packageId) {
       return NextResponse.json({ error: 'Dati mancanti' }, { status: 400 });
@@ -43,7 +43,6 @@ export async function POST(req: Request) {
         type: 'message_package',
         credits: String(pkg.credits),
         packageId,
-        ...(locationId ? { locationId } : {}),
       },
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://neatx.store'}/t/${slug || 'demo'}/admin?tab=agenda&recharge=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://neatx.store'}/t/${slug || 'demo'}/admin?tab=agenda&recharge=cancelled`,
