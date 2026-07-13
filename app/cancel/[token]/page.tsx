@@ -18,7 +18,33 @@ export default function CancelPage() {
   const [rescheduleTime, setRescheduleTime] = useState("");
   const [slots, setSlots] = useState<string[]>([]);
   const [moving, setMoving] = useState(false);
+  const [tenantPhone, setTenantPhone] = useState("");
   const [moveMessage, setMoveMessage] = useState("");
+
+  function whatsappPhone(value: string) {
+    let digits = value.replace(/\D/g, "");
+    if (digits.startsWith("00")) digits = digits.slice(2);
+    if (digits.length === 10 && digits.startsWith("3")) digits = `39${digits}`;
+    return digits.length >= 8 ? digits : "";
+  }
+
+  function notifyTenantViaWhatsApp(phone: string, type: "cancel" | "reschedule", details: { date: string; time: string; newDate?: string; newTime?: string }) {
+    const digits = whatsappPhone(phone);
+    if (!digits) return;
+
+    let message = "";
+    if (type === "cancel") {
+      message = `Ciao, ${appointment.customerName} ha annullato l'appuntamento del ${details.date} alle ${details.time}.`;
+    } else {
+      message = `Ciao, ${appointment.customerName} ha spostato l'appuntamento dal ${details.date} alle ${details.time} al ${details.newDate} alle ${details.newTime}.`;
+    }
+
+    const whatsappTab = window.open("about:blank", "_blank");
+    if (whatsappTab) {
+      whatsappTab.opener = null;
+      whatsappTab.location.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+    }
+  }
 
   useEffect(() => {
     if (!token) return;
@@ -27,6 +53,7 @@ export default function CancelPage() {
       .then((res) => res.json())
       .then((data) => {
         setAppointment(data.appointment);
+        setTenantPhone(data.tenantPhone || "");
         setRescheduleDate(data.appointment?.date || "");
         setLoading(false);
       });
@@ -60,12 +87,17 @@ export default function CancelPage() {
     });
 
     if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (data.tenantPhone) setTenantPhone(data.tenantPhone);
+
       const [year, month, day] = appointment.date.split("-");
       const displayDate = `${day}/${month}/${year}`;
 
       setFinishedMessage(
         `Appuntamento annullato con successo. Lo slot del ${displayDate} alle ${appointment.time} è stato liberato.`
       );
+
+      notifyTenantViaWhatsApp(data.tenantPhone || tenantPhone, "cancel", { date: displayDate, time: appointment.time });
       setCanceling(false);
     } else {
       alert("Si e verificato un errore di connessione.");
@@ -105,11 +137,23 @@ export default function CancelPage() {
     setRescheduleOpen(false);
     setMoving(false);
 
+    const latestPhone = data.tenantPhone || tenantPhone;
+    if (data.tenantPhone) setTenantPhone(data.tenantPhone);
+
+    const [oldYear, oldMonth, oldDay] = appointment.date.split("-");
+    const oldDisplayDate = `${oldDay}/${oldMonth}/${oldYear}`;
     const [newYear, newMonth, newDay] = data.appointment.date.split("-");
     const newDisplayDate = `${newDay}/${newMonth}/${newYear}`;
     setMoveMessage(
-      `Appuntamento spostato con successo al ${newDisplayDate} alle ${data.appointment.time}.`
+      `Appuntamento spostato con successo dal ${oldDisplayDate} alle ${appointment.time} al ${newDisplayDate} alle ${data.appointment.time}.`
     );
+
+    notifyTenantViaWhatsApp(latestPhone, "reschedule", {
+      date: oldDisplayDate,
+      time: appointment.time,
+      newDate: newDisplayDate,
+      newTime: data.appointment.time,
+    });
   };
 
   if (loading) {

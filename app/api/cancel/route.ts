@@ -15,7 +15,16 @@ export async function GET(request: Request) {
       include: { service: true },
     });
 
-    return NextResponse.json({ appointment });
+    let tenantPhone: string | null = null;
+    if (appointment?.tenantId) {
+      const tenant = await prisma.tenant.findUnique({
+        where: { id: appointment.tenantId },
+        select: { phone: true },
+      });
+      tenantPhone = tenant?.phone ?? null;
+    }
+
+    return NextResponse.json({ appointment, tenantPhone });
   } catch (error) {
     console.error("Errore recupero appuntamento:", error);
     return NextResponse.json({ appointment: null });
@@ -31,7 +40,15 @@ export async function POST(request: Request) {
       where: { cancelToken: token },
     });
 
+    let tenantPhone: string | null = null;
+
     if (appointment) {
+      const tenant = await prisma.tenant.findUnique({
+        where: { id: appointment.tenantId ?? "" },
+        select: { phone: true },
+      });
+      tenantPhone = tenant?.phone ?? null;
+
       await prisma.appointment.delete({
         where: { id: appointment.id }
       });
@@ -51,7 +68,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, tenantPhone });
   } catch (error) {
     console.error("Errore eliminazione appuntamento:", error);
     return NextResponse.json({ success: false });

@@ -76,6 +76,12 @@ export async function POST(
       );
     }
 
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: appointment.tenantId ?? "" },
+      select: { phone: true },
+    });
+    const tenantPhone = tenant?.phone ?? null;
+
     const updatedAppointment = await prisma.appointment.update({
       where: { id: appointment.id },
       data: {
@@ -86,7 +92,7 @@ export async function POST(
       include: { service: true },
     });
 
-    return NextResponse.json({ appointment: updatedAppointment });
+    return NextResponse.json({ appointment: updatedAppointment, tenantPhone });
   } catch (error) {
     console.error("Errore spostamento appuntamento:", error);
     return NextResponse.json(

@@ -917,7 +917,32 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     return <div className="min-h-screen bg-[#050814] text-white flex items-center justify-center">Nessun negozio trovato con questo link.</div>;
   }
   if (loadingTenant) {
-    return <div className="min-h-screen bg-[#050814] text-white flex items-center justify-center">Caricamento agenda...</div>;
+    return (
+      <div className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-4 font-sans">
+        <div className="bg-[#0b1221] max-w-md w-full rounded-3xl border border-[#1a2642] p-6 sm:p-8 shadow-2xl">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-20 h-20 rounded-full bg-[#1a2642] animate-pulse mb-4"></div>
+            <div className="h-6 w-40 bg-[#1a2642] rounded-lg animate-pulse"></div>
+            <div className="h-3 w-52 bg-[#1a2642] rounded-lg animate-pulse mt-3"></div>
+          </div>
+          <div className="space-y-3 mb-6">
+            <div className="h-4 w-24 bg-[#1a2642] rounded-lg animate-pulse"></div>
+            <div className="h-12 w-full bg-[#1a2642] rounded-xl animate-pulse"></div>
+          </div>
+          <div className="space-y-3 mb-6">
+            <div className="h-4 w-20 bg-[#1a2642] rounded-lg animate-pulse"></div>
+            <div className="h-12 w-full bg-[#1a2642] rounded-xl animate-pulse"></div>
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+            <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+            <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+          </div>
+          <div className="h-14 w-full bg-gradient-to-r from-[#1a2642] to-[#1e2b4a] rounded-xl animate-pulse"></div>
+        </div>
+        <p className="text-slate-500 text-xs mt-6 font-medium animate-pulse">Caricamento agenda...</p>
+      </div>
+    );
   }
 
   if (tenantInfo.trialExpired) {
@@ -1487,8 +1512,17 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
             </p>
           </div>
         ) : dateError !== "" ? null : loading ? (
-          <div className="text-center py-8">
-            <p className="text-slate-400 text-sm font-medium animate-pulse">
+          <div className="py-6">
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+              <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+              <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+              <div className="h-10 bg-[#1a2642] rounded-xl animate-pulse"></div>
+            </div>
+            <p className="text-slate-500 text-xs text-center font-medium animate-pulse mt-4">
               Calcolo incastri perfetti in corso...
             </p>
           </div>

@@ -215,11 +215,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     }
   }
 
-  // Fetch only data needed for the active tab
   const isAgendaTab = activeTab === 'agenda';
   const isServiziTab = activeTab === 'servizi';
 
-  const rawAppointments = isAgendaTab || isServiziTab ? await prisma.appointment.findMany({
+  const rawAppointments = await prisma.appointment.findMany({
     where: {
       date: { gte: todayItaly },
       tenantId,
@@ -227,7 +226,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     },
     orderBy: [ { date: "asc" }, { time: "asc" } ],
     include: { service: true, staff: true },
-  }) : [];
+  });
 
   const columns = staffList.length > 0 ? staffList.map(s => s.id) : ["unassigned"];
   const maxConcurrent = columns.length;
@@ -261,10 +260,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     take: 20,
   }) : [];
 
-  const waitlistItems = isAgendaTab ? await prisma.waitlist.findMany({
+  const waitlistItems = await prisma.waitlist.findMany({
     where: { tenantId, date: { gte: todayItaly } },
     orderBy: { createdAt: "desc" },
-  }) : [];
+  });
 
   radarAppointments.forEach((app) => {
     let durationMins = 15;
@@ -748,7 +747,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           <ReferralCard tenantId={tenantId} />
         </div>
 
-        
+        {/* LISTA ATTESA — sempre visibile */}
+        {waitlistItems.length > 0 && (
+          <div className="mb-6">
+            <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
+          </div>
+        )}
+
         {/* --- TAB NAVIGATION BAR --- */}
         <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-6 border-b border-[#1e2b4a] custom-scrollbar snap-x">
           <Link href={`/t/${slug}/admin?tab=agenda`}  className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'agenda'    ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📅 Agenda & Orari</Link>
@@ -854,11 +859,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               ))}
             </div>
           )}
-          {/* LISTA ATTESA */}
-          <div className="mb-8">
-            <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
-          </div>
-{/* AGENDA SETTIMANALE TETRIS */}
+          {/* AGENDA SETTIMANALE TETRIS */}
         {freeGapReports.length > 0 && (
 
           <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
