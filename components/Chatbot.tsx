@@ -185,7 +185,7 @@ export default function Chatbot() {
       {/* ═══════════ FLOATING BUTTON ═══════════ */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-4 z-[9999999] group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed right-4 z-[9999999] group transition-all duration-500 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} bottom-20 sm:bottom-6`}
       >
         <div className="relative">
           {/* Pulse ring */}
@@ -215,7 +215,7 @@ export default function Chatbot() {
                 <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-left-blue-500/40" />
               </div>
               {/* Mobile: sopra il pulsante, centrato */}
-              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-50 animate-fade-in sm:hidden">
+              <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-50 animate-fade-in sm:hidden">
                 <div className="bg-[#0a0e1a] border border-blue-500/40 rounded-xl px-3 py-2 shadow-2xl shadow-blue-900/30 flex items-center gap-1.5 whitespace-nowrap">
                   <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
                     <Sparkles size={12} className="text-white" />
