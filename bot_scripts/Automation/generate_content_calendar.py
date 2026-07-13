@@ -70,6 +70,28 @@ TARGETS = [
 
 GAMEPLAY_STYLES = ["runner", "block_miner", "neon_racer"]
 
+# Mappa feature -> scena da raffigurare (in inglese) per i prompt immagine per-giorno
+FEATURE_SCENES_EN = {
+    "no_show": "a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background",
+    "booking": "a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen",
+    "timesheet": "a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets",
+    "recensioni": "a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client",
+    "promemoria": "a WhatsApp reminder notification on a smartphone about an upcoming appointment, a client who will not forget",
+    "analytics": "a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers",
+    "multi_staff": "separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team",
+}
+
+# Mappa nicchia -> descrizione ambiente (in inglese) riusa le frasi dei TARGETS
+NICHE_ENV_EN = {
+    "Parrucchieri": "modern Italian hair salon",
+    "Centri Estetici": "modern beauty center",
+    "Fisioterapisti": "modern physiotherapy clinic",
+    "Barbieri": "luxury barber shop",
+    "Tatuatori": "modern tattoo studio",
+    "Coach e Consulenti": "modern office",
+    "Personal Trainer": "modern gym",
+}
+
 
 def rome_today():
     try:
@@ -92,7 +114,7 @@ def gemini_calendar(seed_items):
             "Each hook must be concrete, painful and specific to the niche.",
             "cover_title max 4 words, MUST be different from any cover_format used before, think of a new angle every time.",
             "No emojis.",
-            "Keep image_prompt in English and coherent with the niche.",
+            "Keep image_prompt in English, coherent with the niche AND with that day's specific pain/promise (show the scenario of the problem or the solution, not just a generic environment).",
         ],
         "calendar": seed_items,
     }
@@ -117,7 +139,7 @@ def openai_calendar(seed_items):
             "Each hook must be concrete, painful and specific to the niche.",
             "cover_title max 4 words, NEVER generic, always specific to the pain of that niche.",
             "No emojis.",
-            "Keep image_prompt in English and coherent with the niche.",
+            "Keep image_prompt in English, coherent with the niche AND with that day's specific pain/promise (show the scenario of the problem or the solution, not just a generic environment).",
             "Avoid generic marketing language.",
             "Return JSON with key days, an array of 7 objects.",
         ],
@@ -164,7 +186,11 @@ def build_seed_calendar():
                 "hook_hint": f"Se sei tra i {target['niche'].lower()} e {feature['pain']}, stai perdendo soldi.",
                 "blog_topic": f"{target['niche']}: {feature['label']} con NeatX",
                 "gameplay_style": gameplay,
-                "image_prompt": target["image_prompt"],
+                # Prompt immagine per-giorno: ambiente della nicchia + scena della feature specifica
+                "image_prompt": (
+                    f"photorealistic cinematic scene inside a {NICHE_ENV_EN.get(target['niche'], 'modern workplace')} "
+                    f"workplace: {FEATURE_SCENES_EN.get(feature['id'], 'professional working calmly')}, premium realistic lighting"
+                ),
                 "keywords": target["keywords"],
             }
         )

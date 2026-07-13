@@ -110,6 +110,21 @@ FEATURE_COVERS = {
     "referral": "CLIENTI CHE PORTANO CLIENTI",
 }
 
+FEATURE_SCENES_EN = {
+    "no_show": "a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background",
+    "booking": "a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen",
+    "timesheet": "a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets",
+    "recensioni": "a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client",
+    "promemoria": "a WhatsApp reminder notification on a smartphone about an upcoming appointment, a client who will not forget",
+    "analytics": "a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers",
+    "multi_staff": "separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team",
+}
+
+def build_scene_prompt(target, feature):
+    scene = FEATURE_SCENES_EN.get(feature, "professional working")
+    return f"photorealistic cinematic scene inside a {target} workplace: {scene}, premium realistic lighting, shallow depth of field"
+
+
 def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
     strategy = strategy or {}
 
@@ -120,7 +135,7 @@ def build_fallback_content(target, gameplay_style, strategy=None, reason=""):
     pain = strategy.get("pain") or FEATURE_PAINS.get(feature, "perdere tempo tra messaggi, telefonate e appuntamenti saltati")
     promise = strategy.get("promise") or FEATURE_PROMISES.get(feature, "prenotazioni automatiche e meno no-show")
     cover_title = strategy.get("cover_title") or FEATURE_COVERS.get(feature, "BASTA NO-SHOW")
-    image_prompt = strategy.get("image_prompt") or f"photorealistic {target} professional working in a modern real workplace"
+    image_prompt = strategy.get("image_prompt") or build_scene_prompt(target, feature)
 
     if reason:
         print(f"[!] Uso contenuto fallback per il reel: {reason}")
@@ -278,7 +293,7 @@ Regole:
 - La scritta a schermo (hook_text) DEVE ESSERE IDENTICA a cover_title. Saranno le 3-4 parole enormi che appaiono in faccia all'utente.
 - La caption di Instagram deve essere persuasiva, includere hashtag VIRALI come #perte #fyp #foryou #viral #imprenditore #businessitalia + hashtag di nicchia e l'invito a commentare la parola AGENDA.
 - Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante.
-- Il "image_prompt" deve essere in INGLESE e descrivere una scena fotografica coerente con {target}, con un professionista vero al lavoro nel suo ambiente.
+- Il "image_prompt" deve essere in INGLESE e descrivere una SCENA CINEMATOGRAFICA REALISTICA che ILLUSTRA VISUALMENTE IL SENSO DEL VIDEO (il dolore/pain o la soluzione/promise descritti nel copione e nella strategia), NON solo l'ambiente generico della professione. La scena deve far capire a colpo d'occhio di cosa parla il reel, includendo il professionista {target} e un elemento visivo che rappresenti pain o promise. Mantieni riferimento a pain e promise già presenti in [STRATEGIA DEL GIORNO].
 - Scrivi SEMPRE "24/7" con lo slash, mai "247" o "24 ore su 24" o "24 7".
 
 Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtick):
@@ -287,7 +302,7 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
   "script_text": "il copione letto dalla voce, aggressivo e dritto al punto",
   "hook_text": "DEVE ESSERE IDENTICO AL COVER_TITLE",
   "cover_title": "TITOLO SHOCK MAX 4 PAROLE",
-  "image_prompt": "prompt fotografico coerente con il target",
+  "image_prompt": "prompt fotografico che ritrae la scena specifica del dolore/soluzione del video",
   "gameplay_style": "{gameplay_style}",
   "caption": "la descrizione per instagram con hashtag"
 }}
@@ -315,7 +330,7 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     if data["gameplay_style"] not in GAMEPLAY_STYLES:
         data["gameplay_style"] = gameplay_style
     if not data.get("image_prompt"):
-        data["image_prompt"] = strategy.get("image_prompt") or f"photorealistic {target} professional working in a modern real workplace"
+        data["image_prompt"] = strategy.get("image_prompt") or build_scene_prompt(target, strategy.get("feature", ""))
     if strategy.get("cover_title") and not data.get("cover_title"):
         data["cover_title"] = strategy["cover_title"]
     if data.get("cover_title"):

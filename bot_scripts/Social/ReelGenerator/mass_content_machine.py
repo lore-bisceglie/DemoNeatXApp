@@ -1,5 +1,6 @@
 import os
 import json
+import glob
 import urllib.parse
 import requests
 import subprocess
@@ -68,9 +69,12 @@ def crea_fabbrica():
             json.dump(dati, f, indent=4, ensure_ascii=False)
             
         # 2. Pulisce la cache dell'immagine per forzare una nuova AI Image
-        if os.path.exists(CACHE_IMAGE):
-            os.remove(CACHE_IMAGE)
-            print("[*] Cache immagine precedente pulita.")
+        for f in glob.glob("assets/niche_img_*.jpg"):
+            try:
+                os.remove(f)
+            except OSError:
+                pass
+        print("[*] Cache immagini precedenti pulita.")
             
         # Pulisce vecchi video generati
         if os.path.exists(GENERATED_VIDEO):

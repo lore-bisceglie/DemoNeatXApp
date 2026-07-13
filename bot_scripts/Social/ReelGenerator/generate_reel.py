@@ -22,6 +22,9 @@ VOICE = "it-IT-ElsaNeural"
 
 import json
 import random
+import hashlib
+import time
+import datetime
 import requests
 from dotenv import load_dotenv
 
@@ -148,11 +151,93 @@ def slugify_topic(value):
     slug = re.sub(r"[^a-z0-9]+", "_", normalized.lower()).strip("_")
     return slug or "generico"
 
-def prompt_immagine_per_nicchia(nicchia):
+# Mappa feature -> scena in inglese (usata per riflettere il senso del video)
+FEATURE_SCENES_EN = {
+    "no_show": "a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background",
+    "booking": "a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen",
+    "timesheet": "a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets",
+    "recensioni": "a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client",
+    "promemoria": "a WhatsApp reminder notification on a smartphone about an upcoming appointment, a client who will not forget",
+    "analytics": "a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers",
+    "multi_staff": "separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team",
+}
+
+# Parole chiave (in italiano, lowercase) che attivano una feature specifica
+FEATURE_KEYWORDS = [
+    ("no_show", ["no_show", "acconto", "no-show"]),
+    ("booking", ["booking", "prenota", "24/7", "agenda"]),
+    ("timesheet", ["timesheet", "excel", "turni", "commercialista"]),
+    ("recensioni", ["recensioni", "google", "recensione"]),
+    ("promemoria", ["promemoria", "whatsapp", "promemoria", "dimentica"]),
+    ("analytics", ["analytics", "statistiche", "incassi", "guadagni", "dati"]),
+    ("multi_staff", ["multi_staff", "staff", "collaboratori", "team"]),
+]
+
+# Descrizione inglese dell'ambiente di lavoro per ogni nicchia (riusa i prompt esistenti)
+ENV_DESCR_BY_KEYWORD = {
+    "parrucch": "modern Italian hair salon",
+    "estetic": "modern beauty salon",
+    "fisioterap": "modern physiotherapy clinic",
+    "osteopat": "osteopathy studio",
+    "massaggi": "massage therapy studio",
+    "psicolog": "psychologist office",
+    "nutrizion": "nutritionist studio",
+    "personal trainer": "modern gym",
+    "avvocat": "law office",
+    "commercialist": "accountant office",
+}
+
+def prompt_immagine_per_nicchia(nicchia, script_text=None, hook_text=None):
     if IMAGE_PROMPT:
         return IMAGE_PROMPT
 
     topic = nicchia.lower()
+
+    # Rileva la feature dal testo (script + hook)
+    testo = f"{script_text or ''} {hook_text or ''}".lower()
+    feature_rilevata = None
+    for feature, keywords in FEATURE_KEYWORDS:
+        if any(kw in testo for kw in keywords):
+            feature_rilevata = feature
+            break
+
+    if feature_rilevata:
+        # Ambiente di lavoro in inglese (default generico se nicchia sconosciuta)
+        env_descr = None
+        for keyword, descr in ENV_DESCR_BY_KEYWORD.items():
+            if keyword in topic:
+                env_descr = descr
+                break
+        if env_descr is None:
+            env_descr = f"{nicchia} workplace"
+
+        # Frase soggetto di base già presente nei prompt di nicchia
+        base_subject = None
+        subject_map = [
+            ("parrucch", "professional hairdresser cutting and styling a client's hair"),
+            ("estetic", "esthetician preparing a facial treatment for a client"),
+            ("fisioterap", "physiotherapist helping a patient during rehabilitation exercises"),
+            ("osteopat", "osteopath treating a patient on a therapy bed"),
+            ("massaggi", "professional massage therapist working with a client"),
+            ("psicolog", "therapist in a calm consultation room with a client"),
+            ("nutrizion", "nutritionist consulting a client with a healthy food plan and tablet"),
+            ("personal trainer", "personal trainer coaching a client in a modern gym"),
+            ("avvocat", "professional lawyer consulting a client at a desk with documents"),
+            ("commercialist", "commercialista consulting a client with laptop and tax documents"),
+        ]
+        for keyword, subject in subject_map:
+            if keyword in topic:
+                base_subject = subject
+                break
+        if base_subject is None:
+            base_subject = f"professional {nicchia} working with a real client"
+
+        return (
+            f"photorealistic cinematic scene inside a {env_descr} workplace: "
+            f"{FEATURE_SCENES_EN[feature_rilevata]}, {base_subject}, "
+            f"premium realistic lighting, shallow depth of field"
+        )
+
     prompts = [
         ("parrucch", "modern Italian hair salon, professional hairdresser cutting and styling a client's hair, elegant mirrors, salon chairs, realistic documentary photo"),
         ("estetic", "modern beauty salon, esthetician preparing a facial treatment for a client, clean luxury treatment room, realistic documentary photo"),
@@ -170,23 +255,67 @@ def prompt_immagine_per_nicchia(nicchia):
             return prompt
     return f"professional {nicchia} working with a real client in a modern workplace, realistic documentary photo, highly detailed"
 
+def _valida_immagine_jpeg(img_data):
+    # Verifica che sia una vera immagine JPEG e di dimensione minima
+    if not img_data or len(img_data) < 5 * 1024:
+        return False
+    return img_data[:3] == b'\xff\xd8\xff'
+
 def genera_immagine_ai(nicchia):
     os.makedirs("assets", exist_ok=True)
-    percorso_img = f"assets/niche_bg_{slugify_topic(nicchia)}.jpg"
+    
+    prompt = prompt_immagine_per_nicchia(nicchia, script_text=SCRIPT_TEXT, hook_text=HOOK_TEXT)
+    oggi = datetime.datetime.now().strftime("%Y-%m-%d")
+    # Hash breve e univoco del prompt: evita nomi file troppo lunghi (limite 255/260 byte)
+    # che facevano fallire open() e ripiegavano sull'immagine nera
+    slug = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
+    percorso_img = f"assets/niche_img_{oggi}_{slug}.jpg"
+    
+    for vecchio in glob.glob(f"assets/niche_img_*_{slug}.jpg"):
+        if vecchio != percorso_img:
+            try:
+                os.remove(vecchio)
+            except OSError:
+                pass
+    
     if os.path.exists(percorso_img):
-        print("[*] Immagine AI già presente. Salto la generazione.")
+        print("[*] Immagine AI di oggi già presente. Salto la generazione.")
         return percorso_img
-        
+         
     print(f"[*] Generazione immagine 4K per la nicchia: {nicchia} (tramite AI Gratuita)...")
     try:
         import urllib.parse
-        prompt = prompt_immagine_per_nicchia(nicchia)
         safe_prompt = urllib.parse.quote(prompt)
-        url = f"https://image.pollinations.ai/prompt/{safe_prompt}?width=1080&height=1920&nologo=true"
-        
-        response = requests.get(url, timeout=90)
-        response.raise_for_status()
-        img_data = response.content
+
+        # Seed stabile derivato dal prompt + data: la stessa scena produce immagini coerenti,
+        # ma ogni giorno (e ogni contenuto diverso) ottiene una varietà diversa
+        seed_base = int(hashlib.sha256(f"{prompt}{oggi}".encode()).hexdigest(), 16) % 10_000_000_000
+
+        # Parametri reali supportati dall'API: enhance (pertinenza prompt),
+        # seed (riproducibilità), width/height (verticale 9:16), nologo (nessun watermark)
+        img_data = None
+        for tentativo in range(3):
+            seed_corrente = seed_base + tentativo  # seed diverso ad ogni retry
+            url = (
+                f"https://image.pollinations.ai/prompt/{safe_prompt}"
+                f"?width=1080&height=1920&nologo=true&enhance=true&seed={seed_corrente}"
+            )
+            try:
+                response = requests.get(url, timeout=120)
+                response.raise_for_status()
+                contenuto = response.content
+                if _valida_immagine_jpeg(contenuto):
+                    img_data = contenuto
+                    break
+                else:
+                    print(f"[!] Tentativo {tentativo + 1}: risposta non valida come JPEG, riprovo...")
+            except Exception as e:
+                print(f"[!] Tentativo {tentativo + 1} fallito: {e}")
+            time.sleep(2)
+
+        if img_data is None:
+            raise RuntimeError("Generazione immagine non riuscita dopo 3 tentativi")
+
         with open(percorso_img, 'wb') as handler:
             handler.write(img_data)
         print("[+] Immagine AI generata e salvata con successo!")
