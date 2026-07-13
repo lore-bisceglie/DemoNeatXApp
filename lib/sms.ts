@@ -71,19 +71,28 @@ export async function sendTenantMessage(
     const client = twilio(TWILIO_SID, TWILIO_TOKEN);
 
     // TRY 1: WhatsApp via MessagingService + template approvato
-    if (whatsappVars && WHATSAPP_TEMPLATE_SID && WHATSAPP_MSG_SVC_SID) {
+    if (WHATSAPP_MSG_SVC_SID) {
       try {
-        const msg = await client.messages.create({
-          contentSid: WHATSAPP_TEMPLATE_SID,
-          contentVariables: JSON.stringify({
-            "1": whatsappVars.storeName,
-            "2": whatsappVars.customerName,
-            "3": whatsappVars.date,
-            "4": whatsappVars.time,
-          }),
-          messagingServiceSid: WHATSAPP_MSG_SVC_SID,
-          to: `whatsapp:${phone}`,
-        });
+        let msg;
+        if (whatsappVars && WHATSAPP_TEMPLATE_SID) {
+          msg = await client.messages.create({
+            contentSid: WHATSAPP_TEMPLATE_SID,
+            contentVariables: JSON.stringify({
+              "1": whatsappVars.storeName,
+              "2": whatsappVars.customerName,
+              "3": whatsappVars.date,
+              "4": whatsappVars.time,
+            }),
+            messagingServiceSid: WHATSAPP_MSG_SVC_SID,
+            to: `whatsapp:${phone}`,
+          });
+        } else {
+          msg = await client.messages.create({
+            body: smsBody,
+            messagingServiceSid: WHATSAPP_MSG_SVC_SID,
+            to: `whatsapp:${phone}`,
+          });
+        }
         if (!msg.errorCode) {
           await deductCredit(tenantId, locationId);
           console.log(`[WHATSAPP] Inviato a ${phone} (sid: ${msg.sid})`);

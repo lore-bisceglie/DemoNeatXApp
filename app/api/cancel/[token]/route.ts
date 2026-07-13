@@ -78,6 +78,29 @@ export async function POST(
           await sendTenantSms(appointment.tenantId, appointment.customerPhone, smsBody, undefined, appointment.locationId || undefined);
         }
       }
+
+      // 🌟 AVVISO AUTOMATICO LISTA D'ATTESA (FIFO)
+      if (appointment.tenantId && appointment.date) {
+        const waitlistEntry = await prisma.waitlist.findFirst({
+          where: { tenantId: appointment.tenantId, date: appointment.date },
+          orderBy: { createdAt: "asc" },
+        });
+
+        if (waitlistEntry) {
+          const tenant = await prisma.tenant.findUnique({
+            where: { id: appointment.tenantId },
+            select: { name: true, slug: true },
+          });
+
+          if (tenant && tenant.slug) {
+            const bookingUrl = `https://${tenant.slug}.neatx.store`;
+            const smsBody = `🎉 ${tenant.name} - Posto Liberato!\nCiao ${waitlistEntry.name}, si è liberato un posto per il ${appointment.date.split('-').reverse().join('/')}. Prenotalo subito: ${bookingUrl}`;
+            await sendTenantSms(appointment.tenantId, waitlistEntry.phone, smsBody, undefined, appointment.locationId || undefined);
+          }
+
+          await prisma.waitlist.delete({ where: { id: waitlistEntry.id } });
+        }
+      }
     }
 
     return NextResponse.json({

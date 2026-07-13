@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
+import { sendTenantSms } from "@/lib/sms";
 
 // Recupera i dati dell'appuntamento dal token segreto
 export async function GET(request: Request) {
@@ -65,6 +66,29 @@ export async function POST(request: Request) {
           time: appointment.time,
           tenantId: appointment.tenantId,
         });
+      }
+
+      // Avviso automatico lista d'attesa (FIFO)
+      if (appointment.tenantId && appointment.date) {
+        const waitlistEntry = await prisma.waitlist.findFirst({
+          where: { tenantId: appointment.tenantId, date: appointment.date },
+          orderBy: { createdAt: "asc" },
+        });
+
+        if (waitlistEntry) {
+          const t = await prisma.tenant.findUnique({
+            where: { id: appointment.tenantId },
+            select: { name: true, slug: true },
+          });
+
+          if (t && t.slug) {
+            const bookingUrl = `https://${t.slug}.neatx.store`;
+            const msg = `🎉 ${t.name} - Posto Liberato!\nCiao ${waitlistEntry.name}, si è liberato un posto per il ${appointment.date.split('-').reverse().join('/')}. Prenotalo subito: ${bookingUrl}`;
+            await sendTenantSms(appointment.tenantId, waitlistEntry.phone, msg);
+          }
+
+          await prisma.waitlist.delete({ where: { id: waitlistEntry.id } });
+        }
       }
     }
 
