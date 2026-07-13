@@ -21,6 +21,6 @@ export default function PublicWidgetsWrapper({ children }: { children: React.Rea
     setShow(isMainDomain && !isSuperAdmin);
   }, []);
 
-  if (!show) return <div style={{ display: "none" }}>{children}</div>;
+  if (!show) return null;
   return <>{children}</>;
 }

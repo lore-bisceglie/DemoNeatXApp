@@ -27,6 +27,11 @@ export async function POST(request: Request) {
     // Crea la sessione di checkout per l'account collegato (Stripe Connect) oppure per l'account principale se demo
     const sessionConfig: any = {
       payment_method_types: ["card"],
+      metadata: {
+        type: "appointment_deposit",
+        appointmentId,
+        tenantSlug,
+      },
       line_items: [
         {
           price_data: {

@@ -721,6 +721,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         serviceId: selectedService.id,
         duration: selectedService.duration,
         locationId: selectedLocationId || undefined,
+        staffId: selectedStaffId && selectedStaffId !== "any" ? selectedStaffId : undefined,
         ...(isPlaygroundDemo ? { paymentMethod } : {}),
       }),
     });

@@ -84,7 +84,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
   const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
-  if (isTrialExpired && tenant.plan !== "premium" && tenant.trialStatus !== "converted") {
+  if (isTrialExpired && tenant.plan !== "premium" && tenant.trialStatus !== "converted" && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
 

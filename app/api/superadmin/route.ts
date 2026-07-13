@@ -146,7 +146,7 @@ export async function POST(req: Request) {
     }
 
     const trialLimit = new Date();
-    trialLimit.setDate(trialLimit.getDate() + 7);
+    trialLimit.setDate(trialLimit.getDate() + 14);
 
     // Crea il Tenant con i servizi annessi e la password
     const newTenant = await prisma.tenant.create({
@@ -179,7 +179,7 @@ export async function POST(req: Request) {
     });
 
     // Create default staff
-    await prisma.staff.create({
+    const createdStaff = await prisma.staff.create({
       data: {
         name: ownerEmail ? ownerEmail.split('@')[0] : "Titolare",
         tenantId: newTenant.id,
@@ -187,6 +187,43 @@ export async function POST(req: Request) {
           connect: createdServices.map((s) => ({ id: s.id }))
         }
       }
+    });
+
+    // Crea Sede Principale di default + StoreSettings + ServiceLocation
+    const mainLocation = await prisma.location.create({
+      data: {
+        name: "Sede Principale",
+        slug: `${slug}-sede-principale`,
+        phone: phone || null,
+        address: address || null,
+        city: address || null,
+        openTime: openTime || null,
+        closeTime: closeTime || null,
+        isMain: true,
+        isActive: true,
+        tenantId: newTenant.id,
+        settings: {
+          create: {
+            smsCredits: 50,
+          },
+        },
+      },
+    });
+
+    for (const service of createdServices) {
+      await prisma.serviceLocation.create({
+        data: {
+          serviceId: service.id,
+          locationId: mainLocation.id,
+          price: service.price,
+          isActive: true,
+        },
+      });
+    }
+
+    await prisma.staff.update({
+      where: { id: createdStaff.id },
+      data: { locationId: mainLocation.id },
     });
 
     if (ownerEmail) {

@@ -34,9 +34,9 @@ export default function CancelPage() {
 
     let message = "";
     if (type === "cancel") {
-      message = `Ciao, ${appointment.customerName} ha annullato l'appuntamento del ${details.date} alle ${details.time}.`;
+      message = `Ciao, ho annullato il mio appuntamento del ${details.date} alle ${details.time}.`;
     } else {
-      message = `Ciao, ${appointment.customerName} ha spostato l'appuntamento dal ${details.date} alle ${details.time} al ${details.newDate} alle ${details.newTime}.`;
+      message = `Ciao, ho spostato il mio appuntamento dal ${details.date} alle ${details.time} al ${details.newDate} alle ${details.newTime}.`;
     }
 
     const whatsappTab = window.open("about:blank", "_blank");

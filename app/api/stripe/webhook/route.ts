@@ -34,7 +34,19 @@ export async function POST(req: Request) {
         const tenantId = session.client_reference_id;
         const metadataType = session.metadata?.type;
 
-        if (tenantId && metadataType === 'message_package') {
+        if (metadataType === 'appointment_deposit' && session.metadata?.appointmentId) {
+          await prisma.appointment.update({
+            where: { id: session.metadata.appointmentId },
+            data: { isPaid: true, paymentStatus: 'PAID' },
+          });
+          const appt = await prisma.appointment.findUnique({
+            where: { id: session.metadata.appointmentId },
+            include: { tenant: true },
+          });
+          await sendTelegramMessage(
+            `✅ <b>CAPARRA PAGATA</b>\n\nPrenotazione <b>${appt?.id}</b> del negozio <b>${appt?.tenant?.name || ''}</b> confermata e pagata.`
+          );
+        } else if (tenantId && metadataType === 'message_package') {
           const creditsToAdd = parseInt(session.metadata?.credits || '0', 10);
           const packageId = session.metadata?.packageId || 'unknown';
           if (creditsToAdd > 0) {
@@ -115,7 +127,7 @@ export async function POST(req: Request) {
         if (subTenantId) {
           await prisma.tenant.update({
             where: { id: subTenantId },
-            data: { trialStatus: 'expired', plan: 'basic' },
+            data: { trialStatus: 'expired', plan: 'basic', trialEndsAt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
           });
           const tenant = await prisma.tenant.findUnique({ where: { id: subTenantId } });
           await sendTelegramMessage(

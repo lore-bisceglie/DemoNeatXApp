@@ -91,6 +91,12 @@ export async function POST(req: Request) {
     const websiteUrl = null;
     const bookingUrl = null;
     const mapsLink = normalizeOptionalUrl(body.mapsLink) || buildMapsLink(address);
+    const rawLogo = typeof body.logoUrl === "string" ? body.logoUrl.trim() : "";
+    const logoUrl =
+      rawLogo && (rawLogo.startsWith("http") || rawLogo.startsWith("data:image/"))
+        ? rawLogo
+        : null;
+    const themeColor = cleanText(body.themeColor) || "cyan";
 
     if (!businessName || !category || !city || !ownerName || !password || !phone || !email) {
       return NextResponse.json(
@@ -928,6 +934,8 @@ export async function POST(req: Request) {
         websiteUrl,
         mapsLink,
         bookingUrl,
+        logoUrl: logoUrl || null,
+        themeColor,
         openTime: template.openTime,
         closeTime: template.closeTime,
         breakStart: template.breakStart || null,

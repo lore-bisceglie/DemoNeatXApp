@@ -18,17 +18,19 @@ const QUICK_REPLIES = [
 
 function playNotificationSound() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new Ctx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+    osc.type = "sine";
     osc.connect(gain);
     gain.connect(ctx.destination);
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.08);
-    gain.gain.setValueAtTime(0.08, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.frequency.setValueAtTime(520, ctx.currentTime);
+    osc.frequency.setValueAtTime(660, ctx.currentTime + 0.09);
+    gain.gain.setValueAtTime(0.035, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
     osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
+    osc.stop(ctx.currentTime + 0.35);
   } catch {
     // Audio not supported
   }
@@ -88,7 +90,7 @@ export default function Chatbot() {
         };
         setMessages([proactiveMsg]);
         setHasNewMessage(true);
-        playNotificationSound();
+        if (!isOpen) playNotificationSound();
         setProactiveSent(true);
       }
     }, 15000);
@@ -154,7 +156,7 @@ export default function Chatbot() {
       };
 
       setMessages(prev => [...prev, botMessage]);
-      playNotificationSound();
+      if (!isOpen) playNotificationSound();
 
       if (!isOpen) setHasNewMessage(true);
     } catch {

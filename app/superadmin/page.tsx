@@ -677,38 +677,35 @@ export default function SuperAdminPage() {
                         </button>
                       </div>
                       
-                      <div className="flex gap-2 w-full">
-                        {tenant.plan !== 'pro' && tenant.plan !== 'elite' && tenant.plan !== 'premium' ? (
-                          <>
-                            <button 
-                              onClick={() => handleMakePlan(tenant.id, 'pro')}
-                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-all text-center"
-                            >
-                              📘 FORZA PRO
-                            </button>
-                            <button 
-                              onClick={() => handleMakePlan(tenant.id, 'elite')}
-                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border border-fuchsia-500/20 transition-all text-center"
-                            >
-                              🌟 FORZA ELITE
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button 
-                              onClick={() => handleMakePlan(tenant.id, 'expire')}
-                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all text-center"
-                            >
-                              🔒 FORZA SCADENZA (Test Paywall)
-                            </button>
-                            <button 
-                              onClick={() => handleMakePlan(tenant.id, 'basic')}
-                              className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
-                            >
-                              🔄 RESET TRIAL (14 Giorni)
-                            </button>
-                          </>
-                        )}
+                      <div className="flex flex-col gap-2 w-full">
+                        <div className="grid grid-cols-2 gap-2 w-full">
+                          <button 
+                            onClick={() => handleMakePlan(tenant.id, 'pro')}
+                            className={`text-xs font-bold px-3 py-2 rounded-lg border transition-all text-center ${tenant.plan === 'pro' || tenant.plan === 'premium' ? 'bg-blue-500/30 text-blue-200 border-blue-500/60' : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20'}`}
+                          >
+                            📘 PRO
+                          </button>
+                          <button 
+                            onClick={() => handleMakePlan(tenant.id, 'elite')}
+                            className={`text-xs font-bold px-3 py-2 rounded-lg border transition-all text-center ${tenant.plan === 'elite' ? 'bg-fuchsia-500/30 text-fuchsia-200 border-fuchsia-500/60' : 'bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border-fuchsia-500/20'}`}
+                          >
+                            🌟 ELITE
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 w-full">
+                          <button 
+                            onClick={() => handleMakePlan(tenant.id, 'basic')}
+                            className="text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
+                          >
+                            🔄 RESET TRIAL (14gg)
+                          </button>
+                          <button 
+                            onClick={() => handleMakePlan(tenant.id, 'expire')}
+                            className="text-xs font-bold px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all text-center"
+                          >
+                            🔒 FORZA SCADENZA
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

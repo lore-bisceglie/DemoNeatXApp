@@ -14,6 +14,7 @@ import {
   Scissors,
   Sparkles,
   UserRound,
+  Image as ImageIcon,
 } from "lucide-react";
 import { demoCategoryOptions } from "@/lib/demoShopTemplates";
 
@@ -85,6 +86,19 @@ const categoryHints: Record<string, { services: string; staff: string; bookings:
   },
 };
 
+const THEME_COLORS = [
+  { value: "cyan", label: "Cyan", dot: "bg-cyan-400" },
+  { value: "rose", label: "Rosa", dot: "bg-rose-400" },
+  { value: "emerald", label: "Smeraldo", dot: "bg-emerald-400" },
+  { value: "amber", label: "Ambra", dot: "bg-amber-400" },
+  { value: "purple", label: "Viola", dot: "bg-purple-400" },
+  { value: "slate", label: "Grigio", dot: "bg-slate-400" },
+  { value: "red", label: "Rosso", dot: "bg-red-400" },
+  { value: "indigo", label: "Indaco", dot: "bg-indigo-400" },
+  { value: "teal", label: "Verde Acqua", dot: "bg-teal-400" },
+  { value: "fuchsia", label: "Fucsia", dot: "bg-fuchsia-400" },
+];
+
 export default function Onboarding() {
   const [businessName, setBusinessName] = useState("");
   const [email, setEmail] = useState("");
@@ -96,6 +110,8 @@ export default function Onboarding() {
   const [address, setAddress] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [tiktokUrl, setTiktokUrl] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [themeColor, setThemeColor] = useState("cyan");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<{
@@ -110,6 +126,33 @@ export default function Onboarding() {
     [category]
   );
   const hint = categoryHints[category] || categoryHints.barber;
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX = 500;
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > MAX) { height *= MAX / width; width = MAX; }
+        } else {
+          if (height > MAX) { width *= MAX / height; height = MAX; }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        setLogoUrl(canvas.toDataURL("image/webp", 0.8));
+      };
+      if (typeof e.target?.result === "string") img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleCreate = async () => {
     setError("");
@@ -141,6 +184,8 @@ export default function Onboarding() {
           address,
           instagramUrl,
           tiktokUrl,
+          logoUrl,
+          themeColor,
         }),
       });
 
@@ -393,6 +438,52 @@ export default function Onboarding() {
                 />
               </label>
             </div>
+            <div>
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <ImageIcon size={14} />
+                Logo / Foto negozio
+              </span>
+              <div className="flex items-center gap-3">
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-[#1e2b4a] bg-[#050814]">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="Logo" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-slate-600">
+                      <ImageIcon size={20} />
+                    </div>
+                  )}
+                </div>
+                <label className="flex-1 cursor-pointer rounded-2xl border border-dashed border-[#1e2b4a] bg-[#050814] px-4 py-3 text-sm text-slate-400 transition hover:border-cyan-400">
+                  Carica dal PC
+                  <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <Sparkles size={14} />
+                Colore tema
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {THEME_COLORS.map((color) => (
+                  <button
+                    type="button"
+                    key={color.value}
+                    onClick={() => setThemeColor(color.value)}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold transition ${
+                      themeColor === color.value
+                        ? "border-cyan-400 bg-cyan-400/10 text-white"
+                        : "border-[#1e2b4a] text-slate-400 hover:border-slate-500"
+                    }`}
+                  >
+                    <span className={`h-3 w-3 rounded-full ${color.dot}`} />
+                    {color.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <label className="block">
               <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                 <UserRound size={14} />
