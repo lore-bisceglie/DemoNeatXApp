@@ -30,76 +30,74 @@ function LocationCard({ location, tenantSlug, tenantName, onEdit, onSettings, on
   var toggleClass = TOGGLE_BASE + (location.isActive ? TOGGLE_ACTIVE : TOGGLE_INACTIVE);
 
   return (
-    <div className={cardClass}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+    <div className={`${cardClass} p-4`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shrink-0">
             <MapPinIcon size={18} className="text-white" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h4 className="font-bold text-white text-lg">{location.name}</h4>
-              {location.isMain && <span className="px-2 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-400 rounded-full">Principale</span>}
-              <span className={badgeClass}>
-                {location.isActive ? "Attiva" : "Disattiva"}
-              </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="font-bold text-white text-lg truncate">{location.name}</h4>
+              {location.isMain && <span className="px-2 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-400 rounded-full whitespace-nowrap">Principale</span>}
+              <span className={badgeClass}>{location.isActive ? "Attiva" : "Disattiva"}</span>
             </div>
-            <p className="text-slate-400 text-sm mt-1 flex items-center gap-1">
-              <MapPinIcon size={14} />
-              {location.address || location.city || "Indirizzo non impostato"}
+            <p className="text-slate-400 text-sm mt-1 flex items-center gap-1 truncate">
+              <MapPinIcon size={14} className="shrink-0" />
+              <span className="truncate">{location.address || location.city || "Indirizzo non impostato"}</span>
             </p>
           </div>
-          <div className="flex items-center gap-1">
-            <button onClick={onToggle} className={toggleClass} title={location.isActive ? "Disattiva" : "Attiva"}>
-              <ToggleRight size={18} />
-            </button>
-            <button onClick={onSettings} className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors" title="Impostazioni">
-              <Settings size={16} />
-            </button>
-            <button onClick={onEdit} className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="Modifica">
-              <Edit size={16} />
-            </button>
-            <button onClick={function () { onDelete(); }} className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Elimina">
-              <Trash2Icon size={16} />
-            </button>
-          </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="bg-[#050814] rounded-xl p-3">
-            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-              <PhoneIcon size={12} /> Telefono
-            </div>
-            <p className="text-white font-medium">{location.phone || "Non impostato"}</p>
-          </div>
-          <div className="bg-[#050814] rounded-xl p-3">
-            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-              <Activity size={12} /> Staff
-            </div>
-            <p className="text-white font-medium">{location._count ? location._count.staff || 0 : 0} dipendenti</p>
-          </div>
-          <div className="bg-[#050814] rounded-xl p-3">
-            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-              <MapPinIcon size={12} /> Servizi
-            </div>
-            <p className="text-white font-medium">{location._count ? location._count.services || 0 : 0} servizi</p>
-          </div>
-          <div className="bg-[#050814] rounded-xl p-3">
-            <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-              <Activity size={12} /> Appuntamenti
-            </div>
-            <p className="text-white font-medium">{location._count ? location._count.appointments || 0 : 0}</p>
-          </div>
-        </div>
-
-        <div className="flex gap-2 mt-4 pt-3 border-t border-[#1a2642]">
-          <button onClick={onEdit} className="flex-1 px-3 py-2 text-xs font-medium bg-[#131c31] hover:bg-[#1a2642] text-slate-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
-            <Edit size={12} /> Modifica
+        <div className="flex items-center gap-1 shrink-0">
+          <button onClick={onToggle} className={toggleClass} title={location.isActive ? "Disattiva" : "Attiva"}>
+            <ToggleRight size={18} />
           </button>
-          <button onClick={onSettings} className="px-3 py-2 text-xs font-medium bg-[#131c31] hover:bg-[#1a2642] text-slate-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
-            <Settings size={12} /> Impostazioni
+          <button onClick={onSettings} className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-colors" title="Impostazioni">
+            <Settings size={16} />
+          </button>
+          <button onClick={onEdit} className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="Modifica">
+            <Edit size={16} />
+          </button>
+          <button onClick={() => onDelete()} className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Elimina">
+            <Trash2Icon size={16} />
           </button>
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 text-sm mt-4">
+        <div className="bg-[#050814] rounded-xl p-3">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+            <PhoneIcon size={12} /> Telefono
+          </div>
+          <p className="text-white font-medium">{location.phone || "Non impostato"}</p>
+        </div>
+        <div className="bg-[#050814] rounded-xl p-3">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+            <Activity size={12} /> Staff
+          </div>
+          <p className="text-white font-medium">{location._count ? location._count.staff || 0 : 0} dipendenti</p>
+        </div>
+        <div className="bg-[#050814] rounded-xl p-3">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+            <MapPinIcon size={12} /> Servizi
+          </div>
+          <p className="text-white font-medium">{location._count ? location._count.services || 0 : 0} servizi</p>
+        </div>
+        <div className="bg-[#050814] rounded-xl p-3">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+            <Activity size={12} /> Appuntamenti
+          </div>
+          <p className="text-white font-medium">{location._count ? location._count.appointments || 0 : 0}</p>
+        </div>
+      </div>
+
+      <div className="flex gap-2 mt-4 pt-3 border-t border-[#1a2642]">
+        <button onClick={onEdit} className="flex-1 px-3 py-2 text-xs font-medium bg-[#131c31] hover:bg-[#1a2642] text-slate-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+          <Edit size={12} /> Modifica
+        </button>
+        <button onClick={onSettings} className="px-3 py-2 text-xs font-medium bg-[#131c31] hover:bg-[#1a2642] text-slate-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+          <Settings size={12} /> Impostazioni
+        </button>
       </div>
     </div>
   );
