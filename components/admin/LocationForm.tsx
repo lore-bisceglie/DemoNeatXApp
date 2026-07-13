@@ -53,6 +53,7 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
         : "/api/locations?slug=" + tenantSlug;
       const method = isEditing ? "PUT" : "POST";
       const body: any = { name, slug, address: address || null, city: city || null, phone: phone || null, mapsLink: mapsLink || null };
+      body.closedDays = initialData?.closedDays || null;
       if (openTime) body.openTime = openTime;
       if (closeTime) body.closeTime = closeTime;
       if (breakStart) body.breakStart = breakStart;
@@ -74,8 +75,8 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-[#0b1221] border border-[#1a2642] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 p-4 pt-[8vh] sm:pt-4">
+      <div className="bg-[#0b1221] border border-[#1a2642] rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
         <div className="p-6 border-b border-[#1a2642] flex items-center justify-between">
           <h3 className="text-xl font-bold text-white">{isEditing ? "Modifica Sede" : "Nuova Sede"}</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1">X</button>

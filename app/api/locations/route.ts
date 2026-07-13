@@ -61,11 +61,11 @@ export async function POST(request: Request) {
 
     // Check Elite plan for multi-location
     const locationCount = await prisma.location.count({ where: { tenantId: tenant.id } });
-    if (locationCount > 0 && tenant.plan !== 'elite') {
+    if (locationCount > 0 && tenant.plan !== 'premium') {
       return NextResponse.json({ 
-        error: 'Multi-sede disponibile solo per piano Elite',
+        error: 'Multi-sede disponibile solo per piano Premium',
         code: 'PLAN_UPGRADE_REQUIRED',
-        requiredPlan: 'elite'
+        requiredPlan: 'premium'
       }, { status: 403 });
     }
 

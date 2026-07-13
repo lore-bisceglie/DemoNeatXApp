@@ -76,13 +76,13 @@ export async function PUT(
     if (!location) return NextResponse.json({ error: 'Sede non trovata' }, { status: 404 });
 
     // Check Elite plan for multi-location (if activating another location)
-    if (isActive === true && tenant.plan !== 'elite') {
+    if (isActive === true && tenant.plan !== 'premium') {
       const otherActive = await prisma.location.count({ where: { tenantId: tenant.id, isActive: true, NOT: { id } } });
       if (otherActive > 0) {
         return NextResponse.json({ 
-          error: 'Multi-sede disponibile solo per piano Elite',
+          error: 'Multi-sede disponibile solo per piano Premium',
           code: 'PLAN_UPGRADE_REQUIRED',
-          requiredPlan: 'elite'
+          requiredPlan: 'premium'
         }, { status: 403 });
       }
     }
