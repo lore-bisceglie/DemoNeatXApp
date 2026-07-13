@@ -81,7 +81,7 @@ export default function SocialFloatingGroup() {
   return (
     <>
       {/* Mobile: pill verticale larga quanto il mappamondo */}
-      <div className="sm:hidden flex flex-col items-center gap-1.5 rounded-2xl bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-1.5 py-2 shadow-2xl shadow-black/50">
+      <div className="sm:hidden flex flex-col items-center gap-1.5 rounded-full bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-1.5 py-2 shadow-2xl shadow-black/50">
         {links.map((link) => {
           const isActiveCopied = link.id === "email" && copied;
           const Icon = isActiveCopied ? Check : link.icon;
