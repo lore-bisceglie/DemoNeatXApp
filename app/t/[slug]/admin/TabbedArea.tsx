@@ -29,7 +29,7 @@ export default function TabbedArea({
   );
 
   const activeChild = Children.toArray(children).find((child) => {
-    if (isValidElement(child) && child.props["data-tab"] === activeTab) {
+    if (isValidElement<{ "data-tab"?: string }>(child) && child.props["data-tab"] === activeTab) {
       return true;
     }
     return false;
