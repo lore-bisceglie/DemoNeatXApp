@@ -18,7 +18,7 @@ export default function FinalCTA() {
           href="/registrazione"
           className="px-10 py-5 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-2xl shadow-[0_0_40px_rgba(16,185,129,0.4)] transition-all text-xl flex items-center justify-center gap-3 hover:scale-105 hover:-translate-y-1 group"
         >
-          Prova Gratis 7 Giorni
+           Prova Gratis 14 Giorni
           <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
         </Link>
         <Link 

@@ -100,7 +100,7 @@ export async function POST(req: Request) {
         
         const markup = {
           inline_keyboard: [
-            [{ text: "🚀 Inizia Prova Gratuita (7 Giorni)", url: "https://demo-neatx.vercel.app/onboarding?source=telegram_funnel" }]
+            [{ text: "🚀 Inizia Prova Gratuita (14 Giorni)", url: "https://demo-neatx.vercel.app/onboarding?source=telegram_funnel" }]
           ]
         };
         

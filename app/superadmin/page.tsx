@@ -705,7 +705,7 @@ export default function SuperAdminPage() {
                               onClick={() => handleMakePlan(tenant.id, 'basic')}
                               className="flex-1 text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
                             >
-                              🔄 RESET TRIAL (7 Giorni)
+                              🔄 RESET TRIAL (14 Giorni)
                             </button>
                           </>
                         )}
