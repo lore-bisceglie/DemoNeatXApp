@@ -1,18 +1,18 @@
 {
   "date": "2026-07-13",
-  "niche": "Fisioterapisti",
+  "niche": "Barbieri",
   "feature": "promemoria",
   "feature_label": "Promemoria WhatsApp",
   "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono",
   "promise": "promemoria automatici che riducono i no-show del 90%",
-  "cover_title": "FISIOTERAPISTI: PROMEMORIA SMART",
-  "hook_hint": "Se sei tra i fisioterapisti e clienti che dimenticano l'appuntamento e non rispondono al telefono, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Promemoria WhatsApp con NeatX",
+  "cover_title": "BARBIERI: PROMEMORIA AUTOMATIC",
+  "hook_hint": "Se sei tra i barbieri e clienti che dimenticano l'appuntamento e non rispondono al telefono, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Promemoria WhatsApp con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic physiotherapy studio, physiotherapist helping patient with rehabilitation, modern clinic",
+  "image_prompt": "photorealistic luxury barber shop, barber shaping beard, cinematic realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
