@@ -110,6 +110,19 @@ export default function Chatbot() {
     }
   }, [isOpen]);
 
+  // Scroll input into view on mobile when focused (prevents keyboard covering it)
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    const onFocus = () => {
+      if (window.innerWidth < 640) {
+        setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'end' }), 300);
+      }
+    };
+    input.addEventListener('focus', onFocus);
+    return () => input.removeEventListener('focus', onFocus);
+  }, []);
+
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isLoading) return;
 
@@ -219,13 +232,14 @@ export default function Chatbot() {
 
       {/* ═══════════ CHAT WINDOW ═══════════ */}
       <div
-        className={`fixed z-[9999999] transition-all duration-500 ease-out origin-bottom-right
+        className={`fixed z-[9999999] transition-all duration-500 ease-out
           bottom-0 right-0 sm:bottom-6 sm:right-6
-          w-full h-full sm:w-[360px] sm:h-[520px] sm:max-h-[80vh] sm:rounded-2xl
-          ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}
+          w-full sm:w-[360px]
+          h-[100dvh] sm:h-[520px] sm:max-h-[80vh] sm:rounded-2xl
+          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}
         `}
       >
-        <div className="w-full h-full flex flex-col bg-[#0a0e1a] sm:rounded-2xl border border-gray-800/50 shadow-2xl shadow-blue-900/20 overflow-hidden backdrop-blur-xl">
+        <div className="h-full flex flex-col bg-[#0a0e1a] sm:rounded-2xl border border-gray-800/50 shadow-2xl shadow-blue-900/20 overflow-hidden backdrop-blur-xl">
           
            {/* ═══ HEADER ═══ */}
           <div className="relative px-4 py-3 border-b border-gray-800/50">
@@ -339,7 +353,7 @@ export default function Chatbot() {
           </div>
 
            {/* ═══ INPUT ═══ */}
-          <form onSubmit={handleSubmit} className="p-2.5 sm:p-3 border-t border-gray-800/50 bg-[#0a0e1a] pb-[env(safe-area-inset-bottom)]">
+          <form onSubmit={handleSubmit} className="p-2.5 sm:p-3 border-t border-gray-800/50 bg-[#0a0e1a]" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
             <div className="flex items-center gap-2 relative">
               <input
                 ref={inputRef}
@@ -348,7 +362,7 @@ export default function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Scrivi..."
-                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[16px] sm:text-[14px] rounded-full px-3.5 py-3 sm:py-2 pr-10 sm:pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all"
+                className="flex-1 bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 text-white text-[16px] sm:text-[14px] rounded-full px-3.5 py-3 sm:py-2 pr-10 sm:pr-12 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 placeholder:text-gray-500 transition-all resize-none"
               />
               <button
                 type="submit"
