@@ -51,41 +51,38 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         
         {children}
         
-        {/* Kill iubenda floating badge/widget on mobile */}
-        <Script id="kill-iubenda" strategy="afterInteractive">
+        {/* Fix iubenda: restore body scroll when modal closes */}
+        <Script id="fix-iubenda-scroll" strategy="afterInteractive">
           {`(() => {
-            const kill = () => {
-              // Selectors for iubenda floating elements
-              const selectors = [
-                '#iubenda-cookie-banner',
-                '.iubenda-cs-banner',
-                '.iubenda-cs-floating-button',
-                '.iubenda-cs-close-btn',
-                '[id^="iubenda-"]',
-                '[class*="iubenda"]',
-                'iframe[src*="iubenda"]',
-              ];
-              selectors.forEach(sel => {
-                document.querySelectorAll(sel).forEach(el => {
-                  if (el.tagName === 'IFRAME' || el.offsetWidth > 0 || el.offsetHeight > 0) {
-                    el.style.display = 'none !important';
-                    el.style.visibility = 'hidden !important';
-                    el.style.opacity = '0 !important';
-                    el.style.pointerEvents = 'none !important';
-                    el.style.position = 'absolute !important';
-                    el.style.left = '-9999px !important';
-                  }
-                });
-              });
+            const restoreScroll = () => {
+              document.body.style.overflow = '';
+              document.body.style.position = '';
+              document.body.style.width = '';
+              document.documentElement.style.overflow = '';
             };
-            // Run immediately
-            kill();
-            // Observe for late-injected elements
-            const obs = new MutationObserver(kill);
-            obs.observe(document.body, { childList: true, subtree: true });
-            // Re-run periodically for 10s
+            // Observe iubenda modal open/close
+            const obs = new MutationObserver(() => {
+              const modal = document.querySelector('#iubenda-cookie-banner, .iubenda-cs-banner, [id^="iubenda-"][role="dialog"], .iubenda-cs-modal');
+              if (modal) {
+                const isOpen = modal.getAttribute('aria-hidden') !== 'true' && !modal.classList.contains('hidden') && modal.offsetParent !== null;
+                if (!isOpen) restoreScroll();
+              }
+            });
+            obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-hidden', 'class', 'style'] });
+            // Also catch ESC key / click outside
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') setTimeout(restoreScroll, 100); });
+            document.addEventListener('click', e => {
+              if (e.target.id === 'iubenda-cookie-banner' || e.target.closest?.('.iubenda-cs-close-btn, .iubenda-cs-overlay')) {
+                setTimeout(restoreScroll, 100);
+              }
+            });
+            // Periodic safety net
             let t = 0;
-            const iv = setInterval(() => { kill(); if (++t > 20) clearInterval(iv); }, 500);
+            const iv = setInterval(() => {
+              const modal = document.querySelector('#iubenda-cookie-banner, .iubenda-cs-banner');
+              if (modal && modal.getAttribute('aria-hidden') === 'true') restoreScroll();
+              if (++t > 30) clearInterval(iv);
+            }, 1000);
           })();`}
         </Script>
         
