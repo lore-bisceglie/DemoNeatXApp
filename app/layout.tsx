@@ -18,7 +18,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.neatx.store"),
   title: "NeatX | Agenda Online per Saloni e Professionisti — 0% Commissioni", 
-  description: "Prenotazioni online, acconti, promemoria automatici. Zero commissioni. La tua agenda brandizzata che riempie gli slot mentre tu lavori. Prova gratis 7 giorni.",
+  description: "Prenotazioni online, acconti, promemoria automatici. Zero commissioni. La tua agenda brandizzata che riempie gli slot mentre tu lavori. Prova gratis 14 giorni.",
   keywords: ["agenda online", "prenotazioni salone", "booking barbiere", "software gestione appuntamenti", "zero commissioni", "promemoria automatici", "neatx"],
   icons: {
     icon: "/apple-icon.png",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "NeatX | Agenda Online — 0% Commissioni", 
-    description: "Prenotazioni online, acconti, promemoria automatici. Zero commissioni. Prova gratis 7 giorni.",
+    description: "Prenotazioni online, acconti, promemoria automatici. Zero commissioni. Prova gratis 14 giorni.",
     url: "https://www.neatx.store",
     siteName: "NeatX",
     images: [

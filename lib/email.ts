@@ -65,7 +65,7 @@ export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, a
         <div style="background: #f4f4f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
           <p><strong>🔗 Link del tuo negozio:</strong><br/><a href="${tenantUrl}" style="color: #00b4ff;">${tenantUrl}</a></p>
         </div>
-        <p>Hai 7 giorni di prova gratuita per testare tutto. Se hai dubbi o vuoi un consiglio, rispondi pure a questa email: ti leggo di persona.</p>
+        <p>Hai 14 giorni di prova gratuita per testare tutto. Se hai dubbi o vuoi un consiglio, rispondi pure a questa email: ti leggo di persona.</p>
         <p>Per accedere alla dashboard, usa il link qui sopra e inserisci la password che hai scelto in registrazione.</p>
         <p>A presto,<br/><strong>Lorenzo — NeatX</strong></p>
         <hr style="border: none; border-top: 1px solid #e2e4e8; margin: 20px 0;"/>

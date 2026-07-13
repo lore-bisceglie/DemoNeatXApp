@@ -10,7 +10,7 @@ const FAQS = [
   },
   {
     q: "Come faccio a iniziare?",
-    a: "Clicca su 'Inizia la Prova', inserisci i dati del tuo salone e in 30 secondi la tua agenda è già online. Hai 7 giorni gratuiti per testare tutto senza inserire la carta di credito.",
+    a: "Clicca su 'Inizia la Prova', inserisci i dati del tuo salone e in 30 secondi la tua agenda è già online. Hai 14 giorni gratuiti per testare tutto senza inserire la carta di credito.",
   },
   {
     q: "I clienti devono scaricare un'app?",
@@ -38,7 +38,7 @@ const FAQS = [
   },
   {
     q: "Come funziona il periodo di prova e i piani a pagamento?",
-    a: "Hai 7 giorni di prova gratuiti con tutte le funzionalità sbloccate, inclusi SMS e pagamenti. Al termine della prova potrai scegliere il piano che preferisci: Pro (29€/mese) o Elite (59€/mese) che include recensioni automatiche e marketing.",
+    a: "Hai 14 giorni di prova gratuiti con tutte le funzionalità sbloccate, inclusi SMS e pagamenti. Al termine della prova potrai scegliere il piano che preferisci: Pro (29€/mese) o Elite (59€/mese) che include recensioni automatiche e marketing.",
   },
 ];
 

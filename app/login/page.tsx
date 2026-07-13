@@ -62,7 +62,7 @@ export default function Login() {
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {["Agenda privata", "Pagina clienti", "Trial 7 giorni"].map((point) => (
+            {["Agenda privata", "Pagina clienti", "Trial 14 giorni"].map((point) => (
               <div key={point} className="rounded-2xl border border-[#1a2642] bg-[#0b1221] p-4">
                 <p className="text-sm font-extrabold text-white">{point}</p>
               </div>

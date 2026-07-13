@@ -13,7 +13,7 @@ import crypto from "crypto";
 
 import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
-const TRIAL_DAYS = 7;
+const TRIAL_DAYS = 14;
 
 function cleanText(value: unknown, fallback = "") {
   if (typeof value !== "string") return fallback;

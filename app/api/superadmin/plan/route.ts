@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     } else {
       // Revert to basic / trial
       const trialEnds = new Date();
-      trialEnds.setDate(trialEnds.getDate() + 7);
+      trialEnds.setDate(trialEnds.getDate() + 14);
       
       await prisma.tenant.update({
         where: { id: tenantId },

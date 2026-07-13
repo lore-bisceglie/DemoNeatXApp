@@ -237,7 +237,7 @@ export default function Onboarding() {
         <div>
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-cyan-300">
             <Sparkles size={15} />
-            Registrazione + prova 7 giorni
+            Registrazione + prova 14 giorni
           </div>
           <h1 className="max-w-xl text-4xl font-extrabold leading-tight text-white sm:text-6xl">
             Registrati e crea il tuo negozio online in 60 secondi.
