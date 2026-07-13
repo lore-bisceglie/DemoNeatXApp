@@ -68,6 +68,18 @@ export async function POST(request: Request) {
         });
       }
 
+      // Notifica alla sede
+      if (appointment.tenantId && appointment.locationId) {
+        const loc = await prisma.location.findUnique({
+          where: { id: appointment.locationId },
+          select: { phone: true, name: true },
+        });
+        if (loc && loc.phone) {
+          const notifBody = `❌ ${appointment.customerName} ha cancellato\n${appointment.date.split('-').reverse().join('/')} alle ${appointment.time}\nSede: ${loc.name}`;
+          await sendTenantSms(appointment.tenantId, loc.phone, notifBody, undefined, appointment.locationId);
+        }
+      }
+
       // Avviso automatico lista d'attesa (FIFO)
       if (appointment.tenantId && appointment.date) {
         const waitlistEntry = await prisma.waitlist.findFirst({

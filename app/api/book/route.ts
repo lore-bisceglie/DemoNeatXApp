@@ -286,6 +286,11 @@ export async function POST(request: Request) {
           { storeName: tenant.name, customerName: customerName.trim(), date: formattedDate, time },
           targetLocationId || undefined
         );
+
+        if (locationForSms && locationForSms.phone) {
+          const notifBody = `📅 Nuova prenotazione!\n${customerName.trim()} — ${service.name}\n${formattedDate} alle ${time}\nSede: ${locationForSms.name}`;
+          await sendTenantSms(tenantId, locationForSms.phone, notifBody, undefined, targetLocationId || undefined);
+        }
       }
     }
 

@@ -9,7 +9,6 @@ interface LocationSettingsFormProps {
 }
 
 export default function LocationSettingsForm({ locationId, tenantSlug, onClose }: LocationSettingsFormProps) {
-  const [smsCredits, setSmsCredits] = useState(0);
   const [paymentStrategy, setPaymentStrategy] = useState("OFF");
   const [paymentFixedAmount, setPaymentFixedAmount] = useState(5);
   const [paymentPercentage, setPaymentPercentage] = useState(20);
@@ -28,7 +27,6 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
       const res = await fetch("/api/locations/" + locationId + "/settings?slug=" + tenantSlug);
       if (res.ok) {
         const data = await res.json();
-        setSmsCredits(data.smsCredits ?? 0);
         setPaymentStrategy(data.paymentStrategy ?? "OFF");
         setPaymentFixedAmount(data.paymentFixedAmount ?? 5);
         setPaymentPercentage(data.paymentPercentage ?? 20);
@@ -52,7 +50,7 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          smsCredits,
+          smsCredits: 0,
           paymentStrategy,
           paymentFixedAmount: paymentStrategy !== "OFF" ? paymentFixedAmount : null,
           paymentPercentage: paymentStrategy !== "OFF" ? paymentPercentage : null,
@@ -85,8 +83,8 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-[#0b1221] border border-[#1a2642] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 p-4 pt-[8vh] sm:pt-4">
+      <div className="bg-[#0b1221] border border-[#1a2642] rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
         <div className="p-6 border-b border-[#1a2642] flex items-center justify-between">
           <h3 className="text-xl font-bold text-white">Impostazioni Sede</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1">X</button>
@@ -94,11 +92,6 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">{error}</div>}
-
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Crediti SMS</label>
-            <input type="number" min="0" value={smsCredits} onChange={function (e) { setSmsCredits(parseInt(e.target.value) || 0); }} className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white focus:border-cyan-500 focus:outline-none" />
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-400 mb-1">Strategia Pagamento</label>

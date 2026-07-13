@@ -749,7 +749,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             tenantId={tenantId}
             slug={slug}
             currentCredits={storeSettings?.smsCredits || 0}
-            locations={locations.map(l => ({ id: l.id, name: l.name, settings: l.settings ? { smsCredits: l.settings.smsCredits } : null }))}
           />
             <div className="h-full min-h-[140px]"><ReferralCard tenantId={tenantId} /></div>
         </div>
