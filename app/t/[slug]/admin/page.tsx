@@ -17,6 +17,7 @@ import CustomerDrawer from "../../../dashboard/CustomerDrawer";
 import TeamDrawer from "./TeamDrawer";
 import MarketingWidget from "./MarketingWidget";
 import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
+import TabbedArea from "./TabbedArea";
 import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
@@ -628,6 +629,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     redirect(redirectUrl);
   }
 
+  const tabConfig = [
+    { id: "agenda", label: "📅 Agenda" },
+    { id: "gestione", label: "⚙️ Gestione" },
+    { id: "business", label: "📈 Business" },
+  ];
+
   return (
     <div className="min-h-screen bg-[#050814] flex flex-col p-4 sm:p-8 font-sans text-slate-200 selection:bg-cyan-500/30">
       <AutoRefreshMonitor appointmentCount={rawAppointments.length} />
@@ -754,677 +761,653 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         )}
 
-        {/* --- TAB NAVIGATION BAR --- */}
-        <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-6 border-b border-[#1e2b4a] custom-scrollbar snap-x">
-          <Link href={`/t/${slug}/admin?tab=agenda`}  className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'agenda'    ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📅 Agenda & Orari</Link>
-          <Link href={`/t/${slug}/admin?tab=servizi`}  className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'servizi'   ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>⚙️ Servizi & Setup</Link>
-          <Link href={`/t/${slug}/admin?tab=marketing`} className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'marketing' ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📈 Marketing & Dati</Link>
-          <Link href={`/t/${slug}/admin?tab=stripe`}    className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'stripe'    ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>💳 Pagamenti</Link>
-          <Link href={`/t/${slug}/admin?tab=sedi`}      className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 ${activeTab === 'sedi'      ? 'bg-[#00b4ff] text-[#050814] shadow-[0_0_10px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 hover:text-white hover:bg-[#1a2642]'}`}>📍 Sedi</Link>
-        </div>
+        <TabbedArea initialTab={activeTab} tabConfig={tabConfig} slug={slug}>
+          <div data-tab="agenda">
+            {locations.length > 1 && (
+              <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
+                <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${!filterLocationId ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>Tutte le sedi</Link>
+                {locations.map((loc: any) => (
+                  <Link key={loc.id} href={`/t/${slug}/admin?tab=agenda&locationId=${loc.id}`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${filterLocationId === loc.id ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>{loc.name}</Link>
+                ))}
+              </div>
+            )}
+            {/* AGENDA SETTIMANALE TETRIS */}
+          {freeGapReports.length > 0 && (
 
-        <div className={activeTab === 'servizi' ? '' : 'hidden'}>
-          <TrialLaunchPanel
-            slug={slug}
-            tenantId={tenantId}
-            tenantName={tenant.name}
-            category={tenant.category}
-            city={tenant.city}
-            description={tenant.description}
-            phone={tenant.phone}
-            address={tenant.address}
-            openTime={tenant.openTime}
-            closeTime={tenant.closeTime}
-            breakStart={tenant.breakStart}
-            breakEnd={tenant.breakEnd}
-            closedDays={typeof tenant.closedDays === 'string' ? JSON.parse(tenant.closedDays) : tenant.closedDays}
-            trialStatus={tenant.trialStatus}
-            isDemoData={tenant.isDemoData}
-            trialEndsAt={tenant.trialEndsAt?.toISOString()}
-            services={tenantServices.map((service) => ({
-              id: service.id,
-              name: service.name,
-              duration: service.duration,
-              price: Number(service.price || 0),
-            }))}
-            staffCount={staffList.length}
-            appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
-          />
-          
-          <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
-        </div>
+            <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <h2 className="text-lg font-extrabold text-white">
+                  Buchi agenda da riempire
+                </h2>
+                <p className="text-xs text-slate-500 font-bold">
+                  Spazi liberi utili nella settimana visibile
+                </p>
+              </div>
 
-        <div className={activeTab === 'stripe' ? '' : 'hidden'}>
-{/* SEZIONE PAGAMENTI STRIPE */}
-        <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
-          <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
-            💳
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
-                <CreditCard size={20} />
-                Integrazione Pagamenti (Stripe)
-              </h2>
-              <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. NeatX non trattiene, non manovra e non vede i tuoi soldi — è Stripe (il circuito dietro PayPal) a gestire il trasferimento. NeatX non salva né il tuo IBAN né i tuoi dati bancari. Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Ti serviranno solo nome, cognome, data di nascita e IBAN.
-              </p>
-            </div>
-            
-            <div>
-              {storeSettings?.stripeOnboardingComplete ? (
-                <div className="flex flex-col items-end gap-1">
-                  <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
-                    <CheckCircle size={16} /> IBAN Collegato (Gestisci su Stripe)
-                  </a>
-                  <span className="text-[10px] text-slate-500 mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
-                </div>
-              ) : (
-                <a
-                  href={`/api/stripe/connect?tenantId=${tenantId}`}
-                  className="bg-[#007aff] hover:bg-[#00b4ff] text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap"
-                >
-                  Collega IBAN (Solo 2 minuti)
-                </a>
-              )}
-            </div>
-          </div>
-          
-          {storeSettings?.stripeOnboardingComplete && (
-            <StripeSettingsForm 
-              tenantId={tenantId}
-              initialStrategy={storeSettings.paymentStrategy}
-              initialFixed={storeSettings.paymentFixedAmount}
-              initialPercentage={storeSettings.paymentPercentage}
-              initialMandatory={storeSettings.paymentMandatory}
-            />
-          )}
-        </div>
-
-        
-{/* Rimosso blocco Stripe duplicato */}
-
-        
-        
-        
-
-        </div>
-
-        <div className={activeTab === 'agenda' ? '' : 'hidden'}>
-          {locations.length > 1 && (
-            <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
-              <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${!filterLocationId ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>Tutte le sedi</Link>
-              {locations.map((loc: any) => (
-                <Link key={loc.id} href={`/t/${slug}/admin?tab=agenda&locationId=${loc.id}`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${filterLocationId === loc.id ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>{loc.name}</Link>
-              ))}
-            </div>
-          )}
-          {/* AGENDA SETTIMANALE TETRIS */}
-        {freeGapReports.length > 0 && (
-
-          <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-              <h2 className="text-lg font-extrabold text-white">
-                Buchi agenda da riempire
-              </h2>
-              <p className="text-xs text-slate-500 font-bold">
-                Spazi liberi utili nella settimana visibile
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {freeGapReports.map((gap) => (
-                <div
-                  key={`${gap.date}-${gap.start}`}
-                  className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex items-center justify-between"
-                >
-                  <div>
-                    <p className="text-white font-bold capitalize">
-                      {gap.label}
-                    </p>
-                    <p className="text-[#00b4ff] font-extrabold text-lg">
-                      {gap.start} - {gap.end}
-                    </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {freeGapReports.map((gap) => (
+                  <div
+                    key={`${gap.date}-${gap.start}`}
+                    className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-white font-bold capitalize">
+                        {gap.label}
+                      </p>
+                      <p className="text-[#00b4ff] font-extrabold text-lg">
+                        {gap.start} - {gap.end}
+                      </p>
+                    </div>
+                    <div className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-xl text-xs font-bold">
+                      {gap.duration} min
+                    </div>
                   </div>
-                  <div className="bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-xl text-xs font-bold">
-                    {gap.duration} min
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
-          <SwipeableAgenda>
-            <DayNavigator currentDate={adjustedTargetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
-              <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
-                📒 Agenda Dinamica ({tenantName})
-              </h2>
-
-              <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
-                <Link
-                  href={`/t/${slug}/admin?weekOffset=${weekOffset - 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
-                  prefetch={false}
-                  scroll={false}
-                  className="px-4 py-2 text-sm text-cyan-300 hover:text-white bg-cyan-500/5 hover:bg-cyan-500/15 rounded-xl transition-all duration-150 font-medium border border-cyan-500/10 hover:border-cyan-500/30 active:scale-95"
-                >
-                  ← Prec
-                </Link>
-
-                <Link
-                  href={`/t/${slug}/admin${filterLocationId ? `?locationId=${filterLocationId}` : ''}`}
-                  prefetch={false}
-                  scroll={false}
-                  className={`px-4 py-2 text-sm font-bold rounded-xl transition-all duration-150 active:scale-95 ${
-                    weekOffset === 0
-                      ? "bg-[#00b4ff] text-[#050814] shadow-lg shadow-cyan-500/20"
-                      : "text-slate-300 hover:bg-[#1e2b4a] hover:scale-[1.05]"
-                  }`}
-                >
-                  Oggi
-                </Link>
-
-                <Link
-                  href={`/t/${slug}/admin?weekOffset=${weekOffset + 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
-                  prefetch={false}
-                  scroll={false}
-                  className="px-4 py-2 text-sm text-cyan-300 hover:text-white bg-cyan-500/5 hover:bg-cyan-500/15 rounded-xl transition-all duration-150 font-medium border border-cyan-500/10 hover:border-cyan-500/30 active:scale-95"
-                >
-                  Pros →
-                </Link>
+                ))}
               </div>
             </div>
+          )}
 
-          <div className="overflow-x-auto pb-4 custom-scrollbar">
-            <div
-              className="min-w-[650px] md:min-w-[900px] grid gap-x-2 gap-y-0"
-              style={{
-                gridTemplateColumns: `minmax(60px, 80px) repeat(${weekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
-              }}
-            >
-                <div style={{ gridColumn: 1 }} className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none border-b border-transparent">
-                  Ora
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
+            <SwipeableAgenda>
+              <DayNavigator currentDate={adjustedTargetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
+                <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                  📒 Agenda Dinamica ({tenantName})
+                </h2>
+
+                <div className="flex items-center gap-1 bg-[#131c31] p-1.5 rounded-2xl border border-[#1e2b4a] w-fit">
+                  <Link
+                    href={`/t/${slug}/admin?weekOffset=${weekOffset - 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
+                    prefetch={false}
+                    scroll={false}
+                    className="px-4 py-2 text-sm text-cyan-300 hover:text-white bg-cyan-500/5 hover:bg-cyan-500/15 rounded-xl transition-all duration-150 font-medium border border-cyan-500/10 hover:border-cyan-500/30 active:scale-95"
+                  >
+                    ← Prec
+                  </Link>
+
+                  <Link
+                    href={`/t/${slug}/admin${filterLocationId ? `?locationId=${filterLocationId}` : ''}`}
+                    prefetch={false}
+                    scroll={false}
+                    className={`px-4 py-2 text-sm font-bold rounded-xl transition-all duration-150 active:scale-95 ${
+                      weekOffset === 0
+                        ? "bg-[#00b4ff] text-[#050814] shadow-lg shadow-cyan-500/20"
+                        : "text-slate-300 hover:bg-[#1e2b4a] hover:scale-[1.05]"
+                    }`}
+                  >
+                    Oggi
+                  </Link>
+
+                  <Link
+                    href={`/t/${slug}/admin?weekOffset=${weekOffset + 1}${filterLocationId ? `&locationId=${filterLocationId}` : ''}`}
+                    prefetch={false}
+                    scroll={false}
+                    className="px-4 py-2 text-sm text-cyan-300 hover:text-white bg-cyan-500/5 hover:bg-cyan-500/15 rounded-xl transition-all duration-150 font-medium border border-cyan-500/10 hover:border-cyan-500/30 active:scale-95"
+                  >
+                    Pros →
+                  </Link>
                 </div>
+              </div>
 
-                {weekDays.map((d, dIndex) => {
-                  const isToday = d.date === todayItaly;
-                  
-                  return (
-                    <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-2 mb-2">
-                      <div className={`text-center py-2 rounded-xl border capitalize transition-colors ${
-                        d.isClosed
-                          ? "bg-red-900/20 text-red-400 border-red-800/30"
-                          : isToday 
-                            ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
-                            : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
-                      }`}>
-                        {d.label} {d.isClosed && <span className="text-[10px] ml-1 font-mono">CHIUSO</span>}
-                      </div>
-                      {staffList.length > 0 && (
-                        <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
-                          {staffList.map(s => (
-                            <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
-                              {s.name.split(' ')[0]}
-                            </div>
-                          ))}
+            <div className="overflow-x-auto pb-4 custom-scrollbar">
+              <div
+                className="min-w-[650px] md:min-w-[900px] grid gap-x-2 gap-y-0"
+                style={{
+                  gridTemplateColumns: `minmax(60px, 80px) repeat(${weekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
+                }}
+              >
+                  <div style={{ gridColumn: 1 }} className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none border-b border-transparent">
+                    Ora
+                  </div>
+
+                  {weekDays.map((d, dIndex) => {
+                    const isToday = d.date === todayItaly;
+                    
+                    return (
+                      <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-2 mb-2">
+                        <div className={`text-center py-2 rounded-xl border capitalize transition-colors ${
+                          d.isClosed
+                            ? "bg-red-900/20 text-red-400 border-red-800/30"
+                            : isToday 
+                              ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
+                              : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
+                        }`}>
+                          {d.label} {d.isClosed && <span className="text-[10px] ml-1 font-mono">CHIUSO</span>}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {allSlots.map((slot) => {
-                  const isQuarter = slot.endsWith("15") || slot.endsWith("45");
-
-                  return (
-                    <div className="contents" key={slot}>
-                      <div style={{ gridColumn: 1 }} className="w-full h-full text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-20 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
-                        <span
-                          className={`px-2 py-1 rounded-xl transition-all ${
-                            isQuarter
-                              ? "text-[10px] text-slate-600"
-                              : "bg-[#131c31] border border-[#1e2b4a]"
-                          }`}
-                        >
-                          {slot}
-                        </span>
+                        {staffList.length > 0 && (
+                          <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
+                            {staffList.map(s => (
+                              <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
+                                {s.name.split(' ')[0]}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
+                    );
+                  })}
 
-                      {weekDays.map((d, dIndex) => {
-                        const cols: any[] = [];
-                        columns.forEach((colId, cIndex) => {
-                          const appt = radarMap[d.date]?.[colId]?.[slot];
-                          const cellKey = `${d.date}-${slot}-${colId}`;
-                          const targetColumn = (dIndex * maxConcurrent) + cIndex + 2;
+                  {allSlots.map((slot) => {
+                    const isQuarter = slot.endsWith("15") || slot.endsWith("45");
 
-                          if (appt === "COVERED") {
-                            return;
-                          }
+                    return (
+                      <div className="contents" key={slot}>
+                        <div style={{ gridColumn: 1 }} className="w-full h-full text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-20 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
+                          <span
+                            className={`px-2 py-1 rounded-xl transition-all ${
+                              isQuarter
+                                ? "text-[10px] text-slate-600"
+                                : "bg-[#131c31] border border-[#1e2b4a]"
+                            }`}
+                          >
+                            {slot}
+                          </span>
+                        </div>
 
-                          if (appt) {
-                            const [y, m, dStr] = d.date.split("-");
-                            cols.push(
-                              <div
-                                key={cellKey}
-                                style={{
-                                  gridRow: `span ${appt._rowSpan} / span ${appt._rowSpan}`,
-                                  gridColumn: targetColumn
-                                }}
-                                className="h-full min-h-[40px] py-[4px] relative z-10"
+                        {weekDays.map((d, dIndex) => {
+                          const cols: any[] = [];
+                          columns.forEach((colId, cIndex) => {
+                            const appt = radarMap[d.date]?.[colId]?.[slot];
+                            const cellKey = `${d.date}-${slot}-${colId}`;
+                            const targetColumn = (dIndex * maxConcurrent) + cIndex + 2;
+
+                            if (appt === "COVERED") {
+                              return;
+                            }
+
+                            if (appt) {
+                              const [y, m, dStr] = d.date.split("-");
+                              cols.push(
+                                <div
+                                  key={cellKey}
+                                  style={{
+                                    gridRow: `span ${appt._rowSpan} / span ${appt._rowSpan}`,
+                                    gridColumn: targetColumn
+                                  }}
+                                  className="h-full min-h-[40px] py-[4px] relative z-10"
+                                >
+                                  <AppointmentBlock
+                                    appt={appt}
+                                    italianDate={`${dStr}/${m}/${y}`}
+                                    durationInMinutes={appt._rowSpan * 15}
+                                  />
+                                </div>
+                              );
+                              return;
+                            }
+
+                            if (d.isClosed) {
+                              cols.push(
+                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px] flex items-center justify-center">
+                                  <span className="text-[10px] text-red-400/40 font-mono font-bold tracking-wider">CHIUSO</span>
+                                </div>
+                              );
+                            } else {
+                              cols.push(
+                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
+                                  <WalkInButton
+                                    date={d.date}
+                                    time={slot}
+                                    tenantId={tenantId}
+                                    services={tenantServices}
+                                    staff={staffList}
+                                  />
+                                </div>
+                              );
+                            }
+                          });
+                          return cols;
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </SwipeableAgenda>
+          </div>
+
+            <div className="flex flex-col gap-6">
+              <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-red-900/5 border border-[#1a2642] h-fit flex flex-col">
+                <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                  <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                    <span>🧭</span>
+                    Chiusure attive
+                  </h2>
+
+                  <div className="overflow-y-auto max-h-[220px] custom-scrollbar space-y-2 pr-1">
+                    {currentClosures.length > 0 ? (
+                      currentClosures.map((app) => {
+                        const isFerie =
+                          app.time === "ALL_DAY" ||
+                          app.customerName.includes("FERIE");
+
+                        return (
+                          <div
+                            key={app.id}
+                            className="flex items-center justify-between gap-3 p-3 bg-[#131c31] rounded-xl border border-[#1e2b4a]"
+                          >
+                            <div className="min-w-0">
+                              <p
+                                className={`font-bold text-[12px] truncate ${
+                                  isFerie ? "text-orange-400" : "text-slate-300"
+                                }`}
                               >
-                                <AppointmentBlock
-                                  appt={appt}
-                                  italianDate={`${dStr}/${m}/${y}`}
-                                  durationInMinutes={appt._rowSpan * 15}
-                                />
-                              </div>
-                            );
-                            return;
-                          }
+                                {isFerie ? "🌴 FERIE" : "☕ PAUSA"}
+                              </p>
+                              <p className="text-slate-400 text-[10px] uppercase mt-0.5">
+                                {app.date.split("-").reverse().join("/")} •{" "}
+                                {app.time === "ALL_DAY"
+                                  ? "Tutto il giorno"
+                                  : `${app.time}${app.endTime ? ` - ${app.endTime}` : ""}`}
+                              </p>
+                            </div>
 
-                          if (d.isClosed) {
-                            cols.push(
-                              <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px] flex items-center justify-center">
-                                <span className="text-[10px] text-red-400/40 font-mono font-bold tracking-wider">CHIUSO</span>
-                              </div>
-                            );
-                          } else {
-                            cols.push(
-                              <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
-                                <WalkInButton
-                                  date={d.date}
-                                  time={slot}
-                                  tenantId={tenantId}
-                                  services={tenantServices}
-                                  staff={staffList}
-                                />
-                              </div>
-                            );
-                          }
-                        });
-                        return cols;
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </SwipeableAgenda>
-        </div>
-
-        </div>
-
-        <div className={activeTab === 'sedi' ? '' : 'hidden'}>
-          <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} />
-        </div>
-
-        {/* ALTRE FUNZIONI DASHBOARD */}
-        <div className="grid grid-cols-1 gap-6 mt-6">
-          <div className={`bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden ${activeTab === 'marketing' ? '' : 'hidden'}`}>
-            <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
-              🎯
-            </div>
-
-            <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
-              <span>🎯</span>
-              Focus di Oggi
-            </h2>
-
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-[#131c31] border border-[#1e2b4a] p-4 rounded-2xl shadow-inner">
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
-                  Clienti Oggi
-                </p>
-
-                <p className="text-3xl font-extrabold text-white">
-                  {todayAppointmentsList.length}
-                </p>
-              </div>
-
-              <div className="bg-[#131c31] border border-[#1e2b4a] p-4 rounded-2xl shadow-inner">
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
-                  Già Pagati
-                </p>
-
-                <p className="text-3xl font-extrabold text-emerald-400">
-                  {todayPaid}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-[#131c31] border border-[#1e2b4a] p-5 rounded-2xl flex items-center justify-between shadow-inner mb-6">
-              <div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
-                  Incasso Stimato Oggi
-                </p>
-
-                <p className="text-4xl font-extrabold text-[#00b4ff]">
-                  {isPremium ? `€${todayTotalRevenue}` : '🔒'}
-                </p>
-              </div>
-
-              <div className="text-4xl opacity-20">💰</div>
-            </div>
-          </div>
-
-          <div className={`flex flex-col gap-6 ${activeTab === 'agenda' ? '' : 'hidden'}`}>
-            <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-red-900/5 border border-[#1a2642] h-fit flex flex-col">
-              <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
-                <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                  <span>🧭</span>
-                  Chiusure attive
-                </h2>
-
-                <div className="overflow-y-auto max-h-[220px] custom-scrollbar space-y-2 pr-1">
-                  {currentClosures.length > 0 ? (
-                    currentClosures.map((app) => {
-                      const isFerie =
-                        app.time === "ALL_DAY" ||
-                        app.customerName.includes("FERIE");
-
-                      return (
-                        <div
-                          key={app.id}
-                          className="flex items-center justify-between gap-3 p-3 bg-[#131c31] rounded-xl border border-[#1e2b4a]"
-                        >
-                          <div className="min-w-0">
-                            <p
-                              className={`font-bold text-[12px] truncate ${
-                                isFerie ? "text-orange-400" : "text-slate-300"
-                              }`}
-                            >
-                              {isFerie ? "🌴 FERIE" : "☕ PAUSA"}
-                            </p>
-                            <p className="text-slate-400 text-[10px] uppercase mt-0.5">
-                              {app.date.split("-").reverse().join("/")} •{" "}
-                              {app.time === "ALL_DAY"
-                                ? "Tutto il giorno"
-                                : `${app.time}${app.endTime ? ` - ${app.endTime}` : ""}`}
-                            </p>
+                            <div className="scale-75 origin-right shrink-0">
+                              <DeleteButton
+                                appointmentId={app.id}
+                                customerName={app.customerName}
+                                phone="0000000000"
+                                date={app.date}
+                                time={app.time}
+                                isSpecial={true}
+                              />
+                            </div>
                           </div>
-
-                          <div className="scale-75 origin-right shrink-0">
-                            <DeleteButton
-                              appointmentId={app.id}
-                              customerName={app.customerName}
-                              phone="0000000000"
-                              date={app.date}
-                              time={app.time}
-                              isSpecial={true}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <p className="text-slate-500 text-sm italic">
-                      Nessuna pausa o ferie attiva nella settimana visibile.
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                  <span>⚙️</span>
-                  Aggiungi Chiusura / Pausa
-                </h2>
-
-                <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
-                  <h3 className="text-[10px] text-slate-400 font-bold uppercase mb-3">
-                    ☕ Blocca Orari (Pausa)
-                  </h3>
-
-                  <form
-                    action={blockTimeRange}
-                    className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
-                  >
-                    <input type="hidden" name="blockType" value="PAUSA" />
-                    {staffList.length > 0 && (
-                      <select
-                        name="staffId"
-                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
-                      >
-                        <option value="all">Tutto lo staff</option>
-                        {staffList.map((s) => (
-                          <option key={s.id} value={s.id}>{s.name}</option>
-                        ))}
-                      </select>
+                        );
+                      })
+                    ) : (
+                      <p className="text-slate-500 text-sm italic">
+                        Nessuna pausa o ferie attiva nella settimana visibile.
+                      </p>
                     )}
-                    <input
-                      type="date"
-                      name="date"
-                      required
-                      defaultValue={todayItaly}
-                      className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
-                      style={{ colorScheme: "dark" }}
-                    />
-                    <select
-                      name="startTime"
-                      required
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
-                    >
-                      <option value="">Dalle</option>
-                      {allSlots.map((s) => (
-                        <option key={`s-${s}`} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    <select
-                      name="endTime"
-                      required
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
-                    >
-                      <option value="">Alle</option>
-                      {allSlots.map((s) => (
-                        <option key={`e-${s}`} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    <button
-                      type="submit"
-                      className="col-span-2 sm:col-span-1 bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl text-sm"
-                    >
-                      Blocca
-                    </button>
-                  </form>
-                </div>
-
-                <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
-                  <h3 className="text-[10px] text-blue-400 font-bold uppercase mb-3">
-                    📋 Permesso Retribuito
-                  </h3>
-
-                  <form
-                    action={blockTimeRange}
-                    className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
-                  >
-                    <input type="hidden" name="blockType" value="PERMESSO" />
-                    {staffList.length > 0 && (
-                      <select
-                        name="staffId"
-                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
-                      >
-                        <option value="all">Tutto lo staff</option>
-                        {staffList.map((s) => (
-                          <option key={`p-${s.id}`} value={s.id}>{s.name}</option>
-                        ))}
-                      </select>
-                    )}
-                    <input
-                      type="date"
-                      name="date"
-                      required
-                      defaultValue={todayItaly}
-                      className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
-                      style={{ colorScheme: "dark" }}
-                    />
-                    <select
-                      name="startTime"
-                      required
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
-                    >
-                      <option value="">Dalle</option>
-                      {allSlots.map((s) => (
-                        <option key={`ps-${s}`} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    <select
-                      name="endTime"
-                      required
-                      className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
-                    >
-                      <option value="">Alle</option>
-                      {allSlots.map((s) => (
-                        <option key={`pe-${s}`} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    <button
-                      type="submit"
-                      className="col-span-2 sm:col-span-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold px-4 py-2 rounded-xl text-sm"
-                    >
-                      Registra
-                    </button>
-                  </form>
+                  </div>
                 </div>
 
                 <div>
-                  <h3 className="text-[10px] text-orange-400 font-bold uppercase mb-2">
-                    🌴 Ferie (Dal - Al)
-                  </h3>
+                  <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                    <span>⚙️</span>
+                    Aggiungi Chiusura / Pausa
+                  </h2>
 
-                  <form
-                    action={blockHoliday}
-                    className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
-                  >
-                    {staffList.length > 0 && (
+                  <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                    <h3 className="text-[10px] text-slate-400 font-bold uppercase mb-3">
+                      ☕ Blocca Orari (Pausa)
+                    </h3>
+
+                    <form
+                      action={blockTimeRange}
+                      className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
+                    >
+                      <input type="hidden" name="blockType" value="PAUSA" />
+                      {staffList.length > 0 && (
+                        <select
+                          name="staffId"
+                          className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
+                        >
+                          <option value="all">Tutto lo staff</option>
+                          {staffList.map((s) => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
+                      )}
+                      <input
+                        type="date"
+                        name="date"
+                        required
+                        defaultValue={todayItaly}
+                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
+                        style={{ colorScheme: "dark" }}
+                      />
                       <select
-                        name="staffId"
-                        className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                        name="startTime"
+                        required
+                        className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
                       >
-                        <option value="all">Tutto lo staff</option>
-                        {staffList.map((s) => (
-                          <option key={s.id} value={s.id}>{s.name}</option>
+                        <option value="">Dalle</option>
+                        {allSlots.map((s) => (
+                          <option key={`s-${s}`} value={s}>{s}</option>
                         ))}
                       </select>
-                    )}
-                    <input
-                      type="date"
-                      name="startDate"
-                      required
-                      defaultValue={todayItaly}
-                      className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
-                      style={{
-                        colorScheme: "dark",
-                      }}
-                    />
+                      <select
+                        name="endTime"
+                        required
+                        className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
+                      >
+                        <option value="">Alle</option>
+                        {allSlots.map((s) => (
+                          <option key={`e-${s}`} value={s}>{s}</option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        className="col-span-2 sm:col-span-1 bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl text-sm"
+                      >
+                        Blocca
+                      </button>
+                    </form>
+                  </div>
 
-                    <input
-                      type="date"
-                      name="endDate"
-                      required
-                      defaultValue={todayItaly}
-                      className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
-                      style={{
-                        colorScheme: "dark",
-                      }}
-                    />
+                  <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
+                    <h3 className="text-[10px] text-blue-400 font-bold uppercase mb-3">
+                      📋 Permesso Retribuito
+                    </h3>
 
-                    <button
-                      type="submit"
-                      className="bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 font-bold px-3 py-2 rounded-xl transition text-sm w-full sm:w-auto"
+                    <form
+                      action={blockTimeRange}
+                      className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
                     >
-                      Salva
-                    </button>
-                  </form>
+                      <input type="hidden" name="blockType" value="PERMESSO" />
+                      {staffList.length > 0 && (
+                        <select
+                          name="staffId"
+                          className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
+                        >
+                          <option value="all">Tutto lo staff</option>
+                          {staffList.map((s) => (
+                            <option key={`p-${s.id}`} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
+                      )}
+                      <input
+                        type="date"
+                        name="date"
+                        required
+                        defaultValue={todayItaly}
+                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
+                        style={{ colorScheme: "dark" }}
+                      />
+                      <select
+                        name="startTime"
+                        required
+                        className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
+                      >
+                        <option value="">Dalle</option>
+                        {allSlots.map((s) => (
+                          <option key={`ps-${s}`} value={s}>{s}</option>
+                        ))}
+                      </select>
+                      <select
+                        name="endTime"
+                        required
+                        className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
+                      >
+                        <option value="">Alle</option>
+                        {allSlots.map((s) => (
+                          <option key={`pe-${s}`} value={s}>{s}</option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        className="col-span-2 sm:col-span-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold px-4 py-2 rounded-xl text-sm"
+                      >
+                        Registra
+                      </button>
+                    </form>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] text-orange-400 font-bold uppercase mb-2">
+                      🌴 Ferie (Dal - Al)
+                    </h3>
+
+                    <form
+                      action={blockHoliday}
+                      className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
+                    >
+                      {staffList.length > 0 && (
+                        <select
+                          name="staffId"
+                          className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                        >
+                          <option value="all">Tutto lo staff</option>
+                          {staffList.map((s) => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
+                      )}
+                      <input
+                        type="date"
+                        name="startDate"
+                        required
+                        defaultValue={todayItaly}
+                        className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                        style={{
+                          colorScheme: "dark",
+                        }}
+                      />
+
+                      <input
+                        type="date"
+                        name="endDate"
+                        required
+                        defaultValue={todayItaly}
+                        className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
+                        style={{
+                          colorScheme: "dark",
+                        }}
+                      />
+
+                      <button
+                        type="submit"
+                        className="bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 font-bold px-3 py-2 rounded-xl transition text-sm w-full sm:w-auto"
+                      >
+                        Salva
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className={activeTab === 'marketing' ? '' : 'hidden'}>
-{/* ATTIVITA RECENTI */}
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
-            <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
-              <Receipt size={20} />
-              Attività Recenti
-            </h2>
+          <div data-tab="gestione">
+            <TrialLaunchPanel
+              slug={slug}
+              tenantId={tenantId}
+              tenantName={tenant.name}
+              category={tenant.category}
+              city={tenant.city}
+              description={tenant.description}
+              phone={tenant.phone}
+              address={tenant.address}
+              openTime={tenant.openTime}
+              closeTime={tenant.closeTime}
+              breakStart={tenant.breakStart}
+              breakEnd={tenant.breakEnd}
+              closedDays={typeof tenant.closedDays === 'string' ? JSON.parse(tenant.closedDays) : tenant.closedDays}
+              trialStatus={tenant.trialStatus}
+              isDemoData={tenant.isDemoData}
+              trialEndsAt={tenant.trialEndsAt?.toISOString()}
+              services={tenantServices.map((service) => ({
+                id: service.id,
+                name: service.name,
+                duration: service.duration,
+                price: Number(service.price || 0),
+              }))}
+              staffCount={staffList.length}
+              appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
+            />
+            
+            <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
 
-            <div className="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-3 max-h-[500px]">
-              {recentActivities.length > 0 ? (
-                recentActivities.map((log) => {
-                  let bgColor = "bg-[#131c31]";
-                  let dotColor = "bg-slate-500";
-                  let icon = "📝";
-
-                  if (log.action === "CREATE_APPOINTMENT") {
-                    bgColor = "bg-emerald-500/10 border-emerald-500/20";
-                    dotColor = "bg-emerald-400";
-                    icon = "✅";
-                  } else if (log.action === "DELETE_APPOINTMENT" || log.action === "CANCEL_APPOINTMENT") {
-                    bgColor = "bg-red-500/10 border-red-500/20";
-                    dotColor = "bg-red-400";
-                    icon = "❌";
-                  } else if (log.action === "MOVE_APPOINTMENT") {
-                    bgColor = "bg-amber-500/10 border-amber-500/20";
-                    dotColor = "bg-amber-400";
-                    icon = "🔄";
-                  } else if (log.action === "NO_SHOW") {
-                    bgColor = "bg-orange-500/10 border-orange-500/20";
-                    dotColor = "bg-orange-400";
-                    icon = "👻";
-                  } else if (log.action === "SECURITY_ALERT") {
-                    bgColor = "bg-red-500/20 border-red-500/40 animate-pulse";
-                    dotColor = "bg-red-500";
-                    icon = "🚨";
-                  }
-
-                  return (
-                    <div
-                      key={log.id}
-                      className={`p-4 rounded-2xl border ${bgColor} flex gap-3`}
-                    >
-                      <div className="mt-1">
-                        <span className="text-lg">{icon}</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-white mb-1 leading-snug">
-                          {log.message}
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-2">
-                          <span>
-                            {new Date(log.createdAt).toLocaleDateString("it-IT", {
-                              day: "2-digit",
-                              month: "short",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${dotColor}`}
-                          ></span>
-                          <span>{log.actor === "admin" ? "Admin" : "Cliente"}</span>
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-10 bg-[#131c31] rounded-2xl border border-[#1e2b4a]">
-                  <span className="text-4xl block mb-2 opacity-30">😴</span>
-                  <p className="text-slate-400 text-sm font-medium">
-                    Nessuna attività recente
-                  </p>
-                </div>
-              )}
+            <div className="mt-6">
+              <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} />
             </div>
           </div>
 
+          <div data-tab="business">
+            <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
+              <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
+                🎯
+              </div>
 
+              <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
+                <span>🎯</span>
+                Focus di Oggi
+              </h2>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-[#131c31] border border-[#1e2b4a] p-4 rounded-2xl shadow-inner">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                    Clienti Oggi
+                  </p>
+
+                  <p className="text-3xl font-extrabold text-white">
+                    {todayAppointmentsList.length}
+                  </p>
+                </div>
+
+                <div className="bg-[#131c31] border border-[#1e2b4a] p-4 rounded-2xl shadow-inner">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                    Già Pagati
+                  </p>
+
+                  <p className="text-3xl font-extrabold text-emerald-400">
+                    {todayPaid}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-[#131c31] border border-[#1e2b4a] p-5 rounded-2xl flex items-center justify-between shadow-inner mb-6">
+                <div>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">
+                    Incasso Stimato Oggi
+                  </p>
+
+                  <p className="text-4xl font-extrabold text-[#00b4ff]">
+                    {isPremium ? `€${todayTotalRevenue}` : '🔒'}
+                  </p>
+                </div>
+
+                <div className="text-4xl opacity-20">💰</div>
+              </div>
+            </div>
+
+{/* SEZIONE PAGAMENTI STRIPE */}
+            <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
+              <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
+                💳
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
+                    <CreditCard size={20} />
+                    Integrazione Pagamenti (Stripe)
+                  </h2>
+                  <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
+                    I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. NeatX non trattiene, non manovra e non vede i tuoi soldi — è Stripe (il circuito dietro PayPal) a gestire il trasferimento. NeatX non salva né il tuo IBAN né i tuoi dati bancari. Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Ti serviranno solo nome, cognome, data di nascita e IBAN.
+                  </p>
+                </div>
+                
+                <div>
+                  {storeSettings?.stripeOnboardingComplete ? (
+                    <div className="flex flex-col items-end gap-1">
+                      <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
+                        <CheckCircle size={16} /> IBAN Collegato (Gestisci su Stripe)
+                      </a>
+                      <span className="text-[10px] text-slate-500 mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
+                    </div>
+                  ) : (
+                    <a
+                      href={`/api/stripe/connect?tenantId=${tenantId}`}
+                      className="bg-[#007aff] hover:bg-[#00b4ff] text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap"
+                    >
+                      Collega IBAN (Solo 2 minuti)
+                    </a>
+                  )}
+                </div>
+              </div>
+              
+              {storeSettings?.stripeOnboardingComplete && (
+                <StripeSettingsForm 
+                  tenantId={tenantId}
+                  initialStrategy={storeSettings.paymentStrategy}
+                  initialFixed={storeSettings.paymentFixedAmount}
+                  initialPercentage={storeSettings.paymentPercentage}
+                  initialMandatory={storeSettings.paymentMandatory}
+                />
+              )}
+            </div>
+
+{/* ATTIVITA RECENTI */}
+            <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] h-full flex flex-col">
+              <h2 className="text-lg font-extrabold text-white mb-6 flex items-center gap-2">
+                <Receipt size={20} />
+                Attività Recenti
+              </h2>
+
+              <div className="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-3 max-h-[500px]">
+                {recentActivities.length > 0 ? (
+                  recentActivities.map((log) => {
+                    let bgColor = "bg-[#131c31]";
+                    let dotColor = "bg-slate-500";
+                    let icon = "📝";
+
+                    if (log.action === "CREATE_APPOINTMENT") {
+                      bgColor = "bg-emerald-500/10 border-emerald-500/20";
+                      dotColor = "bg-emerald-400";
+                      icon = "✅";
+                    } else if (log.action === "DELETE_APPOINTMENT" || log.action === "CANCEL_APPOINTMENT") {
+                      bgColor = "bg-red-500/10 border-red-500/20";
+                      dotColor = "bg-red-400";
+                      icon = "❌";
+                    } else if (log.action === "MOVE_APPOINTMENT") {
+                      bgColor = "bg-amber-500/10 border-amber-500/20";
+                      dotColor = "bg-amber-400";
+                      icon = "🔄";
+                    } else if (log.action === "NO_SHOW") {
+                      bgColor = "bg-orange-500/10 border-orange-500/20";
+                      dotColor = "bg-orange-400";
+                      icon = "👻";
+                    } else if (log.action === "SECURITY_ALERT") {
+                      bgColor = "bg-red-500/20 border-red-500/40 animate-pulse";
+                      dotColor = "bg-red-500";
+                      icon = "🚨";
+                    }
+
+                    return (
+                      <div
+                        key={log.id}
+                        className={`p-4 rounded-2xl border ${bgColor} flex gap-3`}
+                      >
+                        <div className="mt-1">
+                          <span className="text-lg">{icon}</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-white mb-1 leading-snug">
+                            {log.message}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-2">
+                            <span>
+                              {new Date(log.createdAt).toLocaleDateString("it-IT", {
+                                day: "2-digit",
+                                month: "short",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${dotColor}`}
+                            ></span>
+                            <span>{log.actor === "admin" ? "Admin" : "Cliente"}</span>
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-10 bg-[#131c31] rounded-2xl border border-[#1e2b4a]">
+                    <span className="text-4xl block mb-2 opacity-30">😴</span>
+                    <p className="text-slate-400 text-sm font-medium">
+                      Nessuna attività recente
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-
-        </div>
+        </TabbedArea>
       </div>
     </div>
   );

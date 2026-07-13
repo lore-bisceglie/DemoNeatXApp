@@ -42,12 +42,32 @@ export default function WaitlistButton({
 
     setLoading(true);
 
-    // 🛡️ SIMULAZIONE DEMO WAITLIST: Saltiamo validazione telefono e chiamate API.
-    // Accettiamo lettere/numeri fittizi e simuliamo l'inserimento.
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          date: selectedDate,
+          tenantId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Errore durante il salvataggio.");
+        setLoading(false);
+        return;
+      }
+
       setSuccess(true);
+    } catch {
+      setError("Errore di connessione. Riprova.");
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   if (success) {
