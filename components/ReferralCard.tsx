@@ -24,10 +24,8 @@ export default function ReferralCard({ tenantId }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (loading) return null;
-
   return (
-    <div className="rounded-2xl border border-emerald-500/20 bg-[#0b1221] p-5">
+    <div className="rounded-2xl border border-emerald-500/20 bg-[#0b1221] p-5 h-full min-h-[140px] flex flex-col justify-center">
       <div className="flex items-center gap-3 mb-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
           <Gift size={20} />
