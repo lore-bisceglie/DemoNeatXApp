@@ -26,10 +26,20 @@ interface LocationFormProps {
   } | null;
 }
 
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
 export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess, initialData }: LocationFormProps) {
   const isEditing = !!initialData;
   const [name, setName] = useState(initialData?.name || "");
-  const [slug, setSlug] = useState(initialData?.slug || "");
+  const [slug, setSlug] = useState(initialData?.slug || slugify(initialData?.name || ""));
   const [address, setAddress] = useState(initialData?.address || "");
   const [city, setCity] = useState(initialData?.city || "");
   const [phone, setPhone] = useState(initialData?.phone || "");
@@ -87,12 +97,14 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
 
           <div>
             <label className="block text-sm font-medium text-slate-400 mb-1">Nome Sede *</label>
-            <input value={name} onChange={function (e) { setName(e.target.value); }} required className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="Es. Sede Centro" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Slug (per URL) *</label>
-            <input value={slug} onChange={function (e) { setSlug(e.target.value); }} required className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="Es. centro" />
+            <input value={name} onChange={function (e) {
+              const val = e.target.value;
+              setName(val);
+              if (!isEditing) setSlug(slugify(val));
+            }} required className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="Es. Sede Centro" />
+            <p className="text-xs text-slate-500 mt-1">
+              Indirizzo pagina: <span className="text-cyan-400/80">neatx.store/t/{tenantSlug}/sede/{slug || "..."}</span>
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
