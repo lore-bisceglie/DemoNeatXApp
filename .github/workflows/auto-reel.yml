@@ -68,6 +68,7 @@ jobs:
           TIKTOK_COOKIES_JSON: ${{ secrets.TIKTOK_COOKIES_JSON }}
           TIKTOK_SESSION_ID: ${{ secrets.TIKTOK_SESSION_ID }}
           TIKTOK_HEADLESS: "true"
+          STRICT_PUBLISH: "true"
         run: |
           cd bot_scripts/Social/ReelGenerator
           python auto_bot.py
