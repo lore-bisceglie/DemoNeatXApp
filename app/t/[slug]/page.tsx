@@ -256,7 +256,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     closeTime: "19:00",
     breakStart: "",
     breakEnd: "",
-    closedDays: [0, 1] as number[],
+    closedDays: [] as number[],
     instagramUrl: "",
     mapsLink: "",
     tiktokUrl: "",
@@ -334,7 +334,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           setLoadingTenant(false);
           return;
         }
-        let parsedClosedDays = [0, 1];
+        let parsedClosedDays = [];
         try {
           if (data.closedDays) parsedClosedDays = JSON.parse(data.closedDays);
         } catch (e) {}

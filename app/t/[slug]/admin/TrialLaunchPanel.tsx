@@ -64,10 +64,10 @@ const weekDays = [
 
 function parseClosedDays(value?: string | null) {
   try {
-    const parsed = value ? JSON.parse(value) : [0, 1];
-    return Array.isArray(parsed) ? parsed.map(Number) : [0, 1];
+    const parsed = value ? JSON.parse(value) : [];
+    return Array.isArray(parsed) ? parsed.map(Number) : [];
   } catch {
-    return [0, 1];
+    return [];
   }
 }
 

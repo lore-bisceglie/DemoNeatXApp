@@ -4,6 +4,12 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
+
+export function headers() {
+  return {
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  };
+}
 import { BarChart3, CalendarDays, Users, Receipt, Globe, CreditCard, CheckCircle } from "lucide-react";
 import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";

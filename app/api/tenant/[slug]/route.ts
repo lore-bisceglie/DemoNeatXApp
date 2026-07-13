@@ -46,7 +46,9 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
       return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: true, isPremium });
     }
 
-    return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium });
+    return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium }, {
+      headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
   }
