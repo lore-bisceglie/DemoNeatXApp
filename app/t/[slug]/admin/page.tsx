@@ -756,7 +756,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         {/* LISTA ATTESA — sempre visibile */}
         <div className="mb-6">
-          <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} />
+          <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} slug={slug} />
         </div>
 
         <TabbedArea initialTab={activeTab} tabConfig={tabConfig} slug={slug}>

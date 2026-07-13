@@ -9,14 +9,15 @@ type WaitlistItem = {
   date: string;
 };
 
-export default function WaitlistDashboard({ initialData, tenantId }: { initialData: WaitlistItem[], tenantId: string }) {
+export default function WaitlistDashboard({ initialData, tenantId, slug }: { initialData: WaitlistItem[], tenantId: string; slug?: string }) {
   const [waitlist, setWaitlist] = useState<WaitlistItem[]>(initialData);
   const [deleteTarget, setDeleteTarget] = useState<WaitlistItem | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleWhatsApp = (name: string, phone: string, date: string) => {
     const formattedDate = date.split("-").reverse().join("/");
-    const msg = `Ciao ${name}! Sono l'agenda automatica. Si è appena liberato un posto per la giornata del ${formattedDate}. Sei ancora interessato/a? Rispondi a questo messaggio per bloccarlo!`;
+    const baseUrl = window.location.origin;
+    const msg = `Ciao ${name}! Buone notizie 🎉 Si è liberato un posto per il ${formattedDate}. Prenotalo subito qui: ${baseUrl}/t/${slug || tenantId}`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
   };
