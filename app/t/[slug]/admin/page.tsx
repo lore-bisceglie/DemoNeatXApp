@@ -178,16 +178,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     const label = `${dayNames[d.getDay()]} ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}`;
     weekDays = [{ date: adjustedTargetDate, label, isClosed }];
   } else {
-    // Single staff fallback
+    // Full week (Mon-Sun)
     const refDate = new Date(adjustedTargetDate);
     const dayOfWeek = refDate.getDay();
-    const diffToTue = dayOfWeek >= 2 ? 2 - dayOfWeek : -5;
-    const tuesday = new Date(refDate);
-    tuesday.setDate(refDate.getDate() + diffToTue);
+    const diffToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(refDate);
+    monday.setDate(refDate.getDate() + diffToMon);
 
-    weekDays = Array.from({ length: 5 }).map((_, i) => {
-      const d = new Date(tuesday);
-      d.setDate(tuesday.getDate() + i);
+    weekDays = Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
 
       const iso = d.toISOString().split("T")[0];
       const [, m, dayStr] = iso.split("-");
