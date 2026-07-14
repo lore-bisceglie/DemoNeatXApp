@@ -1,18 +1,18 @@
 {
   "date": "2026-07-14",
-  "niche": "Coach e Consulenti",
-  "feature": "promemoria",
-  "feature_label": "Promemoria WhatsApp",
-  "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono",
-  "promise": "promemoria automatici che riducono i no-show del 90%",
-  "cover_title": "PROMEMORIA WHAT ORA",
-  "hook_hint": "Se sei tra i coach e consulenti e clienti che dimenticano l'appuntamento e non rispondono al telefono, stai perdendo soldi.",
-  "blog_topic": "Coach e Consulenti: Promemoria WhatsApp con NeatX",
+  "niche": "Fisioterapisti",
+  "feature": "booking",
+  "feature_label": "Prenotazione 24/7",
+  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+  "promise": "clienti che prenotano da soli anche mentre dormi",
+  "cover_title": "PRENOTAZIONE 24 ORA",
+  "hook_hint": "Se sei tra i fisioterapisti e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+  "blog_topic": "Fisioterapisti: Prenotazione 24/7 con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern office workplace: a WhatsApp reminder notification on a smartphone about an upcoming appointment, a client who will not forget, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }

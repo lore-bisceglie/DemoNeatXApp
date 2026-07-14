@@ -1,62 +1,46 @@
 {
-  "generated_at": "2026-07-14T10:54:59.299014+02:00",
+  "generated_at": "2026-07-14T11:57:49.579666+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
-    "blog_titles_count": 1,
-    "today_niche": "Coach e Consulenti"
+    "blog_titles_count": 2,
+    "today_niche": "Fisioterapisti"
   },
   "ideas": [
     {
-      "title": "COACH E CONSULENTI: BASTA NO-SHOW",
-      "hook": "Se sei un coach o un consulente e i clienti dimenticano l'appuntamento senza rispondere al telefono, stai perdendo soldi ogni giorno.",
-      "angle": "Dimostra il calcolo matematico del tempo perso con i no-show e come l'integrazione dei promemoria WhatsApp di NeatX salvi il fatturato riducendo le dimenticanze del 90%.",
-      "blog_title": "Coach e Consulenti: Promemoria WhatsApp con NeatX",
-      "keywords": [
-        "agenda consulente",
-        "prenotazioni coach",
-        "booking consulenze"
-      ]
+      "hook": "Fisioterapisti: se passate piu tempo a rispondere su WhatsApp che a trattare i pazienti, state perdendo ore di lavoro.",
+      "video_concept": "Un video a schermo condiviso. Da un lato un fisioterapista continuamente interrotto da notifiche e chiamate durante una seduta. Dall'altro, lo stesso professionista che lavora concentrato mentre NeatX gestisce e conferma le prenotazioni in background in totale autonomia.",
+      "blog_title": "Fisioterapisti: Come eliminare le distrazioni del telefono con la prenotazione 24/7",
+      "caption": "Gestire uno studio di fisioterapia non significa fare il centralinista. Scopri come NeatX automatizza le tue prenotazioni e ti restituisce il tuo tempo.",
+      "gameplay_style": "neon_racer"
     },
     {
-      "title": "SVOLTA PER CONSULENTI: ADDIO TELEFONO",
-      "hook": "Smetti di rincorrere i tuoi clienti al telefono per confermare le consulenze della settimana.",
-      "angle": "Mostra il contrasto tra il fare chiamate a vuoto che disturbano il cliente e l'invio automatico di un promemoria personalizzato su WhatsApp che garantisce la presenza.",
-      "blog_title": "Come eliminare le conferme telefoniche manuali per le tue consulenze",
-      "keywords": [
-        "agenda consulente",
-        "booking consulenze"
-      ]
+      "hook": "Il paradosso del fisioterapista: non rispondi al telefono durante un trattamento e perdi un nuovo cliente.",
+      "video_concept": "POV di un paziente che ha bisogno di una seduta urgente di fisioterapia alle 23:00. Invece di aspettare il mattino dopo per telefonare, trova il link NeatX sul profilo del fisioterapista e prenota il suo slot in 30 secondi.",
+      "blog_title": "Agenda fisioterapista: perche la prenotazione online converte piu delle telefonate",
+      "caption": "I tuoi pazienti vogliono prenotare quando fa comodo a loro, anche fuori orario. Dai loro la liberta di farlo con NeatX senza alzare la cornetta.",
+      "gameplay_style": "neon_racer"
     },
     {
-      "title": "PROMEMORIA WHAT ORA",
-      "hook": "Il segreto dei consulenti che hanno l'agenda sempre piena e zero appuntamenti saltati.",
-      "angle": "Presentazione della funzionalità di NeatX che invia notifiche WhatsApp strategiche prima di ogni sessione di coaching.",
-      "blog_title": "Guida pratica ai promemoria automatici per ottimizzare le prenotazioni dei coach",
-      "keywords": [
-        "prenotazioni coach",
-        "agenda consulente"
-      ]
+      "hook": "Ecco perche la tua segretaria per lo studio di fisioterapia non deve costarti uno stipendio mensile.",
+      "video_concept": "Un video rapido e dinamico che mostra la facilità di configurazione dell'agenda online NeatX, evidenziando come sostituisca il lavoro di gestione appuntamenti manuale lavorando giorno e notte.",
+      "blog_title": "Fisioterapisti: Prenotazione 24/7 con NeatX per eliminare il telefono che squilla",
+      "caption": "Automatizza la tua agenda di fisioterapia. Meno distrazioni in studio, piu trattamenti eseguiti e zero telefonate perse.",
+      "gameplay_style": "neon_racer"
     },
     {
-      "title": "IL COSTO DI UN APPUNTAMENTO PERSO",
-      "hook": "Un'ora di consulenza saltata non è solo tempo perso, è fatturato che non recupererai mai più.",
-      "angle": "Analisi del danno economico dei no-show per i professionisti e presentazione della soluzione software di NeatX con messaggi diretti su WhatsApp.",
-      "blog_title": "Quanto ti costano i no-show e come evitarli nella consulenza high-ticket",
-      "keywords": [
-        "booking consulenze",
-        "agenda consulente"
-      ]
+      "hook": "Fisioterapisti, quanti messaggi di prenotazione avete ricevuto questa domenica mentre cercavate di rilassarvi?",
+      "video_concept": "Inquadratura di un fisioterapista che si gode il fine settimana senza l'ansia di rispondere ai messaggi dei pazienti. Sullo schermo del telefono compaiono solo le notifiche di NeatX che confermano i nuovi appuntamenti presi in automatico.",
+      "blog_title": "Gestionale fisioterapisti: come riprendersi il fine settimana grazie alle prenotazioni automatiche",
+      "caption": "Smetti di rincorrere i pazienti nel weekend. Lascia che NeatX gestisca le tue prenotazioni di fisioterapia in totale autonomia mentre tu ti riposi.",
+      "gameplay_style": "neon_racer"
     },
     {
-      "title": "CLIENTI DISTRATTI? RISOLVI COSÌ",
-      "hook": "I tuoi clienti non saltano le sessioni di coaching perché non vogliono venire, ma perché la tua agenda non comunica dove loro guardano davvero.",
-      "angle": "Evidenzia come le email di conferma finiscano in spam mentre WhatsApp ha un tasso di apertura quasi del 100%, rendendolo lo strumento perfetto per i tuoi promemoria.",
-      "blog_title": "Perché le email di promemoria non funzionano più per i coach e cosa usare oggi",
-      "keywords": [
-        "prenotazioni coach",
-        "booking consulenze"
-      ]
+      "hook": "Sei un fisioterapista con l'agenda piena ma passi due ore al giorno a confermare appuntamenti a mano?",
+      "video_concept": "Analisi visiva del tempo sprecato: un calcolatore mostra quanti minuti al giorno si perdono tra telefonate, risposte ai messaggi e riprogrammazioni manuali, dimostrando come NeatX riduca questo tempo a zero.",
+      "blog_title": "Prenotazioni fisioterapia: ottimizza il tuo tempo e aumenta le sedute giornaliere",
+      "caption": "Il tempo perso a organizzare l'agenda e tempo sottratto ai trattamenti e ai tuoi guadagni. Passa al gestionale NeatX e dimentica il telefono.",
+      "gameplay_style": "neon_racer"
     }
   ]
 }
