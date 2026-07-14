@@ -16,10 +16,14 @@ export default function StripeConnectButton({ tenantId }: { tenantId: string }) 
       } else {
         const data = await res.json();
         if (data.error) {
-          if (data.error.includes("platform profile")) {
-            setError("Stripe non è ancora configurato correttamente. Contatta il supporto NeatX per completare l'attivazione.");
+          if (data.error.includes("platform profile") || data.error.includes("complete your platform")) {
+            setError("Stripe sta ancora verificando la tua identità. La configurazione è quasi completa — riprova tra qualche minuto.");
+          } else if (data.error.includes("account already exists") || data.error.includes("already has an account")) {
+            setError("Questo salone ha già un account Stripe collegato.");
+          } else if (data.error.includes("transfers")) {
+            setError("Stripe non ha abilitato i trasferimenti per questa connessione. Verifica il profilo Connect.");
           } else {
-            setError("Errore di connessione a Stripe: " + data.error);
+            setError("Errore Stripe: " + data.error);
           }
         }
       }

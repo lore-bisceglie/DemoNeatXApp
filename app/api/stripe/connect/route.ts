@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", { 
-  apiVersion: "2024-04-10" as any 
-});
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
