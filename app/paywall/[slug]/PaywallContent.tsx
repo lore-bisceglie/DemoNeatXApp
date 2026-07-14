@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import StripeCheckoutButton from './StripeCheckoutButton';
 
-export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId: string; slug: string; publicUrl: string }) {
+export default function PaywallContent({ tenantId, slug, publicUrl, currentPlan, isTrial }: { tenantId: string; slug: string; publicUrl: string; currentPlan?: string; isTrial?: boolean }) {
   const [annual, setAnnual] = useState(false);
 
   return (
@@ -13,10 +13,14 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
           🔒
         </div>
         <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-amber-300">
-          Il tuo periodo di prova è terminato
+          {currentPlan === "pro"
+            ? "Passa al piano Elite per sbloccare tutte le funzionalità"
+            : isTrial
+              ? "Il tuo periodo di prova sta per scadere"
+              : "Il tuo periodo di prova è terminato"}
         </p>
         <h1 className="text-3xl font-extrabold sm:text-5xl mb-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-          Scegli il piano per il tuo Salone
+          {currentPlan === "pro" ? "Potenzia il tuo piano" : "Scegli il piano per il tuo Salone"}
         </h1>
         <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
       </div>
@@ -38,8 +42,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
             <span className="text-5xl font-black text-white">{annual ? '290' : '29'}&euro;</span>
             <span className="text-slate-400 mb-1">/ {annual ? 'anno' : 'mese'}</span>
           </div>
-          {annual && <div className="text-emerald-400 text-sm font-semibold mb-8">Risparmi 58&euro; (~24&euro;/mese)</div>}
-          {!annual && <div className="text-slate-500 text-sm font-semibold mb-8">290&euro;/anno (risparmi 58&euro;)</div>}
+          {annual && <div className="text-emerald-400 text-sm font-semibold mb-8">Risparmi 58&euro;/anno (~24&euro;/mese)</div>}
 
           <div className="space-y-4 mb-8 flex-1">
             {['Appuntamenti Illimitati', 'Promemoria WhatsApp Automatici', 'Blocco orari e ferie', 'Link brandizzato prenotazione', 'Acconti e pagamenti Stripe', 'Esportazione timesheet CSV'].map((f, i) => (
@@ -60,8 +63,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl }: { tenantId
             <span className="text-5xl font-black text-white">{annual ? '590' : '59'}&euro;</span>
             <span className="text-slate-400 mb-1">/ {annual ? 'anno' : 'mese'}</span>
           </div>
-          {annual && <div className="text-emerald-400 text-sm font-semibold mb-8">Risparmi 118&euro; (~49&euro;/mese)</div>}
-          {!annual && <div className="text-slate-500 text-sm font-semibold mb-8">590&euro;/anno (risparmi 118&euro;)</div>}
+          {annual && <div className="text-emerald-400 text-sm font-semibold mb-8">Risparmi 118&euro;/anno (~49&euro;/mese)</div>}
 
           <div className="space-y-4 mb-8 flex-1">
             {['Tutto del piano Pro', 'Mini-Marketing (Recupero Clienti)', 'Autopilota Recensioni Google', 'Multi-Staff illimitato', 'Doppie Sedi / Multi-Location', 'Statistiche ed Esportazione Dati', 'Onboarding VIP dedicato'].map((f, i) => (

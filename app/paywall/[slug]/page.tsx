@@ -21,5 +21,15 @@ export default async function PaywallPage(props: { params: Promise<{ slug: strin
     );
   }
 
-  return <PaywallContent tenantId={tenant.id} slug={tenant.slug} publicUrl={getTenantPublicUrl(tenant.slug)} />;
+  const isTrial = !!(tenant.trialStatus === "active" || (tenant.trialEndsAt && new Date(tenant.trialEndsAt) > new Date()));
+
+  return (
+    <PaywallContent
+      tenantId={tenant.id}
+      slug={tenant.slug}
+      publicUrl={getTenantPublicUrl(tenant.slug)}
+      currentPlan={tenant.plan}
+      isTrial={isTrial}
+    />
+  );
 }
