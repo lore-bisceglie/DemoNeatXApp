@@ -10,6 +10,7 @@ interface LocationTabsProps {
   tenantId: string;
   tenantSlug: string;
   tenantName: string;
+  plan?: string;
 }
 
 const CARD_BASE = "bg-[#0b1221] rounded-xl border ";
@@ -103,7 +104,7 @@ function LocationCard({ location, tenantSlug, tenantName, onEdit, onSettings, on
   );
 }
 
-export default function LocationTabs({ tenantId, tenantSlug, tenantName }: LocationTabsProps) {
+export default function LocationTabs({ tenantId, tenantSlug, tenantName, plan }: LocationTabsProps) {
   const [locations, setLocations] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"list" | "create" | "edit" | "settings">("list");
   const [editingLocation, setEditingLocation] = useState<any | null>(null);
@@ -150,6 +151,10 @@ export default function LocationTabs({ tenantId, tenantSlug, tenantName }: Locat
   }
 
   async function handleToggleActive(location: any) {
+    if (plan !== "elite" && !location.isActive && activeLocations.length >= 1) {
+      alert("Il tuo piano include una sola sede. Passa all'Elite per gestire piu sedi.");
+      return;
+    }
     try {
       var res = await fetch("/api/locations/" + location.id + "?slug=" + tenantSlug, {
         method: "PUT",
@@ -183,12 +188,21 @@ export default function LocationTabs({ tenantId, tenantSlug, tenantName }: Locat
           <h2 className="text-2xl font-bold text-white">Gestione Sedi</h2>
           <p className="text-slate-400 text-sm mt-1">Gestisci le sedi del tuo salone: orari, staff, servizi e impostazioni per sede</p>
         </div>
-        <button
-          onClick={function () { setActiveTab("create"); }}
-          className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2"
-        >
-          <Plus size={18} /> Nuova Sede
-        </button>
+        {plan !== "elite" && locations.length >= 1 ? (
+          <a
+            href={"/paywall/" + tenantSlug}
+            className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
+          >
+            🔒 <Plus size={18} className="opacity-50" /> Nuova Sede (Elite)
+          </a>
+        ) : (
+          <button
+            onClick={function () { setActiveTab("create"); }}
+            className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2"
+          >
+            <Plus size={18} /> Nuova Sede
+          </button>
+        )}
       </div>
 
       <div className="bg-[#0b1221] rounded-2xl border border-[#1a2642] overflow-hidden">

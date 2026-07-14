@@ -1,6 +1,7 @@
-export default function PaywallOverlay({ title, description, isPro, plan, className, children }: { title: string, description: string, isPro?: boolean, plan?: string, className?: string, children: React.ReactNode }) {
+export default function PaywallOverlay({ title, description, isPro, plan, slug, className, children }: { title: string, description: string, isPro?: boolean, plan?: string, slug?: string, className?: string, children: React.ReactNode }) {
   if (plan === "elite" || isPro) return <div className={className}>{children}</div>;
   const upgradeLabel = plan === "pro" ? "ELITE" : "PRO";
+  const upgradeHref = slug ? `/paywall/${slug}` : ("https://wa.me/" + (process.env.NEXT_PUBLIC_SALES_WHATSAPP_NUMBER || "393480480942") + "?text=Ciao!%20Vorrei%20sbloccare%20il%20piano%20" + upgradeLabel + "%20per%20il%20mio%20salone.");
 
   return (
     <div className={`relative overflow-hidden rounded-3xl group ${className || ""}`}>
@@ -20,8 +21,8 @@ export default function PaywallOverlay({ title, description, isPro, plan, classN
         <p className="text-sm text-slate-300 mb-6 max-w-[280px] leading-relaxed">{description}</p>
         
         <a 
-          href={"https://wa.me/" + (process.env.NEXT_PUBLIC_SALES_WHATSAPP_NUMBER || "393480480942") + "?text=Ciao!%20Vorrei%20sbloccare%20il%20piano%20" + upgradeLabel + "%20per%20il%20mio%20salone."}
-          target="_blank"
+          href={upgradeHref}
+          target={slug ? "_self" : "_blank"}
           rel="noopener noreferrer"
           className="px-6 py-3 bg-white text-slate-900 rounded-xl font-bold text-sm hover:bg-slate-100 hover:scale-105 transition-all shadow-[0_10px_20px_rgba(0,0,0,0.2)]"
         >

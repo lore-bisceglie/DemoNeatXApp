@@ -28,6 +28,7 @@ export default function TeamDrawer({
   allServices,
   initialStaffSheetUrl,
   locations: initialLocations,
+  slug,
 }: {
   tenantId: string;
   isPremium: boolean;
@@ -35,6 +36,7 @@ export default function TeamDrawer({
   allServices: Service[];
   initialStaffSheetUrl: string | null;
   locations?: Location[];
+  slug?: string;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -269,8 +271,8 @@ export default function TeamDrawer({
             <p className="text-amber-200 text-sm font-medium flex items-center gap-2">
               <span>🔒</span>
               {plan === "pro"
-                ? `Sei in Piano Pro. Passa all'Elite (59€) per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.`
-                : `Piano Basic. Passa all'Elite (59€) per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.`}
+                ? <>Sei in Piano Pro. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite (59€)</a> per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.</>
+                : <>Piano Basic. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite (59€)</a> per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.</>}
             </p>
           </div>
         )}

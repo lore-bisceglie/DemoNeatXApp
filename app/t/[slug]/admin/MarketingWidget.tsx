@@ -11,7 +11,7 @@ type DormantCustomer = {
   totalSpent: number;
 };
 
-export default function MarketingWidget({ tenantId, isPremium, plan }: { tenantId: string, isPremium: boolean, plan?: string }) {
+export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { tenantId: string, isPremium: boolean, plan?: string; slug?: string }) {
   const [data, setData] = useState<{count: number, customers: DormantCustomer[], estimatedRevenue: number} | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -116,8 +116,8 @@ export default function MarketingWidget({ tenantId, isPremium, plan }: { tenantI
                   ))}
                 </div>
                 <a 
-                  href={"https://wa.me/" + (process.env.NEXT_PUBLIC_SALES_WHATSAPP_NUMBER || "393480480942") + "?text=Ciao!%20Vorrei%20passare%20al%20piano%20ELITE%20(59%C2%AC/mese)%20per%20il%20mio%20salone."}
-                  target="_blank"
+                  href={slug ? `/paywall/${slug}` : ("https://wa.me/" + (process.env.NEXT_PUBLIC_SALES_WHATSAPP_NUMBER || "393480480942") + "?text=Ciao!%20Vorrei%20passare%20al%20piano%20ELITE%20(59%C2%AC/mese)%20per%20il%20mio%20salone.")}
+                  target={slug ? "_self" : "_blank"}
                   rel="noopener noreferrer"
                   className="inline-block text-center mt-8 w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl shadow-lg transition transform hover:scale-105"
                 >

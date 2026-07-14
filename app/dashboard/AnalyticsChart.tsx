@@ -22,7 +22,7 @@ interface AnalyticsChartProps {
   isPro?: boolean;
 }
 
-export default function AnalyticsChart({ data, isPro, plan }: AnalyticsChartProps & { plan?: string }) {
+export default function AnalyticsChart({ data, isPro, plan, slug }: AnalyticsChartProps & { plan?: string; slug?: string }) {
   if (!data || data.length === 0) {
     return <div className="text-slate-500 text-sm italic">Nessun dato disponibile per il grafico.</div>;
   }
@@ -32,6 +32,7 @@ export default function AnalyticsChart({ data, isPro, plan }: AnalyticsChartProp
       title="Sblocca le Statistiche Avanzate" 
       description="Scopri quali sono i tuoi giorni migliori, quanto incassi realmente, e tieni traccia della tua crescita finanziaria." 
       plan={plan || (isPro ? "elite" : "basic")}
+      slug={slug}
     >
       <div className="bg-[#0b1221] border border-[#1a2642] p-6 rounded-3xl shadow-xl mb-8">
       <div className="flex items-center justify-between mb-6">
