@@ -113,17 +113,28 @@ class GuardianAgent(BaseAgent):
         lines = [
             f"<b>{status_icon} NeatX Guardian — Report Giornaliero</b>",
             f"📅 {report.get('date')}",
+            f"{'─'*30}",
             "",
         ]
         today = report.get("today", {})
         if today:
             lines.append(f"🎯 <b>Oggi:</b> {today.get('niche')} — {today.get('feature')}")
-            lines.append(f"📺 Cover: {today.get('cover')}")
+            lines.append(f"📺 Cover: <code>{today.get('cover')}</code>")
             lines.append("")
+
+        labels = {
+            "content_calendar": "Contenuti pianificati",
+            "today_brief": "Brief giornaliero",
+            "market_intelligence": "Intelligence mercato",
+            "reel_data": "Reel presente",
+            "content_advisor": "Raccomandazioni",
+            "leads_pipeline": "Pipeline lead",
+        }
 
         for key, check in checks.items():
             icon = "✅" if check.get("ok") else "⚠️"
-            lines.append(f"{icon} <b>{key}:</b> {check.get('detail')}")
+            label = labels.get(key, key.replace("_", " ").title())
+            lines.append(f"{icon} <b>{label}:</b> <code>{check.get('detail')}</code>")
 
         recap = None
         ideas_msgs = self.bus.read("content_ideas")

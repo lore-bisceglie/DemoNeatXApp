@@ -42,7 +42,7 @@ jobs:
           POSTS=$(ls -t ../content/blog/*.md 2>/dev/null | head -1)
           if [ -n "$POSTS" ]; then
             TITLE=$(head -1 "$POSTS" 2>/dev/null | sed 's/.*"//;s/".*//')
-            python notify_telegram.py "SEO Blog" "Articolo pubblicato: $TITLE" "📝"
+            python notify_telegram.py "SEO Blog" "📝 <b>Articolo pubblicato:</b>\n$TITLE" "📝" "HTML"
           else
             python notify_telegram.py "SEO Blog" "Nessun articolo generato oggi" "⚠️"
           fi

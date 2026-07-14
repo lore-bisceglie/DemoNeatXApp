@@ -47,4 +47,5 @@ if __name__ == "__main__":
     title = sys.argv[1] if len(sys.argv) > 1 else "Notifica NeatX"
     message = sys.argv[2] if len(sys.argv) > 2 else "(nessun messaggio)"
     emoji = sys.argv[3] if len(sys.argv) > 3 else "🤖"
-    send(title, message, emoji)
+    parse_mode = sys.argv[4] if len(sys.argv) > 4 else "Markdown"
+    send(title, message, emoji, parse_mode)
