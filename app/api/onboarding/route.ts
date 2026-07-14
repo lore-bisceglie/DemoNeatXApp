@@ -41,13 +41,12 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return;
 
-  const text = `🚨 *NUOVO LEAD NEATX* 🚨\n\n` +
-    `👤 *Proprietario:* ${ownerName}\n` +
-    `🏢 *Attività:* ${tenant.name}\n` +
-    `📍 *Città:* ${tenant.city}\n` +
-    `🏷️ *Categoria:* ${category}\n` +
-    `📞 *Telefono:* ${tenant.phone}\n\n` +
-    `📱 *WhatsApp:* [Clicca qui per scrivergli](https://wa.me/${tenant.phone.replace(/[^0-9]/g, '')})`;
+  const text = `🚨 <b>NUOVO NEGOZIO</b> 🚨\n\n` +
+    `👤 <b>${ownerName}</b>\n` +
+    `🏪 <b>${tenant.name}</b>\n` +
+    `📍 ${tenant.city} | ${category}\n` +
+    `📞 ${tenant.phone}\n\n` +
+    `<a href="https://wa.me/${tenant.phone.replace(/[^0-9]/g, '')}">📱 Scrivi su WhatsApp</a>`;
 
   try {
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -56,7 +55,7 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
       body: JSON.stringify({
         chat_id: chatId,
         text,
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         disable_web_page_preview: true,
         reply_markup: {
           inline_keyboard: [

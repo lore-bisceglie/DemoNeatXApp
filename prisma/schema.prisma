@@ -45,7 +45,9 @@ model Tenant {
   activationRequested Boolean @default(false)  // Flag per nascondere il box "Richiedi attivazione" una volta cliccato
   publishedAt   DateTime?
   convertedAt   DateTime?
-  plan          String        @default("basic") // "basic" o "premium"
+  plan          String        @default("basic") // "basic", "pro", "elite"
+  stripeCustomerId String?    // Stripe customer ID per il portale abbonamenti
+  stripeSubscriptionId String? // Stripe subscription ID attiva
   createdAt     DateTime      @default(now())
   staffSheetUrl String?       // Link al Google Sheet per gli orari dei dipendenti (fallback globale)
 

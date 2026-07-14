@@ -83,7 +83,7 @@ export async function POST(req: Request) {
           // Aggiorniamo il piano a Premium
           await prisma.tenant.update({
             where: { id: tenantId },
-            data: { plan: "premium" }
+            data: { plan: "pro" }
           });
           await answerCallbackQuery(cb.id, "✅ Salone promosso a PRO!");
           await editMessageText(chatId, messageId, `${cb.message.text}\n\n<b>[Approvato: Piano PRO attivo]</b>`);
@@ -196,8 +196,8 @@ const tenant = await prisma.tenant.findFirst({
         const query = text.replace("/pro ", "").trim();
         const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
         if (tenant) {
-          await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "premium" } });
-          await sendTelegramMessage(`✅ <b>${tenant.name}</b> promosso al piano <b>PRO</b> (59€)!\nI lucchetti sono stati sbloccati.`);
+          await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "pro" } });
+          await sendTelegramMessage(`✅ <b>${tenant.name}</b> promosso al piano <b>PRO</b> (29€)!\nI lucchetti sono stati sbloccati.`);
         } else {
           await sendTelegramMessage("❌ Nessun salone trovato.");
         }
@@ -207,7 +207,7 @@ const tenant = await prisma.tenant.findFirst({
         const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query } } });
         if (tenant) {
           await prisma.tenant.update({ where: { id: tenant.id }, data: { plan: "basic" } });
-          await sendTelegramMessage(`🔒 <b>${tenant.name}</b> retrocesso al piano <b>BASIC</b> (29€)!\nI lucchetti sono stati riattivati.`);
+          await sendTelegramMessage(`🔒 <b>${tenant.name}</b> retrocesso al piano <b>Basic</b> (trial gratuito)!\nI lucchetti sono stati riattivati.`);
         } else {
           await sendTelegramMessage("❌ Nessun salone trovato.");
         }
@@ -338,7 +338,7 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
         let totalLeads = 0, newLeads = 0;
         try { totalLeads = await prisma.lead.count(); } catch {}
         try { newLeads = await prisma.lead.count({ where: { status: 'new' } }); } catch {}
-        const activeTrials = await prisma.tenant.count({ where: { trialStatus: { in: ['trial_active', 'demo', 'published'] }, plan: { not: 'premium' } } });
+        const activeTrials = await prisma.tenant.count({ where: { trialStatus: { in: ['trial_active', 'demo', 'published'] }, plan: { notIn: ['pro', 'elite'] } } });
         const paying = await prisma.tenant.count({ where: { trialStatus: 'converted' } });
         const expired = await prisma.tenant.count({ where: { trialStatus: 'expired' } });
         const reply =

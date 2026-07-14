@@ -101,7 +101,7 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
                 <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center text-4xl mb-6 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
                   🔒
                 </div>
-                <h3 className="text-3xl font-black text-white mb-4">Questa è una funzione Premium</h3>
+                <h3 className="text-3xl font-black text-white mb-4">Questa è una funzione Elite</h3>
                 <p className="text-slate-400 mb-8 max-w-md">
                   Per soli 59€/mese puoi sbloccare il Mini-Marketing automatico. Basterebbe recuperare <strong className="text-white">solo 2 di questi {data.count} clienti</strong> per ripagarti l'abbonamento mensile.
                 </p>
@@ -116,7 +116,7 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
                   ))}
                 </div>
                 <button className="mt-8 w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl shadow-lg transition transform hover:scale-105">
-                  Passa al Premium a 59€
+                  Passa all'Elite a 59€
                 </button>
               </div>
             ) : (

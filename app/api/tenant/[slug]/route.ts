@@ -34,7 +34,7 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
 
     const now = new Date();
     const trialActive = tenant.trialEndsAt ? new Date(tenant.trialEndsAt) > now : false;
-    const isPremium = tenant.plan === 'premium' || trialActive;
+    const isPremium = (tenant.plan === 'pro' || tenant.plan === 'elite') || trialActive;
     const isTrialExpired = tenant.trialEndsAt && now > tenant.trialEndsAt;
     const effectiveTrialStatus = tenant.trialStatus === "converted"
       ? "converted"
@@ -91,7 +91,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
         data: {
           isDemoData: false,
           trialStatus: "converted",
-          plan: "premium",
+          plan: "pro",
           convertedAt: tenant.convertedAt || new Date(),
         },
       });

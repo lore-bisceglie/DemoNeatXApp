@@ -22,6 +22,7 @@ import SwipeableAgenda from "../../../dashboard/SwipeableAgenda";
 import CustomerDrawer from "../../../dashboard/CustomerDrawer";
 import TeamDrawer from "./TeamDrawer";
 import MarketingWidget from "./MarketingWidget";
+import PortalButton from "./PortalButton";
 import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
 import TabbedArea from "./TabbedArea";
 import ResetDemoButton from "../../../dashboard/ResetDemoButton";
@@ -84,7 +85,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
   const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
-  if (isTrialExpired && tenant.plan !== "premium" && tenant.trialStatus !== "converted" && !searchParams?.payment) {
+  if (isTrialExpired && tenant.plan !== "pro" && tenant.plan !== "elite" && tenant.trialStatus !== "converted" && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
 
@@ -164,7 +165,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     return `${hours}:${minutes}`;
   };
 
-  const isPremium = tenant.plan === "premium" || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
+  const isPremium = tenant.plan === "elite" || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
   const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
 
 
@@ -664,6 +665,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             >
               <BarChart3 size={16} /><span className="hidden sm:inline">Analytics</span>
             </Link>
+            {tenant.stripeCustomerId && <PortalButton slug={slug} />}
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
               className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"

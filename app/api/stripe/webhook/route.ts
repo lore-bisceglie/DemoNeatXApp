@@ -44,7 +44,10 @@ export async function POST(req: Request) {
             include: { tenant: true },
           });
           await sendTelegramMessage(
-            `✅ <b>CAPARRA PAGATA</b>\n\nPrenotazione <b>${appt?.id}</b> del negozio <b>${appt?.tenant?.name || ''}</b> confermata e pagata.`
+            `✅ <b>CAPARRA PAGATA</b>\n\n` +
+            `🏪 <b>${appt?.tenant?.name || ''}</b>\n` +
+            `📅 Prenotazione: <b>${appt?.date || ''}</b> alle <b>${appt?.time || ''}</b>\n` +
+            `👤 Cliente: <b>${appt?.customerName || ''}</b>`
           );
         } else if (tenantId && metadataType === 'message_package') {
           const creditsToAdd = parseInt(session.metadata?.credits || '0', 10);
@@ -57,26 +60,36 @@ export async function POST(req: Request) {
             });
             const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
             await sendTelegramMessage(
-              `💬 <b>VENDITA MESSAGGI!</b>\n\nIl negozio <b>${tenant?.name || tenantId}</b>` +
-              ` ha acquistato il pacchetto <b>${packageId}</b>.\n+${creditsToAdd} crediti. Totale: <b>${ss.smsCredits}</b> 📈`
+              `💬 <b>PACCHETTO MESSAGGI</b>\n\n` +
+              `🏪 <b>${tenant?.name || tenantId}</b>\n` +
+              `📦 Pacchetto: <b>${packageId}</b> (+${creditsToAdd} crediti)\n` +
+              `📊 Saldo attuale: <b>${ss.smsCredits}</b> messaggi`
             );
           }
         } else if (tenantId) {
           const purchasedPlan = session.metadata?.plan || 'pro';
           const interval = session.metadata?.interval || 'month';
+          const stripeCustomerId = session.customer as string;
+          const stripeSubscriptionId = session.subscription as string;
+          const updateData: any = {
+            plan: purchasedPlan,
+            trialStatus: 'converted',
+            trialEndsAt: null,
+          };
+          if (stripeCustomerId) updateData.stripeCustomerId = stripeCustomerId;
+          if (stripeSubscriptionId) updateData.stripeSubscriptionId = stripeSubscriptionId;
           const updatedTenant = await prisma.tenant.update({
             where: { id: tenantId },
-            data: {
-              plan: purchasedPlan,
-              trialStatus: 'converted',
-              trialEndsAt: null,
-            }
+            data: updateData,
           });
           await sendTelegramMessage(
-            `💰 <b>PAGAMENTO SAAS!</b>\n\nIl negozio <b>${updatedTenant.name}</b> ha attivato <b>${purchasedPlan.toUpperCase()}</b> (${interval === 'year' ? 'annuale' : 'mensile'})!\nMRR in aumento. 📈`
+            `🟢 <b>NUOVO ABBONAMENTO</b>\n\n` +
+            `🏪 <b>${updatedTenant.name}</b>\n` +
+            `📦 Piano: <b>${purchasedPlan === 'elite' ? 'Elite' : 'Pro'}</b>\n` +
+            `🔄 Ciclo: <b>${interval === 'year' ? 'Annuale' : 'Mensile'}</b>\n` +
+            `💰 Prezzo: <b>${interval === 'year' ? (purchasedPlan === 'elite' ? '590€' : '290€') : (purchasedPlan === 'elite' ? '59€' : '29€')}</b>`
           );
 
-          // Referral reward: se è stato invitato, premia chi lo ha invitato
           if (updatedTenant.referredByCode) {
             const referrer = await prisma.tenant.findUnique({ where: { referralCode: updatedTenant.referredByCode } });
             if (referrer) {
@@ -86,7 +99,7 @@ export async function POST(req: Request) {
                 update: { smsCredits: { increment: 100 } },
               });
               await sendTelegramMessage(
-                `🎉 <b>REFERRAL PREMIATO!</b>\n\n<b>${referrer.name}</b> ha guadagnato 100 crediti WhatsApp per aver invitato <b>${updatedTenant.name}</b>!\nPiù inviti, più messaggi gratis. 🚀`
+                `🎁 <b>REFERRAL</b>\n\n<b>${referrer.name}</b> ha guadagnato 100 crediti WhatsApp per aver portato <b>${updatedTenant.name}</b> a bordo!`
               );
             }
           }
@@ -102,7 +115,9 @@ export async function POST(req: Request) {
           console.warn(`[Stripe] Pagamento fallito per tenant ${tenantId}, subscription ${subscriptionId}`);
           const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
           await sendTelegramMessage(
-            `❌ <b>PAGAMENTO FALLITO!</b>\n\nIl negozio <b>${tenant?.name || tenantId}</b> ha il pagamento della carta fallito.\nAbbonamento non rinnovato. ⚠️`
+            `❌ <b>PAGAMENTO FALLITO</b>\n\n` +
+            `🏪 <b>${tenant?.name || tenantId}</b>\n` +
+            `⚠️ Il rinnovo della carta è fallito. Stripe riproverà nei prossimi giorni, altrimenti l'abbonamento verrà cancellato.`
           );
         }
         break;
@@ -115,7 +130,9 @@ export async function POST(req: Request) {
           console.log(`[Stripe] Rinnovo pagato per tenant ${paidTenantId}`);
           const tenant = await prisma.tenant.findUnique({ where: { id: paidTenantId } });
           await sendTelegramMessage(
-            `🔄 <b>RINNOVO SAAS!</b>\n\nIl negozio <b>${tenant?.name || paidTenantId}</b> ha rinnovato l'abbonamento.\nMRR confermato. ✅`
+            `🔄 <b>RINNOVO PAGATO</b>\n\n` +
+            `🏪 <b>${tenant?.name || paidTenantId}</b>\n` +
+            `✅ Rinnovo abbonamento confermato e pagato con successo.`
           );
         }
         break;
@@ -131,7 +148,9 @@ export async function POST(req: Request) {
           });
           const tenant = await prisma.tenant.findUnique({ where: { id: subTenantId } });
           await sendTelegramMessage(
-            `🚫 <b>ABBONAMENTO CANCELLATO</b>\n\nIl negozio <b>${tenant?.name || subTenantId}</b> ha cancellato l'abbonamento.\nRetrocesso a trial scaduto.`
+            `🚫 <b>ABBONAMENTO CANCELLATO</b>\n\n` +
+            `🏪 <b>${tenant?.name || subTenantId}</b>\n` +
+            `📉 L'abbonamento è stato cancellato. Il negozio è stato retrocesso a piano Basic e vedrà il paywall.`
           );
         }
         break;
@@ -140,10 +159,26 @@ export async function POST(req: Request) {
       case 'customer.subscription.updated': {
         const subUpdate = event.data.object as any;
         const subUpdateTenantId = subUpdate.metadata?.tenant_id;
-        if (subUpdateTenantId && subUpdate.status === 'past_due') {
-          await sendTelegramMessage(
-            `⚠️ <b>ABBONAMENTO IN RITARDO</b>\n\nIl tenant <b>${subUpdateTenantId}</b> ha un pagamento in ritardo (past_due).`
-          );
+        if (subUpdateTenantId) {
+          const updateData: any = {};
+          if (subUpdate.id) updateData.stripeSubscriptionId = subUpdate.id;
+          if (subUpdate.customer) updateData.stripeCustomerId = subUpdate.customer;
+          if (Object.keys(updateData).length > 0) {
+            await prisma.tenant.update({ where: { id: subUpdateTenantId }, data: updateData });
+          }
+          if (subUpdate.status === 'past_due') {
+            await sendTelegramMessage(
+              `⚠️ <b>PAGAMENTO IN RITARDO</b>\n\n` +
+              `🏪 ID: <b>${subUpdateTenantId}</b>\n` +
+              `⏳ Lo Stripe subscription è in stato <b>past_due</b>. Il cliente deve aggiornare la carta.`
+            );
+          } else if (subUpdate.status === 'active' && subUpdate.previous_attributes?.status === 'past_due') {
+            await sendTelegramMessage(
+              `✅ <b>PAGAMENTO RIPRISTINATO</b>\n\n` +
+              `🏪 ID: <b>${subUpdateTenantId}</b>\n` +
+              `🔄 Il pagamento è stato risolto. L'abbonamento è di nuovo attivo.`
+            );
+          }
         }
         break;
       }

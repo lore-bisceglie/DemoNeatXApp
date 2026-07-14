@@ -33,8 +33,8 @@ Funzionalità principali:
 ═══════════════════════════════════════
 PREZZI E PIANI
 ═══════════════════════════════════════
-• PIANO STARTER: Perfetto per chi lavora da solo. Include agenda, promemoria WhatsApp e pagamenti online.
-• PIANO PRO: Per chi ha un team. Include tutto dello Starter + gestione staff multiplo e analytics avanzati.
+• PIANO PRO (29€/mese): Perfetto per chi lavora da solo o con un piccolo team. Include agenda, promemoria WhatsApp, pagamenti online, blocco orari e ferie, link brandizzato.
+• PIANO ELITE (59€/mese): Per chi ha un team strutturato. Include tutto del Pro + Mini-Marketing, recensioni Google automatiche, Multi-Staff illimitato, Doppie Sedi, Statistiche avanzate.
 • PROVA GRATUITA: 14 giorni gratis, senza carta di credito. Si può disdire in qualsiasi momento.
 • ZERO VINCOLI: Nessun contratto annuale. Paghi mese per mese e se non ti piace, disdici con un click.
 

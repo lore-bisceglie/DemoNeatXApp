@@ -235,10 +235,10 @@ export async function POST(req: Request) {
 
     // Notifica Telegram al SuperAdmin
     await sendTelegramMessage(
-      `🎉 <b>NUOVO NEGOZIO CREATO!</b>\n\n` +
-      `Hai appena generato un gestionale per: <b>${name}</b>\n` +
-      `Categoria: ${template}\n` +
-      `Link: https://${slug}.neatx.store`
+      `🆕 <b>NEGOZIO CREATO (SUPERADMIN)</b>\n\n` +
+      `🏪 <b>${name}</b>\n` +
+      `📂 Categoria: ${template}\n` +
+      `🔗 https://${slug}.neatx.store`
     );
 
     return NextResponse.json({ success: true, tenant: newTenant });

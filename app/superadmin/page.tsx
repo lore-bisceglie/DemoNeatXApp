@@ -618,7 +618,7 @@ export default function SuperAdminPage() {
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <button onClick={() => setDetailTenant(tenant)} className="font-bold text-white text-lg leading-tight truncate mr-2 text-left hover:text-indigo-400 transition-colors" title={tenant.name}>{tenant.name}</button>
-                        {(tenant.plan === 'pro' || tenant.plan === 'premium') && <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Pro</span>}
+                        {(tenant.plan === 'pro') && <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Pro</span>}
                         {tenant.plan === 'elite' && <span className="bg-fuchsia-500/20 text-fuchsia-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Elite</span>}
                       </div>
                       <div className="text-sm text-slate-400 flex flex-col gap-1.5">
@@ -631,7 +631,7 @@ export default function SuperAdminPage() {
                           )}
                           <span className="text-xs">Creato il {new Date(tenant.createdAt).toLocaleDateString('it-IT')}</span>
                         </div>
-                        {trialEndsAt && tenant.plan !== 'premium' && (
+                        {trialEndsAt && tenant.plan !== 'pro' && tenant.plan !== 'elite' && (
                           <div className={`flex items-center gap-2 text-xs font-bold ${isTrialExpired ? 'text-red-400' : 'text-orange-400'}`}>
                             {isTrialExpired ? '🔒 PROVA SCADUTA (Paywall)' : `⏳ ${daysLeft} gg di prova rimanenti`}
                           </div>
@@ -681,7 +681,7 @@ export default function SuperAdminPage() {
                         <div className="grid grid-cols-2 gap-2 w-full">
                           <button 
                             onClick={() => handleMakePlan(tenant.id, 'pro')}
-                            className={`text-xs font-bold px-3 py-2 rounded-lg border transition-all text-center ${tenant.plan === 'pro' || tenant.plan === 'premium' ? 'bg-blue-500/30 text-blue-200 border-blue-500/60' : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20'}`}
+                            className={`text-xs font-bold px-3 py-2 rounded-lg border transition-all text-center ${tenant.plan === 'pro' ? 'bg-blue-500/30 text-blue-200 border-blue-500/60' : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20'}`}
                           >
                             📘 PRO
                           </button>

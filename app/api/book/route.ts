@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       isTrialExpired = Boolean(
         bookingTenant?.trialEndsAt &&
           new Date(bookingTenant.trialEndsAt) < new Date() &&
-          bookingTenant.plan !== "premium" &&
+          bookingTenant.plan !== "pro" && bookingTenant.plan !== "elite" &&
           bookingTenant.trialStatus !== "converted"
       );
     }

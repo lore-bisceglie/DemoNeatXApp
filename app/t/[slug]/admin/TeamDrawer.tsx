@@ -97,7 +97,7 @@ export default function TeamDrawer({
     if (!newStaffName.trim()) return;
 
     if (!isPremium && staffList.length >= 1) {
-      alert("Il piano Basic include un solo collaboratore. Passa al Premium per sbloccare i membri illimitati!");
+      alert("Il piano Basic include un solo collaboratore. Passa all'Elite (59€) per sbloccare i membri illimitati!");
       return;
     }
 
@@ -264,7 +264,7 @@ export default function TeamDrawer({
           <div className="bg-amber-500/10 border-b border-amber-500/20 p-4">
             <p className="text-amber-200 text-sm font-medium flex items-center gap-2">
               <span>🔒</span>
-              Piano Basic. Passa al Premium (59€) per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.
+              Piano Basic. Passa all'Elite (59€) per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.
             </p>
           </div>
         )}

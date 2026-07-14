@@ -42,6 +42,8 @@ model Tenant {
   publishedAt   DateTime?
   convertedAt   DateTime?
   plan          String        @default("basic")
+  stripeCustomerId String?
+  stripeSubscriptionId String?
   createdAt     DateTime      @default(now())
   staffSheetUrl String?
   emailVerified Boolean       @default(false)
