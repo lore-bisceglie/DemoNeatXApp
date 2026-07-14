@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
     }
 
-    if (plan === 'premium' || plan === 'pro' || plan === 'elite') {
+    if (plan === 'pro' || plan === 'elite') {
       await prisma.tenant.update({
         where: { id: tenantId },
         data: {

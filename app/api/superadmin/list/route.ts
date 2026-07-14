@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     let trialCount = 0;
 
     tenants.forEach(t => {
-      if (t.plan === 'pro' || t.plan === 'premium') {
+      if (t.plan === 'pro') {
         payingCount++;
         mrr += 29;
       } else if (t.plan === 'elite') {

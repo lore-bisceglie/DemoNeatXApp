@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       else if (data.startsWith("approve_")) {
         const tenantId = data.replace("approve_", "");
         try {
-          // Aggiorniamo il piano a Premium
+          // Promuove il negozio a Pro
           await prisma.tenant.update({
             where: { id: tenantId },
             data: { plan: "pro" }
