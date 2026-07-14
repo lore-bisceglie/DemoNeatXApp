@@ -957,7 +957,7 @@ export async function POST(req: Request) {
         },
         storeSettings: {
           create: {
-            smsCredits: referredByCode ? 75 : 50, // 25 crediti in più se invitato
+            smsCredits: referredByCode ? 100 : 50, // 50 crediti in più se invitato
             maxConcurrentAppointments: Math.max(1, template.staff.length),
           },
         },
@@ -1007,7 +1007,7 @@ export async function POST(req: Request) {
         tenantId: tenant.id,
         settings: {
           create: {
-            smsCredits: referredByCode ? 75 : 50,
+            smsCredits: referredByCode ? 100 : 50,
           },
         },
       },
