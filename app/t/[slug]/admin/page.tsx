@@ -695,60 +695,63 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         {/* Dashboard cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[160px]">
-            <h2 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 auto-rows-fr">
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[220px]">
+            <h2 className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
               Prossimo in arrivo
             </h2>
 
             {nextAppointment ? (
-              <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center justify-between mt-1">
                 <div>
-                  <p className="text-xl font-extrabold text-white truncate max-w-[150px]">
+                  <p className="text-2xl font-extrabold text-white truncate max-w-[180px]">
                     {nextAppointment.customerName}
                   </p>
 
-                  <p className="text-[#00b4ff] font-bold text-base">
+                  <p className="text-[#00b4ff] font-bold text-lg mt-1">
                     {nextAppointment.time}
-                    <span className="text-xs font-medium text-slate-400 ml-1">
+                    <span className="text-sm font-medium text-slate-400 ml-1">
                       ({nextAppointment.date.split("-").reverse().join("/")})
                     </span>
                   </p>
                 </div>
 
-                <div className="bg-[#131c31] p-3 rounded-2xl border border-[#1e2b4a] text-xl shadow-inner">
+                <div className="bg-[#131c31] p-4 rounded-2xl border border-[#1e2b4a] text-2xl shadow-inner">
                   ⏳
                 </div>
               </div>
             ) : (
-              <p className="text-slate-500 text-sm font-medium italic mt-2">
-                Nessun cliente in attesa.
-              </p>
+              <div className="flex flex-col items-center justify-center py-4">
+                <span className="text-4xl mb-3 opacity-30">📅</span>
+                <p className="text-slate-500 text-base font-medium">
+                  Nessun cliente in attesa.
+                </p>
+              </div>
             )}
           </div>
 
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[160px] relative overflow-hidden">
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[220px] relative overflow-hidden">
             <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
               📊
             </div>
 
-            <h2 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest flex items-center gap-2">
+            <h2 className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest flex items-center gap-2">
               <span>📈</span>
               Statistiche Mese
             </h2>
 
-            <div className="flex items-end gap-3 mt-2">
-              <span className="text-4xl font-extrabold text-emerald-400">
+            <div className="flex items-end gap-3 mt-1">
+              <span className="text-5xl font-extrabold text-emerald-400">
                 €{estimatedRevenue}
               </span>
 
-              <span className="text-slate-400 font-medium mb-1 text-sm">
+              <span className="text-slate-400 font-medium mb-1.5 text-sm">
                 / {validMonthly.length} app.ti
               </span>
             </div>
 
-            <p className="text-[10px] text-slate-500 mt-2">
+            <p className="text-xs text-slate-500 mt-3">
               Calcolo dinamico sul prezzo dei servizi configurati.
             </p>
           </div>
@@ -758,7 +761,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             slug={slug}
             currentCredits={storeSettings?.smsCredits || 0}
           />
-            <div className="h-full min-h-[160px]"><ReferralCard tenantId={tenantId} /></div>
+            <div className="h-full min-h-[220px]"><ReferralCard tenantId={tenantId} /></div>
         </div>
 
         {/* LISTA ATTESA — sempre visibile */}
