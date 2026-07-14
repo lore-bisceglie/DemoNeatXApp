@@ -23,11 +23,12 @@ export async function GET(request: Request) {
 
     let accountId = settings.stripeAccountId;
 
-    if (!accountId) {
+    const createAccount = async () => {
       const account = await stripe.accounts.create({
         type: "express",
         capabilities: {
           transfers: { requested: true },
+          card_payments: { requested: true },
         },
         business_type: "individual",
         business_profile: {
@@ -35,23 +36,46 @@ export async function GET(request: Request) {
           product_description: "Prenotazioni appuntamenti e servizi per il settore benessere",
         },
       });
-      accountId = account.id;
+      return account.id;
+    };
 
+    if (!accountId) {
+      accountId = await createAccount();
       await prisma.storeSettings.update({
         where: { tenantId },
         data: { stripeAccountId: accountId }
       });
     }
 
-    const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
-    const accountLink = await stripe.accountLinks.create({
-      account: accountId,
-      refresh_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&refresh=true`,
-      return_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&success=true`,
-      type: "account_onboarding",
-    });
-
-    return NextResponse.redirect(accountLink.url);
+    try {
+      const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+      const accountLink = await stripe.accountLinks.create({
+        account: accountId,
+        refresh_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&refresh=true`,
+        return_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&success=true`,
+        type: "account_onboarding",
+      });
+      return NextResponse.redirect(accountLink.url);
+    } catch (linkError: any) {
+      console.error("Stripe Account Link Error, retrying with new account:", linkError);
+      await prisma.storeSettings.update({
+        where: { tenantId },
+        data: { stripeAccountId: null }
+      });
+      accountId = await createAccount();
+      await prisma.storeSettings.update({
+        where: { tenantId },
+        data: { stripeAccountId: accountId }
+      });
+      const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+      const accountLink = await stripe.accountLinks.create({
+        account: accountId,
+        refresh_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&refresh=true`,
+        return_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&success=true`,
+        type: "account_onboarding",
+      });
+      return NextResponse.redirect(accountLink.url);
+    }
 
   } catch (error: any) {
     console.error("Stripe Connect Error:", error);
