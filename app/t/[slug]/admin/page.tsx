@@ -1289,6 +1289,49 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               </div>
             </div>
 
+            <AnalyticsChart data={analyticsData} plan={tenant.plan} />
+
+            {!isPremium && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-2xl p-5 relative overflow-hidden group">
+                  <div className="absolute -right-4 -top-4 text-6xl opacity-10">👥</div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-amber-400 text-lg">🔒</span>
+                      <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Elite</span>
+                    </div>
+                    <h3 className="text-white font-bold mb-1">Collaboratori Illimitati</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-3">Aggiungi tutto lo staff senza limiti. Ogni collaboratore con i propri servizi e turni.</p>
+                    <a href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20passare%20al%20piano%20ELITE%20per%20sbloccare%20collaboratori%20illimitati." target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite →</a>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-2xl p-5 relative overflow-hidden group">
+                  <div className="absolute -right-4 -top-4 text-6xl opacity-10">📍</div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-amber-400 text-lg">🔒</span>
+                      <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Elite</span>
+                    </div>
+                    <h3 className="text-white font-bold mb-1">Multi-Sede</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-3">Gestisci più sedi con un unico gestionale. Ogni sede con i propri servizi, staff e orari.</p>
+                    <a href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20passare%20al%20piano%20ELITE%20per%20sbloccare%20le%20multi-sedi." target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite →</a>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-2xl p-5 relative overflow-hidden group">
+                  <div className="absolute -right-4 -top-4 text-6xl opacity-10">📊</div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-amber-400 text-lg">🔒</span>
+                      <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Elite</span>
+                    </div>
+                    <h3 className="text-white font-bold mb-1">Statistiche Avanzate</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-3">Grafici, analisi degli incassi e report dettagliati per far crescere il tuo business.</p>
+                    <a href="https://wa.me/393480480942?text=Ciao!%20Vorrei%20passare%20al%20piano%20ELITE%20per%20sbloccare%20le%20statistiche%20avanzate." target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite →</a>
+                  </div>
+                </div>
+              </div>
+            )}
+
 {/* SEZIONE PAGAMENTI STRIPE */}
             <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
               <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
