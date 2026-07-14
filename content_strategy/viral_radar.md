@@ -1,38 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-14T11:57:49.579666+02:00
+Generato: 2026-07-14T17:21:41.733119+02:00
 
-## Idea 1: Fisioterapisti: se passate piu tempo a rispondere su WhatsApp che a trattare i pazienti, state perdendo ore di lavoro.
-- hook: Fisioterapisti: se passate piu tempo a rispondere su WhatsApp che a trattare i pazienti, state perdendo ore di lavoro.
-- video_concept: Un video a schermo condiviso. Da un lato un fisioterapista continuamente interrotto da notifiche e chiamate durante una seduta. Dall'altro, lo stesso professionista che lavora concentrato mentre NeatX gestisce e conferma le prenotazioni in background in totale autonomia.
-- blog_title: Fisioterapisti: Come eliminare le distrazioni del telefono con la prenotazione 24/7
-- caption: Gestire uno studio di fisioterapia non significa fare il centralinista. Scopri come NeatX automatizza le tue prenotazioni e ti restituisce il tuo tempo.
-- gameplay_style: neon_racer
+## Idea 1: Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?
+- format: pain shock
+- niche: Barbieri
+- hook: Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero telefono che squilla tutto il giorno e messaggi senza fine.
+- cta: Commenta AGENDA e ti mando il link.
 
-## Idea 2: Il paradosso del fisioterapista: non rispondi al telefono durante un trattamento e perdi un nuovo cliente.
-- hook: Il paradosso del fisioterapista: non rispondi al telefono durante un trattamento e perdi un nuovo cliente.
-- video_concept: POV di un paziente che ha bisogno di una seduta urgente di fisioterapia alle 23:00. Invece di aspettare il mattino dopo per telefonare, trova il link NeatX sul profilo del fisioterapista e prenota il suo slot in 30 secondi.
-- blog_title: Agenda fisioterapista: perche la prenotazione online converte piu delle telefonate
-- caption: I tuoi pazienti vogliono prenotare quando fa comodo a loro, anche fuori orario. Dai loro la liberta di farlo con NeatX senza alzare la cornetta.
-- gameplay_style: neon_racer
+## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- format: before after
+- niche: Barbieri
+- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- angle: Confronto diretto tra caos manuale e link NeatX.
+- cta: Scrivi DEMO se vuoi provarlo.
 
-## Idea 3: Ecco perche la tua segretaria per lo studio di fisioterapia non deve costarti uno stipendio mensile.
-- hook: Ecco perche la tua segretaria per lo studio di fisioterapia non deve costarti uno stipendio mensile.
-- video_concept: Un video rapido e dinamico che mostra la facilità di configurazione dell'agenda online NeatX, evidenziando come sostituisca il lavoro di gestione appuntamenti manuale lavorando giorno e notte.
-- blog_title: Fisioterapisti: Prenotazione 24/7 con NeatX per eliminare il telefono che squilla
-- caption: Automatizza la tua agenda di fisioterapia. Meno distrazioni in studio, piu trattamenti eseguiti e zero telefonate perse.
-- gameplay_style: neon_racer
-
-## Idea 4: Fisioterapisti, quanti messaggi di prenotazione avete ricevuto questa domenica mentre cercavate di rilassarvi?
-- hook: Fisioterapisti, quanti messaggi di prenotazione avete ricevuto questa domenica mentre cercavate di rilassarvi?
-- video_concept: Inquadratura di un fisioterapista che si gode il fine settimana senza l'ansia di rispondere ai messaggi dei pazienti. Sullo schermo del telefono compaiono solo le notifiche di NeatX che confermano i nuovi appuntamenti presi in automatico.
-- blog_title: Gestionale fisioterapisti: come riprendersi il fine settimana grazie alle prenotazioni automatiche
-- caption: Smetti di rincorrere i pazienti nel weekend. Lascia che NeatX gestisca le tue prenotazioni di fisioterapia in totale autonomia mentre tu ti riposi.
-- gameplay_style: neon_racer
-
-## Idea 5: Sei un fisioterapista con l'agenda piena ma passi due ore al giorno a confermare appuntamenti a mano?
-- hook: Sei un fisioterapista con l'agenda piena ma passi due ore al giorno a confermare appuntamenti a mano?
-- video_concept: Analisi visiva del tempo sprecato: un calcolatore mostra quanti minuti al giorno si perdono tra telefonate, risposte ai messaggi e riprogrammazioni manuali, dimostrando come NeatX riduca questo tempo a zero.
-- blog_title: Prenotazioni fisioterapia: ottimizza il tuo tempo e aumenta le sedute giornaliere
-- caption: Il tempo perso a organizzare l'agenda e tempo sottratto ai trattamenti e ai tuoi guadagni. Passa al gestionale NeatX e dimentica il telefono.
-- gameplay_style: neon_racer
+## Idea 3: Un no-show non è un fastidio, è fatturato perso.
+- format: calculator
+- niche: Barbieri
+- hook: Un no-show non è un fastidio, è fatturato perso.
+- angle: Stima soldi persi in un mese e collega promemoria/acconto.
+- cta: Commenta AGENDA.

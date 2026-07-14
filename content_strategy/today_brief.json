@@ -1,18 +1,18 @@
 {
   "date": "2026-07-14",
-  "niche": "Fisioterapisti",
+  "niche": "Barbieri",
   "feature": "booking",
   "feature_label": "Prenotazione 24/7",
   "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
   "promise": "clienti che prenotano da soli anche mentre dormi",
   "cover_title": "PRENOTAZIONE 24 ORA",
-  "hook_hint": "Se sei tra i fisioterapisti e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Prenotazione 24/7 con NeatX",
+  "hook_hint": "Se sei tra i barbieri e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Prenotazione 24/7 con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
