@@ -1301,7 +1301,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     Integrazione Pagamenti (Stripe)
                   </h2>
                   <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                    I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. NeatX non trattiene, non manovra e non vede i tuoi soldi — è Stripe (il circuito dietro PayPal) a gestire il trasferimento. NeatX non salva né il tuo IBAN né i tuoi dati bancari. Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Ti serviranno solo nome, cognome, data di nascita e IBAN.
+                    I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. <strong className="text-emerald-400">NeatX non tocca i tuoi soldi.</strong> Non li tratteniamo, non li spostiamo, non li vediamo. È Stripe (lo stesso circuito di PayPal) a gestire il trasferimento dal cliente al tuo conto. <strong className="text-slate-300">NeatX non salva né il tuo IBAN né i tuoi dati bancari.</strong> Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Inserisci nome, cognome, data di nascita e IBAN direttamente su Stripe — noi non vediamo nulla.
                   </p>
                 </div>
                 
@@ -1314,7 +1314,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                       <span className="text-[10px] text-slate-500 mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
                     </div>
                   ) : (
-                    <StripeConnectButton tenantId={tenantId} />
+                    <div className="flex flex-col items-end gap-2">
+                      <StripeConnectButton tenantId={tenantId} />
+                      <span className="text-[10px] text-slate-600 text-right max-w-[240px] leading-relaxed">Inserisci i dati direttamente su Stripe. <strong className="text-slate-500">NeatX non vede e non salva il tuo IBAN.</strong></span>
+                    </div>
                   )}
                 </div>
               </div>
