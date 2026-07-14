@@ -198,7 +198,7 @@ class ContentMachineAgent(BaseAgent):
         niches = ["Parrucchieri", "Barbieri", "Centri Estetici", "Fisioterapisti", "Tatuatori", "Personal Trainer"]
         features = [
             {"id": "no_show", "label": "Zero No-Show"},
-            {"id": "booking", "label": "Prenotazione 24/7"},
+            {"id": "booking", "label": "Prenotazione 24 ore su 24"},
             {"id": "timesheet", "label": "Timesheet Commercialista"},
             {"id": "recensioni", "label": "Recensioni Automatiche"},
             {"id": "promemoria", "label": "Promemoria WhatsApp"},

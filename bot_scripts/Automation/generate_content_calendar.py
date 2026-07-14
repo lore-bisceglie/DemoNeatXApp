@@ -22,7 +22,7 @@ CALENDAR_MD = OUT_DIR / "content_calendar.md"
 
 FEATURES = [
     {"id": "no_show", "label": "Zero No-Show", "pain": "acconti automatici che filtrano i clienti che non si presentano", "promise": "ogni slot occupato da clienti che hanno già pagato"},
-    {"id": "booking", "label": "Prenotazione 24/7", "pain": "telefono che squilla tutto il giorno e messaggi senza fine", "promise": "clienti che prenotano da soli anche mentre dormi"},
+    {"id": "booking", "label": "Prenotazione 24 ore su 24", "pain": "telefono che squilla tutto il giorno e messaggi senza fine", "promise": "clienti che prenotano da soli anche mentre dormi"},
     {"id": "timesheet", "label": "Timesheet Commercialista", "pain": "ore dei dipendenti segnate a mano su fogli Excel persi", "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista"},
     {"id": "recensioni", "label": "Recensioni Automatiche", "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche", "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta"},
     {"id": "promemoria", "label": "Promemoria WhatsApp", "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono", "promise": "promemoria automatici che riducono i no-show del 90%"},

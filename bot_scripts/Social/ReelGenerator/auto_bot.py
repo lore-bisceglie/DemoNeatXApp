@@ -294,7 +294,7 @@ Regole:
 - La caption di Instagram deve essere persuasiva, includere hashtag VIRALI come #perte #fyp #foryou #viral #imprenditore #businessitalia + hashtag di nicchia e l'invito a commentare la parola AGENDA.
 - Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante.
 - Il "image_prompt" deve essere in INGLESE e descrivere una SCENA CINEMATOGRAFICA REALISTICA che ILLUSTRA VISUALMENTE IL SENSO DEL VIDEO (il dolore/pain o la soluzione/promise descritti nel copione e nella strategia), NON solo l'ambiente generico della professione. La scena deve far capire a colpo d'occhio di cosa parla il reel, includendo il professionista {target} e un elemento visivo che rappresenti pain o promise. Mantieni riferimento a pain e promise già presenti in [STRATEGIA DEL GIORNO].
-- Scrivi SEMPRE "24/7" con lo slash, mai "247" o "24 ore su 24" o "24 7".
+- Scrivi sempre "24 ore su 24", mai "24/7" o "247".
 
 Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtick):
 {{

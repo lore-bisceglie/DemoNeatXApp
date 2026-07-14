@@ -165,7 +165,7 @@ FEATURE_SCENES_EN = {
 # Parole chiave (in italiano, lowercase) che attivano una feature specifica
 FEATURE_KEYWORDS = [
     ("no_show", ["no_show", "acconto", "no-show"]),
-    ("booking", ["booking", "prenota", "24/7", "agenda"]),
+    ("booking", ["booking", "prenota", "24 ore su 24", "agenda"]),
     ("timesheet", ["timesheet", "excel", "turni", "commercialista"]),
     ("recensioni", ["recensioni", "google", "recensione"]),
     ("promemoria", ["promemoria", "whatsapp", "promemoria", "dimentica"]),
