@@ -1303,6 +1303,15 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
                     I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. <strong className="text-emerald-400">NeatX non tocca i tuoi soldi.</strong> Non li tratteniamo, non li spostiamo, non li vediamo. È Stripe (lo stesso circuito di PayPal) a gestire il trasferimento dal cliente al tuo conto. <strong className="text-slate-300">NeatX non salva né il tuo IBAN né i tuoi dati bancari.</strong> Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Inserisci nome, cognome, data di nascita e IBAN direttamente su Stripe — noi non vediamo nulla.
                   </p>
+                  <div className="mt-3 bg-[#131c31] border border-[#1e2b4a] rounded-xl p-3 inline-block">
+                    <p className="text-xs text-slate-400 font-medium mb-1">Dopo aver cliccato "Collega IBAN":</p>
+                    <ol className="text-xs text-slate-500 space-y-1 ml-4 list-decimal">
+                      <li>Verrai reindirizzato su <strong className="text-slate-300">Stripe</strong> (il circuito di pagamenti)</li>
+                      <li>Inserisci <strong className="text-slate-300">nome, cognome, data di nascita e IBAN</strong></li>
+                      <li>Conferma — fatto. I pagamenti dei clienti arrivano direttamente sul tuo conto</li>
+                    </ol>
+                    <p className="text-xs text-slate-600 mt-2 italic">NeatX non riceve, non salva e non vede nessuno di questi dati.</p>
+                  </div>
                 </div>
                 
                 <div>
