@@ -55,7 +55,7 @@ export async function GET(request: Request) {
         return_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&success=true`,
         type: "account_onboarding",
       });
-      return NextResponse.redirect(accountLink.url);
+      return NextResponse.json({ url: accountLink.url });
     } catch (linkError: any) {
       console.error("Stripe Account Link Error, retrying with new account:", linkError);
       await prisma.storeSettings.update({
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
         return_url: `${origin}/api/stripe/callback?tenantId=${tenantId}&success=true`,
         type: "account_onboarding",
       });
-      return NextResponse.redirect(accountLink.url);
+      return NextResponse.json({ url: accountLink.url });
     }
 
   } catch (error: any) {
