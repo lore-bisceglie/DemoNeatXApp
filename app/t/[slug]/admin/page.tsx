@@ -696,7 +696,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         {/* Dashboard cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px]">
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[160px]">
             <h2 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
               Prossimo in arrivo
@@ -728,7 +728,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             )}
           </div>
 
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[140px] relative overflow-hidden">
+          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-emerald-900/10 border border-[#1a2642] flex flex-col justify-center h-full min-h-[160px] relative overflow-hidden">
             <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
               📊
             </div>
@@ -758,7 +758,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             slug={slug}
             currentCredits={storeSettings?.smsCredits || 0}
           />
-            <div className="h-full min-h-[140px]"><ReferralCard tenantId={tenantId} /></div>
+            <div className="h-full min-h-[160px]"><ReferralCard tenantId={tenantId} /></div>
         </div>
 
         {/* LISTA ATTESA — sempre visibile */}
