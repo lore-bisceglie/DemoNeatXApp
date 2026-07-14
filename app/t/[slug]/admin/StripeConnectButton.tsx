@@ -22,6 +22,8 @@ export default function StripeConnectButton({ tenantId }: { tenantId: string }) 
             setError("Questo salone ha già un account Stripe collegato.");
           } else if (data.error.includes("transfers")) {
             setError("Stripe non ha abilitato i trasferimenti per questa connessione. Verifica il profilo Connect.");
+          } else if (data.error.includes("managing losses")) {
+            setError("Manca un'impostazione su Stripe. Vai su https://dashboard.stripe.com/settings/connect/platform-profile e conferma le responsabilità sulle perdite.");
           } else {
             setError("Errore Stripe: " + data.error);
           }
