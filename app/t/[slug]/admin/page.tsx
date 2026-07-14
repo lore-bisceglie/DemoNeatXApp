@@ -756,7 +756,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             slug={slug}
             currentCredits={storeSettings?.smsCredits || 0}
           />
-          <div className="h-full"><ReferralCard tenantId={tenantId} /></div>
+          <ReferralCard tenantId={tenantId} />
         </div>
 
         {/* LISTA ATTESA — sempre visibile */}
