@@ -44,10 +44,10 @@ export default function MessageRechargeCard({
 
   return (
     <div
-      className={`p-8 rounded-3xl shadow-xl border flex flex-col justify-between h-[280px] relative overflow-hidden transition-all ${
+      className={`p-8 rounded-3xl shadow-xl border flex flex-col justify-between h-full min-h-[280px] relative overflow-hidden transition-all ${
         isLow
           ? "bg-red-950/20 border-red-900/50 shadow-red-900/20"
-          : "bg-[#0b1221] border-[#1a2642] shadow-cyan-900/10"
+          : "bg-[#0b1221] border-indigo-500/20 shadow-indigo-900/20"
       }`}
     >
       <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
