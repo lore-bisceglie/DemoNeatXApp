@@ -29,6 +29,7 @@ import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 import MessageRechargeCard from "./MessageRechargeCard";
+import StripeConnectButton from "./StripeConnectButton";
 import ReferralCard from "@/components/ReferralCard";
 import LocationTabs from "@/components/admin/LocationTabs";
 
@@ -1313,12 +1314,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                       <span className="text-[10px] text-slate-500 mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
                     </div>
                   ) : (
-                    <a
-                      href={`/api/stripe/connect?tenantId=${tenantId}`}
-                      className="bg-[#007aff] hover:bg-[#00b4ff] text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/20 whitespace-nowrap"
-                    >
-                      Collega IBAN (Solo 2 minuti)
-                    </a>
+                    <StripeConnectButton tenantId={tenantId} />
                   )}
                 </div>
               </div>
