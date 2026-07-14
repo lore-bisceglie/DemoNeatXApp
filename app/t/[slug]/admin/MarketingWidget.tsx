@@ -11,7 +11,7 @@ type DormantCustomer = {
   totalSpent: number;
 };
 
-export default function MarketingWidget({ tenantId, isPremium }: { tenantId: string, isPremium: boolean }) {
+export default function MarketingWidget({ tenantId, isPremium, plan }: { tenantId: string, isPremium: boolean, plan?: string }) {
   const [data, setData] = useState<{count: number, customers: DormantCustomer[], estimatedRevenue: number} | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
     <PaywallOverlay 
       title="Sblocca il Marketing Automatico" 
       description="Invia messaggi promozionali su WhatsApp ai clienti che non tornano da più di 30 giorni e falli tornare in salone in automatico." 
-      isPro={isPremium}
+      plan={plan || (isPremium ? "elite" : "basic")}
       className="mb-8"
     >
       {/* Widget Dashboard */}
@@ -115,9 +115,14 @@ export default function MarketingWidget({ tenantId, isPremium }: { tenantId: str
                     </div>
                   ))}
                 </div>
-                <button className="mt-8 w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl shadow-lg transition transform hover:scale-105">
-                  Passa all'Elite a 59€
-                </button>
+                <a 
+                  href={"https://wa.me/" + (process.env.NEXT_PUBLIC_SALES_WHATSAPP_NUMBER || "393480480942") + "?text=Ciao!%20Vorrei%20passare%20al%20piano%20ELITE%20(59%C2%AC/mese)%20per%20il%20mio%20salone."}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-center mt-8 w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl shadow-lg transition transform hover:scale-105"
+                >
+                  Passa all'Elite a 59€/mese
+                </a>
               </div>
             ) : (
               <div className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-[#070b14] flex flex-col gap-6">

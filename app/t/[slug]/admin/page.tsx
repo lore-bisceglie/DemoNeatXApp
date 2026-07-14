@@ -657,7 +657,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </h1>
 
           <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            <TeamDrawer tenantId={tenantId} isPremium={isPremium} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} />
+            <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} />
             <CustomerDrawer tenantId={tenantId} />
             <Link
               href={`/t/${slug}/admin/analytics`}
@@ -1234,7 +1234,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}
             />
             
-            <MarketingWidget tenantId={tenantId} isPremium={isPremium} />
+            <MarketingWidget tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} />
 
             <div className="mt-6">
               <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} />
