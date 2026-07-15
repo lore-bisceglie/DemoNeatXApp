@@ -28,12 +28,14 @@ export default function LiveNotification() {
 
   return (
     <div 
-      className={`hidden md:flex fixed top-28 left-6 z-50 bg-[#131c31]/95 backdrop-blur-md border border-[#1e2b4a] shadow-2xl shadow-cyan-900/20 p-4 rounded-2xl items-center gap-4 transform transition-all duration-500 ease-out ${
-        showNotification ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0 pointer-events-none'
-      }`}
+      className={`fixed z-[9990] flex items-center gap-3 bg-[#0b1221]/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 px-4 py-3 rounded-2xl transform transition-all duration-500 ease-out
+        bottom-[110px] left-1/2 -translate-x-1/2 w-[90%] max-w-[340px]
+        md:bottom-24 md:left-6 md:translate-x-0 md:w-auto md:max-w-md
+        ${showNotification ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}
+      `}
     >
-      <div className="w-2 h-2 rounded-full bg-green-500 animate-ping flex-shrink-0"></div>
-      <p className="text-white text-sm font-bold m-0 p-0 leading-none">
+      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0"></div>
+      <p className="text-white text-xs sm:text-sm font-semibold m-0 p-0 leading-snug">
         {notification}
       </p>
     </div>
