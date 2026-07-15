@@ -216,16 +216,15 @@ export default function Chatbot() {
                 </div>
                 <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-3 border-transparent border-left-blue-500/40" />
               </div>
-              {/* Mobile: sopra il pulsante, centrato */}
-              <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-50 animate-fade-in sm:hidden">
+              {/* Mobile: sopra il pulsante, allineato a destra per non sbordare dallo schermo */}
+              <div className="absolute bottom-full mb-3 right-0 z-50 animate-fade-in sm:hidden flex flex-col items-end">
                 <div className="bg-[#0a0e1a] border border-blue-500/40 rounded-xl px-3 py-2 shadow-2xl shadow-blue-900/30 flex items-center gap-1.5 whitespace-nowrap">
                   <span className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
                     <Sparkles size={12} className="text-white" />
                   </span>
                   <span className="text-white text-xs font-medium">Ciao! Sono <span className="text-blue-300">NeatBot</span> 🤖</span>
-                  <span className="text-[10px] text-gray-400 px-1.5 py-0.5 bg-blue-500/20 rounded-full">Assistente AI</span>
                 </div>
-                <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-0 h-0 border-3 border-transparent border-top-blue-500/40" />
+                <div className="mr-[22px] w-0 h-0 border-[6px] border-transparent border-t-blue-500/40" />
               </div>
             </>
           )}
