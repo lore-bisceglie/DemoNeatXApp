@@ -221,7 +221,7 @@ export default function SuperAdminPage() {
             <p className="text-slate-400 text-sm mt-1">NeatX SaaS — Godmode</p>
           </div>
           <div className="relative mb-4">
-            <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Password segreta" autoFocus className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500" />
+            <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleLogin(e); }} placeholder="Password segreta" autoFocus className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500" />
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">{showPassword ? "👁️" : "👁️‍🗨️"}</button>
           </div>
           {authError && <div className="text-red-400 text-sm mb-4 bg-red-500/10 border border-red-500/20 p-3 rounded-lg">{authError}</div>}
