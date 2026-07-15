@@ -338,6 +338,11 @@ def monta_reel(
     - CTA finale con animazione
     - Musica ambient in sottofondo
     """
+    # PATCH PER MOVIEPY 1.0.3 + PILLOW 10+
+    import PIL
+    if not hasattr(PIL.Image, 'ANTIALIAS'):
+        PIL.Image.ANTIALIAS = PIL.Image.LANCZOS
+        
     try:
         from moviepy.editor import (
             VideoFileClip, AudioFileClip, ImageClip, ColorClip,
@@ -352,7 +357,7 @@ def monta_reel(
     from PIL import Image, ImageDraw, ImageFont, ImageFilter
     import numpy as np
 
-    print("[🎬] Montaggio video professionale in corso...")
+    print(f"\n[🎬] Avvio montaggio (durata {audio_duration:.1f}s)...")
 
     # Carica audio
     audio = AudioFileClip(str(audio_path))
@@ -486,7 +491,6 @@ def crea_sottotitoli_animati(testo: str, durata_totale: float):
         try:
             clip = (TextClip(
                         txt=testo_blocco,
-                        font="Arial-Bold",
                         fontsize=62,
                         color="white",
                         stroke_color="black",
@@ -516,7 +520,6 @@ def crea_cta_finale(durata_totale: float):
     try:
         cta = (TextClip(
                     txt="✨ neatx.store ✨",
-                    font="Arial-Bold",
                     fontsize=58,
                     color="#00b4ff",
                     stroke_color="black",
