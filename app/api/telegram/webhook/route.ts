@@ -348,6 +348,26 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
           `Usa /agent run per eseguire tutti gli agenti ora.`;
         await sendTelegramMessage(reply);
       }
+      else if (text === "/lead") {
+        let leads = [];
+        try {
+          leads = await prisma.lead.findMany({
+            take: 5,
+            orderBy: { createdAt: "desc" },
+            select: { name: true, source: true, status: true }
+          });
+        } catch (e) {}
+        
+        if (leads.length === 0) {
+           await sendTelegramMessage("📭 Nessun lead trovato nella pipeline.");
+        } else {
+           let reply = `🎯 <b>ULTIMI 5 CONTATTI (LEADS)</b>\n\n`;
+           leads.forEach((l, i) => {
+             reply += `${i+1}. <b>${l.name}</b>\n📌 Fonte: ${l.source}\n📊 Stato: ${l.status}\n\n`;
+           });
+           await sendTelegramMessage(reply);
+        }
+      }
       else if (text === "/agent run") {
         try {
           const token = process.env.GITHUB_TOKEN || process.env.GH_PAT;
@@ -383,6 +403,7 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
           `/nuova-sede [nome] [slug] [telefono?] - Crea una nuova sede per un salone\n` +
           `/avvisa [messaggio] - Invia una mail a tutti i negozi\n` +
           `/agents - Mostra lo stato degli agenti automatici\n` +
+          `/lead - Mostra gli ultimi 5 contatti raccolti dal sito\n` +
           `/agent run - Esegue tutti gli agenti ora su GitHub\n` +
           `/aiuto - Mostra questo messaggio`;
         await sendTelegramMessage(helpText);
