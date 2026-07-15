@@ -245,22 +245,51 @@ def genera_script_fallback(professione: dict) -> dict:
 
 # ─── STEP 2: GENERA VOCE ─────────────────────────────────────────
 async def genera_voce(testo: str, output_path: Path):
-    """Genera voce italiana ultra-realistica con Microsoft Neural Edge-TTS"""
-    import edge_tts
+    """Genera voce italiana ultra-realistica con ElevenLabs (o Edge-TTS di fallback)"""
+    import os
+    import urllib.request
+    import json
     
-    print(f"[VOCE] Generazione voce con {VOICE}...")
+    eleven_api_key = os.environ.get("ELEVENLABS_API_KEY")
+    eleven_voice_id = os.environ.get("ELEVENLABS_VOICE_ID")
     
-    # Puliamo il testo da caratteri speciali
     testo_pulito = re.sub(r'[—–]', '-', testo)
     
+    if eleven_api_key and eleven_voice_id:
+        print(f"[VOCE] Generazione voce personalizzata con ElevenLabs...")
+        try:
+            url = f"https://api.elevenlabs.io/v1/text-to-speech/{eleven_voice_id}"
+            headers = {
+                "Accept": "audio/mpeg",
+                "Content-Type": "application/json",
+                "xi-api-key": eleven_api_key
+            }
+            data = {
+                "text": testo_pulito,
+                "model_id": "eleven_multilingual_v2",
+                "voice_settings": {
+                    "stability": 0.5,
+                    "similarity_boost": 0.8
+                }
+            }
+            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=30) as resp, open(output_path, "wb") as f:
+                f.write(resp.read())
+            print(f"[✅] Voce ElevenLabs salvata: {output_path.name}")
+            return
+        except Exception as e:
+            print(f"[!] Errore ElevenLabs ({e}), passo a Edge-TTS...")
+    
+    print(f"[VOCE] Generazione voce standard con {VOICE}...")
+    import edge_tts
     communicate = edge_tts.Communicate(
         testo_pulito, 
         VOICE,
-        rate="+5%",   # Leggermente più veloce per ritmo TikTok
+        rate="+5%",
         volume="+10%"
     )
     await communicate.save(str(output_path))
-    print(f"[✅] Voce salvata: {output_path.name}")
+    print(f"[✅] Voce standard salvata: {output_path.name}")
 
 
 # ─── STEP 3: GENERA AVATAR ───────────────────────────────────────
