@@ -371,8 +371,8 @@ def monta_reel(
         for i, img_path in enumerate(selected):
             try:
                 clip = (ImageClip(str(img_path))
-                        .resized((VIDEO_W, VIDEO_H))
-                        .with_duration(duration / n_images))
+                        .resize((VIDEO_W, VIDEO_H))
+                        .set_duration(duration / n_images))
                 bg_clips.append(clip)
             except:
                 pass
@@ -384,26 +384,26 @@ def monta_reel(
                 from moviepy import concatenate_videoclips
             bg = concatenate_videoclips(bg_clips)
         else:
-            bg = ColorClip((VIDEO_W, VIDEO_H), color=(5, 8, 20)).with_duration(duration)
+            bg = ColorClip((VIDEO_W, VIDEO_H), color=(5, 8, 20)).set_duration(duration)
     else:
-        bg = ColorClip((VIDEO_W, VIDEO_H), color=(5, 8, 20)).with_duration(duration)
+        bg = ColorClip((VIDEO_W, VIDEO_H), color=(5, 8, 20)).set_duration(duration)
 
     # Overlay scuro semi-trasparente per leggibilità testo
-    overlay = ColorClip((VIDEO_W, VIDEO_H), color=(0, 0, 0)).with_duration(duration).with_opacity(0.55)
+    overlay = ColorClip((VIDEO_W, VIDEO_H), color=(0, 0, 0)).set_duration(duration).set_opacity(0.55)
 
     # ── LOGO NEATX ──────────────────────────────────────────────
     logo_img = crea_logo_neatx()
     logo = (ImageClip(logo_img)
-            .with_duration(duration)
-            .with_position(("center", 80)))
+            .set_duration(duration)
+            .set_position(("center", 80)))
 
     # ── AVATAR O PLACEHOLDER ─────────────────────────────────────
     layers = [bg, overlay, logo]
 
     if avatar_video_path and avatar_video_path.exists():
         avatar_clip = (VideoFileClip(str(avatar_video_path))
-                       .resized(width=VIDEO_W * 0.65)
-                       .with_position(("center", VIDEO_H * 0.45)))
+                       .resize(width=VIDEO_W * 0.65)
+                       .set_position(("center", VIDEO_H * 0.45)))
         layers.append(avatar_clip)
     
     # ── SOTTOTITOLI WORD-BY-WORD ─────────────────────────────────
@@ -416,7 +416,7 @@ def monta_reel(
 
     # ── MONTAGGIO FINALE ─────────────────────────────────────────
     video = CompositeVideoClip(layers, size=(VIDEO_W, VIDEO_H))
-    video = video.with_audio(audio)
+    video = video.set_audio(audio)
 
     print(f"[💾] Rendering in corso (potrebbe richiedere 1-2 minuti)...")
     video.write_videofile(
@@ -485,18 +485,18 @@ def crea_sottotitoli_animati(testo: str, durata_totale: float):
         
         try:
             clip = (TextClip(
+                        txt=testo_blocco,
                         font="Arial-Bold",
-                        text=testo_blocco,
-                        font_size=62,
+                        fontsize=62,
                         color="white",
                         stroke_color="black",
                         stroke_width=3,
                         method="caption",
                         size=(VIDEO_W - 100, None),
                     )
-                    .with_start(t_start)
-                    .with_end(min(t_end, durata_totale))
-                    .with_position(("center", VIDEO_H * 0.72)))
+                    .set_start(t_start)
+                    .set_end(min(t_end, durata_totale))
+                    .set_position(("center", VIDEO_H * 0.72)))
             clips.append(clip)
         except Exception as e:
             pass  # Se TextClip fallisce, continua senza sottotitoli
@@ -515,16 +515,16 @@ def crea_cta_finale(durata_totale: float):
     
     try:
         cta = (TextClip(
+                    txt="✨ neatx.store ✨",
                     font="Arial-Bold",
-                    text="✨ neatx.store ✨",
-                    font_size=58,
+                    fontsize=58,
                     color="#00b4ff",
                     stroke_color="black",
                     stroke_width=2,
                )
-               .with_start(max(0, durata_totale - 3.5))
-               .with_end(durata_totale)
-               .with_position(("center", VIDEO_H - 180)))
+               .set_start(max(0, durata_totale - 3.5))
+               .set_end(durata_totale)
+               .set_position(("center", VIDEO_H - 180)))
         return cta
     except:
         try:
