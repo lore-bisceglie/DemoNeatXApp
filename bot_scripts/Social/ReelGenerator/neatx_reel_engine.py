@@ -339,9 +339,9 @@ def monta_reel(
     - Musica ambient in sottofondo
     """
     # PATCH PER MOVIEPY 1.0.3 + PILLOW 10+
-    import PIL
-    if not hasattr(PIL.Image, 'ANTIALIAS'):
-        PIL.Image.ANTIALIAS = PIL.Image.LANCZOS
+    from PIL import Image
+    if not hasattr(Image, 'ANTIALIAS'):
+        Image.ANTIALIAS = Image.LANCZOS
         
     try:
         from moviepy.editor import (
