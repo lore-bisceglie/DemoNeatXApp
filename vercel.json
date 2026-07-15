@@ -2,7 +2,13 @@
   "crons": [
     {
       "path": "/api/cron/trials",
-      "schedule": "0 7 * * *"
+      "schedule": "0 7 * * *",
+      "description": "Email ai clienti in scadenza trial (3gg, 1gg, scaduto) + aggiorna stato tenant"
+    },
+    {
+      "path": "/api/cron/reminders",
+      "schedule": "0 9 * * *",
+      "description": "SMS/WhatsApp promemoria appuntamento di domani a tutti i clienti (tutti i tenant)"
     }
   ]
 }
