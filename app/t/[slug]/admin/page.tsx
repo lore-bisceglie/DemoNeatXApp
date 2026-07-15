@@ -35,6 +35,7 @@ import LocationTabs from "@/components/admin/LocationTabs";
 
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
+import SupportWidget from "./SupportWidget";
 import crypto from "crypto";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
@@ -1420,6 +1421,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           </div>
         </TabbedArea>
+        
+        <SupportWidget tenantId={tenant.id} colorTheme={tenant.themeColor} />
       </div>
     </div>
   );
