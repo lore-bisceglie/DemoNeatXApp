@@ -77,41 +77,35 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const tenantName = tenant.name;
   const tenantServices = tenant.services;
 
-  const staffList = await prisma.staff.findMany({ where: { tenantId } });
+  // C1 — Primo gruppo di query parallele: tutte dipendono solo da tenantId
+  // e sono indipendenti tra loro, quindi partono insieme.
+  const [staffList, locationsRaw] = await Promise.all([
+    prisma.staff.findMany({ where: { tenantId } }),
+    prisma.location.findMany({
+      where: { tenantId, isActive: true },
+      include: { settings: true },
+      orderBy: { isMain: 'desc' },
+    }),
+  ]);
 
+  // Alias per compatibilità con il resto del codice
+  const locations = locationsRaw;
 
+  // Gestione storeSettings separata: può richiedere un create in caso di assenza
+  let storeSettings = await prisma.storeSettings.findUnique({ where: { tenantId } });
+  if (!storeSettings) {
+    storeSettings = await prisma.storeSettings.create({
+      data: { tenantId, smsCredits: 50 },
+    });
+  }
 
-
-  // Logica PAYWALL
+  // Logica PAYWALL (viene eseguita dopo aver già caricato staff e locations in parallelo)
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
   const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
   if (isTrialExpired && tenant.plan !== "pro" && tenant.plan !== "elite" && tenant.trialStatus !== "converted" && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
-
-  // Redirect to paywall already handled above
-
-  let storeSettings = await prisma.storeSettings.findUnique({
-    where: {
-      tenantId,
-    },
-  });
-
-  if (!storeSettings) {
-    storeSettings = await prisma.storeSettings.create({
-      data: {
-        tenantId,
-        smsCredits: 50,
-      },
-    });
-  }
-
-  const locations = await prisma.location.findMany({
-    where: { tenantId, isActive: true },
-    include: { settings: true },
-    orderBy: { isMain: 'desc' },
-  });
 
   
   // Parse chiusura days
@@ -227,15 +221,66 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const isAgendaTab = activeTab === 'agenda';
   const isServiziTab = activeTab === 'servizi';
 
-  const rawAppointments = await prisma.appointment.findMany({
-    where: {
-      date: { gte: todayItaly },
-      tenantId,
-      ...(filterLocationId ? { locationId: filterLocationId } : {}),
-    },
-    orderBy: [ { date: "asc" }, { time: "asc" } ],
-    include: { service: true, staff: true },
-  });
+  // C1 — Secondo gruppo di query parallele: tutte dipendono da weekDatesArray e currentMonthPrefix
+  // che sono ora disponibili. Le lanciamo insieme per dimezzare il tempo di attesa DB.
+  const currentMonthPrefix = todayItaly.substring(0, 7);
+  const [
+    rawAppointments,
+    radarAppointmentsRaw,
+    recentActivities,
+    waitlistItems,
+    monthlyAppointments,
+    allAppointments,
+  ] = await Promise.all([
+    // Appuntamenti futuri per la lista principale
+    prisma.appointment.findMany({
+      where: {
+        date: { gte: todayItaly },
+        tenantId,
+        ...(filterLocationId ? { locationId: filterLocationId } : {}),
+      },
+      orderBy: [{ date: "asc" }, { time: "asc" }],
+      include: { service: true, staff: true },
+    }),
+    // Appuntamenti per il radar (griglia settimanale) — solo se tab agenda
+    isAgendaTab
+      ? prisma.appointment.findMany({
+          where: {
+            date: { in: weekDatesArray },
+            tenantId,
+            ...(filterLocationId ? { locationId: filterLocationId } : {}),
+          },
+          include: { service: true },
+        })
+      : Promise.resolve([]),
+    // Log attività recenti — solo se tab agenda
+    isAgendaTab
+      ? prisma.activityLog.findMany({
+          where: { tenantId },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        })
+      : Promise.resolve([]),
+    // C2 — Lista d'attesa (una sola volta, filtrata per date future)
+    prisma.waitlist.findMany({
+      where: { tenantId, date: { gte: todayItaly } },
+      orderBy: { createdAt: "asc" },
+    }),
+    // Appuntamenti del mese corrente per il calcolo incassi
+    prisma.appointment.findMany({
+      where: { date: { startsWith: currentMonthPrefix }, tenantId },
+      include: { service: true },
+    }),
+    // Appuntamenti degli ultimi 14 giorni per analytics
+    prisma.appointment.findMany({
+      where: { tenantId, date: { in: past14Days } },
+      include: { service: true },
+    }),
+  ]);
+
+  // Alias per compatibilità con il codice che usa waitlistData
+  const waitlistData = waitlistItems;
+  const radarAppointments = radarAppointmentsRaw;
 
   const columns = staffList.length > 0 ? staffList.map(s => s.id) : ["unassigned"];
   const maxConcurrent = columns.length;
@@ -250,29 +295,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     });
   }
 
-  const radarAppointments = isAgendaTab ? await prisma.appointment.findMany({
-    where: {
-      date: {
-        in: weekDatesArray,
-      },
-      tenantId,
-      ...(filterLocationId ? { locationId: filterLocationId } : {}),
-    },
-    include: {
-      service: true,
-    },
-  }) : [];
 
-  const recentActivities = isAgendaTab ? await prisma.activityLog.findMany({
-    where: { tenantId },
-    orderBy: { createdAt: "desc" },
-    take: 20,
-  }) : [];
-
-  const waitlistItems = await prisma.waitlist.findMany({
-    where: { tenantId, date: { gte: todayItaly } },
-    orderBy: { createdAt: "asc" },
-  });
 
   radarAppointments.forEach((app) => {
     let durationMins = 15;
@@ -390,27 +413,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const nextAppointment = appointments.find((app) => !isClosure(app)) || null;
   const currentClosures = appointments.filter((app) => isClosure(app));
 
-  
-  // WAITLIST FETCH
-  const waitlistData = await prisma.waitlist.findMany({
-    where: { tenantId },
-    orderBy: { createdAt: 'asc' }
-  });
 
-
-  // 🌟 CALCOLO INCASSI DINAMICI PREMIUM
-  const currentMonthPrefix = todayItaly.substring(0, 7);
-  const monthlyAppointments = await prisma.appointment.findMany({
-    where: {
-      date: {
-        startsWith: currentMonthPrefix,
-      },
-      tenantId,
-    },
-    include: {
-      service: true,
-    },
-  });
+  // 🌟 CALCOLO INCASSI DINAMICI PREMIUM (usa monthlyAppointments già caricato nel Promise.all)
 
   const validMonthly = monthlyAppointments.filter(
     (app) =>
@@ -441,13 +445,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
 
 
-  const allAppointments = await prisma.appointment.findMany({
-    where: {
-      tenantId,
-      date: { in: past14Days }
-    },
-    include: { service: true }
-  });
 
   const analyticsData = past14Days.map(dateStr => {
     const apps = allAppointments.filter(a => a.date === dateStr);

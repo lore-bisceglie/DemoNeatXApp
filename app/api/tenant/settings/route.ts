@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 export async function PUT(request: Request) {
   try {
@@ -7,6 +8,23 @@ export async function PUT(request: Request) {
 
     if (!tenantId) {
       return NextResponse.json({ error: "Missing tenantId" }, { status: 400 });
+    }
+
+    // Recupera il tenant per verificare l'autenticazione
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { id: true, slug: true, adminPassword: true },
+    });
+
+    if (!tenant) {
+      return NextResponse.json({ error: "Negozio non trovato" }, { status: 404 });
+    }
+
+    // Verifica il cookie di autenticazione admin
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
+    if (authCookie !== tenant.adminPassword) {
+      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 
     const updated = await prisma.tenant.update({

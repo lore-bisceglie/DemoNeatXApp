@@ -155,6 +155,7 @@ export default function Onboarding() {
   };
 
   const handleCreate = async () => {
+    if (isGenerating) return;
     setError("");
 
     if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !password.trim() || !phone.trim() || !email.trim()) {
@@ -193,8 +194,8 @@ export default function Onboarding() {
       if (!res.ok) throw new Error(data.error || "Errore durante la creazione.");
 
       setSuccessData(data);
-    } catch (err: any) {
-      setError(err.message || "Errore durante la creazione.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Errore durante la creazione.");
     } finally {
       setIsGenerating(false);
     }

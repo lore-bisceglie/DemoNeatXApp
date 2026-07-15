@@ -15,6 +15,52 @@ type Service = {
   locations?: { locationId: string; price?: number | null }[];
 };
 
+// Tipo pubblico per una sede (senza campi sensibili)
+type PublicLocation = {
+  id: string;
+  name: string;
+  address?: string | null;
+  phone?: string | null;
+  openTime?: string | null;
+  closeTime?: string | null;
+  breakStart?: string | null;
+  breakEnd?: string | null;
+  closedDays?: string | null;
+  mapsLink?: string | null;
+  isMain: boolean;
+  isActive: boolean;
+  settings?: {
+    paymentStrategy: string;
+    paymentFixedAmount: number;
+    paymentPercentage: number;
+    paymentMandatory: boolean;
+    stripeAccountId?: string | null;
+    stripeOnboardingComplete?: boolean;
+  } | null;
+};
+
+// Tipo pubblico per un membro dello staff
+type PublicStaffMember = {
+  id: string;
+  name: string;
+  services: Pick<Service, 'id' | 'name' | 'duration' | 'price'>[];
+  locations: { locationId: string }[];
+  locationId?: string | null;
+};
+
+// Tipo per la configurazione del tema colore
+type ThemeConfig = {
+  mainHex: string;
+  btnBg: string;
+  textMain: string;
+  textHover: string;
+  borderMain: string;
+  shadowMain: string;
+  avatarShadow: string;
+  badgeBg: string;
+  selection: string;
+};
+
 const activityProfiles = [
   {
     id: "all",
@@ -125,12 +171,12 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
   const [paymentMethod, setPaymentMethod] = useState<"salon" | "online">("salon");
   const [selectedActivityId, setSelectedActivityId] = useState("all");
   const [showActivityModal, setShowActivityModal] = useState(true);
-  const [locations, setLocations] = useState<any[]>([]);
+  const [locations, setLocations] = useState<PublicLocation[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState("");
   
   const router = useRouter();
 
-  const themeMap: Record<string, any> = {
+  const themeMap: Record<string, ThemeConfig> = {
     cyan: {
       mainHex: '00b4ff',
       btnBg: 'bg-[#00b4ff] hover:bg-cyan-400 text-[#050814]',
@@ -269,7 +315,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     description: "",
     city: "",
     isPremium: false,
-    staff: [] as any[],
+    staff: [] as PublicStaffMember[],
     logoUrl: "",
     themeColor: "cyan",
     storeSettings: null as {
@@ -294,9 +340,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
   const filteredStaff = useMemo(() => {
     if (!selectedLocationId) return tenantInfo.staff;
-    return tenantInfo.staff.filter((s: any) => {
+    return tenantInfo.staff.filter((s: PublicStaffMember) => {
       if (s.locations && s.locations.length > 0) {
-        return s.locations.some((l: any) => l.locationId === selectedLocationId);
+        return s.locations.some((l: { locationId: string }) => l.locationId === selectedLocationId);
       }
       if (s.locationId) return s.locationId === selectedLocationId;
       return true;
@@ -552,6 +598,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     setDateError("");
     setLoading(true);
 
+    // B3 — AbortController: cancella la fetch precedente se i parametri cambiano
+    // prima che la risposta arrivi, prevenendo la race condition dove slot sbagliati
+    // sovrascrivono quelli corretti.
+    const controller = new AbortController();
+
     const params = new URLSearchParams({
       date,
       tenantId: tenantInfo.id,
@@ -560,10 +611,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     });
     if (selectedLocationId) params.set("locationId", selectedLocationId);
     if (selectedStaffId && selectedStaffId !== "any") params.set("staffId", selectedStaffId);
-    fetch(`/api/availability?${params}`)
+    fetch(`/api/availability?${params}`, { signal: controller.signal })
       .then((res) => res.json())
       .then((data) => {
-        let fetchedSlots = data.slots || [];
+        let fetchedSlots: string[] = data.slots || [];
 
         const now = new Date();
         const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
@@ -586,13 +637,18 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         setLoading(false);
         setInitialLoad(false);
       })
-      .catch((error) => {
-        console.error("Errore:", error);
+      .catch((error: Error) => {
+        // Ignora l'errore di abort — è intenzionale e non è un vero errore
+        if (error.name === "AbortError") return;
+        console.error("Errore disponibilità:", error);
         setSlots([]);
         setIsHoliday(false);
         setLoading(false);
         setInitialLoad(false);
       });
+
+    // Cleanup: annulla la fetch in corso se il componente si aggiorna prima della risposta
+    return () => controller.abort();
   }, [date, maxDate, selectedService, tenantInfo.id, today, selectedLocationId, selectedStaffId]);
 
   const prevLocationIdRef = useRef(selectedLocationId);
@@ -663,6 +719,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     demandMode?.tone === "cyan" ? "text-cyan-300" : "text-red-400";
 
   const handleBook = async () => {
+    // B1 — Guard doppio click: se la prenotazione è già in corso, ignora il click
+    if (isBooking) return;
+
     setFormError("");
     const errors: string[] = [];
 
@@ -706,158 +765,165 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
     setIsBooking(true);
 
-    const res = await fetch("/api/book", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customerName: name,
-        customerPhone: phone,
-        date,
-        time: selectedSlot,
-        honey,
-        tenantId: tenantInfo.id,
-        serviceId: selectedService.id,
-        duration: selectedService.duration,
-        locationId: selectedLocationId || undefined,
-        staffId: selectedStaffId && selectedStaffId !== "any" ? selectedStaffId : undefined,
-        ...(isPlaygroundDemo ? { paymentMethod } : {}),
-      }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      const cancelToken = data.cancelToken;
-      const appointmentId = data.appointment?.id;
-
-      // 1. Calcola l'importo da pagare in base alle regole del negozio
-      let amountEur = 0;
-      if (tenantInfo.storeSettings?.paymentStrategy === "FIXED") {
-        amountEur = tenantInfo.storeSettings?.paymentFixedAmount || 0;
-      } else if (tenantInfo.storeSettings?.paymentStrategy === "PERCENTAGE" && selectedService.price) {
-        amountEur = (selectedService.price * (tenantInfo.storeSettings?.paymentPercentage || 0)) / 100;
-      } else if (tenantInfo.storeSettings?.paymentStrategy === "FULL" && selectedService.price) {
-        amountEur = selectedService.price;
-      }
-
-      // 2. Se c'è una scelta esplicita di pagare in sede (e la caparra non è obbligatoria)
-      const isMandatoryPayment = tenantInfo.storeSettings?.paymentStrategy !== "OFF" && tenantInfo.storeSettings?.paymentMandatory;
-      const forceOffline = !isMandatoryPayment && paymentMethod === "salon";
-
-      // 3. Se c'è un importo e non è forzato offline, chiamiamo Stripe
-      if (amountEur > 0 && appointmentId && !forceOffline) {
-        try {
-          const stripeRes = await fetch("/api/stripe/checkout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              tenantSlug: params.slug,
-              appointmentId: appointmentId,
-              amountEur: amountEur,
-              serviceName: selectedService.name
-            })
-          });
-
-          if (stripeRes.ok) {
-            const { url } = await stripeRes.json();
-            if (url) {
-              window.location.href = url; // Teletrasporto su Stripe
-              return;
-            }
-          }
-        } catch (err) {
-          console.error("Stripe redirect fallito, proseguo normalmente", err);
-        }
-      }
-
-      // Se non si passa per Stripe, procede con il classico flusso
-      if (isPlaygroundDemo) {
-        setDemoModal({
-          show: true,
+    // B2 — try/catch/finally: garantisce che `isBooking` torni false
+    // anche in caso di disconnessione o errore imprevisto di rete.
+    try {
+      const res = await fetch("/api/book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerName: name,
+          customerPhone: phone,
           date,
           time: selectedSlot,
-          serviceName: selectedService.name,
-          paymentLabel:
-            isPlaygroundDemo && paymentMethod === "online"
-              ? "Pagamento online simulato"
-              : isPlaygroundDemo
-              ? "Pagamento in sede"
-              : "Prenotazione test salvata",
-          customerName: name,
-          customerPhone: isPlaygroundDemo && !phone ? "3330000000" : phone,
-          cancelPath: `/cancel/${cancelToken}`,
-          price: selectedService.price || 0,
-        });
+          honey,
+          tenantId: tenantInfo.id,
+          serviceId: selectedService.id,
+          duration: selectedService.duration,
+          locationId: selectedLocationId || undefined,
+          staffId: selectedStaffId && selectedStaffId !== "any" ? selectedStaffId : undefined,
+          ...(isPlaygroundDemo ? { paymentMethod } : {}),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const cancelToken = data.cancelToken;
+        const appointmentId = data.appointment?.id;
+
+        // 1. Calcola l'importo da pagare in base alle regole del negozio
+        let amountEur = 0;
+        if (tenantInfo.storeSettings?.paymentStrategy === "FIXED") {
+          amountEur = tenantInfo.storeSettings?.paymentFixedAmount || 0;
+        } else if (tenantInfo.storeSettings?.paymentStrategy === "PERCENTAGE" && selectedService.price) {
+          amountEur = (selectedService.price * (tenantInfo.storeSettings?.paymentPercentage || 0)) / 100;
+        } else if (tenantInfo.storeSettings?.paymentStrategy === "FULL" && selectedService.price) {
+          amountEur = selectedService.price;
+        }
+
+        // 2. Se c'è una scelta esplicita di pagare in sede (e la caparra non è obbligatoria)
+        const isMandatoryPayment = tenantInfo.storeSettings?.paymentStrategy !== "OFF" && tenantInfo.storeSettings?.paymentMandatory;
+        const forceOffline = !isMandatoryPayment && paymentMethod === "salon";
+
+        // 3. Se c'è un importo e non è forzato offline, chiamiamo Stripe
+        if (amountEur > 0 && appointmentId && !forceOffline) {
+          try {
+            const stripeRes = await fetch("/api/stripe/checkout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                tenantSlug: params.slug,
+                appointmentId: appointmentId,
+                amountEur: amountEur,
+                serviceName: selectedService.name
+              })
+            });
+
+            if (stripeRes.ok) {
+              const { url } = await stripeRes.json();
+              if (url) {
+                window.location.href = url; // Teletrasporto su Stripe
+                return;
+              }
+            }
+          } catch (err) {
+            console.error("Stripe redirect fallito, proseguo normalmente", err);
+          }
+        }
+
+        // Se non si passa per Stripe, procede con il classico flusso
+        if (isPlaygroundDemo) {
+          setDemoModal({
+            show: true,
+            date,
+            time: selectedSlot,
+            serviceName: selectedService.name,
+            paymentLabel:
+              isPlaygroundDemo && paymentMethod === "online"
+                ? "Pagamento online simulato"
+                : isPlaygroundDemo
+                ? "Pagamento in sede"
+                : "Prenotazione test salvata",
+            customerName: name,
+            customerPhone: isPlaygroundDemo && !phone ? "3330000000" : phone,
+            cancelPath: `/cancel/${cancelToken}`,
+            price: selectedService.price || 0,
+          });
+          setName("");
+          setPhone("");
+          setSelectedSlot("");
+          setDate(today);
+          setSlots([]);
+          setHoney("");
+          return;
+        }
+
+        if (phone === "0000") {
+          router.push("/dashboard");
+          return;
+        }
+
+        const [year, month, day] = date.split("-");
+        const italianDate = `${day}/${month}/${year}`;
+        const cleanPhone = phone.replace(/\D/g, "");
+        const shopPhone = tenantInfo.phone;
+
+        const baseUrl =
+          window.location.hostname === "localhost"
+            ? "http://localhost:3000"
+            : window.location.origin;
+
+        const cancelUrl = `${baseUrl}/cancel/${cancelToken}`;
+
+        const text = encodeURIComponent(
+          `✨ *Nuova Prenotazione!*\n\n` +
+            `👤 *Cliente:* ${name}\n` +
+            `📞 *Telefono:* ${cleanPhone}\n` +
+            `📅 *Data:* ${italianDate}\n` +
+            `⏰ *Ora:* ${selectedSlot}\n` +
+            `💆‍♀️ *Servizio:* ${selectedService.name} (${selectedService.price}€)\n\n` +
+            `❌ *Per annullare in autonomia:*\n` +
+            `Puoi usare questo link fino a 2 ore prima:\n${cancelUrl}\n\n` +
+            `_Prenotazione gestita da ${tenantInfo.name}._ 🚀`
+        );
+
+        if (!tenantInfo.bookingUrl && !shopPhone) {
+          setFormError("Numero WhatsApp del negozio non configurato.");
+          return;
+        }
+        const whatsappUrl = tenantInfo.bookingUrl || `https://wa.me/${shopPhone}?text=${text}`;
+        const link = document.createElement("a");
+        link.href = whatsappUrl;
+        link.target = "_top";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
         setName("");
         setPhone("");
         setSelectedSlot("");
         setDate(today);
         setSlots([]);
         setHoney("");
-        setIsBooking(false);
-        return;
+      } else if (res.status === 429) {
+        setFormError("Troppi tentativi ravvicinati! Attendi un paio di minuti e riprova.");
+      } else {
+        try {
+          const errorData = await res.json();
+          setFormError(errorData.error || "Si è verificato un errore di connessione, riprova!");
+        } catch (e) {
+          setFormError(`Errore server: ${res.statusText}`);
+        }
       }
-
-      if (phone === "0000") {
-        router.push("/dashboard");
-        return;
-      }
-
-      const [year, month, day] = date.split("-");
-      const italianDate = `${day}/${month}/${year}`;
-      const cleanPhone = phone.replace(/\D/g, "");
-      const shopPhone = tenantInfo.phone;
-
-      const baseUrl =
-        window.location.hostname === "localhost"
-          ? "http://localhost:3000"
-          : window.location.origin;
-
-      const cancelUrl = `${baseUrl}/cancel/${cancelToken}`;
-
-      const text = encodeURIComponent(
-        `✨ *Nuova Prenotazione!*\n\n` +
-          `👤 *Cliente:* ${name}\n` +
-          `📞 *Telefono:* ${cleanPhone}\n` +
-          `📅 *Data:* ${italianDate}\n` +
-          `⏰ *Ora:* ${selectedSlot}\n` +
-          `💆‍♀️ *Servizio:* ${selectedService.name} (${selectedService.price}€)\n\n` +
-          `❌ *Per annullare in autonomia:*\n` +
-          `Puoi usare questo link fino a 2 ore prima:\n${cancelUrl}\n\n` +
-          `_Prenotazione gestita da ${tenantInfo.name}._ 🚀`
-      );
-
-      if (!tenantInfo.bookingUrl && !shopPhone) {
-        setFormError("Numero WhatsApp del negozio non configurato.");
-        setIsBooking(false);
-        return;
-      }
-      const whatsappUrl = tenantInfo.bookingUrl || `https://wa.me/${shopPhone}?text=${text}`;
-      const link = document.createElement("a");
-      link.href = whatsappUrl;
-      link.target = "_top";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      setName("");
-      setPhone("");
-      setSelectedSlot("");
-      setDate(today);
-      setSlots([]);
-      setHoney("");
-      setIsBooking(false);
-    } else if (res.status === 429) {
-      setFormError("Troppi tentativi ravvicinati! Attendi un paio di minuti e riprova.");
-      setIsBooking(false);
-    } else {
-      try {
-        const errorData = await res.json();
-        setFormError(errorData.error || "Si è verificato un errore di connessione, riprova!");
-      } catch (e) {
-        setFormError(`Errore server: ${res.statusText}`);
-      }
+    } catch (networkError) {
+      // Errore di rete (disconnessione, timeout, ecc.)
+      console.error("Errore di rete durante la prenotazione:", networkError);
+      setFormError("Errore di connessione. Controlla la rete e riprova.");
+    } finally {
+      // B2 — Garantisce sempre il reset del flag di prenotazione,
+      // anche se l'utente ha perso la connessione a metà operazione.
       setIsBooking(false);
     }
   };

@@ -42,11 +42,25 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
         ? "expired"
         : tenant.trialStatus;
 
+    // Rimuovi i campi sensibili prima di restituire i dati al client pubblico
+    const {
+      adminPassword,
+      ownerPasswordHash,
+      stripeCustomerId,
+      stripeSubscriptionId,
+      referralCode,
+      referredByCode,
+      ownerEmail,
+      staffSheetUrl,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ...publicTenant
+    } = tenant;
+
     if (isTrialExpired && !isPremium) {
-      return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: true, isPremium });
+      return NextResponse.json({ ...publicTenant, trialStatus: effectiveTrialStatus, trialExpired: true, isPremium });
     }
 
-    return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium }, {
+    return NextResponse.json({ ...publicTenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium }, {
       headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
     });
   } catch (error) {
