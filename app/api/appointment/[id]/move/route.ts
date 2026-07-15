@@ -60,6 +60,7 @@ export async function POST(
       select: {
         time: true,
         endTime: true,
+        staffId: true,
       },
     });
 
@@ -67,6 +68,8 @@ export async function POST(
       if (app.time === "ALL_DAY") return true;
       const appStart = timeToMins(app.time);
       const appEnd = app.endTime ? timeToMins(app.endTime) : appStart + 15;
+      // Se entrambi hanno staffId diverso, non sono in conflitto
+      if (appointment.staffId && app.staffId && appointment.staffId !== app.staffId) return false;
       return Math.max(startMins, appStart) < Math.min(endMins, appEnd);
     });
 

@@ -171,7 +171,9 @@ export async function POST(request: Request) {
 
     // 🌟 CALCOLO FINE SERVIZIO
     const startMins = timeToMins(time);
-    const endMins = startMins + parseInt(duration, 10);
+    const parsedDuration = parseInt(String(duration ?? "30"), 10);
+    const safeDuration = isNaN(parsedDuration) || parsedDuration <= 0 ? 30 : parsedDuration;
+    const endMins = startMins + safeDuration;
     const endTime = minsToTime(endMins);
 
     // 🌟 VERIFICA SOVRAPPOSIZIONE SOLO PER QUESTA SEDE
@@ -219,14 +221,6 @@ export async function POST(request: Request) {
           }
         } catch (e) {}
       }
-    }
-
-    if (!isAdmin && !isPlaygroundDemo && !customerPhone) {
-      return NextResponse.json({ error: "Inserisci un numero di telefono valido." }, { status: 400 });
-    }
-
-    if (!isPlaygroundDemo && customerName.trim().length < 3) {
-      return NextResponse.json({ error: "Il nome inserito è troppo corto." }, { status: 400 });
     }
 
     const cleanPhone = customerPhone ? customerPhone.replace(/\D/g, '') : "0000000000";

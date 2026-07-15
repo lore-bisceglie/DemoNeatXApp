@@ -94,7 +94,15 @@ export async function POST(
       // 🌟 AVVISO AUTOMATICO LISTA D'ATTESA (FIFO)
       if (appointment.tenantId && appointment.date) {
         const waitlistEntry = await prisma.waitlist.findFirst({
-          where: { tenantId: appointment.tenantId, date: appointment.date },
+          where: {
+            tenantId: appointment.tenantId,
+            date: appointment.date,
+            // Se l'utente ha specificato un orario preferito, usa quello; altrimenti qualsiasi per quella data
+            OR: [
+              { preferredTime: appointment.time },
+              { preferredTime: null },
+            ]
+          },
           orderBy: { createdAt: "asc" },
         });
 

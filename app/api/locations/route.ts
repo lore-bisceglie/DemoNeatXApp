@@ -170,7 +170,7 @@ export async function POST(request: Request) {
     await prisma.locationSettings.create({
       data: {
         locationId: location.id,
-        smsCredits: 50,
+        smsCredits: 0,
         paymentStrategy: 'OFF',
         paymentFixedAmount: 5.0,
         paymentPercentage: 20,
