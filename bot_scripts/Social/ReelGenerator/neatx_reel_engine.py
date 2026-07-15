@@ -364,8 +364,8 @@ def monta_reel(
     print(f"\n[🎬] Avvio montaggio (durata {duration:.1f}s)...")
 
     # ── SFONDO ──────────────────────────────────────────────────
-    # Cerca immagini B-Roll nella cartella assets
-    broll_images = list(ASSETS_DIR.glob("*.jpg")) + list(ASSETS_DIR.glob("*.png"))
+    # Usa SOLO le immagini premium generate da noi per il Reel
+    broll_images = list(ASSETS_DIR.glob("neatx_reel_*.jpg"))
     
     if broll_images:
         # Usa le immagini premium che abbiamo generato
@@ -548,6 +548,7 @@ async def genera_reel_completo():
     script_text = None
     hook_text = None
     cta_text = "Prova gratis su neatx.store"
+    cover_title = "NEATX\nAPP PRENOTAZIONI"
     
     reel_data_path = BASE_DIR / "reel_data.json"
     if reel_data_path.exists():
@@ -557,6 +558,7 @@ async def genera_reel_completo():
                 niche = data.get("niche")
                 script_text = data.get("script_text")
                 hook_text = data.get("hook_text")
+                cover_title = data.get("cover_title", cover_title)
                 print(f"[🔗] Dati ricevuti da auto_bot.py! Niche: {niche}")
         except:
             pass
@@ -635,6 +637,14 @@ async def genera_reel_completo():
             f.unlink()
         except:
             pass
+            
+    # ── GENERA COPERTINA INSTAGRAM ──
+    print("\n[🖼️] Generazione copertina per Instagram...")
+    try:
+        import subprocess
+        subprocess.run(["python", "create_cover.py", cover_title], check=True)
+    except Exception as e:
+        print(f"[!] Errore generazione copertina: {e}")
     
     print(f"\n{'═'*60}")
     print(f"  ✅ REEL PRONTO!")
