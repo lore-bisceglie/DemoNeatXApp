@@ -71,7 +71,7 @@ async function run() {
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const dateStr = tomorrow.toISOString().split("T")[0];
 
-  console.log("  Setup completato:", { slug, tenantId, svcId, staffId });
+  console.log("  Setup completato:", { slug, tenantId, svcId, staffId, adminPassword });
 
   // ─────────────────────────────────────────────
   // API CANCELLO PRENOTAZIONE

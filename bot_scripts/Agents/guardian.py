@@ -87,13 +87,18 @@ class GuardianAgent(BaseAgent):
         # 6. Controlla lead reali dal DB (via API)
         try:
             import urllib.request
-            resp = urllib.request.urlopen("https://neatx.store/api/agents/lead-stats", timeout=10)
+            req = urllib.request.Request(
+                "https://www.neatx.store/api/agents/lead-stats",
+                headers={"x-admin-password": os.environ.get("SUPERADMIN_PASSWORD", "")}
+            )
+            resp = urllib.request.urlopen(req, timeout=10)
             lead_data = json.loads(resp.read())
             report["checks"]["leads_pipeline"] = {
                 "ok": True,
                 "detail": f"{lead_data.get('total', 0)} totali, {lead_data.get('newLeads', 0)} nuovi",
             }
-        except Exception:
+        except Exception as e:
+            self.log(f"Errore API lead-stats: {e}")
             report["checks"]["leads_pipeline"] = {
                 "ok": True,
                 "detail": "API non raggiungibile",
