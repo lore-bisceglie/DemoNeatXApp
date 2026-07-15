@@ -338,10 +338,17 @@ def monta_reel(
     - CTA finale con animazione
     - Musica ambient in sottofondo
     """
-    from moviepy import (
-        VideoFileClip, AudioFileClip, ImageClip, ColorClip,
-        CompositeVideoClip, concatenate_videoclips, TextClip
-    )
+    try:
+        from moviepy.editor import (
+            VideoFileClip, AudioFileClip, ImageClip, ColorClip,
+            CompositeVideoClip, concatenate_videoclips, TextClip
+        )
+    except ImportError:
+        # Fallback per versioni più recenti di MoviePy (v2+)
+        from moviepy import (
+            VideoFileClip, AudioFileClip, ImageClip, ColorClip,
+            CompositeVideoClip, concatenate_videoclips, TextClip
+        )
     from PIL import Image, ImageDraw, ImageFont, ImageFilter
     import numpy as np
 
@@ -371,7 +378,10 @@ def monta_reel(
                 pass
         
         if bg_clips:
-            from moviepy import concatenate_videoclips
+            try:
+                from moviepy.editor import concatenate_videoclips
+            except ImportError:
+                from moviepy import concatenate_videoclips
             bg = concatenate_videoclips(bg_clips)
         else:
             bg = ColorClip((VIDEO_W, VIDEO_H), color=(5, 8, 20)).with_duration(duration)
@@ -447,7 +457,10 @@ def crea_sottotitoli_animati(testo: str, durata_totale: float):
     Crea sottotitoli word-by-word stile CapCut:
     ogni parola appare evidenziata in ciano mentre viene pronunciata
     """
-    from moviepy import TextClip, ImageClip
+    try:
+        from moviepy.editor import TextClip
+    except ImportError:
+        from moviepy import TextClip
     from PIL import Image, ImageDraw, ImageFont
     import numpy as np
     
@@ -495,7 +508,10 @@ def crea_sottotitoli_animati(testo: str, durata_totale: float):
 
 def crea_cta_finale(durata_totale: float):
     """CTA finale che compare negli ultimi 3 secondi"""
-    from moviepy import TextClip
+    try:
+        from moviepy.editor import TextClip
+    except ImportError:
+        from moviepy import TextClip
     
     try:
         cta = (TextClip(
@@ -511,7 +527,10 @@ def crea_cta_finale(durata_totale: float):
                .with_position(("center", VIDEO_H - 180)))
         return cta
     except:
-        from moviepy import ColorClip
+        try:
+            from moviepy.editor import ColorClip
+        except ImportError:
+            from moviepy import ColorClip
         return ColorClip((1, 1), color=(0,0,0), duration=0.1)
 
 
