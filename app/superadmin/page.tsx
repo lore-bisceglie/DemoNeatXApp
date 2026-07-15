@@ -3,17 +3,34 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
+type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never";
+
+const generateSecurePassword = () => {
+  const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
+  const lower = "abcdefghjkmnpqrstuvwxyz";
+  const digits = "23456789";
+  const special = "!@#$";
+  const all = upper + lower + digits + special;
+  const pwd = [
+    upper[Math.floor(Math.random() * upper.length)],
+    lower[Math.floor(Math.random() * lower.length)],
+    digits[Math.floor(Math.random() * digits.length)],
+    special[Math.floor(Math.random() * special.length)],
+    ...Array.from({ length: 8 }, () => all[Math.floor(Math.random() * all.length)]),
+  ];
+  return pwd.sort(() => Math.random() - 0.5).join("");
+};
+
 export default function SuperAdminPage() {
   const [tenants, setTenants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [template, setTemplate] = useState("barbiere");
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState("");
   const [tenantPassword, setTenantPassword] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
@@ -24,232 +41,130 @@ export default function SuperAdminPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Edit modal
+  const [filterPlan, setFilterPlan] = useState<PlanFilter>("all");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
   const [editing, setEditing] = useState(false);
-
   const [stats, setStats] = useState({ mrr: 0, payingCount: 0, trialCount: 0 });
-
   const [sortBy, setSortBy] = useState<"date" | "name" | "plan">("date");
   const [detailTenant, setDetailTenant] = useState<any>(null);
-
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
 
+  const now = new Date();
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const totalCount = tenants.length;
+  const registeredToday = tenants.filter(t => new Date(t.createdAt) >= todayStart).length;
+  const neverActivated = tenants.filter(t => !t.trialEndsAt && t.plan !== "pro" && t.plan !== "elite").length;
+  const expiredCount = tenants.filter(t => {
+    const exp = t.trialEndsAt ? new Date(t.trialEndsAt) : null;
+    return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
+  }).length;
+
   const fetchTenants = async (pwd: string) => {
     try {
-      const res = await fetch('/api/superadmin/list', {
-        headers: { 'x-admin-password': pwd }
-      });
-      if (res.status === 401) {
-        setAuthError("Password errata");
-        setIsAuthenticated(false);
-        setLoading(false);
-        return;
-      }
-      if (!res.ok) {
-        const errData = await res.json();
-        setAuthError("Errore API: " + (errData.error || res.statusText));
-        setIsAuthenticated(false);
-        setLoading(false);
-        return;
-      }
+      const res = await fetch("/api/superadmin/list", { headers: { "x-admin-password": pwd } });
+      if (res.status === 401) { setAuthError("Password errata"); setIsAuthenticated(false); setLoading(false); return; }
+      if (!res.ok) { const err = await res.json(); setAuthError("Errore: " + (err.error || res.statusText)); setIsAuthenticated(false); setLoading(false); return; }
       const data = await res.json();
       setTenants(data.tenants || (Array.isArray(data) ? data : []));
       if (data.stats) setStats(data.stats);
-      
-      // Imposta il cookie per far apparire il Godmode Hub in tutto il sito
       document.cookie = "superadmin_god_eye=true; path=/; max-age=86400";
       sessionStorage.setItem("superadmin_pwd", pwd);
-      
       setIsAuthenticated(true);
       setAuthError("");
-    } catch (e: any) {
-      console.error(e);
-      setAuthError(e.message);
+    } catch (e: unknown) {
+      setAuthError(e instanceof Error ? e.message : "Errore");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    // Non carichiamo al mount, aspettiamo la password
-    setLoading(false);
-  }, []);
+  useEffect(() => { setLoading(false); }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    fetchTenants(password);
-  };
+  const handleLogin = (e: React.FormEvent) => { e.preventDefault(); setLoading(true); fetchTenants(password); };
 
   const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setCreating(true);
-    setError("");
-
+    e.preventDefault(); setCreating(true); setError("");
     try {
-      const res = await fetch('/api/superadmin', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-admin-password': password 
-        },
-        body: JSON.stringify({ 
-          name, slug, template, adminPassword: tenantPassword, ownerEmail,
-          phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
-          logoUrl, themeColor
-        })
+      const res = await fetch("/api/superadmin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": password },
+        body: JSON.stringify({ name, slug, template, adminPassword: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor })
       });
-
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Errore sconosciuto");
-      }
-
-      setName("");
-      setSlug("");
-      setTenantPassword("");
-      setPhone("");
-      setAddress("");
-      setInstagramUrl("");
-      setMapsLink("");
-      setDescription("");
-      setOpenTime("");
-      setCloseTime("");
-      setLogoUrl("");
-      setThemeColor("cyan");
-      fetchTenants(password); // Aggiorna la lista
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setCreating(false);
-    }
+      if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
+      setName(""); setSlug(""); setTenantPassword(""); setPhone(""); setAddress("");
+      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan");
+      fetchTenants(password);
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : "Errore"); }
+    finally { setCreating(false); }
   };
 
   const handleDelete = async (tenantId: string, tenantName: string) => {
-    if (!confirm(`Sei sicuro di voler ELIMINARE DEFINITIVAMENTE il negozio "${tenantName}"? Questa operazione è irreversibile e cancellerà anche tutti gli appuntamenti e i servizi.`)) return;
-    
+    if (!confirm(`Eliminare DEFINITIVAMENTE "${tenantName}"? Irreversibile.`)) return;
     try {
-      const res = await fetch('/api/superadmin/delete', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId })
-      });
+      const res = await fetch("/api/superadmin/delete", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore durante la cancellazione');
+      if (!res.ok) throw new Error(data.error || "Errore");
       fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
   const handleMakePlan = async (tenantId: string, plan: string) => {
-    let msg = `Vuoi promuovere questo cliente al piano ${plan.toUpperCase()}?`;
-    if (plan === 'basic') msg = 'Vuoi riportare questo cliente al piano Basic/Trial?';
-    if (plan === 'expire') msg = 'Vuoi forzare la scadenza della prova gratuita per testare il Paywall?';
-    
+    let msg = `Promuovere al piano ${plan.toUpperCase()}?`;
+    if (plan === "basic") msg = "Riportare al Trial (14 gg)?";
+    if (plan === "expire") msg = "Forzare scadenza trial (Paywall)?";
     if (!confirm(msg)) return;
     try {
-      const res = await fetch('/api/superadmin/plan', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, plan })
-      });
+      const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId, plan }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
+      if (!res.ok) throw new Error(data.error || "Errore");
       fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
   const handleAddSms = async (tenantId: string) => {
-    const amountStr = prompt("Quanti crediti SMS vuoi aggiungere (es. 100, 500)?");
+    const amountStr = prompt("Quanti crediti SMS? (es. 100, 500)");
     if (!amountStr) return;
     const amount = parseInt(amountStr, 10);
     if (isNaN(amount) || amount <= 0) return;
-
     try {
-      const res = await fetch('/api/superadmin/sms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, amount })
-      });
+      const res = await fetch("/api/superadmin/sms", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId, amount }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
-      alert(`Fatto! Ora questo salone ha ${data.newTotal} crediti SMS.`);
+      if (!res.ok) throw new Error(data.error || "Errore");
+      alert(`Crediti aggiornati: ${data.newTotal}`);
       fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
-  const handleTenantSms = async (tenantId: string) => {
-    const amountStr = prompt("Quanti crediti SMS vuoi aggiungere?");
-    if (!amountStr) return;
-    const amount = parseInt(amountStr, 10);
-    if (isNaN(amount) || amount <= 0) return;
-
-    try {
-      const res = await fetch('/api/superadmin/sms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ tenantId, amount })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
-      alert(`Fatto! Crediti aggiornati: ${data.newTotal}`);
-      fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    }
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
   const handleImpersonate = (slug: string, adminPassword: string | null) => {
-    if (!adminPassword) {
-      alert("Questo tenant non ha ancora una password admin generata.");
-      return;
-    }
-    const isLocal = window.location.hostname.includes('localhost');
-    const domainStr = isLocal ? '' : `; domain=.neatx.store`;
-    document.cookie = `admin_auth_${slug}=${adminPassword}; path=/; max-age=86400${domainStr}`;
-    
-    const url = isLocal ? `http://localhost:3000/t/${slug}/admin` : `https://${slug}.neatx.store/admin`;
-    window.open(url, '_blank');
+    if (!adminPassword) { alert("Nessuna password admin configurata."); return; }
+    const isLocal = window.location.hostname.includes("localhost");
+    document.cookie = `admin_auth_${slug}=${adminPassword}; path=/; max-age=86400${isLocal ? "" : "; domain=.neatx.store"}`;
+    window.open(isLocal ? `http://localhost:3000/t/${slug}/admin` : `https://${slug}.neatx.store/admin`, "_blank");
+  };
+
+  const handleCopyCredentials = (tenant: any) => {
+    const pwd = tenant.adminPassword || "(non impostata)";
+    const text = `Negozio: ${tenant.name}\nSito: https://${tenant.slug}.neatx.store\nAdmin: https://${tenant.slug}.neatx.store/admin\nPassword: ${pwd}`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(tenant.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => prompt("Copia le credenziali:", text));
   };
 
   const openEdit = (tenant: any) => {
     setEditTarget(tenant);
     setEditData({
-      name: tenant.name || '',
-      ownerEmail: tenant.ownerEmail || '',
-      phone: tenant.phone || '',
-      address: tenant.address || '',
-      instagramUrl: tenant.instagramUrl || '',
-      mapsLink: tenant.mapsLink || '',
-      description: tenant.description || '',
-      openTime: tenant.openTime || '',
-      closeTime: tenant.closeTime || '',
-      logoUrl: tenant.logoUrl || '',
-      themeColor: tenant.themeColor || 'cyan',
-      adminPassword: tenant.adminPassword || '',
+      name: tenant.name || "", ownerEmail: tenant.ownerEmail || "", phone: tenant.phone || "",
+      address: tenant.address || "", instagramUrl: tenant.instagramUrl || "", mapsLink: tenant.mapsLink || "",
+      description: tenant.description || "", openTime: tenant.openTime || "", closeTime: tenant.closeTime || "",
+      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", adminPassword: tenant.adminPassword || ""
     });
   };
 
@@ -257,685 +172,462 @@ export default function SuperAdminPage() {
     if (!editTarget) return;
     setEditing(true);
     try {
-      const res = await fetch('/api/superadmin', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-password': password
-        },
-        body: JSON.stringify({ id: editTarget.id, ...editData })
-      });
+      const res = await fetch("/api/superadmin", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ id: editTarget.id, ...editData }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore aggiornamento');
+      if (!res.ok) throw new Error(data.error || "Errore aggiornamento");
       setEditTarget(null);
       fetchTenants(password);
-    } catch (e: any) {
-      alert(e.message);
-    } finally {
-      setEditing(false);
-    }
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
+    finally { setEditing(false); }
   };
 
   const handleExportCsv = () => {
-    const sorted = getSortedTenants();
-    const headers = ["Nome", "Slug", "Piano", "Email", "Telefono", "Servizi", "SMS", "Stripe", "Creato il", "Trial Scade"];
-    const rows = sorted.map(t => [
-      t.name,
-      t.slug,
-      t.plan,
-      t.ownerEmail || '',
-      t.phone || '',
-      t.services?.length || 0,
-      t.storeSettings?.smsCredits || 0,
-      t.storeSettings?.stripeOnboardingComplete ? 'Sì' : 'No',
-      new Date(t.createdAt).toLocaleDateString('it-IT'),
-      t.trialEndsAt ? new Date(t.trialEndsAt).toLocaleDateString('it-IT') : '-',
-    ]);
-    const csv = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `tenant-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click(); URL.revokeObjectURL(url);
+    const rows = getSortedTenants().map(t => [t.name, t.slug, t.plan, t.ownerEmail || "", t.phone || "", t.services?.length || 0, t.storeSettings?.smsCredits || 0, t.storeSettings?.stripeOnboardingComplete ? "Si" : "No", new Date(t.createdAt).toLocaleDateString("it-IT"), t.trialEndsAt ? new Date(t.trialEndsAt).toLocaleDateString("it-IT") : "-"]);
+    const csv = [["Nome", "Slug", "Piano", "Email", "Telefono", "Servizi", "SMS", "Stripe", "Creato", "Trial Scade"].join(","), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(","))].join("\n");
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })), download: `tenant-${new Date().toISOString().split("T")[0]}.csv` });
+    a.click();
   };
 
   const getSortedTenants = () => {
-    const filtered = tenants.filter(t =>
-      t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (t.ownerEmail && t.ownerEmail.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      t.slug.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    const sorted = [...filtered].sort((a, b) => {
-      if (sortBy === 'name') return a.name.localeCompare(b.name);
-      if (sortBy === 'plan') return (a.plan || 'basic').localeCompare(b.plan || 'basic');
+    return tenants.filter(t => {
+      const q = searchTerm.toLowerCase();
+      if (!t.name.toLowerCase().includes(q) && !(t.ownerEmail?.toLowerCase().includes(q)) && !t.slug.toLowerCase().includes(q)) return false;
+      if (filterPlan === "all") return true;
+      if (filterPlan === "pro") return t.plan === "pro";
+      if (filterPlan === "elite") return t.plan === "elite";
+      const exp = t.trialEndsAt ? new Date(t.trialEndsAt) : null;
+      if (filterPlan === "trial") return exp && exp > now && t.plan !== "pro" && t.plan !== "elite";
+      if (filterPlan === "expired") return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
+      if (filterPlan === "never") return !t.trialEndsAt && t.plan !== "pro" && t.plan !== "elite";
+      return true;
+    }).sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "plan") return (a.plan || "basic").localeCompare(b.plan || "basic");
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-    return sorted;
   };
+
+  const THEME_OPTIONS: [string, string][] = [["cyan","🔵 Cyan"],["rose","🌸 Rosa"],["emerald","🌿 Smeraldo"],["amber","💛 Ambra"],["purple","💜 Viola"],["slate","🪨 Grigio"],["red","🔴 Rosso"],["indigo","🌌 Indaco"],["teal","🌊 Verde Acqua"],["fuchsia","🌺 Fucsia"]];
+  const IC = "w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500";
+  const ISM = "w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500";
 
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
-        <form onSubmit={handleLogin} className="bg-slate-900 border border-slate-800 p-8 rounded-xl max-w-md w-full shadow-2xl">
-          <h1 className="text-2xl font-bold text-white mb-6 text-center">Super Admin Login</h1>
-          <div className="relative mb-4">
-            <input 
-              type={showPassword ? "text" : "password"} 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Inserisci la password segreta"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500"
-            />
-            <button 
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
-            >
-              {showPassword ? '👁️' : '👁️‍🗨️'}
-            </button>
+        <form onSubmit={handleLogin} className="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md w-full shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="text-5xl mb-3">🔐</div>
+            <h1 className="text-2xl font-bold text-white">Super Admin</h1>
+            <p className="text-slate-400 text-sm mt-1">NeatX SaaS — Godmode</p>
           </div>
-          {authError && <div className="text-red-400 text-sm mb-4">{authError}</div>}
-          <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg">
-            {loading ? "Verifica..." : "Entra"}
-          </button>
+          <div className="relative mb-4">
+            <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Password segreta" autoFocus className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500" />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">{showPassword ? "👁️" : "👁️‍🗨️"}</button>
+          </div>
+          {authError && <div className="text-red-400 text-sm mb-4 bg-red-500/10 border border-red-500/20 p-3 rounded-lg">{authError}</div>}
+          <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition disabled:opacity-50">{loading ? "Verifica..." : "Entra nel Pannello"}</button>
         </form>
       </div>
     );
   }
 
+  const PLAN_FILTERS: { key: PlanFilter; label: string; active: string }[] = [
+    { key: "all",     label: `Tutti (${totalCount})`,              active: "bg-slate-600 text-white" },
+    { key: "pro",     label: `Pro (${stats.payingCount})`,         active: "bg-blue-500/40 text-blue-200 border border-blue-400/50" },
+    { key: "elite",   label: "Elite",                              active: "bg-fuchsia-500/40 text-fuchsia-200 border border-fuchsia-400/50" },
+    { key: "trial",   label: `Trial (${stats.trialCount})`,       active: "bg-amber-500/30 text-amber-200 border border-amber-400/50" },
+    { key: "expired", label: `Scaduti (${expiredCount})`,          active: "bg-red-500/30 text-red-200 border border-red-400/50" },
+    { key: "never",   label: `Mai attivati (${neverActivated})`,   active: "bg-slate-700 text-slate-300 border border-slate-600" },
+  ];
+
   return (
-    <><div className="min-h-screen bg-[#050814] text-slate-200 p-8 font-sans w-full">
-      <div className="w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-          <div>
-            <div className="flex items-center gap-4 mb-2">
-              <Link href="/" className="text-sm font-medium flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">
-                🏠 Torna al Sito Pubblico
-              </Link>
-              <Link href="/superadmin/agents" className="text-sm font-medium flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">
-                🤖 Agenti
-              </Link>
+    <>
+      <div className="min-h-screen bg-[#050814] text-slate-200 p-4 md:p-8 font-sans w-full">
+        <div className="w-full">
+
+          {/* HEADER */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <Link href="/" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🏠 Sito</Link>
+              <Link href="/superadmin/agents" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🤖 Agenti</Link>
+              <button onClick={() => { setLoading(true); fetchTenants(password); }} className="text-sm font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-full transition-colors">🔄 Aggiorna</button>
             </div>
-            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
-              Pannello Super Admin (NeatX SaaS)
-            </h1>
-            <p className="text-slate-400">Pannello di controllo globale (Godmode)</p>
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Pannello Super Admin</h1>
+            <p className="text-slate-400 text-sm mt-0.5">NeatX SaaS — Godmode Control Panel</p>
           </div>
-      </div>
 
-      {/* GOD-EYE STATS */}
-      <div className="w-full mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
-          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">MRR (Fatturato Ricorrente)</h3>
-          <div className="text-4xl font-extrabold text-emerald-400 relative">€ {stats.mrr ? stats.mrr.toLocaleString('it-IT') : 0}</div>
-        </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
-          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Saloni Paganti (Attivi)</h3>
-          <div className="text-4xl font-extrabold text-white relative">{stats.payingCount || 0}</div>
-        </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg relative overflow-hidden group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-500 opacity-0 group-hover:opacity-20 transition-opacity blur"></div>
-          <h3 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest relative">Saloni in Trial (Lead)</h3>
-          <div className="text-4xl font-extrabold text-amber-400 relative">{stats.trialCount || 0}</div>
-        </div>
-      </div>
-
-      <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Colonna Creazione (1/4) */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
-            <h2 className="text-xl font-semibold mb-4 text-white">Crea Nuovo Cliente</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div>
-                <label className="block text-sm text-slate-400 mb-1">Nome Attività</label>
-                <input 
-                  type="text" 
-                  value={name} 
-                  onChange={e => setName(e.target.value)} 
-                  placeholder="Es. Studio Dentistico Rossi" 
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500" 
-                  required 
-                />
+          {/* STATS 6 CARDS */}
+          <div className="w-full mb-8 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+            {[
+              { label: "MRR", value: `€${stats.mrr?.toLocaleString("it-IT") || 0}`, cls: "text-emerald-400", grd: "from-emerald-500 to-teal-500" },
+              { label: "Paganti", value: stats.payingCount || 0, cls: "text-white", grd: "from-indigo-600 to-purple-600" },
+              { label: "In Trial", value: stats.trialCount || 0, cls: "text-amber-400", grd: "from-amber-500 to-orange-500" },
+              { label: "Totale", value: totalCount, cls: "text-cyan-400", grd: "from-cyan-500 to-blue-500" },
+              { label: "Oggi", value: registeredToday, cls: "text-green-400", grd: "from-green-500 to-emerald-500", sub: "nuove reg." },
+              { label: "Scaduti", value: expiredCount, cls: "text-red-400", grd: "from-red-500 to-rose-500", sub: "trial scaduto" },
+            ].map(s => (
+              <div key={s.label} className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative overflow-hidden group">
+                <div className={`absolute -inset-1 bg-gradient-to-r ${s.grd} opacity-0 group-hover:opacity-20 transition-opacity blur`} />
+                <h3 className="text-slate-400 text-[10px] font-medium mb-1 uppercase tracking-widest relative">{s.label}</h3>
+                <div className={`text-2xl font-extrabold relative ${s.cls}`}>{s.value}</div>
+                {s.sub && <p className="text-slate-500 text-[9px] mt-0.5 relative">{s.sub}</p>}
               </div>
+            ))}
+          </div>
 
-              <div>
-                <label className="block text-sm text-slate-400 mb-1">Email Proprietario</label>
-                <input 
-                  type="email" 
-                  value={ownerEmail} 
-                  onChange={e => setOwnerEmail(e.target.value)} 
-                  placeholder="Es. mario.rossi@email.com" 
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500"
-                />
-                <p className="text-xs text-slate-500 mt-1">Se inserita, invieremo in automatico l'email di Benvenuto con le credenziali.</p>
-              </div>
+          <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-              <div>
-                <label className="block text-sm text-slate-400 mb-1">Link Personalizzato (Slug)</label>
-                <div className="flex items-center">
-                  <span className="text-slate-500 bg-slate-950 border border-r-0 border-slate-800 rounded-l-lg p-3 text-sm">https://</span>
-                  <input 
-                    type="text" 
-                    value={slug} 
-                    onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} 
-                    placeholder="studio-rossi" 
-                    className="w-full bg-slate-950 border border-slate-800 p-3 text-white focus:outline-none focus:border-indigo-500"
-                    required 
-                  />
-                  <span className="text-slate-500 bg-slate-950 border border-l-0 border-slate-800 rounded-r-lg p-3 text-sm">.neatx.store</span>
+            {/* FORM CREAZIONE */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
+              <h2 className="text-xl font-semibold mb-5 text-white">➕ Nuovo Cliente</h2>
+              <form onSubmit={handleCreate} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Nome Attività *</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Es. Studio Dentistico Rossi" className={IC} required />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm text-slate-400 mb-1">Password d'Accesso Iniziale</label>
-                <input 
-                  type="text" 
-                  value={tenantPassword} 
-                  onChange={e => setTenantPassword(e.target.value)} 
-                  placeholder="Es. Segreta2026!" 
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500"
-                  required 
-                />
-                <p className="text-xs text-slate-500 mt-1">La password che il cliente userà per accedere a admin.</p>
-              </div>
-
-              <div>
-                <label className="block text-sm text-slate-400 mb-1">Template Servizi</label>
-                <select 
-                  value={template} 
-                  onChange={e => setTemplate(e.target.value)} 
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500"
-                >
-                  <option value="barbiere">💈 Barbiere (Taglio, Barba)</option>
-                  <option value="parrucchiere">✂️ Parrucchiere (Taglio Donna, Colore)</option>
-                  <option value="estetista">💅 Centro Estetico / Nails (Massaggi, Unghie)</option>
-                  <option value="medico">🩺 Medico / Fisioterapista (Visite, Controlli)</option>
-                  <option value="nutrizionista">🥗 Nutrizionista (Prima Visita, Dieta)</option>
-                  <option value="psicologo">🛋️ Psicologo (Seduta, Prima Visita)</option>
-                  <option value="personaltrainer">🏋️ Personal Trainer (Lezioni Singole)</option>
-                  <option value="tatuatore">🖋️ Tatuatore / Piercer (Tatuaggi, Consulenze)</option>
-                  <option value="consulente">💼 Consulente / Avvocato (Consulenze 30/60m)</option>
-                  <option value="toelettatura">🐕 Dog Sitter / Toelettatura (Bagno, Taglio)</option>
-                  <option value="vuoto">Vuoto (Solo Standard)</option>
-                </select>
-              </div>
-
-              <details className="group border border-slate-800 rounded-lg bg-slate-950 overflow-hidden">
-                <summary className="cursor-pointer p-4 font-medium text-slate-300 hover:text-white hover:bg-slate-900 transition-all focus:outline-none">
-                  ⚙️ Impostazioni Avanzate (Opzionali)
-                </summary>
-                <div className="p-4 pt-0 space-y-4 border-t border-slate-800 mt-2">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Telefono (WhatsApp)</label>
-                      <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Es. +39 333 1234567" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Indirizzo Fisico</label>
-                      <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="Es. Via Roma 1, Milano" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Link Instagram</label>
-                      <input type="url" value={instagramUrl} onChange={e => setInstagramUrl(e.target.value)} placeholder="https://instagram.com/tuoprofilo" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Link Google Maps</label>
-                      <input type="url" value={mapsLink} onChange={e => setMapsLink(e.target.value)} placeholder="https://maps.google.com/..." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Orario Apertura</label>
-                      <input type="time" value={openTime} onChange={e => setOpenTime(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Orario Chiusura</label>
-                      <input type="time" value={closeTime} onChange={e => setCloseTime(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                    </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Email Proprietario</label>
+                  <input type="email" value={ownerEmail} onChange={e => setOwnerEmail(e.target.value)} placeholder="mario@email.com" className={IC} />
+                  <p className="text-xs text-slate-500 mt-1">Inviamo email di benvenuto automatica se inserita.</p>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Link (Slug) *</label>
+                  <div className="flex items-center">
+                    <span className="text-slate-500 bg-slate-950 border border-r-0 border-slate-800 rounded-l-lg p-3 text-xs whitespace-nowrap">https://</span>
+                    <input type="text" value={slug} onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} placeholder="studio-rossi" className="w-full bg-slate-950 border border-slate-800 p-3 text-white focus:outline-none focus:border-indigo-500 text-sm" required />
+                    <span className="text-slate-500 bg-slate-950 border border-l-0 border-slate-800 rounded-r-lg p-3 text-xs whitespace-nowrap">.neatx.store</span>
                   </div>
-                  <div>
-                    <label className="block text-xs text-slate-400 mb-1">Descrizione Negozio (Sotto il titolo)</label>
-                    <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Es. Il tuo stile impeccabile, a portata di click." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Password Admin *</label>
+                  <div className="flex gap-2">
+                    <input type="text" value={tenantPassword} onChange={e => setTenantPassword(e.target.value)} placeholder="Es. Segreta2026!" className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 font-mono text-sm" required />
+                    <button type="button" onClick={() => setTenantPassword(generateSecurePassword())} title="Genera password sicura" className="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 px-3 rounded-lg text-lg transition shrink-0">🎲</button>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-4">
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Link Logo / Foto (o Carica dal PC)</label>
-                      <div className="flex gap-2">
-                        <input type="url" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://... o clicca l'icona 👉" className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
-                        <label className="bg-slate-800 hover:bg-slate-700 cursor-pointer border border-slate-700 rounded-md px-3 flex items-center justify-center transition-colors" title="Carica foto dal PC">
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            className="hidden" 
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (!file) return;
+                  <p className="text-xs text-slate-500 mt-1">Clicca 🎲 per generare una password sicura.</p>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Template Servizi</label>
+                  <select value={template} onChange={e => setTemplate(e.target.value)} className={IC}>
+                    <option value="barbiere">💈 Barbiere</option>
+                    <option value="parrucchiere">✂️ Parrucchiere</option>
+                    <option value="estetista">💅 Centro Estetico</option>
+                    <option value="medico">🩺 Medico / Fisioterapista</option>
+                    <option value="nutrizionista">🥗 Nutrizionista</option>
+                    <option value="psicologo">🛋️ Psicologo</option>
+                    <option value="personaltrainer">🏋️ Personal Trainer</option>
+                    <option value="tatuatore">🖋️ Tatuatore</option>
+                    <option value="consulente">💼 Consulente / Avvocato</option>
+                    <option value="toelettatura">🐕 Toelettatura</option>
+                    <option value="vuoto">📋 Vuoto</option>
+                  </select>
+                </div>
+                <details className="border border-slate-800 rounded-lg bg-slate-950 overflow-hidden">
+                  <summary className="cursor-pointer p-4 font-medium text-slate-300 hover:text-white hover:bg-slate-900 transition-all text-sm">⚙️ Impostazioni Avanzate (Opzionali)</summary>
+                  <div className="p-4 pt-0 space-y-3 border-t border-slate-800 mt-2">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div><label className="block text-xs text-slate-400 mb-1">Telefono</label><input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+39 333..." className={ISM} /></div>
+                      <div><label className="block text-xs text-slate-400 mb-1">Indirizzo</label><input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="Via Roma 1" className={ISM} /></div>
+                      <div><label className="block text-xs text-slate-400 mb-1">Instagram</label><input type="url" value={instagramUrl} onChange={e => setInstagramUrl(e.target.value)} placeholder="https://instagram.com/..." className={ISM} /></div>
+                      <div><label className="block text-xs text-slate-400 mb-1">Google Maps</label><input type="url" value={mapsLink} onChange={e => setMapsLink(e.target.value)} placeholder="https://maps.google.com/..." className={ISM} /></div>
+                      <div><label className="block text-xs text-slate-400 mb-1">Apertura</label><input type="time" value={openTime} onChange={e => setOpenTime(e.target.value)} className={ISM} /></div>
+                      <div><label className="block text-xs text-slate-400 mb-1">Chiusura</label><input type="time" value={closeTime} onChange={e => setCloseTime(e.target.value)} className={ISM} /></div>
+                    </div>
+                    <div><label className="block text-xs text-slate-400 mb-1">Descrizione</label><textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Il tuo stile..." className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm h-14 resize-none focus:outline-none focus:border-indigo-500" /></div>
+                    <div className="grid grid-cols-2 gap-3 border-t border-slate-800 pt-3">
+                      <div>
+                        <label className="block text-xs text-slate-400 mb-1">Logo (URL)</label>
+                        <div className="flex gap-2">
+                          <input type="url" value={logoUrl} onChange={e => setLogoUrl(e.target.value)} placeholder="https://..." className={ISM} />
+                          <label className="bg-slate-800 hover:bg-slate-700 cursor-pointer border border-slate-700 rounded-md px-2 flex items-center" title="Carica dal PC">
+                            <input type="file" accept="image/*" className="hidden" onChange={e => {
+                              const file = e.target.files?.[0]; if (!file) return;
                               const reader = new FileReader();
-                              reader.onload = (event) => {
+                              reader.onload = ev => {
                                 const img = new Image();
                                 img.onload = () => {
-                                  const canvas = document.createElement('canvas');
-                                  const MAX_WIDTH = 500;
-                                  const MAX_HEIGHT = 500;
-                                  let width = img.width;
-                                  let height = img.height;
-                                  if (width > height) {
-                                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                                  } else {
-                                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                                  }
-                                  canvas.width = width;
-                                  canvas.height = height;
-                                  const ctx = canvas.getContext('2d');
-                                  ctx?.drawImage(img, 0, 0, width, height);
-                                  const base64Url = canvas.toDataURL('image/webp', 0.8);
-                                  setLogoUrl(base64Url);
+                                  const c = document.createElement("canvas"); const M = 500;
+                                  let w = img.width, h = img.height;
+                                  if (w > h) { if (w > M) { h *= M / w; w = M; } } else { if (h > M) { w *= M / h; h = M; } }
+                                  c.width = w; c.height = h; c.getContext("2d")?.drawImage(img, 0, 0, w, h);
+                                  setLogoUrl(c.toDataURL("image/webp", 0.8));
                                 };
-                                img.src = event.target?.result as string;
+                                img.src = ev.target?.result as string;
                               };
                               reader.readAsDataURL(file);
-                            }} 
-                          />
-                          <span className="text-lg">📁</span>
-                        </label>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Tema Colore</label>
-                      <select value={themeColor} onChange={e => setThemeColor(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500">
-                        <option value="cyan">🔵 Cyan (Default)</option>
-                        <option value="rose">🌸 Rosa Cipria</option>
-                        <option value="emerald">🌿 Smeraldo</option>
-                        <option value="amber">💛 Ambra</option>
-                        <option value="purple">💜 Viola</option>
-                        <option value="slate">🪨 Grigio Ardesia (Elegante)</option>
-                        <option value="red">🔴 Rosso Acceso</option>
-                        <option value="indigo">🌌 Blu Indaco</option>
-                        <option value="teal">🌊 Verde Acqua</option>
-                        <option value="fuchsia">🌺 Fucsia Vibrante</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </details>
-
-              {error && <div className="p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg">{error}</div>}
-
-              <button 
-                type="submit" 
-                disabled={creating}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50"
-              >
-                {creating ? "Creazione in corso..." : "Genera Cliente 🚀"}
-              </button>
-            </form>
-          </div>
-
-          {/* Lista Clienti */}
-          <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-white">Clienti Attivi ({tenants.length})</h2>
-                <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer">
-                  <option value="date">📅 Più recenti</option>
-                  <option value="name">🔤 Nome A-Z</option>
-                  <option value="plan">📊 Per piano</option>
-                </select>
-              </div>
-              <div className="flex gap-2 w-full sm:w-auto">
-                <input
-                  type="text"
-                  placeholder="Cerca negozio o email..."
-                  value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
-                  className="flex-1 sm:w-48 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-                />
-                <button onClick={handleExportCsv} className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-600/30 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap" title="Esporta CSV">
-                  📥 CSV
-                </button>
-              </div>
-            </div>
-            
-            {loading ? (
-              <div className="animate-pulse flex space-x-4">
-                <div className="flex-1 space-y-4 py-1">
-                  <div className="h-4 bg-slate-800 rounded w-3/4"></div>
-                  <div className="space-y-2">
-                    <div className="h-4 bg-slate-800 rounded"></div>
-                    <div className="h-4 bg-slate-800 rounded w-5/6"></div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {getSortedTenants().map((tenant) => {
-                  const now = new Date();
-                  const trialEndsAt = tenant.trialEndsAt ? new Date(tenant.trialEndsAt) : null;
-                  const isTrialExpired = trialEndsAt && now > trialEndsAt;
-                  const daysLeft = trialEndsAt ? Math.ceil((trialEndsAt.getTime() - now.getTime()) / (1000 * 3600 * 24)) : 0;
-                  
-                  return (
-                  <div key={tenant.id} className="bg-slate-950 border border-slate-800 p-5 rounded-xl flex flex-col justify-between group hover:border-indigo-500/50 transition-colors gap-4">
-                    <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <button onClick={() => setDetailTenant(tenant)} className="font-bold text-white text-lg leading-tight truncate mr-2 text-left hover:text-indigo-400 transition-colors" title={tenant.name}>{tenant.name}</button>
-                        {(tenant.plan === 'pro') && <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Pro</span>}
-                        {tenant.plan === 'elite' && <span className="bg-fuchsia-500/20 text-fuchsia-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">Elite</span>}
-                      </div>
-                      <div className="text-sm text-slate-400 flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="bg-slate-800 px-2 py-1 rounded text-xs">{tenant.services?.length || 0} servizi</span>
-                          {tenant.storeSettings?.stripeOnboardingComplete ? (
-                            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-1 rounded text-[10px] font-bold uppercase">✅ Stripe</span>
-                          ) : (
-                            <span className="bg-slate-800/50 text-slate-500 px-2 py-1 rounded text-[10px] uppercase">❌ No IBAN</span>
-                          )}
-                          <span className="text-xs">Creato il {new Date(tenant.createdAt).toLocaleDateString('it-IT')}</span>
-                        </div>
-                        {trialEndsAt && tenant.plan !== 'pro' && tenant.plan !== 'elite' && (
-                          <div className={`flex items-center gap-2 text-xs font-bold ${isTrialExpired ? 'text-red-400' : 'text-orange-400'}`}>
-                            {isTrialExpired ? '🔒 PROVA SCADUTA (Paywall)' : `⏳ ${daysLeft} gg di prova rimanenti`}
-                          </div>
-                        )}
-                        {tenant.ownerEmail && <div className="text-xs truncate text-slate-500 mt-1" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
-                        <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-800/50">
-                          <span className="text-xs font-semibold text-slate-300 bg-slate-900 px-2 py-1 rounded">💬 {tenant.storeSettings?.smsCredits || 0} SMS</span>
-                          <button onClick={() => handleAddSms(tenant.id)} className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded hover:bg-emerald-500/20 font-bold border border-emerald-500/20 transition-all">+ CARICA</button>
+                            }} />
+                            📁
+                          </label>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-slate-800/50">
-                      <div className="flex gap-2 w-full">
-                        <a 
-                          href={`https://${tenant.slug}.neatx.store`}
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex-1 text-center text-xs text-indigo-400 hover:text-indigo-300 font-medium bg-indigo-500/10 px-2 py-2 rounded-lg transition-colors flex items-center justify-center"
-                        >
-                          Sito Pubblico
-                        </a>
-                        <button 
-                          onClick={() => handleImpersonate(tenant.slug, tenant.adminPassword)}
-                          title="Entra come Admin (Impersonate)"
-                          className="flex-1 text-center text-xs text-amber-400 hover:text-amber-300 font-medium bg-amber-500/10 px-2 py-2 rounded-lg transition-all border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)] flex items-center justify-center"
-                        >
-                          🕵️‍♂️ Entra
-                        </button>
-                        <button 
-                          onClick={() => openEdit(tenant)}
-                          title="Modifica negozio"
-                          className="text-xs font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-2 rounded-lg transition-all"
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(tenant.id, tenant.name)}
-                          title="Elimina negozio"
-                          className="text-xs font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 px-3 py-2 rounded-lg transition-all"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                      
-                      <div className="flex flex-col gap-2 w-full">
-                        <div className="grid grid-cols-2 gap-2 w-full">
-                          <button 
-                            onClick={() => handleMakePlan(tenant.id, 'pro')}
-                            className={`text-xs font-bold px-3 py-2 rounded-lg border transition-all text-center ${tenant.plan === 'pro' ? 'bg-blue-500/30 text-blue-200 border-blue-500/60' : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20'}`}
-                          >
-                            📘 PRO
-                          </button>
-                          <button 
-                            onClick={() => handleMakePlan(tenant.id, 'elite')}
-                            className={`text-xs font-bold px-3 py-2 rounded-lg border transition-all text-center ${tenant.plan === 'elite' ? 'bg-fuchsia-500/30 text-fuchsia-200 border-fuchsia-500/60' : 'bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border-fuchsia-500/20'}`}
-                          >
-                            🌟 ELITE
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 w-full">
-                          <button 
-                            onClick={() => handleMakePlan(tenant.id, 'basic')}
-                            className="text-xs font-bold px-3 py-2 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition-all text-center"
-                          >
-                            🔄 RESET TRIAL (14gg)
-                          </button>
-                          <button 
-                            onClick={() => handleMakePlan(tenant.id, 'expire')}
-                            className="text-xs font-bold px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all text-center"
-                          >
-                            🔒 FORZA SCADENZA
-                          </button>
-                        </div>
+                      <div>
+                        <label className="block text-xs text-slate-400 mb-1">Tema</label>
+                        <select value={themeColor} onChange={e => setThemeColor(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+                          {THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                        </select>
                       </div>
                     </div>
                   </div>
-                )})}
-                
-                {getSortedTenants().length === 0 && (
-                  <div className="text-center py-12 text-slate-500 lg:col-span-3">
-                    <div className="text-4xl mb-2">👻</div>
-                    Nessun cliente trovato.
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Edit Tenant Modal */}
-    {editTarget && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setEditTarget(null)}>
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Modifica {editTarget.name}</h2>
-            <button onClick={() => setEditTarget(null)} className="text-slate-400 hover:text-white text-xl">&times;</button>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Nome Attività</label>
-              <input type="text" value={editData.name} onChange={e => setEditData({...editData, name: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Email Proprietario</label>
-              <input type="email" value={editData.ownerEmail} onChange={e => setEditData({...editData, ownerEmail: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Telefono</label>
-                <input type="text" value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Indirizzo</label>
-                <input type="text" value={editData.address} onChange={e => setEditData({...editData, address: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Instagram</label>
-                <input type="url" value={editData.instagramUrl} onChange={e => setEditData({...editData, instagramUrl: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Google Maps</label>
-                <input type="url" value={editData.mapsLink} onChange={e => setEditData({...editData, mapsLink: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Orario Apertura</label>
-                <input type="time" value={editData.openTime} onChange={e => setEditData({...editData, openTime: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Orario Chiusura</label>
-                <input type="time" value={editData.closeTime} onChange={e => setEditData({...editData, closeTime: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Descrizione</label>
-              <textarea value={editData.description} onChange={e => setEditData({...editData, description: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Logo URL</label>
-                <input type="url" value={editData.logoUrl} onChange={e => setEditData({...editData, logoUrl: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">Tema Colore</label>
-                <select value={editData.themeColor} onChange={e => setEditData({...editData, themeColor: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500">
-                  <option value="cyan">🔵 Cyan</option>
-                  <option value="rose">🌸 Rosa</option>
-                  <option value="emerald">🌿 Smeraldo</option>
-                  <option value="amber">💛 Ambra</option>
-                  <option value="purple">💜 Viola</option>
-                  <option value="slate">🪨 Grigio</option>
-                  <option value="red">🔴 Rosso</option>
-                  <option value="indigo">🌌 Indaco</option>
-                  <option value="teal">🌊 Verde</option>
-                  <option value="fuchsia">🌺 Fucsia</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs text-slate-400 mb-1">Password Admin</label>
-              <input type="text" value={editData.adminPassword} onChange={e => setEditData({...editData, adminPassword: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500 font-mono tracking-wider" />
-              <p className="text-[10px] text-slate-500 mt-1">Cambia la password di accesso alla dashboard admin.</p>
-            </div>
-          </div>
-          <div className="flex gap-3 mt-6 pt-4 border-t border-slate-800">
-            <button onClick={() => setEditTarget(null)} className="flex-1 px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold text-sm transition">Annulla</button>
-            <button onClick={handleEditSave} disabled={editing} className="flex-1 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition disabled:opacity-50">
-              {editing ? "Salvataggio..." : "Salva Modifiche"}
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-
-    {/* Tenant Detail Drawer */}
-    {detailTenant && (
-      <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setDetailTenant(null)}>
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative w-full max-w-xl bg-slate-900 border-l border-slate-800 h-full overflow-y-auto shadow-2xl p-6" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-white">{detailTenant.name}</h2>
-              <p className="text-sm text-slate-400">{detailTenant.slug}.neatx.store</p>
-            </div>
-            <button onClick={() => setDetailTenant(null)} className="text-slate-400 hover:text-white text-xl">&times;</button>
-          </div>
-
-          <div className="space-y-5">
-            {/* Info generali */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Informazioni</h3>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-slate-500">Piano:</span> <span className="text-white font-semibold capitalize">{detailTenant.plan}</span></div>
-                <div><span className="text-slate-500">Stato:</span> <span className="text-white font-semibold">{detailTenant.trialStatus}</span></div>
-                <div><span className="text-slate-500">Servizi:</span> <span className="text-white font-semibold">{detailTenant.services?.length || 0}</span></div>
-                <div><span className="text-slate-500">Stripe:</span> <span className={`font-semibold ${detailTenant.storeSettings?.stripeOnboardingComplete ? 'text-emerald-400' : 'text-red-400'}`}>{detailTenant.storeSettings?.stripeOnboardingComplete ? '✅ Collegato' : '❌ Non collegato'}</span></div>
-                <div className="flex items-center gap-2"><span className="text-slate-500">SMS Crediti:</span> <span className="text-white font-semibold">{detailTenant.storeSettings?.smsCredits || 0}</span> <button onClick={() => handleTenantSms(detailTenant.id)} className="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">+ CARICA</button></div>
-                <div><span className="text-slate-500">Creato il:</span> <span className="text-white font-semibold">{new Date(detailTenant.createdAt).toLocaleDateString('it-IT')}</span></div>
-              </div>
-              {detailTenant.ownerEmail && <p className="text-sm text-slate-400 mt-3">📧 {detailTenant.ownerEmail}</p>}
-              {detailTenant.phone && <p className="text-sm text-slate-400 mt-1">📞 {detailTenant.phone}</p>}
-              {detailTenant.address && <p className="text-sm text-slate-400 mt-1">📍 {detailTenant.address}</p>}
+                </details>
+                {error && <div className="p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg">{error}</div>}
+                <button type="submit" disabled={creating} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg transition disabled:opacity-50">{creating ? "Creazione..." : "🚀 Genera Cliente"}</button>
+              </form>
             </div>
 
-            {/* Trial */}
-            {detailTenant.trialEndsAt && (
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Trial</h3>
+            {/* LISTA CLIENTI */}
+            <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
+              {/* Toolbar */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-slate-400">Scade il:</span>
-                  <span className="text-white font-semibold">{new Date(detailTenant.trialEndsAt).toLocaleDateString('it-IT')}</span>
-                  {(() => {
-                    const daysLeft = Math.ceil((new Date(detailTenant.trialEndsAt).getTime() - Date.now()) / (1000 * 3600 * 24));
-                    const expired = daysLeft <= 0;
-                    return <span className={`text-xs font-bold px-2 py-0.5 rounded ${expired ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>{expired ? 'Scaduto' : `${daysLeft} gg`}</span>;
-                  })()}
+                  <h2 className="text-xl font-semibold text-white">Clienti <span className="text-slate-500 text-base">({getSortedTenants().length})</span></h2>
+                  <select value={sortBy} onChange={e => setSortBy(e.target.value as "date" | "name" | "plan")} className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none cursor-pointer">
+                    <option value="date">📅 Recenti</option>
+                    <option value="name">🔤 A-Z</option>
+                    <option value="plan">📊 Piano</option>
+                  </select>
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <input type="text" placeholder="Cerca..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="flex-1 sm:w-52 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" />
+                  <button onClick={handleExportCsv} className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-600/30 px-3 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap">📥 CSV</button>
                 </div>
               </div>
-            )}
 
-            {/* Orari */}
-            {(detailTenant.openTime || detailTenant.closeTime) && (
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Orari</h3>
-                <div className="flex items-center gap-4 text-sm">
-                  {detailTenant.openTime && <span className="text-slate-400">Apertura: <span className="text-white font-semibold">{detailTenant.openTime}</span></span>}
-                  {detailTenant.closeTime && <span className="text-slate-400">Chiusura: <span className="text-white font-semibold">{detailTenant.closeTime}</span></span>}
-                </div>
+              {/* Filtri piano */}
+              <div className="flex flex-wrap gap-2 mb-5">
+                {PLAN_FILTERS.map(f => (
+                  <button key={f.key} onClick={() => setFilterPlan(f.key)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${filterPlan === f.key ? f.active : "bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200"}`}>{f.label}</button>
+                ))}
               </div>
-            )}
 
-            {/* Servizi */}
-            {detailTenant.services && detailTenant.services.length > 0 && (
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Servizi ({detailTenant.services.length})</h3>
-                <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar">
-                  {detailTenant.services.map((svc: any) => (
-                    <div key={svc.id} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-lg hover:bg-slate-900/50">
-                      <span className="text-slate-300">{svc.name}</span>
-                      <span className="text-slate-500 font-mono">{svc.duration}min · €{svc.price}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Sedi */}
-            {detailTenant.locations && detailTenant.locations.length > 0 && (
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Sedi ({detailTenant.locations.length})</h3>
-                <div className="space-y-2">
-                  {detailTenant.locations.map((loc: any) => (
-                    <div key={loc.id} className="bg-slate-900/50 border border-slate-800/50 rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-semibold text-white">{loc.isMain ? '⭐' : '📍'} {loc.name}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded ${loc.isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{loc.isActive ? 'Attiva' : 'Disattiva'}</span>
-                      </div>
-                      <div className="text-xs text-slate-400 space-y-0.5">
-                        {loc.address && <div>📍 {loc.address}</div>}
-                        {loc.phone && <div>📞 {loc.phone}</div>}
-                        {loc.openTime && loc.closeTime && <div>🕐 {loc.openTime} - {loc.closeTime}</div>}
-                        <div className="mt-1.5 pt-1.5 border-t border-slate-800/50">
-                          <span className="text-slate-500">📞 {loc.phone || 'Non impostato'}</span>
+              {loading ? (
+                <div className="space-y-3">{[...Array(4)].map((_, i) => <div key={i} className="h-36 bg-slate-800 rounded-xl animate-pulse" />)}</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {getSortedTenants().map(tenant => {
+                    const exp = tenant.trialEndsAt ? new Date(tenant.trialEndsAt) : null;
+                    const expired = exp && now > exp;
+                    const days = exp ? Math.ceil((exp.getTime() - now.getTime()) / 86400000) : 0;
+                    const copied = copiedId === tenant.id;
+                    return (
+                      <div key={tenant.id} className="bg-slate-950 border border-slate-800 p-4 rounded-xl flex flex-col justify-between group hover:border-indigo-500/40 transition-colors gap-3">
+                        <div>
+                          <div className="flex justify-between items-start mb-2 gap-1">
+                            <button onClick={() => setDetailTenant(tenant)} className="font-bold text-white text-sm leading-tight text-left hover:text-indigo-400 transition-colors line-clamp-2" title={tenant.name}>{tenant.name}</button>
+                            <div className="flex flex-col gap-0.5 items-end shrink-0">
+                              {tenant.plan === "pro" && <span className="bg-blue-500/20 text-blue-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Pro</span>}
+                              {tenant.plan === "elite" && <span className="bg-fuchsia-500/20 text-fuchsia-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Elite</span>}
+                              {tenant.isDemoData && <span className="bg-slate-700/50 text-slate-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Demo</span>}
+                              {!tenant.trialEndsAt && tenant.plan !== "pro" && tenant.plan !== "elite" && <span className="bg-slate-700/30 text-slate-500 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Mai att.</span>}
+                              {expired && tenant.plan !== "pro" && tenant.plan !== "elite" && <span className="bg-red-500/20 text-red-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Scaduto</span>}
+                            </div>
+                          </div>
+                          <div className="text-sm text-slate-400 space-y-1.5">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="bg-slate-800 px-2 py-0.5 rounded text-xs">{tenant.services?.length || 0} servizi</span>
+                              {tenant.storeSettings?.stripeOnboardingComplete
+                                ? <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-bold">✅ Stripe</span>
+                                : <span className="bg-slate-800/50 text-slate-500 px-2 py-0.5 rounded text-[10px]">❌ Stripe</span>}
+                            </div>
+                            {exp && tenant.plan !== "pro" && tenant.plan !== "elite" && (
+                              <div className={`text-xs font-semibold ${expired ? "text-red-400" : "text-orange-400"}`}>{expired ? `🔒 Scaduto da ${Math.abs(days)} gg` : `⏳ ${days} gg rimanenti`}</div>
+                            )}
+                            {tenant.ownerEmail && <div className="text-xs truncate text-slate-500" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
+                            <div className="flex items-center justify-between pt-1 border-t border-slate-800/50">
+                              <span className="text-xs text-slate-400">💬 {tenant.storeSettings?.smsCredits || 0} SMS</span>
+                              <span className="text-xs text-slate-600">{new Date(tenant.createdAt).toLocaleDateString("it-IT")}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5 mt-auto pt-3 border-t border-slate-800/50">
+                          <div className="flex gap-1 w-full">
+                            <a href={`https://${tenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" title="Sito pubblico" className="flex-1 text-center text-[11px] text-indigo-400 hover:text-indigo-300 font-medium bg-indigo-500/10 py-1.5 rounded-lg transition flex items-center justify-center">🌐</a>
+                            <button onClick={() => handleImpersonate(tenant.slug, tenant.adminPassword)} title="Entra come Admin" className="flex-1 text-[11px] text-amber-400 font-medium bg-amber-500/10 py-1.5 rounded-lg border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/20 transition">🕵️</button>
+                            <button onClick={() => handleCopyCredentials(tenant)} title="Copia credenziali per il cliente" className={`flex-1 text-[11px] font-medium py-1.5 rounded-lg transition flex items-center justify-center ${copied ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"}`}>{copied ? "✅" : "📋"}</button>
+                            <button onClick={() => openEdit(tenant)} title="Modifica" className="text-[11px] font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-1.5 rounded-lg transition">✏️</button>
+                            <button onClick={() => handleDelete(tenant.id, tenant.name)} title="Elimina" className="text-[11px] font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 px-3 py-1.5 rounded-lg transition">🗑️</button>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1">
+                            <button onClick={() => handleMakePlan(tenant.id, "pro")} className={`text-xs font-bold py-1.5 rounded-lg border transition ${tenant.plan === "pro" ? "bg-blue-500/30 text-blue-200 border-blue-500/60" : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20"}`}>📘 PRO</button>
+                            <button onClick={() => handleMakePlan(tenant.id, "elite")} className={`text-xs font-bold py-1.5 rounded-lg border transition ${tenant.plan === "elite" ? "bg-fuchsia-500/30 text-fuchsia-200 border-fuchsia-500/60" : "bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border-fuchsia-500/20"}`}>🌟 ELITE</button>
+                          </div>
+                          <div className="grid grid-cols-3 gap-1">
+                            <button onClick={() => handleAddSms(tenant.id)} className="text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 +SMS</button>
+                            <button onClick={() => handleMakePlan(tenant.id, "basic")} className="text-xs font-bold py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition">🔄 Trial</button>
+                            <button onClick={() => handleMakePlan(tenant.id, "expire")} className="text-xs font-bold py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition">🔒 Scadi</button>
+                          </div>
                         </div>
                       </div>
+                    );
+                  })}
+                  {getSortedTenants().length === 0 && (
+                    <div className="text-center py-16 text-slate-500 col-span-3">
+                      <div className="text-5xl mb-3">👻</div>
+                      <p>Nessun cliente trovato.</p>
+                      {filterPlan !== "all" && <button onClick={() => setFilterPlan("all")} className="mt-3 text-indigo-400 text-sm hover:underline">Rimuovi filtro</button>}
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
-            )}
-
-            {/* Social */}
-            {(detailTenant.instagramUrl || detailTenant.mapsLink) && (
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Link</h3>
-                <div className="flex flex-col gap-2 text-sm">
-                  {detailTenant.instagramUrl && <a href={detailTenant.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 truncate">📸 {detailTenant.instagramUrl}</a>}
-                  {detailTenant.mapsLink && <a href={detailTenant.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 truncate">🗺️ {detailTenant.mapsLink}</a>}
-                </div>
-              </div>
-            )}
-
-            {/* Azioni rapide */}
-            <div className="flex gap-3 pt-2">
-              <a href={`https://${detailTenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-sm font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 px-4 py-2.5 rounded-lg hover:bg-indigo-600/30 transition">
-                🌐 Sito Pubblico
-              </a>
-              <button onClick={() => { handleImpersonate(detailTenant.slug, detailTenant.adminPassword); }} className="flex-1 text-sm font-bold bg-amber-600/20 text-amber-400 border border-amber-600/30 px-4 py-2.5 rounded-lg hover:bg-amber-600/30 transition">
-                🕵️ Entra come Admin
-              </button>
-              <button onClick={() => { setDetailTenant(null); openEdit(detailTenant); }} className="flex-1 text-sm font-bold bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 px-4 py-2.5 rounded-lg hover:bg-cyan-600/30 transition">
-                ✏️ Modifica
-              </button>
+              )}
             </div>
           </div>
         </div>
       </div>
-    )}
-  </>
+
+      {/* MODAL MODIFICA */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setEditTarget(null)}>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">✏️ {editTarget.name}</h2>
+              <button onClick={() => setEditTarget(null)} className="text-slate-400 hover:text-white text-xl">&times;</button>
+            </div>
+            <div className="space-y-4">
+              <div><label className="block text-xs text-slate-400 mb-1">Nome</label><input type="text" value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })} className={IC} /></div>
+              <div><label className="block text-xs text-slate-400 mb-1">Email Proprietario</label><input type="email" value={editData.ownerEmail} onChange={e => setEditData({ ...editData, ownerEmail: e.target.value })} className={IC} /></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs text-slate-400 mb-1">Telefono</label><input type="text" value={editData.phone} onChange={e => setEditData({ ...editData, phone: e.target.value })} className={IC} /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Indirizzo</label><input type="text" value={editData.address} onChange={e => setEditData({ ...editData, address: e.target.value })} className={IC} /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs text-slate-400 mb-1">Instagram</label><input type="url" value={editData.instagramUrl} onChange={e => setEditData({ ...editData, instagramUrl: e.target.value })} className={IC} /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Google Maps</label><input type="url" value={editData.mapsLink} onChange={e => setEditData({ ...editData, mapsLink: e.target.value })} className={IC} /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs text-slate-400 mb-1">Apertura</label><input type="time" value={editData.openTime} onChange={e => setEditData({ ...editData, openTime: e.target.value })} className={IC} /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Chiusura</label><input type="time" value={editData.closeTime} onChange={e => setEditData({ ...editData, closeTime: e.target.value })} className={IC} /></div>
+              </div>
+              <div><label className="block text-xs text-slate-400 mb-1">Descrizione</label><textarea value={editData.description} onChange={e => setEditData({ ...editData, description: e.target.value })} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" /></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs text-slate-400 mb-1">Logo URL</label><input type="url" value={editData.logoUrl} onChange={e => setEditData({ ...editData, logoUrl: e.target.value })} className={IC} /></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Tema</label><select value={editData.themeColor} onChange={e => setEditData({ ...editData, themeColor: e.target.value })} className={IC}>{THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">Password Admin</label>
+                <div className="flex gap-2">
+                  <input type="text" value={editData.adminPassword} onChange={e => setEditData({ ...editData, adminPassword: e.target.value })} className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500 font-mono tracking-wider" />
+                  <button type="button" onClick={() => setEditData({ ...editData, adminPassword: generateSecurePassword() })} title="Genera" className="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 px-3 rounded-lg text-xl transition shrink-0">🎲</button>
+                </div>
+                <p className="text-[10px] text-slate-500 mt-1">Clicca 🎲 per generarne una sicura. Comunicala al cliente dopo aver salvato.</p>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6 pt-4 border-t border-slate-800">
+              <button onClick={() => setEditTarget(null)} className="flex-1 px-4 py-2.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-bold text-sm transition">Annulla</button>
+              <button onClick={handleEditSave} disabled={editing} className="flex-1 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition disabled:opacity-50">{editing ? "Salvataggio..." : "✅ Salva"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DRAWER DETTAGLIO */}
+      {detailTenant && (
+        <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setDetailTenant(null)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative w-full max-w-xl bg-slate-900 border-l border-slate-800 h-full overflow-y-auto shadow-2xl p-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-white">{detailTenant.name}</h2>
+                <p className="text-sm text-slate-400 font-mono">{detailTenant.slug}.neatx.store</p>
+              </div>
+              <button onClick={() => setDetailTenant(null)} className="text-slate-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">📊 Informazioni</h3>
+                <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 text-sm">
+                  <div><span className="text-slate-500">Piano:</span> <span className="text-white font-semibold capitalize">{detailTenant.plan || "basic"}</span></div>
+                  <div><span className="text-slate-500">Stato:</span> <span className="text-white font-semibold">{detailTenant.trialStatus || "-"}</span></div>
+                  <div><span className="text-slate-500">Servizi:</span> <span className="text-white font-semibold">{detailTenant.services?.length || 0}</span></div>
+                  <div><span className="text-slate-500">Sedi:</span> <span className="text-white font-semibold">{detailTenant.locations?.length || 0}</span></div>
+                  <div><span className="text-slate-500">Stripe:</span> <span className={`font-semibold ${detailTenant.storeSettings?.stripeOnboardingComplete ? "text-emerald-400" : "text-red-400"}`}>{detailTenant.storeSettings?.stripeOnboardingComplete ? "✅ Sì" : "❌ No"}</span></div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500">SMS:</span>
+                    <span className="text-white font-semibold">{detailTenant.storeSettings?.smsCredits || 0}</span>
+                    <button onClick={() => handleAddSms(detailTenant.id)} className="text-emerald-400 text-[10px] font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 hover:bg-emerald-500/20 transition">+</button>
+                  </div>
+                  <div><span className="text-slate-500">Creato:</span> <span className="text-white font-semibold">{new Date(detailTenant.createdAt).toLocaleDateString("it-IT")}</span></div>
+                  <div><span className="text-slate-500">Demo:</span> <span className="text-white font-semibold">{detailTenant.isDemoData ? "✅" : "❌"}</span></div>
+                </div>
+                <div className="mt-3 space-y-1 text-sm">
+                  {detailTenant.ownerEmail && <p className="text-slate-400">📧 {detailTenant.ownerEmail}</p>}
+                  {detailTenant.phone && <p className="text-slate-400">📞 {detailTenant.phone}</p>}
+                  {detailTenant.address && <p className="text-slate-400">📍 {detailTenant.address}</p>}
+                </div>
+              </div>
+
+              {detailTenant.trialEndsAt && (() => {
+                const dl = Math.ceil((new Date(detailTenant.trialEndsAt).getTime() - Date.now()) / 86400000);
+                const e = dl <= 0;
+                return (
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                    <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">⏳ Trial</h3>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="text-slate-400">Scade il:</span>
+                      <span className="text-white font-semibold">{new Date(detailTenant.trialEndsAt).toLocaleDateString("it-IT")}</span>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${e ? "bg-red-500/20 text-red-400" : "bg-amber-500/20 text-amber-400"}`}>{e ? `Scaduto da ${Math.abs(dl)} gg` : `${dl} gg rimanenti`}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {(detailTenant.openTime || detailTenant.closeTime) && (
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">🕐 Orari</h3>
+                  <div className="flex gap-4 text-sm">
+                    {detailTenant.openTime && <span className="text-slate-400">Apertura: <span className="text-white font-semibold">{detailTenant.openTime}</span></span>}
+                    {detailTenant.closeTime && <span className="text-slate-400">Chiusura: <span className="text-white font-semibold">{detailTenant.closeTime}</span></span>}
+                  </div>
+                </div>
+              )}
+
+              {detailTenant.services?.length > 0 && (
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">🛠️ Servizi ({detailTenant.services.length})</h3>
+                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                    {detailTenant.services.map((s: { id: string; name: string; duration: number; price: number }) => (
+                      <div key={s.id} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-lg hover:bg-slate-900/50">
+                        <span className="text-slate-300">{s.name}</span>
+                        <span className="text-slate-500 font-mono text-xs">{s.duration}min · €{s.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {detailTenant.locations?.length > 0 && (
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">📍 Sedi ({detailTenant.locations.length})</h3>
+                  <div className="space-y-2">
+                    {detailTenant.locations.map((l: { id: string; name: string; address?: string | null; isMain: boolean; isActive: boolean }) => (
+                      <div key={l.id} className="bg-slate-900/60 border border-slate-800/50 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-white">{l.isMain ? "⭐" : "📍"} {l.name}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded ${l.isActive ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>{l.isActive ? "Attiva" : "Disattiva"}</span>
+                        </div>
+                        {l.address && <p className="text-xs text-slate-400 mt-1">📍 {l.address}</p>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(detailTenant.instagramUrl || detailTenant.mapsLink) && (
+                <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">🔗 Link</h3>
+                  {detailTenant.instagramUrl && <a href={detailTenant.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 truncate block text-sm mb-1">📸 {detailTenant.instagramUrl}</a>}
+                  {detailTenant.mapsLink && <a href={detailTenant.mapsLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 truncate block text-sm">🗺️ {detailTenant.mapsLink}</a>}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <a href={`https://${detailTenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" className="text-center text-sm font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 px-4 py-3 rounded-xl hover:bg-indigo-600/30 transition">🌐 Sito</a>
+                <button onClick={() => handleImpersonate(detailTenant.slug, detailTenant.adminPassword)} className="text-sm font-bold bg-amber-600/20 text-amber-400 border border-amber-600/30 px-4 py-3 rounded-xl hover:bg-amber-600/30 transition">🕵️ Entra Admin</button>
+                <button onClick={() => handleCopyCredentials(detailTenant)} className={`text-sm font-bold border px-4 py-3 rounded-xl transition ${copiedId === detailTenant.id ? "bg-emerald-600/30 text-emerald-300 border-emerald-600/50" : "bg-emerald-600/20 text-emerald-400 border-emerald-600/30 hover:bg-emerald-600/30"}`}>{copiedId === detailTenant.id ? "✅ Copiato!" : "📋 Copia Credenziali"}</button>
+                <button onClick={() => { setDetailTenant(null); openEdit(detailTenant); }} className="text-sm font-bold bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 px-4 py-3 rounded-xl hover:bg-cyan-600/30 transition">✏️ Modifica</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

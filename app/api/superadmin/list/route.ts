@@ -19,7 +19,7 @@ export async function GET(req: Request) {
         category: true,
         city: true,
         ownerName: true,
-        ownerEmail: true,       // Visibile al superadmin per supporto
+        ownerEmail: true,
         logoUrl: true,
         themeColor: true,
         description: true,
@@ -36,7 +36,10 @@ export async function GET(req: Request) {
         breakStart: true,
         breakEnd: true,
         closedDays: true,
-        // Stato abbonamento (necessario per stats)
+        // Endpoint protetto da password superadmin: adminPassword è necessario
+        // per la funzione "impersonate" e "copia credenziali"
+        adminPassword: true,
+        // Stato abbonamento
         trialStartedAt: true,
         trialEndsAt: true,
         trialStatus: true,
@@ -46,9 +49,8 @@ export async function GET(req: Request) {
         convertedAt: true,
         plan: true,
         createdAt: true,
-        // NO: adminPassword, ownerPasswordHash, stripeCustomerId,
-        //     stripeSubscriptionId, staffSheetUrl, referralCode,
-        //     referredByCode, emailVerifyToken
+        // NO: ownerPasswordHash, stripeCustomerId, stripeSubscriptionId,
+        //     staffSheetUrl, referralCode, referredByCode, emailVerifyToken
         services: {
           select: { id: true, name: true, price: true, duration: true },
         },
@@ -71,6 +73,7 @@ export async function GET(req: Request) {
           },
         },
       },
+
     });
 
     const now = new Date();
