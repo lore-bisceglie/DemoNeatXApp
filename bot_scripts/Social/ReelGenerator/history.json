@@ -159,7 +159,7 @@
         "title": "CLIENTI IN AUTOMATICO",
         "hook": "CLIENTI IN AUTOMATICO",
         "date": "2026-07-13",
-        "views": 4,
+        "views": 7,
         "likes": 0
     },
     {
@@ -175,7 +175,7 @@
         "title": "PRENOTAZIONE 24 ORA",
         "hook": "PRENOTAZIONE 24 ORA",
         "date": "2026-07-14",
-        "views": 22,
+        "views": 29,
         "likes": 1
     },
     {
@@ -183,6 +183,13 @@
         "title": "PRENOTAZIONE 24 ORA",
         "hook": "PRENOTAZIONE 24 ORA",
         "date": "2026-07-14",
+        "views": 0
+    },
+    {
+        "youtube_id": "lwhT5oxU7ws",
+        "title": "STOP TURNI CONFUSI",
+        "hook": "STOP TURNI CONFUSI",
+        "date": "2026-07-15",
         "views": 0
     }
 ]

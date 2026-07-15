@@ -1,13 +1,13 @@
 {
-    "niche": "Barbieri",
-    "script_text": "Sei stanco di rispondere a messaggi e chiamate ogni giorno? Ogni minuto sprecato è denaro buttato! Con NeatX, i tuoi clienti prenotano da soli, anche mentre dormi! Niente più telefono che squilla, niente più stress. È ora di liberarti e concentrarti su ciò che ami fare tagliare capelli! Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
-    "hook_text": "PRENOTAZIONE 24 ORA",
-    "cover_title": "PRENOTAZIONE 24 ORA",
-    "image_prompt": "a luxurious barber shop scene with a barber relaxing while a client books an appointment on their smartphone, showcasing a clean and modern booking interface on the screen, bright and premium lighting emphasizing a stress-free environment",
-    "gameplay_style": "neon_racer",
-    "caption": "Stanco di rispondere a chiamate? Fai prenotare i tuoi clienti 24/7! Commenta AGENDA per scoprire come! #perte #fyp #foryou #viral #imprenditore #businessitalia #barber #barbershop #neatx",
-    "strategy_date": "2026-07-14",
-    "strategy_feature": "booking",
-    "strategy_pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-    "strategy_promise": "clienti che prenotano da soli anche mentre dormi"
+    "niche": "Tatuatori",
+    "script_text": "Stai buttando via tempo e soldi con turni confusi e clienti sbagliati! È ora di dire basta! Con NeatX, ogni membro dello staff ha la sua agenda separata e i turni vengono gestiti automaticamente. Dimentica il caos delle ferie e le assegnazioni sbagliate! Ogni tatuatore merita di lavorare in modo organizzato e proficuo. Vuoi automatizzare tutto? Commenta la parola AGENDA qui sotto e ti invio il link in privato!",
+    "hook_text": "STOP TURNI CONFUSI",
+    "cover_title": "STOP TURNI CONFUSI",
+    "image_prompt": "a photorealistic cinematic scene inside a modern tattoo studio with multiple staff members, each having their own separate agendas displayed on a screen, showcasing organized shifts and calm coordination among the team, premium realistic lighting",
+    "gameplay_style": "runner",
+    "caption": "Basta caos nei turni! Gestisci il tuo studio con NeatX e non perdere più clienti! Commenta AGENDA per maggiori info! #perte #fyp #foryou #viral #imprenditore #businessitalia #tatuatori #tattooartist",
+    "strategy_date": "2026-07-15",
+    "strategy_feature": "multi_staff",
+    "strategy_pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+    "strategy_promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto"
 }

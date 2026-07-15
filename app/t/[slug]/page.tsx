@@ -570,12 +570,47 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
     (!isPlaygroundDemo && phone === "") ||
     !privacyAccepted;
 
-  const isScarce = false;
-  const isSelectedLastMinute = isScarce && selectedSlot !== "";
-  const demandMode = null;
-  const demandClass = "from-red-500/10 to-transparent border-red-500/20";
-  const demandAccent = "text-red-400";
   const isSaturday = new Date(date).getDay() === 6;
+  const isScarce = slots.length > 0 && slots.length <= 5;
+  const isVeryScarce = slots.length > 0 && slots.length <= 2;
+  const shownSlots = slots.slice(0, 3).join(", ");
+  const slotSummary =
+    slots.length > 3 ? `${shownSlots} e altri ${slots.length - 3}` : shownSlots;
+  const demandMode = isVeryScarce
+    ? {
+        title: "Ultimi incastri disponibili",
+        message:
+          slots.length === 1
+            ? `E rimasto solo l'orario delle ${slots[0]}.`
+            : `Sono rimasti solo questi orari: ${slotSummary}.`,
+        tone: "red" as const,
+      }
+    : isSaturday
+    ? {
+        title: isScarce ? "Sabato quasi pieno" : "Sabato molto richiesto",
+        message: isScarce
+          ? `Per sabato rimangono ${slots.length} incastri: ${slotSummary}.`
+          : isPlaygroundDemo
+          ? "Il sabato si riempie prima: nella demo vedi come spingere il cliente a scegliere subito."
+          : "Il sabato si riempie prima: scegli subito un orario disponibile.",
+        tone: "cyan" as const,
+      }
+    : isScarce
+    ? {
+        title: "Giornata quasi piena",
+        message: `Sono rimasti ${slots.length} incastri: ${slotSummary}.`,
+        tone: "orange" as const,
+      }
+    : null;
+  const demandClass =
+    demandMode?.tone === "cyan"
+      ? "from-cyan-500/10 to-blue-500/10 border-cyan-500/30 shadow-[0_0_15px_rgba(0,180,255,0.15)]"
+      : demandMode?.tone === "red"
+      ? "from-red-500/10 to-orange-500/10 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.15)]"
+      : "from-orange-500/10 to-red-500/10 border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]";
+  const demandAccent =
+    demandMode?.tone === "cyan" ? "text-cyan-300" : "text-red-400";
+  const isSelectedLastMinute = isScarce && selectedSlot !== "";
 
   const [closingHourStr, closingMinuteStr] = (effectiveCloseTime || "19:00").split(":").map(Number);
   const closingHour = closingHourStr;
