@@ -1088,6 +1088,7 @@ export async function POST(req: Request) {
       publicUrl: getTenantPublicUrl(tenant.slug),
       adminUrl: getTenantAdminUrl(tenant.slug),
       needsVerification: true,
+      adminPassword: adminPassword,
     });
   } catch (error) {
     console.error("Errore Onboarding:", error);

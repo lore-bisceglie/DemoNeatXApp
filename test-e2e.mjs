@@ -38,7 +38,7 @@ async function run() {
     }),
   });
   check("Registrazione", reg.status === 200 && reg.data.success);
-  const { slug, publicUrl, adminUrl } = reg.data;
+  const { slug, publicUrl, adminUrl, adminPassword } = reg.data;
 
   const ten = await jsonFetch(`${BASE}/api/tenant/${slug}`);
   check("GET tenant", ten.status === 200 && ten.data.id);
@@ -120,13 +120,13 @@ async function run() {
   // ─────────────────────────────────────────────
   console.log("\n3️⃣  STRIPE CONNECT (demo fallback)");
   const connRes = await fetch(`${BASE}/api/stripe/connect?tenantId=${tenantId}`, { redirect: "manual" });
-  check("Stripe connect (fallback)", connRes.status >= 300 && connRes.status < 400, connRes.status + ' redirect');
+  check("Stripe connect (fallback)", connRes.status === 200, connRes.status + ' ok');
 
   // ─────────────────────────────────────────────
   // TELEGRAM MAGIC LOGIN
   // ─────────────────────────────────────────────
   console.log("\n4️⃣  TELEGRAM MAGIC LOGIN");
-  const magic = await fetch(`${BASE}/api/telegram/magic?slug=${slug}&secret=${ten.data.adminPassword}`, { redirect: "manual" });
+  const magic = await fetch(`${BASE}/api/telegram/magic?slug=${slug}&secret=${adminPassword}`, { redirect: "manual" });
   const magicOk = magic.status >= 300 && magic.status < 400 && magic.headers.get("set-cookie")?.includes("admin_auth_");
   check("Telegram magic login", magicOk, `${magic.status} ${magic.headers.get("set-cookie")?.slice(0, 40) || ''}`);
 

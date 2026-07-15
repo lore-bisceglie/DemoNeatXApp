@@ -111,10 +111,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
 
+    const activeLocations = await prisma.location.findMany({
+      where: { tenantId: tenant.id, isActive: true },
+      select: { id: true }
+    });
+
     const created = await prisma.service.create({
       data: {
         ...service,
         tenantId: tenant.id,
+        locations: {
+          create: activeLocations.map(loc => ({
+            locationId: loc.id,
+            isActive: true,
+            price: service.price
+          }))
+        }
       },
     });
 
