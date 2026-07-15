@@ -223,6 +223,14 @@ export default function Home() {
     }
   }, []);
 
+  // Notifica Telegram per la visita alla demo (una volta per sessione)
+  useEffect(() => {
+    if (typeof window !== "undefined" && !sessionStorage.getItem("demo_visited")) {
+      sessionStorage.setItem("demo_visited", "true");
+      fetch("/api/demo/visit", { method: "POST" }).catch(() => {});
+    }
+  }, []);
+
   useEffect(() => {
     fetch(`/api/services?tenantId=${tenantInfo.id}`)
       .then((res) => res.json())
