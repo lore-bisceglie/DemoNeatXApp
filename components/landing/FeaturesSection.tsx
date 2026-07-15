@@ -1,6 +1,6 @@
 "use client";
 
-import { MousePointerClick, BellRing, WalletCards, Zap, CalendarSync, FileSpreadsheet, ShieldCheck, UserCog } from "lucide-react";
+import { MousePointerClick, BellRing, WalletCards, CalendarSync, FileSpreadsheet, MapPin } from "lucide-react";
 
 const FEATURE_CARDS = [
   {
@@ -29,17 +29,17 @@ const FEATURE_CARDS = [
   },
   {
     icon: CalendarSync,
-    title: "Turni da Google Sheets",
+    title: "Gestione Staff 360°",
     description:
-      "Compila il Google Sheet con gli orari di ogni dipendente. NeatX sincronizza tutto: l'agenda mostra solo gli slot liberi di ciascuno.",
+      "Sincronizza i turni da Google Sheets o imposta ferie e pause pranzo direttamente nel pannello. L'agenda mostrerà solo gli slot realmente liberi.",
     accent: "text-blue-400",
     border: "hover:border-blue-400/50",
   },
   {
-    icon: UserCog,
-    title: "Ferie, Pause e Permessi",
+    icon: MapPin,
+    title: "Gestione Sedi Multiple",
     description:
-      "Gestisci ferie intere, pause pranzo e permessi retribuiti per ogni singolo dipendente. Tutto separato, tutto tracciato.",
+      "Hai più di un salone? Gestisci tutte le sedi da un unico account. Il sistema blocca i dipendenti condivisi per evitare doppie prenotazioni impossibili.",
     accent: "text-amber-400",
     border: "hover:border-amber-400/50",
   },
@@ -59,7 +59,7 @@ export default function FeaturesSection() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-cyan-300 mb-5">
-            <Zap size={14} />
+            <span className="text-[14px]">⚡</span>
             Il sistema operativo dell&apos;agenda
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">Meno messaggi. Più slot pieni.</h2>
