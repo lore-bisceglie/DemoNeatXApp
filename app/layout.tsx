@@ -95,8 +95,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Chatbot AI */}
           <Chatbot />
 
-          {/* Social bar — verticale, glass, a sinistra. Nascosta su mobile per non intralciare */}
-          <div className="hidden sm:block fixed bottom-16 sm:bottom-20 left-4 sm:left-6 z-[9998] pointer-events-auto">
+          {/* Social bar — verticale, glass, a sinistra. */}
+          <div className="fixed bottom-24 sm:bottom-20 left-4 sm:left-6 z-[9998] pointer-events-auto">
             <SocialFloatingGroup />
           </div>
         </PublicWidgetsWrapper>
