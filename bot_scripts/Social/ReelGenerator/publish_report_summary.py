@@ -1,6 +1,6 @@
 import json, os, sys
 
-path = sys.argv[1] if len(sys.argv) > 1 else 'publish_report.json'
+path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), 'publish_report.json')
 if not os.path.exists(path):
     print('Nessun report trovato')
     sys.exit(0)
