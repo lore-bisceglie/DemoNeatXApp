@@ -357,11 +357,11 @@ def monta_reel(
     from PIL import Image, ImageDraw, ImageFont, ImageFilter
     import numpy as np
 
-    print(f"\n[🎬] Avvio montaggio (durata {audio_duration:.1f}s)...")
-
     # Carica audio
     audio = AudioFileClip(str(audio_path))
     duration = audio.duration
+    
+    print(f"\n[🎬] Avvio montaggio (durata {duration:.1f}s)...")
 
     # ── SFONDO ──────────────────────────────────────────────────
     # Cerca immagini B-Roll nella cartella assets
