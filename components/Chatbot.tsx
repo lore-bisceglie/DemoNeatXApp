@@ -235,11 +235,12 @@ export default function Chatbot() {
       {/* ═══════════ CHAT WINDOW ═══════════ */}
       <div
         className={`fixed z-[9999999] transition-all duration-500 ease-out
-          bottom-0 right-0 sm:bottom-6 sm:right-6
+          inset-0 sm:inset-auto sm:bottom-6 sm:right-6
           w-full sm:w-[360px]
           h-[100dvh] sm:h-[520px] sm:max-h-[80vh] sm:rounded-2xl
-          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}
+          ${isOpen ? 'opacity-100 sm:translate-y-0' : 'opacity-0 sm:translate-y-full pointer-events-none'}
         `}
+        style={{ height: '100dvh' }}
       >
         <div className="h-full flex flex-col bg-[#0a0e1a] sm:rounded-2xl border border-gray-800/50 shadow-2xl shadow-blue-900/20 overflow-hidden backdrop-blur-xl">
           
