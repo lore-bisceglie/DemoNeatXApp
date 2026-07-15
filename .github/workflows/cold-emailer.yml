@@ -24,6 +24,9 @@ jobs:
       - name: Run Cold Emailer
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
         run: |
           python bot_scripts/Email/cold_emailer.py
       - name: Upload Generated Emails

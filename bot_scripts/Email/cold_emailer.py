@@ -1,50 +1,56 @@
 #!/usr/bin/env python3
 """
-NeatX Cold Emailer (Il Venditore a Freddo)
-Genera email di vendita "su misura" per i saloni, analizzando il loro nome o stile
-e proponendo l'agenda NeatX in modo personalizzato grazie a Gemini AI.
+NeatX Cold Emailer (Il Venditore a Freddo) 100% Autonomo
+Genera email di vendita "su misura" tramite OmniRoute/AI_Provider e le invia
+automaticamente al potenziale cliente tramite Gmail SMTP.
 """
 
 import os
 import json
+import sys
+import smtplib
 from pathlib import Path
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# Assicuriamoci che ai_provider sia importabile aggiungendo il path corretto
+bot_scripts_dir = Path(__file__).resolve().parent.parent
+if str(bot_scripts_dir) not in sys.path:
+    sys.path.append(str(bot_scripts_dir))
+
 try:
-    from google import genai
-    from google.genai import types
+    from Automation.ai_provider import openai_json
 except ImportError:
-    print("[!] google-generativeai non è installato. Esegui: pip install google-generativeai")
+    print("[!] Modulo ai_provider non trovato. Esco.")
     exit(1)
 
-# Configurazione API Key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    print("[!] Errore: GEMINI_API_KEY non trovata. Inseriscila nei Secrets di GitHub o nel file .env")
-    exit(1)
-
-client = genai.Client(api_key=GEMINI_API_KEY)
+# Configurazione Gmail SMTP
+GMAIL_USER = os.getenv("GMAIL_USER")
+GMAIL_PASS = os.getenv("GMAIL_PASS")
 
 # Lista finta (demo) di saloni che vogliamo contattare oggi
 target_salons = [
     {
         "nome": "Barberia Il Rasoio",
         "citta": "Milano",
+        "email_destinatario": "test.barberia@example.com", # Da sostituire con vere email
         "stile": "Old school, tagli classici, clientela maschile affezionata",
         "problema_attuale": "Hanno ancora l'agenda cartacea e perdono chiamate mentre lavorano."
     },
     {
         "nome": "Glamour Beauty Center",
         "citta": "Roma",
+        "email_destinatario": "test.glamour@example.com",
         "stile": "Lusso, estetica avanzata, unghie e massaggi",
         "problema_attuale": "Hanno tanti no-show (clienti che prenotano e non si presentano)."
     }
 ]
 
 def generate_cold_email(salon):
-    print(f"[*] Analisi del salone '{salon['nome']}' in corso...")
+    print(f"[*] Analisi del salone '{salon['nome']}' in corso tramite AI...")
     
     prompt = f"""
 Sei il direttore vendite di NeatX, un software innovativo per la gestione degli appuntamenti (agenda online) dedicato a parrucchieri e centri estetici.
@@ -69,20 +75,44 @@ Restituisci ESATTAMENTE e SOLO questo formato JSON:
     "corpo_email": "Testo completo dell'email, usa \\n per andare a capo"
 }}
 """
-
-    try:
-        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
-        # Pulisco il testo in caso di formattazione markdown
-        json_text = response.text.strip().replace("```json", "").replace("```", "")
-        email_data = json.loads(json_text)
-        return email_data
-    except Exception as e:
-        print(f"[!] Errore durante la generazione dell'email per {salon['nome']}: {e}")
+    
+    response = openai_json(prompt=prompt, model="gpt-4o-mini")
+    if not response:
+        print(f"[!] Errore durante la generazione dell'email per {salon['nome']}")
         return None
+        
+    return response
+
+def send_email_smtp(to_email, subject, body):
+    if not GMAIL_USER or not GMAIL_PASS:
+        print(f"[!] Credenziali Gmail mancanti. L'email per {to_email} non sarà inviata.")
+        return False
+        
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = GMAIL_USER
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        
+        # Sostituisci i \n con <br> per l'HTML
+        body_html = body.replace('\\n', '<br>').replace('\n', '<br>')
+        msg.attach(MIMEText(body_html, 'html'))
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(GMAIL_USER, GMAIL_PASS)
+        server.send_message(msg)
+        server.quit()
+        
+        print(f"[✅] Email inviata fisicamente a {to_email}!")
+        return True
+    except Exception as e:
+        print(f"[!] Errore SMTP nell'invio a {to_email}: {e}")
+        return False
 
 def main():
     print("=========================================")
-    print("[*] AVVIO NEATX COLD EMAILER")
+    print("[*] AVVIO NEATX COLD EMAILER (100% AUTOMATICO)")
     print("=========================================\n")
     
     output_dir = Path("email_generate")
@@ -92,23 +122,25 @@ def main():
         email = generate_cold_email(salon)
         if email:
             print("\n" + "-"*50)
-            print(f"[*] EMAIL PRONTA PER: {salon['nome']}")
+            print(f"[*] EMAIL GENERATA PER: {salon['nome']}")
             print(f"[*] OGGETTO: {email['oggetto']}")
             print("-" * 50)
             print(email['corpo_email'])
             print("-" * 50 + "\n")
             
-            # Salva la mail in un file di testo
+            # 1. Salva la mail in un file di testo come backup
             safe_name = salon['nome'].replace(" ", "_").lower()
             file_path = output_dir / f"email_{safe_name}.txt"
             with open(file_path, "w", encoding="utf-8") as f:
-                f.write(f"A: {salon['nome']} ({salon['citta']})\n")
+                f.write(f"A: {salon['email_destinatario']}\n")
                 f.write(f"OGGETTO: {email['oggetto']}\n")
                 f.write("="*40 + "\n\n")
                 f.write(email['corpo_email'])
+                
+            # 2. INVIA L'EMAIL FISICAMENTE!
+            send_email_smtp(salon['email_destinatario'], email['oggetto'], email['corpo_email'])
             
-    print(f"\n[+] Tutte le email sono state generate e salvate nella cartella '{output_dir}'.")
-    print("[*] Pronto per fare copia-incolla sul tuo Gmail e inviare!")
+    print(f"\n[+] Fine ciclo di vendite. Lavoro completato in totale autonomia.")
 
 if __name__ == "__main__":
     main()
