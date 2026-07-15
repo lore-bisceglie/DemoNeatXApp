@@ -393,8 +393,8 @@ def monta_reel(
     else:
         bg = ColorClip((VIDEO_W, VIDEO_H), color=(5, 8, 20)).set_duration(duration)
 
-    # Overlay scuro semi-trasparente per leggibilità testo
-    overlay = ColorClip((VIDEO_W, VIDEO_H), color=(0, 0, 0)).set_duration(duration).set_opacity(0.55)
+    # Overlay scuro leggerissimo (15%) per aiutare la leggibilità senza scurire le foto
+    overlay = ColorClip((VIDEO_W, VIDEO_H), color=(0, 0, 0)).set_duration(duration).set_opacity(0.15)
 
     # ── LOGO NEATX ──────────────────────────────────────────────
     logo_img = crea_logo_neatx()
