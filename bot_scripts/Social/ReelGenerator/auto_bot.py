@@ -424,9 +424,9 @@ def run_pipeline():
     # 1.5 Il gameplay viene scelto/generato dentro generate_reel.py.
     print(f"[*] Sfondo gameplay richiesto: {data.get('gameplay_style', 'runner')}")
     
-    # 2. Monta il video (usando il video registrato manualmente app_demo.mp4)
-    print("\n[*] Esecuzione generate_reel.py...")
-    subprocess.run(["python", "generate_reel.py"], check=True)
+    # 2. Monta il video usando il nuovo motore professionale
+    print("\n[*] Esecuzione neatx_reel_engine.py...")
+    subprocess.run(["python", "-X", "utf8", "neatx_reel_engine.py"], check=True)
     
     # 4. Pubblica
     print("\n[*] Esecuzione publish_reel.py...")
