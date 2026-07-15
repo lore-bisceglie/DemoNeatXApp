@@ -697,32 +697,35 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         {/* Dashboard cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
-          <div className="bg-[#0b1221] p-8 rounded-3xl shadow-xl shadow-cyan-900/20 border border-cyan-500/20 flex flex-col justify-center h-full min-h-[320px]">
-            <h2 className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          <div className="bg-gradient-to-br from-[#0b1221] to-[#0f192b] p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 border border-white/5 flex flex-col justify-center h-full min-h-[320px] transition-all duration-300 hover:-translate-y-1 hover:shadow-cyan-500/10 hover:border-cyan-500/30 group">
+            <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest flex items-center gap-2 group-hover:text-cyan-400 transition-colors">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
+              </span>
               Prossimo in arrivo
             </h2>
 
             {nextAppointment ? (
               <div className="flex items-center justify-between mt-2">
                 <div>
-                  <p className="text-2xl font-extrabold text-white truncate max-w-[180px]">
+                  <p className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 truncate max-w-[180px] drop-shadow-sm">
                     {nextAppointment.customerName}
                   </p>
-                  <p className="text-[#00b4ff] font-bold text-xl mt-1">
+                  <p className="text-[#00b4ff] font-black text-2xl mt-1 drop-shadow-[0_0_12px_rgba(0,180,255,0.4)]">
                     {nextAppointment.time}
-                    <span className="text-sm font-medium text-slate-400 ml-1">
+                    <span className="text-sm font-medium text-slate-500 ml-2">
                       ({nextAppointment.date.split("-").reverse().join("/")})
                     </span>
                   </p>
                 </div>
-                <div className="bg-[#131c31] p-4 rounded-2xl border border-[#1e2b4a] text-2xl shadow-inner">
+                <div className="bg-gradient-to-br from-[#131c31] to-[#0b1221] p-4 rounded-2xl border border-white/5 text-2xl shadow-inner shadow-black/50 group-hover:border-cyan-500/30 transition-all">
                   ⏳
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-6">
-                <span className="text-5xl mb-3 opacity-20">📅</span>
+                <span className="text-5xl mb-3 opacity-20 grayscale group-hover:grayscale-0 transition-all duration-500">📅</span>
                 <p className="text-slate-500 text-base font-medium">
                   Nessun cliente in attesa.
                 </p>
@@ -730,24 +733,24 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             )}
           </div>
 
-          <div className="bg-[#0b1221] p-8 rounded-3xl shadow-xl shadow-emerald-900/20 border border-emerald-500/20 flex flex-col justify-center h-full min-h-[320px] relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 text-8xl opacity-[0.03] pointer-events-none">
-              📊
+          <div className="bg-gradient-to-br from-[#0b1221] to-[#0f192b] p-8 rounded-3xl shadow-2xl shadow-emerald-900/20 border border-white/5 flex flex-col justify-center h-full min-h-[320px] relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-emerald-500/10 hover:border-emerald-500/30 group">
+            <div className="absolute -right-6 -bottom-6 text-9xl opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform duration-500">
+              💰
             </div>
-            <h2 className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest flex items-center gap-2">
-              <span>📈</span>
+            <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest flex items-center gap-2 group-hover:text-emerald-400 transition-colors">
+              <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]">📈</span>
               Statistiche Mese
             </h2>
-            <div className="flex items-end gap-3 mt-2">
-              <span className="text-5xl font-extrabold text-emerald-400">
+            <div className="flex flex-col gap-1 mt-2 z-10 relative">
+              <span className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-br from-emerald-400 to-teal-200 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                 €{estimatedRevenue}
               </span>
-              <span className="text-slate-400 font-medium mb-1.5 text-sm">
-                / {validMonthly.length} app.ti
+              <span className="text-slate-500 font-bold text-sm tracking-wide mt-1">
+                su <strong className="text-white">{validMonthly.length}</strong> appuntamenti previsti
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-3">
-              Calcolo dinamico sul prezzo dei servizi configurati.
+            <p className="text-[11px] text-slate-600 mt-4 font-medium z-10 relative leading-relaxed">
+              Calcolo dinamico sul prezzo dei servizi configurati nel sistema.
             </p>
           </div>
 
