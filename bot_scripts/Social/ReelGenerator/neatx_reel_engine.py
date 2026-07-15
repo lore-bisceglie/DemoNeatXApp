@@ -144,20 +144,24 @@ def carica_api_key():
 
 
 def genera_script_ai(professione: dict) -> dict:
-    """Genera uno script originale con Gemini per la professione scelta"""
-    api_key = carica_api_key()
+    """Genera uno script originale con OmniRoute/OpenAI/Gemini per la professione scelta"""
+    import sys
+    from pathlib import Path
     
-    if not api_key:
-        # Fallback: usa uno script pre-scritto dal database
-        return genera_script_fallback(professione)
-    
+    # Assicuriamoci che ai_provider sia importabile aggiungendo il path corretto
+    bot_scripts_dir = Path(__file__).resolve().parent.parent.parent
+    if str(bot_scripts_dir) not in sys.path:
+        sys.path.append(str(bot_scripts_dir))
+        
     try:
-        from google import genai
-        client = genai.Client(api_key=api_key)
+        from Automation.ai_provider import openai_json
+    except ImportError:
+        print("[!] Modulo ai_provider non trovato, uso fallback")
+        return genera_script_fallback(professione)
         
-        dolore = random.choice(professione["dolori"])
-        
-        prompt = f"""
+    dolore = random.choice(professione["dolori"])
+    
+    prompt = f"""
 Sei un copywriter esperto di video virali per TikTok e Instagram Reels in Italia.
 Scrivi uno script per un video di 20 secondi per promuovere NeatX (neatx.store), 
 un sistema di prenotazioni online per {professione["label"]}.
@@ -185,16 +189,13 @@ Rispondi SOLO con un JSON valido in questo formato:
   "script_completo": "tutto il testo concatenato con spazi"
 }}
 """
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
-        text = response.text.strip()
-        text = re.sub(r"```json\n?|\n?```", "", text).strip()
-        return json.loads(text)
     
-    except Exception as e:
-        print(f"[!] Gemini non disponibile ({e}), uso script pre-scritto")
+    response = openai_json(prompt=prompt, model="gemini-2.5-flash")
+    
+    if response:
+        return response
+    else:
+        print(f"[!] AI Provider non disponibile, uso script pre-scritto")
         return genera_script_fallback(professione)
 
 

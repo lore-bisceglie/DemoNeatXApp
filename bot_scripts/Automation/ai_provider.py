@@ -5,7 +5,8 @@ import urllib.error
 import urllib.request
 
 
-OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
+base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+OPENAI_CHAT_URL = f"{base_url}/chat/completions"
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
 
 
@@ -26,12 +27,14 @@ def _redact_secret(text):
     return re.sub(r"sk-[A-Za-z0-9_-]+", "sk-***", text or "")
 
 
-def openai_chat(prompt, system=None, json_mode=False, temperature=0.7, max_tokens=1600):
+def openai_chat(prompt, system=None, json_mode=False, temperature=0.7, max_tokens=1600, model=None):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         return None
 
-    model = os.environ.get("OPENAI_MODEL", DEFAULT_OPENAI_MODEL)
+    if not model:
+        model = os.environ.get("OPENAI_MODEL", DEFAULT_OPENAI_MODEL)
+        
     messages = []
     if system:
         messages.append({"role": "system", "content": system})
@@ -67,19 +70,20 @@ def openai_chat(prompt, system=None, json_mode=False, temperature=0.7, max_token
         return payload["choices"][0]["message"]["content"].strip()
     except urllib.error.HTTPError as exc:
         details = _redact_secret(exc.read().decode("utf-8", errors="ignore"))
-        print(f"[!] OpenAI non disponibile HTTP {exc.code}: {details[:500]}")
+        print(f"[!] OpenAI/OmniRoute non disponibile HTTP {exc.code}: {details[:500]}")
     except Exception as exc:
-        print(f"[!] OpenAI non disponibile: {exc}")
+        print(f"[!] OpenAI/OmniRoute non disponibile: {exc}")
     return None
 
 
-def openai_json(prompt, system=None, temperature=0.7, max_tokens=1600):
+def openai_json(prompt, system=None, temperature=0.7, max_tokens=1600, model=None):
     text = openai_chat(
         prompt,
         system=system or "Rispondi solo con JSON valido, senza markdown.",
         json_mode=True,
         temperature=temperature,
         max_tokens=max_tokens,
+        model=model
     )
     if not text:
         return None
@@ -87,15 +91,16 @@ def openai_json(prompt, system=None, temperature=0.7, max_tokens=1600):
     try:
         return json.loads(_clean_json_text(text))
     except Exception as exc:
-        print(f"[!] JSON OpenAI non leggibile: {exc}")
+        print(f"[!] JSON AI non leggibile: {exc}")
         return None
 
 
-def openai_text(prompt, system=None, temperature=0.7, max_tokens=1800):
+def openai_text(prompt, system=None, temperature=0.7, max_tokens=1800, model=None):
     return openai_chat(
         prompt,
         system=system,
         json_mode=False,
         temperature=temperature,
         max_tokens=max_tokens,
+        model=model
     )
