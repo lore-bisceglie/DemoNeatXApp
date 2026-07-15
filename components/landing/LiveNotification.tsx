@@ -28,16 +28,21 @@ export default function LiveNotification() {
 
   return (
     <div 
-      className={`fixed z-[9990] flex items-center gap-3 bg-[#0b1221]/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 px-4 py-3 rounded-2xl transform transition-all duration-500 ease-out
-        bottom-[110px] left-1/2 -translate-x-1/2 w-[90%] max-w-[340px]
-        md:bottom-24 md:left-6 md:translate-x-0 md:w-auto md:max-w-md
-        ${showNotification ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}
+      className={`fixed z-[99999] flex items-center gap-3 bg-[#1a2642]/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 p-4 rounded-[20px] transform transition-all duration-500 ease-out
+        top-4 left-4 right-4 mx-auto max-w-sm
+        md:top-auto md:bottom-8 md:left-8 md:right-auto md:w-auto md:max-w-md md:rounded-2xl
+        ${showNotification ? 'translate-y-0 opacity-100' : 'md:translate-y-10 -translate-y-[120%] opacity-0 pointer-events-none'}
       `}
     >
-      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping flex-shrink-0"></div>
-      <p className="text-white text-xs sm:text-sm font-semibold m-0 p-0 leading-snug">
-        {notification}
-      </p>
+      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-400 to-cyan-400 flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/20">
+        <span className="text-white text-lg">✨</span>
+      </div>
+      <div className="flex flex-col">
+        <span className="text-white text-sm font-bold leading-tight">NeatX</span>
+        <p className="text-slate-300 text-xs sm:text-sm font-medium mt-0.5 leading-snug">
+          {notification}
+        </p>
+      </div>
     </div>
   );
 }
