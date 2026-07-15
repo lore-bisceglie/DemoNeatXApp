@@ -349,23 +349,24 @@ const tenant = await prisma.tenant.findFirst({ where: { name: { contains: query 
         await sendTelegramMessage(reply);
       }
       else if (text === "/lead") {
-        let leads = [];
         try {
-          leads = await prisma.lead.findMany({
+          const leads = await prisma.lead.findMany({
             take: 5,
             orderBy: { createdAt: "desc" },
             select: { name: true, source: true, status: true }
           });
-        } catch (e) {}
         
-        if (leads.length === 0) {
-           await sendTelegramMessage("📭 Nessun lead trovato nella pipeline.");
-        } else {
-           let reply = `🎯 <b>ULTIMI 5 CONTATTI (LEADS)</b>\n\n`;
-           leads.forEach((l, i) => {
-             reply += `${i+1}. <b>${l.name}</b>\n📌 Fonte: ${l.source}\n📊 Stato: ${l.status}\n\n`;
-           });
-           await sendTelegramMessage(reply);
+          if (leads.length === 0) {
+             await sendTelegramMessage("📭 Nessun lead trovato nella pipeline.");
+          } else {
+             let reply = `🎯 <b>ULTIMI 5 CONTATTI (LEADS)</b>\n\n`;
+             leads.forEach((l, i) => {
+               reply += `${i+1}. <b>${l.name}</b>\n📌 Fonte: ${l.source}\n📊 Stato: ${l.status}\n\n`;
+             });
+             await sendTelegramMessage(reply);
+          }
+        } catch (e) {
+          await sendTelegramMessage("❌ Errore durante la ricerca dei lead.");
         }
       }
       else if (text === "/agent run") {
