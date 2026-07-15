@@ -1,86 +1,46 @@
 {
-  "generated_at": "2026-07-15T11:00:48.436997+02:00",
+  "generated_at": "2026-07-15T12:02:26.139730+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
-    "blog_titles_count": 2,
-    "today_niche": "Parrucchieri"
+    "blog_titles_count": 3,
+    "today_niche": "Tatuatori"
   },
   "ideas": [
     {
-      "niche": "Parrucchieri",
-      "hook": "Sei un parrucchiere e segni ancora le ore dello staff su fogli Excel che poi puntualmente perdi?",
-      "cover_title": "STOP AGLI ERRORI",
-      "blog_topic": "Parrucchieri: Timesheet Commercialista con NeatX",
-      "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-      "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
-      "keywords": [
-        "gestionale parrucchieri",
-        "prenotazioni parrucchiere",
-        "agenda salone"
-      ]
+      "title": "Gestione Staff per Studi di Tatuaggi",
+      "hook": "Se nel tuo studio di tatuaggi devi ancora coordinare a mano i turni e le ferie dei tuoi collaboratori stai sprecando ore ogni settimana.",
+      "video_concept": "Video con gameplay stile runner in sottofondo mentre una voce fuori campo spiega come NeatX automatizza l'assegnazione dei clienti al tatuatore corretto in base allo stile e alla disponibilità.",
+      "blog_topic": "Tatuatori: Gestione Staff e turni automatizzati con NeatX",
+      "pain_point": "Turni multipli e ferie da coordinare a mano tra i vari tatuatori dello studio."
     },
     {
-      "niche": "Parrucchieri",
-      "hook": "Quante ore perdi ogni fine mese a ricostruire i turni dei tuoi parrucchieri per mandarli al consulente del lavoro?",
-      "cover_title": "FINE MESE SENZA ANSIA",
-      "blog_topic": "Come semplificare la gestione dei turni nel tuo salone di acconciatura",
-      "pain": "tempo sprecato a calcolare ore lavorate a fine mese",
-      "promise": "calcolo automatico delle ore e report esportabile in pochi secondi",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic scene of a modern Italian salon interior, showing a sleek tablet displaying an automatically calculated staff attendance sheet with zero errors, bright professional setup",
-      "keywords": [
-        "gestione personale parrucchieri",
-        "orari dipendenti salone",
-        "software per parrucchieri"
-      ]
+      "title": "Stop Clienti Assegnati al Tatuatore Sbagliato",
+      "hook": "Quel momento in cui un cliente prenota per un tatuaggio fineline ma finisce per errore nell'agenda del tuo collaboratore che fa solo traditional.",
+      "video_concept": "Schermata divisa che mostra il caos di un'agenda cartacea condivisa contro la precisione delle agende digitali separate e collegate per ogni singolo artista su NeatX.",
+      "blog_topic": "Come evitare errori di assegnazione clienti nel tuo studio di tatuaggi",
+      "pain_point": "Clienti assegnati al collaboratore sbagliato con conseguente perdita di tempo e scontento del cliente."
     },
     {
-      "niche": "Barbieri",
-      "hook": "Se gestisci una barberia con tre o più dipendenti e usi ancora i bigliettini di carta per segnare le ferie, rischi il caos.",
-      "cover_title": "GESTISCI LO STAFF",
-      "blog_topic": "Barbieri: come tracciare ferie e permessi dei dipendenti senza fogli sparsi",
-      "pain": "sovrapposizioni di ferie dei collaboratori e appuntamenti persi",
-      "promise": "calendario ferie sincronizzato con l'agenda digitale per evitare buchi",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic shot of a busy Italian barbershop with a digital wall monitor displaying color-coded employee shifts and vacation slots clearly organized",
-      "keywords": [
-        "gestionale barbieri",
-        "agenda barbieri",
-        "orari staff barberia"
-      ]
+      "title": "Proteggere la Caparra del Tatuaggio",
+      "hook": "Come fanno gli studi di tatuaggi con più collaboratori a gestire le caparre senza impazzire tra messaggi privati e bonifici non tracciati.",
+      "video_concept": "Un video focalizzato sulla spiegazione di come NeatX vincola la prenotazione del turno con ciascun tatuatore al versamento automatico della caparra.",
+      "blog_topic": "Gestione caparra tatuaggio: come automatizzare i pagamenti per ogni collaboratore dello studio",
+      "pain_point": "Mancato incasso delle caparre e difficoltà a tracciare i pagamenti associati ai singoli membri dello staff."
     },
     {
-      "niche": "Centri Estetici",
-      "hook": "Le tue estetiste ti chiedono i permessi all'ultimo minuto e non sai mai come riorganizzare l'agenda dei trattamenti?",
-      "cover_title": "TURNI SOTTO CONTROLLO",
-      "blog_topic": "Centri Estetici: la guida definitiva per gestire i turni dei dipendenti",
-      "pain": "disorganizzazione nei turni e permessi improvvisi dello staff",
-      "promise": "pianificazione turni rapida e notifiche istantanee dei cambi orario",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic view of an elegant Italian beauty center reception area with a smartphone showing an intuitive staff scheduling app, soft warm lighting",
-      "keywords": [
-        "gestionale centri estetici",
-        "software centro estetico",
-        "turni dipendenti estetica"
-      ]
+      "title": "Agende Separate per Tatuatori dello Studio",
+      "hook": "Smetti di fare da segretario ai tuoi tatuatori: ecco come dare a ogni collaboratore la sua agenda indipendente senza perdere il controllo del tuo studio.",
+      "video_concept": "Screencast rapido della dashboard di NeatX che mostra come configurare i permessi dello staff e come ogni tatuatore possa vedere solo i propri appuntamenti.",
+      "blog_topic": "Agenda tatuatori: come dividere i clienti tra i membri del team in modo automatico",
+      "pain_point": "Mancanza di autonomia dei collaboratori e sovraccarico di lavoro di segreteria per il titolare dello studio."
     },
     {
-      "niche": "Parrucchieri",
-      "hook": "Il tuo commercialista si lamenta ogni volta delle ore dipendenti scritte a mano che gli mandi in ritardo?",
-      "cover_title": "CSV PRONTO IN UN CLICK",
-      "blog_topic": "Saloni di bellezza: come inviare il foglio presenze al commercialista senza stress",
-      "pain": "contestazioni del commercialista e ritardi nell'invio delle presenze dello staff",
-      "promise": "esportazione immediata del file CSV con tutte le ore lavorate, approvato dai consulenti",
-      "gameplay_style": "runner",
-      "image_prompt": "photorealistic shot focusing on a modern laptop screen in a hair salon showing a neat CSV export button labeled for the accountant, clean aesthetic",
-      "keywords": [
-        "gestione salone",
-        "fogli presenze parrucchieri",
-        "software gestionale parrucchiere"
-      ]
+      "title": "Coordinare le Ferie dei Tatuatori Senza Bloccare lo Studio",
+      "hook": "Se un tuo tatuatore va in ferie e continui a ricevere richieste di prenotazione per lui, rischi di creare un disservizio o perdere clienti storici.",
+      "video_concept": "Gameplay in stile runner che illustra visivamente la fluidità di impostare i giorni di chiusura per un singolo artista lasciando attive le prenotazioni per gli altri membri dello staff.",
+      "blog_topic": "Come gestire le ferie del personale nel tuo studio di tatuaggi senza fermare le prenotazioni online",
+      "pain_point": "Difficoltà nel coordinare le ferie e rischio di sovrapposizione di appuntamenti durante le assenze dello staff."
     }
   ]
 }
