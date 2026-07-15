@@ -102,7 +102,7 @@ model Location {
   staffSheetUrl String?
 
   tenantId      String
-  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Relazioni
   staff         Staff[]
@@ -127,7 +127,7 @@ model LocationSettings {
   paymentMandatory  Boolean @default(false)
 
   locationId        String  @unique
-  location          Location @relation(fields: [locationId], references: [id])
+  location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   updatedAt         DateTime @updatedAt
 }
@@ -143,7 +143,7 @@ model Service {
 
   // Collegamento al Tenant
   tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   appointments Appointment[]
 
@@ -157,9 +157,9 @@ model Service {
 model ServiceLocation {
   id         String   @id @default(cuid())
   serviceId  String
-  service    Service  @relation(fields: [serviceId], references: [id])
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   locationId String
-  location   Location @relation(fields: [locationId], references: [id])
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   price      Float?   // Override prezzo per questa sede (null = usa Service.price)
   isActive   Boolean  @default(true)
 
@@ -189,19 +189,19 @@ model Appointment {
 
   // Relazione con il Servizio specifico
   serviceId     String?
-  service       Service? @relation(fields: [serviceId], references: [id])
+  service       Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   // Relazione con lo Staff che esegue il servizio
   staffId       String?
-  staff         Staff?   @relation(fields: [staffId], references: [id])
+  staff         Staff?   @relation(fields: [staffId], references: [id], onDelete: Cascade)
 
   // Relazione con il Negozio
   tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Relazione con la Sede (NUOVO - opzionale per retrocompatibilità)
   locationId    String?
-  location      Location? @relation(fields: [locationId], references: [id])
+  location      Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([locationId])
 }
@@ -217,7 +217,7 @@ model BlockedSlot {
 
   // Collegamento al Tenant
   tenantId String?
-  tenant   Tenant? @relation(fields: [tenantId], references: [id])
+  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 // ------------------------------------------------------
@@ -242,7 +242,7 @@ model StoreSettings {
 
   // Relazione 1-a-1 col Tenant
   tenantId   String   @unique
-  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 // ------------------------------------------------------
@@ -257,7 +257,7 @@ model NoShow {
 
   // Collegamento al Tenant per isolamento dati
   tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 // ------------------------------------------------------
@@ -272,7 +272,7 @@ model Waitlist {
 
   // Collegamento al Tenant per isolamento dati
   tenantId  String?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 // ------------------------------------------------------
@@ -288,7 +288,7 @@ model CustomerNote {
   updatedAt    DateTime @updatedAt
 
   tenantId String
-  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, phone])
 }
@@ -328,7 +328,7 @@ model ActivityLog {
   createdAt     DateTime @default(now())
 
   tenantId      String
-  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
 }
@@ -340,7 +340,7 @@ model Staff {
   id           String        @id @default(cuid())
   name         String        // Es. "Marco", "Giulia"
   tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Servizi che questo dipendente può svolgere
   services     Service[]
@@ -352,7 +352,7 @@ model Staff {
 
   // Sede di riferimento (nullable = lavora in tutte le sedi dove ha servizi)
   locationId      String?
-  location        Location? @relation(fields: [locationId], references: [id])
+  location        Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   // Sedi specifiche per staff multi-sede (relazione molti-a-molti)
   locations       StaffLocation[]
