@@ -46,13 +46,14 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name, tenantId, locationId, locationIds } = await req.json();
+    const { name, tenantId, locationId, locationIds, serviceIds } = await req.json();
 
     if (!name || !tenantId) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
     }
 
     const selectedLocations = locationIds || (locationId ? [locationId] : []);
+    const selectedServices = Array.isArray(serviceIds) ? serviceIds : [];
 
     const newStaff = await prisma.staff.create({
       data: {
@@ -61,6 +62,9 @@ export async function POST(req: Request) {
         locationId: locationId || null,
         locations: selectedLocations.length > 0
           ? { create: selectedLocations.map((lid: string) => ({ locationId: lid })) }
+          : undefined,
+        services: selectedServices.length > 0
+          ? { connect: selectedServices.map((sid: string) => ({ id: sid })) }
           : undefined,
       },
       include: {

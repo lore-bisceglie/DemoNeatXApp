@@ -157,6 +157,7 @@ export async function GET(request: Request) {
     for (const staff of allStaff) {
       const baseSchedule = parseBaseSchedule(staff.baseSchedule);
       const exceptions = parseShiftExceptions(staff.shiftExceptions);
+      const exception = exceptions.find(e => e.date === date);
 
       if (Object.keys(baseSchedule).length > 0) {
         // Usa DB
@@ -171,6 +172,12 @@ export async function GET(request: Request) {
         const sheetSchedule = await fetchStaffSchedule(location.staffSheetUrl, staff.name, date);
         if (sheetSchedule) {
           staffSchedules[staff.id] = sheetSchedule;
+        }
+      } else {
+        // Nessun base schedule e nessun Google Sheet: fallback a orari sede
+        // Ma se c'è un'eccezione di ferie, il dipendente è offline
+        if (exception && exception.type === "ferie") {
+          staffSchedules[staff.id] = { isOff: true, shifts: [] };
         }
       }
     }
@@ -234,6 +241,9 @@ export async function GET(request: Request) {
 
       if (availableStaffCount > overlappingUnassignedCount) {
         availableSlots.push(minsToTime(potentialStart));
+      }
+      if (potentialStart === openTime) {
+          console.log(`[DEBUG QA] date=${date}, capableStaffIds=${capableStaffIds}, staffSchedules=`, staffSchedules, `, availableStaffCount=${availableStaffCount}, overlappingUnassignedCount=${overlappingUnassignedCount}`);
       }
     }
 
