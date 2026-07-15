@@ -83,7 +83,14 @@ export async function POST(request: Request) {
       // Avviso automatico lista d'attesa (FIFO)
       if (appointment.tenantId && appointment.date) {
         const waitlistEntry = await prisma.waitlist.findFirst({
-          where: { tenantId: appointment.tenantId, date: appointment.date },
+          where: {
+            tenantId: appointment.tenantId,
+            date: appointment.date,
+            OR: [
+              { preferredTime: appointment.time },
+              { preferredTime: null },
+            ]
+          },
           orderBy: { createdAt: "asc" },
         });
 

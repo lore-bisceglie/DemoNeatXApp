@@ -7,12 +7,6 @@ export async function POST(
 ) {
   try {
     const { id } = await context.params;
-    const body = await request.json().catch(() => ({}));
-
-    const isPaid =
-      typeof body.isPaid === "boolean"
-        ? body.isPaid
-        : true;
 
     if (!id) {
       return NextResponse.json(
@@ -20,6 +14,12 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    const body = await request.json().catch(() => ({}));
+    const isPaid =
+      typeof body.isPaid === "boolean"
+        ? body.isPaid
+        : true;
 
     const updatedAppointment = await prisma.appointment.update({
       where: {
@@ -42,4 +42,4 @@ export async function POST(
       { status: 500 }
     );
   }
-}
+}
