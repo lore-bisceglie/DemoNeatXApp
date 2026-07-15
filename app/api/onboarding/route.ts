@@ -60,7 +60,7 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
         reply_markup: {
           inline_keyboard: [
             [
-              { text: "✅ Approva (PRO)", callback_data: `approve_${tenant.id}` },
+              { text: "✅ Attiva Manualmente", callback_data: `approve_${tenant.id}` },
               { text: "🔴 Elimina (Spam)", callback_data: `delete_${tenant.id}` }
             ]
           ]
@@ -945,7 +945,7 @@ export async function POST(req: Request) {
         trialEndsAt,
         trialStatus: "trial_active",
         isDemoData: true,
-        plan: "basic",
+        plan: "elite",
         referredByCode,
         referredAt: referredByCode ? now : null,
         services: {

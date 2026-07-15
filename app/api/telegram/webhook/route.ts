@@ -80,13 +80,13 @@ export async function POST(req: Request) {
       else if (data.startsWith("approve_")) {
         const tenantId = data.replace("approve_", "");
         try {
-          // Promuove il negozio a Pro
+          // Attivazione manuale (es. pagamento bonifico/contanti)
           await prisma.tenant.update({
             where: { id: tenantId },
-            data: { plan: "pro" }
+            data: { plan: "elite", trialStatus: "converted", trialEndsAt: null }
           });
-          await answerCallbackQuery(cb.id, "✅ Salone promosso a PRO!");
-          await editMessageText(chatId, messageId, `${cb.message.text}\n\n<b>[Approvato: Piano PRO attivo]</b>`);
+          await answerCallbackQuery(cb.id, "✅ Salone attivato manualmente (Elite)!");
+          await editMessageText(chatId, messageId, `${cb.message.text}\n\n<b>[Attivato Manualmente: Piano ELITE definitivo]</b>`);
         } catch (e) {
           await answerCallbackQuery(cb.id, "Errore durante l'approvazione.");
         }
