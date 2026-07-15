@@ -27,6 +27,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
         run: python bot_scripts/Agents/coordinator.py
 
       - name: Commit blackboard updates
