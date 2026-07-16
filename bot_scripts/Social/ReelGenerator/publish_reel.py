@@ -81,21 +81,22 @@ def get_caption():
             data = json.load(f)
             return data.get("caption", "Scopri come automatizzare il tuo business con NeatX! #perte #fyp #foryou #viral #imprenditore #businessitalia")
     return "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione"
+# Servizi di fallback per l'upload (sia video che copertina)
+FALLBACK_SERVICES = [
+    {
+        "url": "https://tmpfiles.org/api/v1/upload",
+        "files_name": "file",
+        "parse": lambda r: r.json().get("data", {}).get("url", "").replace("tmpfiles.org/", "tmpfiles.org/dl/"),
+    },
+    {
+        "url": "https://file.io",
+        "files_name": "file",
+        "parse": lambda r: r.json().get("link", ""),
+    },
+]
 
 def upload_video_fallback():
-    services = [
-        {
-            "url": "https://tmpfiles.org/api/v1/upload",
-            "files_name": "file",
-            "parse": lambda r: r.json().get("data", {}).get("url", "").replace("tmpfiles.org/", "tmpfiles.org/dl/"),
-        },
-        {
-            "url": "https://file.io",
-            "files_name": "file",
-            "parse": lambda r: r.json().get("link", ""),
-        },
-    ]
-    for svc in services:
+    for svc in FALLBACK_SERVICES:
         try:
             print(f"    Provo {svc['url']}...")
             r = requests.post(
@@ -187,7 +188,7 @@ def publish_to_instagram():
                     time.sleep(2 ** attempt)
                 else:
                     print("[!] catbox.moe fallito per la copertina, provo upload alternativo...")
-                    for svc in services:
+                    for svc in FALLBACK_SERVICES:
                         try:
                             print(f"    Provo {svc['url']} per la copertina...")
                             r_alt = requests.post(
