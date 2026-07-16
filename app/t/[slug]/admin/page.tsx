@@ -1316,17 +1316,22 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                       <p className="text-[10px] text-slate-600 mt-2 italic">NeatX non riceve, non salva e non vede nessuno di questi dati.</p>
                     </div>
 
-                    <div className="bg-gradient-to-br from-blue-900/20 to-[#0b1221] border border-blue-500/20 shadow-inner shadow-blue-500/5 rounded-xl p-3 flex-1 max-w-sm flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="bg-white text-black px-1.5 py-0.5 rounded font-black text-[9px] tracking-tighter uppercase">Revolut</span>
-                          <p className="text-xs text-blue-300 font-bold">Non hai un conto aziendale?</p>
+                    <div className="bg-[#050505] border border-white/10 shadow-2xl shadow-black/80 rounded-xl p-4 flex-1 max-w-sm flex flex-col justify-between relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                      
+                      <div className="z-10 relative">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-sans font-bold text-white text-[15px] tracking-tight flex items-center">
+                            Revolut <span className="font-light ml-1 text-slate-300">Business</span>
+                          </span>
+                          <span className="bg-white/10 text-white px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border border-white/5">Sponsor</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 leading-relaxed mb-2">
-                          Apri <strong className="text-white">Revolut Business</strong> online in 5 minuti. IBAN immediato, zero costi fissi, perfetto da collegare subito a Stripe.
+                        <p className="text-xs text-white font-bold mb-1">Non hai un conto aziendale?</p>
+                        <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+                          Apri il tuo conto online in 5 minuti. IBAN immediato, zero costi fissi, perfetto da collegare subito a Stripe.
                         </p>
                       </div>
-                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="inline-flex text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors">
+                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-white text-black text-[11px] font-bold py-2 px-4 rounded-lg hover:bg-slate-200 transition-colors shadow-lg">
                         Apri il tuo conto gratuito →
                       </a>
                     </div>
