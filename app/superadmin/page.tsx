@@ -444,7 +444,11 @@ export default function SuperAdminPage() {
                             <button onClick={() => handleImpersonate(tenant.slug, tenant.adminPassword)} title="Entra come Admin" className="flex-1 text-[11px] text-amber-400 font-medium bg-amber-500/10 py-1.5 rounded-lg border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/20 transition">🕵️</button>
                             <button onClick={() => handleCopyCredentials(tenant)} title="Copia credenziali per il cliente" className={`flex-1 text-[11px] font-medium py-1.5 rounded-lg transition flex items-center justify-center ${copied ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"}`}>{copied ? "✅" : "📋"}</button>
                             <button onClick={() => openEdit(tenant)} title="Modifica" className="text-[11px] font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-1.5 rounded-lg transition">✏️</button>
-                            <button onClick={() => handleDelete(tenant.id, tenant.name)} title="Elimina" className="text-[11px] font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 px-3 py-1.5 rounded-lg transition">🗑️</button>
+                            {tenant.slug === 'demo-vetrina' ? (
+                              <button disabled title="Demo pubblica protetta" className="text-[11px] font-medium flex items-center justify-center bg-slate-800/50 text-slate-500 px-3 py-1.5 rounded-lg cursor-not-allowed">🛡️</button>
+                            ) : (
+                              <button onClick={() => handleDelete(tenant.id, tenant.name)} title="Elimina" className="text-[11px] font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 px-3 py-1.5 rounded-lg transition">🗑️</button>
+                            )}
                           </div>
                           <div className="flex gap-1 w-full mt-1">
                             <button onClick={() => handleAddSms(tenant.id)} className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 + SMS</button>

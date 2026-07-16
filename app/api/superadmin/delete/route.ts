@@ -14,6 +14,12 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'ID negozio mancante' }, { status: 400 });
     }
 
+    // Protezione Demo Pubblica
+    const target = await prisma.tenant.findUnique({ where: { id: tenantId } });
+    if (target?.slug === 'demo-vetrina') {
+      return NextResponse.json({ error: 'Operazione non consentita: Non puoi cancellare la Demo pubblica.' }, { status: 403 });
+    }
+
     // Per cancellare un negozio senza errori di Foreign Key, eliminiamo prima tutti i dati collegati
     await prisma.$transaction([
       prisma.appointment.deleteMany({ where: { tenantId } }),
