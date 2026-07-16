@@ -127,6 +127,9 @@ Regole:
 - Scrivi in italiano, tono professionale ma coinvolgente.
 - Almeno 400 parole.
 - Non includere frontmatter, nessun preambolo, solo il Markdown.
+- Inserisci in modo organico due box promozionali all'interno dell'articolo (uno a metà testo e uno alla fine).
+- Il testo del box deve sembrare un consiglio utile, ad esempio: "💡 TIP: Se perdi ore a pensare a cosa scrivere sui social del tuo salone, abbiamo creato 'L'Arsenale dei Prompt': 50 comandi già pronti da copiare e incollare su ChatGPT per fare post perfetti in 3 minuti. [Scoprili qui: https://tinyurl.com/neatxprompt]"
+- Assicurati che il link https://tinyurl.com/neatxprompt sia cliccabile nel Markdown. Adatta il tono della promozione al contesto del paragrafo in cui lo inserisci.
 """
     openai_article = openai_text(
         prompt,
