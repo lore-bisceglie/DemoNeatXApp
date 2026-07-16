@@ -24,13 +24,7 @@ export default function IntegrationsSection() {
           {/* WhatsApp */}
           <div className="bg-[#0b1221] border border-[#1a2642] rounded-2xl p-6 flex flex-col items-center justify-center min-w-[160px] hover:border-emerald-500/30 transition-colors shadow-lg">
             <div className="text-emerald-400 font-bold text-2xl tracking-tight mb-2">WhatsApp</div>
-            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Notifiche API</span>
-          </div>
-
-          {/* Telegram */}
-          <div className="bg-[#0b1221] border border-[#1a2642] rounded-2xl p-6 flex flex-col items-center justify-center min-w-[160px] hover:border-sky-500/30 transition-colors shadow-lg">
-            <div className="text-sky-400 font-bold text-2xl tracking-tight mb-2">Telegram</div>
-            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Bot Clienti</span>
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Promemoria Clienti</span>
           </div>
 
           {/* Revolut Business (Referral) */}
