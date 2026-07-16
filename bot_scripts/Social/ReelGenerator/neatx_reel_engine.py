@@ -394,8 +394,8 @@ def monta_reel(
     print(f"\n[🎬] Avvio montaggio (durata {duration:.1f}s)...")
 
     # ── SFONDO ──────────────────────────────────────────────────
-    # Usa SOLO le immagini premium generate da noi per il Reel
-    broll_images = list(ASSETS_DIR.glob("neatx_reel_*.jpg"))
+    # Usa SOLO le immagini premium generate da noi per il Reel (incluse le grafiche PNG)
+    broll_images = list(ASSETS_DIR.glob("neatx_reel_*.jpg")) + list(ASSETS_DIR.glob("neatx_reel_*.png"))
     
     if broll_images:
         # Usa le immagini premium che abbiamo generato
