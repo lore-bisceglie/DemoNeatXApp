@@ -142,10 +142,11 @@ def publish_to_instagram():
                 timeout=120
             )
             video_url = r_upload.text.strip()
-            print(f"[+] URL temporaneo generato: {video_url}")
 
             if not video_url.startswith("http"):
                 raise Exception(f"Risposta non valida dal server temporaneo: {video_url[:200]}")
+                
+            print(f"[+] URL temporaneo generato: {video_url}")
             break
         except Exception as e:
             print(f"[!] Tentativo {attempt}/{max_retries} fallito: {e}")
