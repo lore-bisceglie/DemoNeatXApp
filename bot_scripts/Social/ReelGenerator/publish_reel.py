@@ -261,30 +261,40 @@ def publish_to_tiktok():
     print("[*] Avvio pubblicazione su TikTok...")
     try:
         from tiktok_uploader.upload import upload_video
-        success = upload_video(
-            VIDEO_FILE,
-            description=caption,
-            cookies_list=cookies,
-            browser="chromium", # Usa la versione locale invece di quella globale
-            headless=TIKTOK_HEADLESS
-        )
-        
-        # tiktok_uploader returns a boolean or a list of booleans
-        is_success = False
-        if isinstance(success, list):
-            is_success = all(success)
-        else:
-            is_success = bool(success)
+    except ImportError:
+        return platform_result(False, "Modulo tiktok_uploader non trovato")
+
+    max_retries = 3
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"[*] Tentativo TikTok {attempt}/{max_retries}...")
+            success = upload_video(
+                VIDEO_FILE,
+                description=caption,
+                cookies_list=cookies,
+                browser="chromium", # Usa la versione locale invece di quella globale
+                headless=TIKTOK_HEADLESS
+            )
             
-        if not is_success:
-            raise Exception("TikTok ha rifiutato l'upload (probabilmente cookie scaduti o bloccati).")
+            # tiktok_uploader returns a boolean or a list of booleans
+            if isinstance(success, list):
+                is_success = all(success)
+            else:
+                is_success = bool(success)
+                
+            if is_success:
+                print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
+                return platform_result(True, "Pubblicato su TikTok.")
+            else:
+                print(f"[!] TikTok ha rifiutato l'upload al tentativo {attempt}.")
+        except Exception as e:
+            print(f"[!] Errore durante la pubblicazione su TikTok (tentativo {attempt}): {e}")
             
-        print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
-        return platform_result(True, "Pubblicato su TikTok.")
-    except Exception as e:
-        message = f"Errore durante la pubblicazione su TikTok: {e}"
-        print(f"[!] {message}")
-        return platform_result(False, message)
+        if attempt < max_retries:
+            print(f"    Ritento tra 10 secondi...")
+            time.sleep(10)
+            
+    return platform_result(False, "Pubblicazione fallita su TikTok dopo tutti i tentativi.")
 
 def publish_to_youtube():
     if not os.path.exists(VIDEO_FILE):
