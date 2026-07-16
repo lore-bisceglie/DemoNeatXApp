@@ -87,7 +87,7 @@ def upload_video_fallback():
         {
             "url": "https://tmpfiles.org/api/v1/upload",
             "files_name": "file",
-            "parse": lambda r: r.json().get("data", {}).get("url", "").replace("tmpfiles.org/dl", "tmpfiles.org/api/v1/download"),
+            "parse": lambda r: r.json().get("data", {}).get("url", "").replace("tmpfiles.org/", "tmpfiles.org/dl/"),
         },
         {
             "url": "https://file.io",
@@ -175,18 +175,33 @@ def publish_to_instagram():
                     files={"fileToUpload": open(path_cover, "rb")},
                     timeout=60
                 )
-                cover_url = r_cover.text.strip()
+                cover_url_temp = r_cover.text.strip()
+                if not cover_url_temp.startswith("http"):
+                    raise Exception(f"Risposta copertina non valida: {cover_url_temp[:200]}")
+                cover_url = cover_url_temp
                 print(f"[+] URL copertina generato: {cover_url}")
-
-                if not cover_url.startswith("http"):
-                    print(f"[!] Avviso: Risposta copertina non valida: {cover_url[:200]}")
-                    cover_url = ""
                 break
             except Exception as e:
                 print(f"[!] Tentativo copertina {attempt}/3 fallito: {e}")
                 if attempt < 3:
                     time.sleep(2 ** attempt)
                 else:
+                    print("[!] catbox.moe fallito per la copertina, provo upload alternativo...")
+                    for svc in services:
+                        try:
+                            print(f"    Provo {svc['url']} per la copertina...")
+                            r_alt = requests.post(
+                                svc["url"],
+                                files={svc["files_name"]: open(path_cover, "rb")},
+                                timeout=60
+                            )
+                            cover_url_temp = svc["parse"](r_alt)
+                            if cover_url_temp.startswith("http"):
+                                cover_url = cover_url_temp
+                                print(f"    [+] URL alternativo copertina: {cover_url}")
+                                break
+                        except Exception as e_alt:
+                            print(f"    [!] Alternativa copertina fallita: {e_alt}")
                     print("[!] Caricamento copertina fallito dopo 3 tentativi, proseguo senza.")
     
     # 3. Creazione Container (Fase 1 Meta API)
