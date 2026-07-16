@@ -449,6 +449,25 @@ def monta_reel(
     cta_clip = crea_cta_finale(duration)
     layers.append(cta_clip)
 
+    # ── ARSENALE DEI PROMPT (Copertina PDF) ──────────────────────
+    arsenale_cover_png = ASSETS_DIR / "arsenale_cover.png"
+    arsenale_cover_jpg = ASSETS_DIR / "arsenale_cover.jpg"
+    actual_cover_path = arsenale_cover_png if arsenale_cover_png.exists() else (arsenale_cover_jpg if arsenale_cover_jpg.exists() else None)
+    
+    if actual_cover_path:
+        try:
+            t_start = max(0, duration - 4.5)
+            arsenale_clip = (ImageClip(str(actual_cover_path))
+                             .resize(width=VIDEO_W * 0.7)
+                             .set_position(("center", VIDEO_H * 0.25))
+                             .set_start(t_start)
+                             .set_end(duration)
+                             .crossfadein(0.5))
+            layers.append(arsenale_clip)
+            print(f"[🖼️] Aggiunta copertina Arsenale dei Prompt al video!")
+        except Exception as e:
+            print(f"[!] Errore aggiunta cover arsenale: {e}")
+
     # ── MONTAGGIO FINALE ─────────────────────────────────────────
     video = CompositeVideoClip(layers, size=(VIDEO_W, VIDEO_H))
     video = video.set_audio(audio)
