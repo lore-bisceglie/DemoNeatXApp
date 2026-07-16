@@ -25,13 +25,13 @@ jobs:
           TODAY=$(date +%Y-%m-%d)
 
           # Reel pubblicati oggi
-          REEL_COUNT=$(grep -l "$TODAY" ../bot_scripts/Social/ReelGenerator/reel_data.json 2>/dev/null && echo "1" || echo "0")
+          REEL_COUNT=$(grep -q "$TODAY" ../bot_scripts/Social/ReelGenerator/reel_data.json 2>/dev/null && echo "1" || echo "0")
 
           # Articoli SEO oggi
           SEO_COUNT=$(ls ../content/blog/*.md 2>/dev/null | wc -l)
 
           # Lead oggi
-          LEAD_COUNT=$(ls ../leads/lead_messages_$TODAY.md 2>/dev/null && echo "1" || echo "0")
+          LEAD_COUNT=$(test -f ../leads/lead_messages_$TODAY.md && echo "1" || echo "0")
 
           # Negozio creato oggi
           STORE_COUNT=$(grep -c "$TODAY" ../super_logs.json 2>/dev/null || echo "0")
