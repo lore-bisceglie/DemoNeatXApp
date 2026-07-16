@@ -38,6 +38,5 @@ jobs:
       - name: Commit content strategy
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: 'Auto-strategy: aggiorna calendario contenuti'
+          commit_message: 'Auto-calendar: aggiorna calendario editoriale settimanale'
           file_pattern: 'content_strategy/*.json content_strategy/*.md'
-          pull_options: '--rebase'
