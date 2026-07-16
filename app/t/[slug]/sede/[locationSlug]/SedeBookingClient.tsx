@@ -35,6 +35,7 @@ interface Props {
     name: string;
     duration: number;
     price: number | null;
+    priceInLocation?: number | null;
     staff: string[];
   }>;
   staff: Array<{
@@ -146,7 +147,6 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
       if (!res.ok) { throw new Error(data.error || "Errore prenotazione"); }
 
       setSuccess(true);
-      setSuccess(true);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -243,7 +243,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-white text-lg">{svc.name}</h3>
               <p className="text-slate-400 text-sm mt-1">
-                {svc.duration} min &bull; {svc.price ? "€" + svc.price : "Prezzo da concordare"}
+                {svc.duration} min &bull; {(svc.priceInLocation ?? svc.price) ? "€" + (svc.priceInLocation ?? svc.price) : "Prezzo da concordare"}
               </p>
             </div>
             {isSelected && (
@@ -402,7 +402,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
               <dt className="text-slate-500">Durata</dt>
               <dd className="font-medium text-white">{selectedServiceData ? selectedServiceData.duration + " min" : ""}</dd>
               <dt className="text-slate-500">Prezzo</dt>
-              <dd className="font-medium text-white">{selectedServiceData && selectedServiceData.price ? "€" + selectedServiceData.price : "Da concordare"}</dd>
+              <dd className="font-medium text-white">{selectedServiceData && (selectedServiceData.priceInLocation ?? selectedServiceData.price) ? "€" + (selectedServiceData.priceInLocation ?? selectedServiceData.price) : "Da concordare"}</dd>
               <dt className="text-slate-500">Sede</dt>
               <dd className="font-medium text-white">{location.name}</dd>
               <dt className="text-slate-500">Data</dt>
@@ -462,8 +462,8 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
       <main className="pt-20 pb-20 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <Link href={"/t/" + tenant.slug} className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm mb-4">
-              <ChevronLeft size={16} /> Indietro
+            <Link href={"/t/" + tenant.slug + "/sedi"} className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm mb-4">
+              <ChevronLeft size={16} /> Cambia Sede
             </Link>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#131c31] rounded-xl border border-[#1e2b4a] mb-4">
               <MapPin size={16} className="text-cyan-400" />

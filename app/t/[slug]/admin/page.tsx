@@ -10,7 +10,7 @@ export function headers() {
     "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
   };
 }
-import { BarChart3, CalendarDays, Users, Receipt, Globe, CreditCard, CheckCircle } from "lucide-react";
+import { BarChart3, CalendarDays, Users, Receipt, Globe, CreditCard, CheckCircle, Gift } from "lucide-react";
 import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";
 import AppointmentBlock from "../../../dashboard/AppointmentBlock";
@@ -663,6 +663,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
             >
               <BarChart3 size={16} /><span className="hidden sm:inline">Analytics</span>
+            </Link>
+            <Link
+              href={`/t/${slug}/admin/referral`}
+              className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
+            >
+              <Gift size={16} /><span className="hidden sm:inline">Invita</span>
             </Link>
             {tenant.stripeCustomerId && <PortalButton slug={slug} />}
             <a

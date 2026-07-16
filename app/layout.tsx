@@ -49,6 +49,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="beforeInteractive" 
         />
         
+        {/* SEO Schema.org (JSON-LD) */}
+        <Script id="schema-software" type="application/ld+json" strategy="beforeInteractive">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "NeatX",
+              "operatingSystem": "Web",
+              "applicationCategory": "BusinessApplication",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "EUR"
+              },
+              "description": "Software gestionale e agenda appuntamenti online zero commissioni per saloni, barbieri e centri estetici in Italia."
+            }
+          `}
+        </Script>
+
         {children}
         
         {/* Fix iubenda: restore body scroll when modal closes */}

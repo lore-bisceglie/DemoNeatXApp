@@ -398,13 +398,9 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       return;
     }
 
-    if (festeNazionali.includes(giornoMese)) {
-      setDateError("Il salone è chiuso in questa data per festività nazionale!");
-      setSlots([]);
-      setIsHoliday(false);
-      setInitialLoad(false);
-      return;
-    }
+    // Il controllo sulle festività specifiche è ora demandato esclusivamente 
+    // all'API backend (/api/slots), che legge le impostazioni del tenant 
+    // permettendo eccezioni (es. aperture straordinarie).
 
     setDateError("");
     setLoading(true);
@@ -518,12 +514,26 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         
         if (data.checkoutUrl) {
           window.location.href = data.checkoutUrl;
+          // IMPORTANT: Do NOT setIsBooking(false) here to prevent multiple clicks
+          // while Stripe is loading. The page will unload.
           return;
         }
 
-        const confirmText = `Ciao, sono ${name}. Vorrei confermare la mia prenotazione per ${
-          selectedService?.name
-        } il ${date.split("-").reverse().join("/")} alle ${selectedSlot}.`;
+        // Se il pagamento è in salone, apriamo WhatsApp in una nuova scheda
+        const baseUrl = window.location.origin;
+        const cancelUrl = `${baseUrl}/cancel/${data.cancelToken}`;
+        const priceString = effectiveServicePrice ? ` (${effectiveServicePrice}€)` : "";
+        
+        const confirmText = `📅 *Nuova Prenotazione!*\n\n` +
+          `👤 *Cliente:* ${name}\n` +
+          `📱 *Telefono:* ${phone || "Non inserito"}\n` +
+          `📅 *Data:* ${date.split("-").reverse().join("/")}\n` +
+          `⏰ *Ora:* ${selectedSlot}\n` +
+          `✂️ *Servizio:* ${selectedService?.name}${priceString}\n` +
+          `💳 *Pagamento:* in salone\n\n` +
+          `❌ *Per annullare in autonomia:*\n` +
+          `Puoi usare questo link fino a 2 ore prima del taglio:\n${cancelUrl}\n\n` +
+          `_Prenotazione gestita tramite NeatX._ 🚀`;
         
         const tenantPhone = selectedLocation?.phone || tenantInfo.phone;
         const cleanPhone = tenantPhone.replace(/\D/g, "");
@@ -539,14 +549,22 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         link.click();
         document.body.removeChild(link);
 
+        // Subito dopo aver aperto WhatsApp, la scheda corrente va alla pagina di successo
+        if (data.appointment?.id) {
+          window.location.href = `/t/${params.slug}/success?app_id=${data.appointment.id}`;
+          return;
+        }
+
         setName("");
         setPhone("");
         setSelectedSlot("");
         setDate(today);
         setSlots([]);
         setHoney("");
+        setIsBooking(false);
       } else if (res.status === 429) {
         setFormError("Troppi tentativi ravvicinati! Attendi un paio di minuti e riprova.");
+        setIsBooking(false);
       } else {
         try {
           const errorData = await res.json();
@@ -554,11 +572,11 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         } catch (e) {
           setFormError(`Errore server: ${res.statusText}`);
         }
+        setIsBooking(false);
       }
     } catch (networkError) {
       console.error("Errore di rete durante la prenotazione:", networkError);
       setFormError("Errore di connessione. Controlla la rete e riprova.");
-    } finally {
       setIsBooking(false);
     }
   };
@@ -756,7 +774,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#00b4ff] opacity-[0.04] blur-[120px] pointer-events-none rounded-full"></div>
 
-      <div className={`bg-[#0b1221] max-w-md w-full rounded-3xl shadow-2xl border border-[#1a2642] p-6 sm:p-8 relative z-10 ${th.shadowMain}`}>
+      <div className={`bg-[#0b1221] max-w-md md:max-w-lg lg:max-w-xl w-full rounded-3xl shadow-2xl border border-[#1a2642] p-6 sm:p-8 relative z-10 transition-all ${th.shadowMain}`}>
         {isPlaygroundDemo && (
           <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs p-3 rounded-xl font-semibold leading-relaxed">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

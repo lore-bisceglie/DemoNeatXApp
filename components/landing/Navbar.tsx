@@ -4,10 +4,10 @@ import Link from "next/link";
 import { LogIn } from "lucide-react";
 
 type NavbarProps = {
-  onOpenRoi: () => void;
+  onOpenRoi?: () => void;
 };
 
-export default function Navbar({ onOpenRoi }: NavbarProps) {
+export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
   return (
     <nav className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="w-full md:w-auto flex items-center justify-between">
@@ -25,7 +25,11 @@ export default function Navbar({ onOpenRoi }: NavbarProps) {
 
       <div className="hidden md:flex gap-8 text-sm font-bold text-slate-400">
         <a href="#features" className="hover:text-white transition-colors">Funzionalità</a>
-        <button onClick={onOpenRoi} className="hover:text-white transition-colors font-extrabold text-[#00b4ff]">Calcola ROI</button>
+        {onOpenRoi ? (
+          <button onClick={onOpenRoi} className="hover:text-white transition-colors font-extrabold text-[#00b4ff]">Calcola ROI</button>
+        ) : (
+          <Link href="/?showRoi=true" className="hover:text-white transition-colors font-extrabold text-[#00b4ff]">Calcola ROI</Link>
+        )}
         <a href="#pricing" className="hover:text-white transition-colors">Prezzi</a>
         <Link href="/blog" className="hover:text-white transition-colors text-purple-400">Blog</Link>
       </div>
@@ -44,13 +48,19 @@ export default function Navbar({ onOpenRoi }: NavbarProps) {
         <a href="#features" className="rounded-2xl border border-[#1a2642] bg-[#0b1221]/80 px-4 py-3 text-center text-slate-300">
           Funzionalità
         </a>
-        <button
-          type="button"
-          onClick={onOpenRoi}
-          className="rounded-2xl border border-[#00b4ff]/25 bg-[#00b4ff]/10 px-4 py-3 text-center text-cyan-300"
-        >
-          Calcola ROI
-        </button>
+        {onOpenRoi ? (
+          <button
+            type="button"
+            onClick={onOpenRoi}
+            className="rounded-2xl border border-[#00b4ff]/25 bg-[#00b4ff]/10 px-4 py-3 text-center text-cyan-300"
+          >
+            Calcola ROI
+          </button>
+        ) : (
+          <Link href="/?showRoi=true" className="rounded-2xl border border-[#00b4ff]/25 bg-[#00b4ff]/10 px-4 py-3 text-center text-cyan-300">
+            Calcola ROI
+          </Link>
+        )}
         <a href="#pricing" className="rounded-2xl border border-[#1a2642] bg-[#0b1221]/80 px-4 py-3 text-center text-slate-300">
           Prezzi
         </a>

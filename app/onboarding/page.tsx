@@ -170,6 +170,8 @@ export default function Onboarding() {
 
     setIsGenerating(true);
 
+    const referredByCode = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("ref") : null;
+
     try {
       const res = await fetch("/api/onboarding", {
         method: "POST",
@@ -187,6 +189,7 @@ export default function Onboarding() {
           tiktokUrl,
           logoUrl,
           themeColor,
+          ref: referredByCode,
         }),
       });
 
