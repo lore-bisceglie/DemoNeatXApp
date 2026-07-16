@@ -446,14 +446,18 @@ export default function SuperAdminPage() {
                             <button onClick={() => openEdit(tenant)} title="Modifica" className="text-[11px] font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-1.5 rounded-lg transition">✏️</button>
                             <button onClick={() => handleDelete(tenant.id, tenant.name)} title="Elimina" className="text-[11px] font-medium flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500/20 px-3 py-1.5 rounded-lg transition">🗑️</button>
                           </div>
-                          <div className="grid grid-cols-2 gap-1">
-                            <button onClick={() => handleMakePlan(tenant.id, "pro")} className={`text-xs font-bold py-1.5 rounded-lg border transition ${tenant.plan === "pro" ? "bg-blue-500/30 text-blue-200 border-blue-500/60" : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20"}`}>📘 PRO</button>
-                            <button onClick={() => handleMakePlan(tenant.id, "elite")} className={`text-xs font-bold py-1.5 rounded-lg border transition ${tenant.plan === "elite" ? "bg-fuchsia-500/30 text-fuchsia-200 border-fuchsia-500/60" : "bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border-fuchsia-500/20"}`}>🌟 ELITE</button>
-                          </div>
-                          <div className="grid grid-cols-3 gap-1">
-                            <button onClick={() => handleAddSms(tenant.id)} className="text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 +SMS</button>
-                            <button onClick={() => handleMakePlan(tenant.id, "basic")} className="text-xs font-bold py-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20 transition">🔄 Trial</button>
-                            <button onClick={() => handleMakePlan(tenant.id, "expire")} className="text-xs font-bold py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition">🔒 Scadi</button>
+                          <div className="flex gap-1 w-full mt-1">
+                            <button onClick={() => handleAddSms(tenant.id)} className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 + SMS</button>
+                            <div className="relative flex-1 group z-10">
+                              <button className="w-full text-xs font-bold py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition">⚙️ Gestisci</button>
+                              <div className="absolute bottom-full right-0 mb-1 hidden group-hover:flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 w-40 gap-1 overflow-hidden">
+                                <button onClick={() => handleMakePlan(tenant.id, "pro")} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "pro" ? "bg-blue-500/20 text-blue-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>📘 Imposta PRO</button>
+                                <button onClick={() => handleMakePlan(tenant.id, "elite")} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "elite" ? "bg-fuchsia-500/20 text-fuchsia-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>🌟 Imposta ELITE</button>
+                                <div className="h-px bg-slate-800 my-1 w-full"></div>
+                                <button onClick={() => handleMakePlan(tenant.id, "basic")} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
+                                <button onClick={() => handleMakePlan(tenant.id, "expire")} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>

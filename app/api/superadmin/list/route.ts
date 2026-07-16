@@ -82,6 +82,8 @@ export async function GET(req: Request) {
     let trialCount = 0;
 
     tenants.forEach(t => {
+      if (t.isDemoData) return; // Esclude i dati finti/demo dal calcolo MRR e paganti
+
       if (t.plan === 'pro') {
         payingCount++;
         mrr += 29;

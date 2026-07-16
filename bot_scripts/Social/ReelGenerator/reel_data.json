@@ -1,13 +1,14 @@
 {
     "niche": "Barbieri",
-    "script_text": "Sei un barbiere e ogni settimana perdi soldi? Clienti che non si presentano ti costano tempo e denaro. Con NeatX, puoi dire addio agli no-show! Grazie agli acconti automatici, ogni slot è occupato da clienti paganti. Non lasciare che il tuo salone viva nell'incertezza, rendi ogni appuntamento una certezza. Non sai cosa postare sui social? Scarica i nostri 50 Prompt IA per saloni. Link in Bio!",
+    "script_text": "Se sei tra i barbieri e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' acconti automatici che filtrano i clienti che non si presentano. Con NeatX puoi avere ogni slot occupato da clienti che hanno già pagato, senza rincorrere clienti tutto il giorno. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
     "hook_text": "ADDIO ACCONTI",
     "cover_title": "ADDIO ACCONTI",
-    "image_prompt": "a cinematic scene in a luxury barber shop, featuring a smartphone displaying a confirmed appointment with a paid deposit, a calendar showing a locked time slot, and a calm professional barber in the background, illuminated by premium realistic lighting",
+    "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
     "gameplay_style": "block_miner",
-    "caption": "Sei stanco di perdere soldi con clienti che non si presentano? Scopri come gli acconti automatici possono rivoluzionare il tuo salone! #perte #fyp #foryou #viral #imprenditore #businessitalia #barbieri #salonlife #neatx 👉 Stanco di non sapere cosa postare? Scarica L'Arsenale dei Prompt (50 template copia-incolla): https://tinyurl.com/neatxprompt",
+    "caption": "Barbieri: basta agenda gestita a mano. Commenta INFO o AGENDA e ti mando la demo NeatX. #perte #fyp #foryou #viral #imprenditore #businessitalia #crescita",
     "strategy_date": "2026-07-16",
     "strategy_feature": "no_show",
     "strategy_pain": "acconti automatici che filtrano i clienti che non si presentano",
-    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato"
+    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato",
+    "fallback_reason": "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili"
 }
