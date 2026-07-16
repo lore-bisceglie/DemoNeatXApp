@@ -448,9 +448,9 @@ export default function SuperAdminPage() {
                           </div>
                           <div className="flex gap-1 w-full mt-1">
                             <button onClick={() => handleAddSms(tenant.id)} className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 + SMS</button>
-                            <div className="relative flex-1 group z-10">
+                            <div className="relative flex-1 group/menu z-10">
                               <button className="w-full text-xs font-bold py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition">⚙️ Gestisci</button>
-                              <div className="absolute bottom-full right-0 mb-1 hidden group-hover:flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 w-40 gap-1 overflow-hidden">
+                              <div className="absolute bottom-full right-0 mb-1 hidden group-hover/menu:flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 w-40 gap-1 overflow-hidden">
                                 <button onClick={() => handleMakePlan(tenant.id, "pro")} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "pro" ? "bg-blue-500/20 text-blue-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>📘 Imposta PRO</button>
                                 <button onClick={() => handleMakePlan(tenant.id, "elite")} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "elite" ? "bg-fuchsia-500/20 text-fuchsia-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>🌟 Imposta ELITE</button>
                                 <div className="h-px bg-slate-800 my-1 w-full"></div>
