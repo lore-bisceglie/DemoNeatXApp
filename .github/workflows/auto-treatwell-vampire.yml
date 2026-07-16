@@ -1,0 +1,30 @@
+name: NeatX Treatwell Vampire
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Numero massimo di email vampiro da inviare oggi"
+        required: false
+        default: "5"
+  schedule:
+    - cron: "30 8 * * 1-5" # Ogni mattina dal lunedi al venerdi alle 08:30
+jobs:
+  run-vampire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install python-dotenv
+      - name: Run Treatwell Vampire
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
+          NEXT_PUBLIC_ROOT_DOMAIN: "neatx.store"
+        run: |
+          python bot_scripts/GrowthHack/treatwell_vampire.py
