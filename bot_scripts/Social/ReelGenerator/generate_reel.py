@@ -264,6 +264,48 @@ def _valida_immagine_jpeg(img_data):
 def genera_immagine_ai(nicchia):
     os.makedirs("assets", exist_ok=True)
     
+    # --- INTEGRAZIONE IMMAGINI PREMIUM ---
+    premium_dir = "assets/premium_images"
+    if os.path.exists(premium_dir):
+        premium_images = glob.glob(f"{premium_dir}/*.jpg")
+        if premium_images:
+            topic = nicchia.lower()
+            matched_images = []
+            if "parrucch" in topic or "barbier" in topic:
+                matched_images = [img for img in premium_images if "barber" in img.lower()]
+            elif "estetic" in topic:
+                matched_images = [img for img in premium_images if "estetista" in img.lower() or "nail" in img.lower()]
+            elif "fisioterap" in topic or "osteopat" in topic:
+                matched_images = [img for img in premium_images if "fisioterapista" in img.lower()]
+            elif "tatuat" in topic:
+                matched_images = [img for img in premium_images if "tatuatore" in img.lower()]
+            elif "personal trainer" in topic or "palestr" in topic:
+                matched_images = [img for img in premium_images if "personal_trainer" in img.lower()]
+            elif "psicolog" in topic:
+                matched_images = [img for img in premium_images if "psicologo" in img.lower()]
+            elif "nutrizion" in topic:
+                matched_images = [img for img in premium_images if "nutrizionista" in img.lower()]
+            elif "commercialist" in topic or "avvocat" in topic:
+                matched_images = [img for img in premium_images if "commercialista" in img.lower()]
+            elif "prompt" in topic or "volantin" in topic or "marketing" in topic:
+                matched_images = [img for img in premium_images if "prompt" in img.lower()]
+            
+            # Per garantire sempre varietà (un'immagine diversa a ogni reel), uniamo l'immagine 
+            # specifica della nicchia con le foto generiche dell'app (dashboard, prenotazioni, ecc.)
+            generic_images = [img for img in premium_images if "dashboard" in img.lower() or "prenota" in img.lower() or "roi" in img.lower() or "notifica" in img.lower() or "prima_dopo" in img.lower()]
+            
+            if matched_images:
+                matched_images.extend(generic_images)
+            else:
+                matched_images = generic_images
+            
+            if matched_images:
+                import random
+                chosen = random.choice(matched_images)
+                print(f"[*] Utilizzo immagine PREMIUM AI: {chosen}")
+                return chosen
+    # -------------------------------------
+    
     prompt = prompt_immagine_per_nicchia(nicchia, script_text=SCRIPT_TEXT, hook_text=HOOK_TEXT)
     oggi = datetime.datetime.now().strftime("%Y-%m-%d")
     # Hash breve e univoco del prompt: evita nomi file troppo lunghi (limite 255/260 byte)

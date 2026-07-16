@@ -1316,23 +1316,25 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                       <p className="text-[10px] text-slate-600 mt-2 italic">NeatX non riceve, non salva e non vede nessuno di questi dati.</p>
                     </div>
 
-                    <div className="bg-[#050505] border border-white/10 shadow-2xl shadow-black/80 rounded-xl p-4 flex-1 max-w-sm flex flex-col justify-between relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                    <div className="relative rounded-2xl p-5 flex-1 max-w-sm flex flex-col justify-between overflow-hidden shadow-2xl group border border-white/10 bg-[#111111]">
+                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-600 rounded-full mix-blend-screen filter blur-[50px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                      <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-600 rounded-full mix-blend-screen filter blur-[50px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
                       
                       <div className="z-10 relative">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="font-sans font-bold text-white text-[15px] tracking-tight flex items-center">
-                            Revolut <span className="font-light ml-1 text-slate-300">Business</span>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="font-sans font-black text-white tracking-tighter text-[18px]">
+                            Revolut <span className="font-normal text-slate-300 tracking-normal">Business</span>
                           </span>
-                          <span className="bg-white/10 text-white px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border border-white/5">Sponsor</span>
+                          <span className="bg-white/10 text-white px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border border-white/10">Sponsor</span>
                         </div>
-                        <p className="text-xs text-white font-bold mb-1">Non hai un conto aziendale?</p>
-                        <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
-                          Apri il tuo conto online in 5 minuti. IBAN immediato, zero costi fissi, perfetto da collegare subito a Stripe.
+                        <p className="text-[13px] text-white font-semibold mb-1">Il conto business senza confini.</p>
+                        <p className="text-[11px] text-slate-300 leading-relaxed mb-4">
+                          IBAN immediato, carte fisiche e virtuali gratuite. Perfetto da collegare a Stripe in 2 minuti.
                         </p>
                       </div>
-                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-white text-black text-[11px] font-bold py-2 px-4 rounded-lg hover:bg-slate-200 transition-colors shadow-lg">
-                        Apri il tuo conto gratuito →
+                      
+                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-white text-black text-[12px] font-bold py-2.5 px-4 rounded-xl hover:bg-slate-200 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                        Apri conto gratuito →
                       </a>
                     </div>
                   </div>
