@@ -1295,38 +1295,56 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
                 💳
               </div>
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
+                <div className="flex-1">
                   <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
                     <CreditCard size={20} />
                     Integrazione Pagamenti (Stripe)
                   </h2>
-                  <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
+                  <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
                     I pagamenti vanno direttamente sul <strong className="text-slate-300">tuo</strong> IBAN. <strong className="text-emerald-400">NeatX non tocca i tuoi soldi.</strong> Non li tratteniamo, non li spostiamo, non li vediamo. È Stripe (lo stesso circuito di PayPal) a gestire il trasferimento dal cliente al tuo conto. <strong className="text-slate-300">NeatX non salva né il tuo IBAN né i tuoi dati bancari.</strong> Zero commissioni da parte nostra (solo il ~1.5% di Stripe). Inserisci nome, cognome, data di nascita e IBAN direttamente su Stripe — noi non vediamo nulla.
                   </p>
-                  <div className="mt-3 bg-[#131c31] border border-[#1e2b4a] rounded-xl p-3 inline-block">
-                    <p className="text-xs text-slate-400 font-medium mb-1">Dopo aver cliccato "Collega IBAN":</p>
-                    <ol className="text-xs text-slate-500 space-y-1 ml-4 list-decimal">
-                      <li>Verrai reindirizzato su <strong className="text-slate-300">Stripe</strong> (il circuito di pagamenti)</li>
-                      <li>Inserisci <strong className="text-slate-300">nome, cognome, data di nascita e IBAN</strong></li>
-                      <li>Conferma — fatto. I pagamenti dei clienti arrivano direttamente sul tuo conto</li>
-                    </ol>
-                    <p className="text-xs text-slate-600 mt-2 italic">NeatX non riceve, non salva e non vede nessuno di questi dati.</p>
+                  
+                  <div className="flex flex-col md:flex-row gap-3 items-stretch mt-4">
+                    <div className="bg-[#131c31] border border-[#1e2b4a] rounded-xl p-3 flex-1 max-w-sm">
+                      <p className="text-xs text-slate-400 font-medium mb-1">Dopo aver cliccato "Collega IBAN":</p>
+                      <ol className="text-[11px] text-slate-500 space-y-1 ml-4 list-decimal">
+                        <li>Verrai reindirizzato su <strong className="text-slate-300">Stripe</strong> (il circuito di pagamenti)</li>
+                        <li>Inserisci <strong className="text-slate-300">nome, cognome, data di nascita e IBAN</strong></li>
+                        <li>Conferma — fatto. I pagamenti dei clienti arrivano direttamente sul tuo conto</li>
+                      </ol>
+                      <p className="text-[10px] text-slate-600 mt-2 italic">NeatX non riceve, non salva e non vede nessuno di questi dati.</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-blue-900/20 to-[#0b1221] border border-blue-500/20 shadow-inner shadow-blue-500/5 rounded-xl p-3 flex-1 max-w-sm flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="bg-white text-black px-1.5 py-0.5 rounded font-black text-[9px] tracking-tighter uppercase">Revolut</span>
+                          <p className="text-xs text-blue-300 font-bold">Non hai un conto aziendale?</p>
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-relaxed mb-2">
+                          Apri <strong className="text-white">Revolut Business</strong> online in 5 minuti. IBAN immediato, zero costi fissi, perfetto da collegare subito a Stripe.
+                        </p>
+                      </div>
+                      <a href="INSERISCI_QUI_IL_TUO_LINK_REVOLUT" target="_blank" rel="noopener noreferrer" className="inline-flex text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors">
+                        Apri il tuo conto gratuito →
+                      </a>
+                    </div>
                   </div>
                 </div>
                 
-                <div>
+                <div className="shrink-0 w-full xl:w-auto">
                   {storeSettings?.stripeOnboardingComplete ? (
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex flex-col items-start xl:items-end gap-1">
                       <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors cursor-pointer shadow-lg shadow-emerald-500/10">
                         <CheckCircle size={16} /> IBAN Collegato (Gestisci su Stripe)
                       </a>
-                      <span className="text-[10px] text-slate-500 mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
+                      <span className="text-[10px] text-slate-500 ml-1 xl:ml-0 xl:mr-2">I tuoi dati bancari restano solo su Stripe, NeatX non li salva</span>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-end gap-2">
+                    <div className="flex flex-col items-start xl:items-end gap-2">
                       <StripeConnectButton tenantId={tenantId} />
-                      <span className="text-[10px] text-slate-600 text-right max-w-[240px] leading-relaxed">Inserisci i dati direttamente su Stripe. <strong className="text-slate-500">NeatX non vede e non salva il tuo IBAN.</strong></span>
+                      <span className="text-[10px] text-slate-600 text-left xl:text-right max-w-[240px] leading-relaxed">Inserisci i dati direttamente su Stripe. <strong className="text-slate-500">NeatX non vede e non salva il tuo IBAN.</strong></span>
                     </div>
                   )}
                 </div>

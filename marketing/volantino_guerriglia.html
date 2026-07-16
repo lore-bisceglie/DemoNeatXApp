@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volantino Guerriglia NeatX</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .flyer-container {
+            width: 210mm;
+            height: 297mm;
+            background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+            padding: 40mm 20mm;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            border: 2px solid #333;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .pre-headline {
+            color: #06b6d4;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14pt;
+            margin-bottom: 15px;
+        }
+
+        .headline {
+            font-size: 42pt;
+            font-weight: 900;
+            line-height: 1.1;
+            margin: 0 0 30px 0;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .highlight {
+            color: #06b6d4;
+        }
+
+        .problem-statement {
+            font-size: 20pt;
+            font-weight: 400;
+            color: #94a3b8;
+            line-height: 1.4;
+            margin-bottom: 50px;
+            padding: 0 20px;
+        }
+
+        .solution-box {
+            background-color: rgba(6, 182, 212, 0.1);
+            border: 2px solid #06b6d4;
+            border-radius: 15px;
+            padding: 30px;
+            width: 80%;
+            margin-bottom: 50px;
+        }
+
+        .solution-text {
+            font-size: 18pt;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.2);
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 15px;
+        }
+
+        .qr-text {
+            color: #000000;
+            font-size: 16pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .footer {
+            margin-top: auto;
+            color: #475569;
+            font-size: 12pt;
+            font-weight: 700;
+        }
+
+        /* Hide elements not needed in print */
+        @media print {
+            body {
+                background: none;
+                height: auto;
+            }
+            .flyer-container {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flyer-container">
+        
+        <div class="header">
+            <div class="pre-headline">La cruda verità sui saloni</div>
+            <h1 class="headline">Quante chiamate <br>hai perso <span class="highlight">oggi</span>?</h1>
+            <p class="problem-statement">
+                Mentre hai le mani occupate con un cliente, il telefono squilla.<br>
+                <strong>Se non rispondi, quel cliente chiama il negozio accanto.</strong>
+            </p>
+        </div>
+
+        <div class="solution-box">
+            <p class="solution-text">
+                Immagina un'agenda che lavora da sola 24 ore su 24.<br>
+                I clienti si prenotano da soli. Tu tagli i capelli in pace.
+            </p>
+        </div>
+
+        <div class="qr-section">
+            <img class="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://neatx.store" alt="QR Code">
+            <p class="qr-text">INQUADRA COL TELEFONO</p>
+            <p style="color:#333; margin-top:5px; font-weight:700;">per attivare la prova gratuita su NeatX</p>
+        </div>
+
+        <div class="footer">
+            Powered by neatx.store
+        </div>
+
+    </div>
+
+</body>
+</html>

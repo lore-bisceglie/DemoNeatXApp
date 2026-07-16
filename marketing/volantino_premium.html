@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeatX - Volantino Ufficiale</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505; /* Nero grafite */
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .flyer-a4 {
+            width: 210mm;
+            height: 297mm;
+            background: radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+                        #0a0a0a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #1f2937;
+        }
+
+        /* Griglia principale */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100%;
+            padding: 20mm;
+            gap: 10mm;
+            z-index: 10;
+        }
+
+        /* PARTE SINISTRA: Testi */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 28pt;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 25mm;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo span {
+            color: #0ea5e9; /* Blu NeatX */
+        }
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20pt;
+        }
+
+        .hero-title {
+            font-size: 46pt;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 10mm;
+            letter-spacing: -1.5px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 16pt;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #94a3b8;
+            margin-bottom: 15mm;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20mm 0;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            font-size: 15pt;
+            font-weight: 500;
+            margin-bottom: 5mm;
+            color: #e2e8f0;
+        }
+
+        .features-list li svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            color: #38bdf8; /* Azzurro */
+        }
+
+        .footer {
+            margin-top: auto;
+            font-size: 14pt;
+            font-weight: 600;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* PARTE DESTRA: Grafica e QR */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Il QR Code */
+        .qr-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 8mm;
+            text-align: center;
+            margin-top: 5mm;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        /* Glow dietro il QR */
+        .qr-card::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            background: rgba(56, 189, 248, 0.2);
+            filter: blur(40px);
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .qr-card img {
+            width: 160px;
+            height: 160px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 10px;
+        }
+
+        .qr-card h3 {
+            margin: 0;
+            font-size: 14pt;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        .qr-card p {
+            margin: 5px 0 0 0;
+            font-size: 11pt;
+            color: #94a3b8;
+        }
+
+        /* Mockup Telefono */
+        .phone-mockup {
+            width: 260px;
+            height: 520px;
+            background-color: #000;
+            border-radius: 36px;
+            border: 6px solid #1e293b;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                        0 0 0 1px rgba(255,255,255,0.1),
+                        inset 0 0 0 2px rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: -15mm; /* Tagliato in basso per stile */
+        }
+        
+        /* Notch del telefono */
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 25px;
+            background: #1e293b;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 10;
+        }
+
+        /* Schermata interna (Reale screenshot) */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-image: url('../public/preview.png'); /* Cerca l'immagine preview */
+            background-size: cover;
+            background-position: top center;
+            background-color: #0f172a; /* Fallback se non c'è l'immagine */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Fallback UI dentro lo schermo se l'immagine non si carica bene */
+        .fallback-ui {
+            padding: 40px 20px;
+        }
+        .ui-header { font-size: 14pt; font-weight: 700; margin-bottom: 20px;}
+        .ui-box { background: rgba(255,255,255,0.05); border-radius: 12px; height: 60px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);}
+
+        /* Decorazioni di sfondo */
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+            pointer-events: none;
+            mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+        }
+
+        @media print {
+            body { background: none; height: auto; min-height: 0; }
+            .flyer-a4 { border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flyer-a4">
+        <div class="bg-grid"></div>
+        
+        <div class="content-grid">
+            <!-- PARTE SINISTRA -->
+            <div class="left-column">
+                
+                <div class="logo">
+                    <div class="logo-box">N</div>
+                    NEAT<span>X</span>
+                </div>
+
+                <h1 class="hero-title">La tua agenda.<br>Il tuo brand.</h1>
+                
+                <p class="subtitle">
+                    Crea una pagina di prenotazione professionale, personalizzala e condividila con i tuoi clienti in pochi minuti.
+                </p>
+
+                <ul class="features-list">
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Personalizzazione completa
+                    </li>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        Nessun codice
+                    </li>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        Link condivisibile
+                    </li>
+                    <li>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Sempre online 24/7
+                    </li>
+                </ul>
+
+                <div class="footer">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    neatx.store
+                </div>
+            </div>
+
+            <!-- PARTE DESTRA -->
+            <div class="right-column">
+                
+                <!-- QR CODE ALTO DESTRA -->
+                <div class="qr-card">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://neatx.store&color=050505" alt="QR Code NeatX">
+                    <h3>Scansiona e crea</h3>
+                    <p>la tua agenda in 10s.</p>
+                </div>
+
+                <!-- MOCKUP TELEFONO -->
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <!-- Fallback se preview.png non viene trovata -->
+                        <div class="fallback-ui" style="display: none;">
+                            <div class="ui-header">Dashboard</div>
+                            <div class="ui-box"></div>
+                            <div class="ui-box" style="opacity:0.7"></div>
+                            <div class="ui-box" style="opacity:0.4"></div>
+                            <div class="ui-box" style="opacity:0.2"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script per gestire l'errore di caricamento immagine -->
+    <script>
+        // Se l'immagine preview.png non esiste localmente, mostra il fallback
+        const screen = document.querySelector('.phone-screen');
+        const img = new Image();
+        img.src = '../public/preview.png';
+        img.onerror = function() {
+            document.querySelector('.fallback-ui').style.display = 'block';
+            screen.style.backgroundImage = 'none';
+        };
+    </script>
+</body>
+</html>
