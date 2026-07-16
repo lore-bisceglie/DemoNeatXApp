@@ -1,18 +1,18 @@
 {
-  "date": "2026-07-16",
-  "niche": "Parrucchieri",
+  "date": "2026-07-17",
+  "niche": "Centri Estetici",
   "feature": "no_show",
   "feature_label": "Zero No-Show",
   "pain": "acconti automatici che filtrano i clienti che non si presentano",
   "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "STOP A PERDITE",
-  "hook_hint": "Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Parrucchieri: Zero No-Show con NeatX",
-  "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "cover_title": "SLOT OCCUPATI GARANTITI",
+  "hook_hint": "Se sei tra i centri estetici e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Zero No-Show con NeatX",
+  "gameplay_style": "neon_racer",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
