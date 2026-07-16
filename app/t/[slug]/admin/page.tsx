@@ -1326,7 +1326,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                           Apri <strong className="text-white">Revolut Business</strong> online in 5 minuti. IBAN immediato, zero costi fissi, perfetto da collegare subito a Stripe.
                         </p>
                       </div>
-                      <a href="INSERISCI_QUI_IL_TUO_LINK_REVOLUT" target="_blank" rel="noopener noreferrer" className="inline-flex text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors">
+                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="inline-flex text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors">
                         Apri il tuo conto gratuito →
                       </a>
                     </div>
