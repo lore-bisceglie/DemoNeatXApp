@@ -10,6 +10,7 @@ import FeaturesSection from "@/components/landing/FeaturesSection";
 import TimesheetFeatureSection from "@/components/landing/TimesheetFeatureSection";
 import OperatingSteps from "@/components/landing/OperatingSteps";
 import PricingSection from "@/components/landing/PricingSection";
+import IntegrationsSection from "@/components/landing/IntegrationsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
@@ -66,6 +67,7 @@ export default function Home() {
       <OperatingSteps />
       <PricingSection />
       <ComparisonTable />
+      <IntegrationsSection />
       <FAQSection />
       <FinalCTA />
       <Footer />
