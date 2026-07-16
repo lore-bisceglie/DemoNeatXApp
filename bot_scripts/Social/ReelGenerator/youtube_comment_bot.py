@@ -22,9 +22,9 @@ TRIGGER_WORDS = [
 ]
 
 REPLY_TEMPLATES = [
-    "Grazie per l'interesse! Ti ho scritto più info in descrizione, oppure scrivici su Instagram @neatx_app per una demo personalizzata!",
-    "Ciao! Abbiamo una demo gratuita, ti lascio il link nella descrizione del video. Se hai domande specifiche, scrivici pure!",
-    "Grazie! Per una demo gratuita personalizzata per la tua attività, visitaci su neatx.store. Siamo anche su Instagram @neatx_app!",
+    "Grazie per l'interesse! Per una demo personalizzata visita neatx.store. Ah, se hai problemi con i social, abbiamo anche creato 'L'Arsenale dei Prompt': 50 post pronti per ChatGPT! Scaricali qui: https://tinyurl.com/neatxprompt",
+    "Ciao! Trovi la demo gratuita in descrizione. Nel frattempo, se vuoi svoltare sui social in 3 minuti, scarica il nostro 'L'Arsenale dei Prompt' (50 template copia-incolla) a questo link: https://tinyurl.com/neatxprompt",
+    "Grazie! Visita neatx.store per la demo. Inoltre, per i tuoi social, non perderti i nostri 50 Prompt copia-incolla pensati per i saloni: https://tinyurl.com/neatxprompt",
 ]
 
 PROCESSED_FILE = "youtube_replied.json"

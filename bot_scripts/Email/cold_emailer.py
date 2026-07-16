@@ -67,7 +67,8 @@ Regole per l'email:
 2. Sii colloquiale, educato e fai un complimento specifico sul loro stile.
 3. Affronta direttamente il loro "Problema noto" e spiega come NeatX lo risolve (es. azzerare i no-show, smettere di rispondere al telefono mentre si lavora).
 4. Chiudi con una Call To Action (CTA) morbida: chiedi se hanno 5 minuti giovedì per fargli vedere come funziona.
-5. Usa il formato JSON per restituire l'oggetto e il corpo della mail.
+6. Includi SEMPRE un 'P.S.' finale in cui promuovi il nostro nuovo prodotto digitale 'L'Arsenale dei Prompt', spiegando che sono 50 template copia-incolla per ChatGPT per i loro social e inserendo obbligatoriamente questo link: https://tinyurl.com/neatxprompt
+7. Usa il formato JSON per restituire l'oggetto e il corpo della mail.
 
 Restituisci ESATTAMENTE e SOLO questo formato JSON:
 {{
