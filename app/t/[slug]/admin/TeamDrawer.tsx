@@ -230,6 +230,32 @@ export default function TeamDrawer({
     setSavingUrl(false);
   };
 
+  const handleSyncSheets = async () => {
+    if (!staffSheetUrl) {
+      alert("Salva prima un link valido!");
+      return;
+    }
+    setSavingUrl(true);
+    try {
+      const res = await fetch(`/api/tenant/sync-sheets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tenantId }),
+      });
+      if (res.ok) {
+        alert("Sincronizzazione completata con successo! Il Database è aggiornato.");
+        await fetchStaff();
+      } else {
+        const errorText = await res.text();
+        alert("Errore sincronizzazione: " + errorText);
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Errore di rete durante la sincronizzazione.");
+    }
+    setSavingUrl(false);
+  };
+
   const selectedLocationIds = selectedStaff?.locations?.map((l) => l.locationId) || [];
 
   return (
@@ -292,9 +318,16 @@ export default function TeamDrawer({
             <button
               onClick={handleSaveSheetUrl}
               disabled={savingUrl}
-              className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-xl text-sm transition disabled:opacity-50 whitespace-nowrap"
+              className="bg-[#1e2b4a] hover:bg-[#2a3a5e] text-slate-300 font-bold px-4 py-2 rounded-xl text-sm transition disabled:opacity-50 whitespace-nowrap"
             >
               {savingUrl ? "..." : "Salva"}
+            </button>
+            <button
+              onClick={handleSyncSheets}
+              disabled={savingUrl || !staffSheetUrl}
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-xl text-sm transition disabled:opacity-50 whitespace-nowrap flex items-center gap-1"
+            >
+              {savingUrl ? "⏳" : "🔄 Sincronizza"}
             </button>
           </div>
           <p className="text-xs text-slate-500 mt-2 leading-relaxed">
