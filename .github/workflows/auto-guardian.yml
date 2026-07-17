@@ -2,7 +2,7 @@ name: NeatX Guardian
 on:
   schedule:
     # 10:37 e 21:37 Europe/Rome in estate.
-    - cron: '37 8,19 * * *'
+    - cron: '0 8,19 * * *'
   workflow_dispatch:
 permissions:
   contents: read

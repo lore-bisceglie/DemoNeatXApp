@@ -3,7 +3,7 @@ on:
   schedule:
     # 01:00 e 08:17 Europe/Rome in estate.
     - cron: '0 23 * * *'
-    - cron: '17 6 * * *'
+    - cron: '0 6 * * *'
   workflow_dispatch:
 permissions:
   contents: write

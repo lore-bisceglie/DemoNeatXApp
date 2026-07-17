@@ -2,7 +2,7 @@ name: NeatX Build Health
 on:
   schedule:
     # 07:12 Europe/Rome in estate.
-    - cron: '12 5 * * *'
+    - cron: '0 5 * * *'
   workflow_dispatch:
 permissions:
   contents: read

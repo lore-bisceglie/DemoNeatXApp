@@ -1,7 +1,7 @@
 name: NeatX DM Concierge
 on:
   schedule:
-    - cron: '*/20 * * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 permissions:
   contents: write

@@ -2,8 +2,8 @@ name: auto-neatx-agents
 
 on:
   schedule:
-    - cron: "07 07 * * *"   # 09:07 Europe/Rome
-    - cron: "37 19 * * *"   # 21:37 Europe/Rome
+    - cron: "0 7 * * *"   # 09:07 Europe/Rome
+    - cron: "0 19 * * *"   # 21:37 Europe/Rome
   workflow_dispatch:
 
 jobs:
