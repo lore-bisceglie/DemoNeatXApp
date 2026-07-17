@@ -407,7 +407,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
 
     const controller = new AbortController();
     
-    let url = `/api/slots?date=${date}&duration=${selectedService.duration}&tenantId=${tenantInfo.id}&locationId=${selectedLocationId}`;
+    let url = `/api/availability?date=${date}&duration=${selectedService.duration}&tenantId=${tenantInfo.id}&locationId=${selectedLocationId}`;
     if (selectedStaffId && selectedStaffId !== "any") {
       url += `&staffId=${selectedStaffId}`;
     }
