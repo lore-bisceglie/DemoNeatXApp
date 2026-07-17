@@ -78,9 +78,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Appuntamenti filtrati per locationId (se multi-sede) o solo tenantId
+    // Controlliamo TUTTI gli appuntamenti del tenant, senza filtrare per locationId.
+    // In questo modo, se un dipendente (es. Antonio) lavora in 2 sedi,
+    // un appuntamento a Milano bloccherà correttamente il suo slot anche se un cliente cerca a Roma.
     const appointmentWhere: any = { date: date, tenantId: tenantId };
-    if (locationId) appointmentWhere.locationId = locationId;
 
     const appointments = await prisma.appointment.findMany({
       where: appointmentWhere,
