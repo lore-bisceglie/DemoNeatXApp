@@ -935,7 +935,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       </div>
 
       {/* Banner Promozionale NeatX (Marketing Virale) */}
-      <div className="bg-[#131c31] max-w-md w-full rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-[#1e2b4a] p-6 mt-6 text-center flex flex-col items-center gap-2 relative z-10">
+      <div className="bg-[#131c31] max-w-md md:max-w-lg lg:max-w-xl w-full rounded-3xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-[#1a2642] p-6 mt-6 text-center flex flex-col items-center gap-2 relative z-10">
         <h3 className="text-white font-extrabold text-lg mb-1 tracking-wide">La tua attività. Senza limiti.</h3>
         <p className="text-slate-300 text-xs font-medium">I clienti dimenticano. <span className="font-bold text-white">Neat<span className="text-[#007aff]">X</span></span> ricorda. La tua agenda si riempie.</p>
         <p className="text-slate-400 text-[11px] mb-2">C'è un motivo se funziona.</p>
@@ -947,7 +947,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         </Link>
       </div>
 
-      <div className="bg-[#0b1221] max-w-md w-full rounded-3xl p-6 mt-2 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1e2b4a] shadow-lg">
+      <div className="bg-[#0b1221] max-w-md md:max-w-lg lg:max-w-xl w-full rounded-3xl p-6 mt-4 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1a2642] shadow-lg">
         <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
           <p>
             Powered by <span className="font-bold text-white">Neat<span className="text-[#007aff]">X</span></span>
