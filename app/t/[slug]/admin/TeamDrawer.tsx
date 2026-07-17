@@ -356,8 +356,13 @@ export default function TeamDrawer({
             2. Scrivi il <strong className="text-slate-300">nome</strong> di ogni dipendente nella colonna A.<br/>
             3. Per ogni giorno inserisci gli orari nel formato <strong className="text-slate-300">09:00-13:00, 14:00-19:00</strong> (più turni separati da virgola).<br/>
             4. Per i giorni di riposo scrivi <strong className="text-slate-300">Riposo</strong>.<br/>
-            5. Incolla il link qui sopra e clicca Salva. Le ore verranno usate anche per il foglio presenze del commercialista.
+            5. Incolla il link qui sopra e clicca Salva, poi Sincronizza.
           </p>
+          <div className="mt-3 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
+            <p className="text-xs text-indigo-300 leading-relaxed font-medium">
+              <span className="mr-1">💡</span> <strong>Consiglio d'oro:</strong> I nomi che scrivi nel file Excel devono essere identici a quelli su NeatX. Se scrivi un nome nuovo, il sistema lo creerà automaticamente in basso a destra (con 0 servizi). Ricordati sempre di <strong>cliccare sul suo nome per assegnargli i servizi e le sedi</strong>, altrimenti i clienti non potranno prenotarlo!
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] min-h-0 flex-1">
