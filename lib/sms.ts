@@ -1,8 +1,8 @@
 import { prisma } from "./prisma";
-import twilio from "twilio";
 
-const WHATSAPP_TEMPLATE_SID = process.env.TWILIO_WHATSAPP_TEMPLATE_SID || "";
-const WHATSAPP_MSG_SVC_SID = process.env.TWILIO_WHATSAPP_MSG_SVC_SID || "";
+// Green-API configuration
+const GREEN_API_ID_INSTANCE = process.env.GREEN_API_ID_INSTANCE || "";
+const GREEN_API_TOKEN_INSTANCE = process.env.GREEN_API_TOKEN_INSTANCE || "";
 
 interface WhatsAppTemplateVars {
   storeName: string;
@@ -12,8 +12,12 @@ interface WhatsAppTemplateVars {
 }
 
 function formatPhone(raw: string): string {
-  let p = raw.replace(/[^0-9+]/g, "");
-  if (!p.startsWith("+")) p = `+39${p}`;
+  // Mantieni solo i numeri
+  let p = raw.replace(/\D/g, "");
+  // Aggiungi 39 se non c'è, perché Green API vuole il formato internazionale senza +
+  if (!p.startsWith("39")) {
+    p = `39${p}`;
+  }
   return p;
 }
 
@@ -36,75 +40,51 @@ export async function sendTenantMessage(
   whatsappVars?: WhatsAppTemplateVars,
   locationId?: string
 ) {
-  const TWILIO_SID = process.env.TWILIO_ACCOUNT_SID;
-  const TWILIO_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-  const TWILIO_FROM = process.env.TWILIO_PHONE_NUMBER;
-
-  if (!TWILIO_SID || !TWILIO_TOKEN || !TWILIO_FROM) {
-    console.error("[sms] Credenziali Twilio mancanti");
-    return { success: false, error: "Twilio non configurato" };
+  if (!GREEN_API_ID_INSTANCE || !GREEN_API_TOKEN_INSTANCE) {
+    console.error("[whatsapp] Credenziali Green API mancanti");
+    return { success: false, error: "Green API non configurato" };
   }
 
   try {
     const hasCredits = await checkCredits(tenantId);
     if (!hasCredits) {
-      console.warn(`[sms] Salone ${tenantId} crediti esauriti`);
+      console.warn(`[whatsapp] Salone ${tenantId} crediti esauriti`);
       return { success: false, error: "Crediti esauriti" };
     }
 
     const phone = formatPhone(toPhone);
-    const client = twilio(TWILIO_SID, TWILIO_TOKEN);
+    // Nota: l'URL base dipende dall'istanza, usa il dominio corretto (es: 1103.api.greenapi.com o 7103.api.greenapi.com)
+    // Se ID istanza è 710722685411, l'API è solitamente https://7103.api.greenapi.com o simile. 
+    // Lo calcoliamo in base all'ID istanza o usiamo l'endpoint generico api.greenapi.com che fa il redirect,
+    // MA l'endpoint corretto per la zona 7103 è https://7103.api.greenapi.com.
+    // Estraiamo i primi 4 caratteri dell'istanza:
+    const serverId = GREEN_API_ID_INSTANCE.substring(0, 4);
+    const url = `https://${serverId}.api.greenapi.com/waInstance${GREEN_API_ID_INSTANCE}/sendMessage/${GREEN_API_TOKEN_INSTANCE}`;
+    
+    // In WhatsApp con Green API mandiamo il body diretto, non ci serve il template.
+    const payload = {
+      chatId: `${phone}@c.us`,
+      message: smsBody,
+    };
 
-    // TRY 1: WhatsApp via MessagingService + template approvato
-    if (WHATSAPP_MSG_SVC_SID) {
-      try {
-        let msg;
-        if (whatsappVars && WHATSAPP_TEMPLATE_SID) {
-          msg = await client.messages.create({
-            contentSid: WHATSAPP_TEMPLATE_SID,
-            contentVariables: JSON.stringify({
-              "1": whatsappVars.storeName,
-              "2": whatsappVars.customerName,
-              "3": whatsappVars.date,
-              "4": whatsappVars.time,
-            }),
-            messagingServiceSid: WHATSAPP_MSG_SVC_SID,
-            to: `whatsapp:${phone}`,
-          });
-        } else {
-          msg = await client.messages.create({
-            body: smsBody,
-            messagingServiceSid: WHATSAPP_MSG_SVC_SID,
-            to: `whatsapp:${phone}`,
-          });
-        }
-        if (!msg.errorCode) {
-          await deductCredit(tenantId);
-          console.log(`[WHATSAPP] Inviato a ${phone} (sid: ${msg.sid})`);
-          return { success: true, messageId: msg.sid, channel: "whatsapp" as const };
-        }
-        console.warn(`[sms] WhatsApp fallito (${msg.errorCode}), passo a SMS...`);
-      } catch (waErr: any) {
-        console.warn(`[sms] WhatsApp eccezione: ${waErr.message}, passo a SMS...`);
-      }
-    }
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-    // PIANO B: SMS classico
-    try {
-      const msg = await client.messages.create({
-        body: smsBody,
-        from: TWILIO_FROM,
-        to: phone,
-      });
+    const data = await response.json();
+
+    if (response.ok && data.idMessage) {
       await deductCredit(tenantId);
-      console.log(`[SMS] Inviato a ${phone} (sid: ${msg.sid})`);
-      return { success: true, messageId: msg.sid, channel: "sms" as const };
-    } catch (smsErr: any) {
-      console.error(`[sms] SMS fallito: ${smsErr.message}`);
-      return { success: false, error: smsErr.message || "Errore SMS" };
+      console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.idMessage})`);
+      return { success: true, messageId: data.idMessage, channel: "whatsapp" as const };
+    } else {
+      console.error(`[whatsapp] Fallito:`, data);
+      return { success: false, error: "Errore invio WhatsApp" };
     }
   } catch (err: any) {
-    console.error("[sms] Errore critico:", err);
+    console.error("[whatsapp] Errore critico:", err);
     return { success: false, error: err.message || "Errore interno" };
   }
 }

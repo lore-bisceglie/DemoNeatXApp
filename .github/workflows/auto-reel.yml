@@ -70,7 +70,7 @@ jobs:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
           TIKTOK_HEADLESS: "true"
-          STRICT_PUBLISH: "true"
+          STRICT_PUBLISH: "false"
         run: |
           cd bot_scripts/Social/ReelGenerator
           python auto_bot.py

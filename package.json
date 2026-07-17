@@ -31,8 +31,7 @@
     "recharts": "^3.9.1",
     "resend": "^6.17.1",
     "stripe": "^22.3.0",
-    "sweetalert2": "^11.26.25",
-    "twilio": "^6.0.2"
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
