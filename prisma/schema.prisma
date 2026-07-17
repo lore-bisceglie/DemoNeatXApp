@@ -1,65 +1,59 @@
-// Questo blocco dice a Prisma come generare il codice per leggere i dati
+// Database schema
 generator client {
   provider = "prisma-client-js"
 }
 
-// Connessione al cloud di Neon (PostgreSQL)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// ------------------------------------------------------
-// 1. IL NEGOZIO / CENTRO ESTETICO (TENANT)
-// ------------------------------------------------------
 model Tenant {
   id            String        @id @default(cuid()) 
-  slug          String        @unique              // Es. "greenbeauty" per l'URL personalizzato
-  name          String        // Nome dell'attività
-  category      String?       // Categoria scelta in onboarding
-  city          String?       // Citta dell'attivita
-  ownerName     String?       // Nome del proprietario
-  ownerEmail    String?       // Email del proprietario
-  ownerPasswordHash String?    // Password proprietario salvata in modo sicuro
-  logoUrl       String?       // URL immagine logo del negozio
-  themeColor    String        @default("cyan") // Tema colore del negozio es. "cyan", "rose", "emerald"
-  description   String?       // Descrizione pubblica generata dal template
-  phone         String?       // Numero WhatsApp del salone per ricevere notifiche (fallback)
-  address       String?       // Indirizzo dell'attività es. "Via Roma 1, Milano"
-  instagramUrl  String?       // Link profilo Instagram
-  facebookUrl   String?       // Link profilo Facebook
-  tiktokUrl     String?       // Link profilo TikTok
-  websiteUrl    String?       // Sito esterno dell'attivita
-  mapsLink      String?       // Link Google Maps
-  bookingUrl    String?       // Link prenotazione esterno. Se vuoto usa WhatsApp
-  openTime      String?       // Orario apertura es. "09:00" (fallback se sede non ha orari)
-  closeTime     String?       // Orario chiusura es. "19:00"
-  breakStart    String?       // Inizio pausa pranzo es. "13:00" (null = nessuna pausa)
-  breakEnd      String?       // Fine pausa pranzo es. "14:00"
-  closedDays    String?       // Giorni chiusura settimanali in JSON array es. "[0,1]" (dom=0, lun=1)
-  adminPassword String?       // Password autogenerata per l'accesso alla dashboard privata
+  slug          String        @unique
+  name          String
+  category      String?
+  city          String?
+  ownerName     String?
+  ownerEmail    String?
+  ownerPasswordHash String?
+  logoUrl       String?
+  themeColor    String        @default("cyan")
+  description   String?
+  phone         String?
+  address       String?
+  instagramUrl  String?
+  facebookUrl   String?
+  tiktokUrl     String?
+  websiteUrl    String?
+  mapsLink      String?
+  bookingUrl    String?
+  openTime      String?
+  closeTime     String?
+  breakStart    String?
+  breakEnd      String?
+  closedDays    String?
+  adminPassword String?
   trialStartedAt DateTime?
-  trialEndsAt   DateTime?     // Scadenza del periodo di prova di 7 giorni
-  trialStatus   String        @default("demo") // demo, trial_active, published, expired, converted
-  isDemoData    Boolean       @default(true)   // Dati generati da template, convertibili in reali
-  activationRequested Boolean @default(false)  // Flag per nascondere il box "Richiedi attivazione" una volta cliccato
+  trialEndsAt   DateTime?
+  trialStatus   String        @default("demo")
+  isDemoData    Boolean       @default(true)
+  activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
-  plan          String        @default("basic") // "basic", "pro", "elite"
-  stripeCustomerId String?    // Stripe customer ID per il portale abbonamenti
-  stripeSubscriptionId String? // Stripe subscription ID attiva
+  plan          String        @default("basic")
+  stripeCustomerId String?
+  stripeSubscriptionId String?
   createdAt     DateTime      @default(now())
-  staffSheetUrl String?       // Link al Google Sheet per gli orari dei dipendenti (fallback globale)
-
-  // Email verification
-  emailVerified       Boolean   @default(false)
-  emailVerifyToken    String?   @unique
-
-  // Sicurezza & Anti-Bruteforce
+  staffSheetUrl String?
+  emailVerified Boolean       @default(false)
+  emailVerifyToken String?   @unique
   failedLoginAttempts Int     @default(0)
-  lockoutUntil        DateTime?
+  lockoutUntil  DateTime?
+  referralCode  String?       @unique
+  referredByCode String?
+  referredAt    DateTime?
 
-  // Relazioni: Tutto l'universo del salone è agganciato qui
   appointments  Appointment[]
   blockedSlots  BlockedSlot[]
   services      Service[]
@@ -70,214 +64,139 @@ model Tenant {
   activityLogs  ActivityLog[]
   staff         Staff[]
   locations     Location[]
-
-  // Referral System
-  referralCode   String?   @unique
-  referredByCode String?
-  referredAt     DateTime?
 }
 
-// ------------------------------------------------------
-// 1b. SEDE / LOCATION (MULTI-SEDE)
-// ------------------------------------------------------
 model Location {
   id            String        @id @default(cuid())
-  name          String        // Es. "Sede Centro", "Sede Roma Nord"
-  slug          String        // Es. "centro", "roma-nord" (per URL: /sede/centro)
-  address       String?       // Indirizzo specifico sede
-  city          String?       // Città sede
-  phone         String?       // WhatsApp dedicato sede (fallback a Tenant.phone)
-  mapsLink      String?       // Link Google Maps specifico sede
-  isMain        Boolean       @default(false) // Sede principale
+  name          String
+  slug          String
+  address       String?
+  city          String?
+  phone         String?
+  mapsLink      String?
+  isMain        Boolean       @default(false)
   isActive      Boolean       @default(true)
-
-  // Orari specifici sede (vincolanti per disponibilità)
-  openTime      String?       
+  openTime      String?
   closeTime     String?
   breakStart    String?
   breakEnd      String?
-  closedDays    String?       // JSON array
-
-  // Google Sheets per questa sede
+  closedDays    String?
   staffSheetUrl String?
-
   tenantId      String
-  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  // Relazioni
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
   staff         Staff[]
   staffLocations StaffLocation[]
   services      ServiceLocation[]
   appointments  Appointment[]
   settings      LocationSettings?
-
   @@unique([tenantId, slug])
   @@index([tenantId])
 }
 
 model LocationSettings {
   id                String  @id @default(cuid())
-  smsCredits        Int     @default(0) // Crediti SMS separati per sede
-  stripeAccountId   String? // Futuro: Stripe Connect per-sede se serve
-
-  // Regole pagamento specifiche sede (override StoreSettings)
-  paymentStrategy   String  @default("OFF") // "OFF", "FIXED", "PERCENTAGE", "FULL"
+  smsCredits        Int     @default(0)
+  stripeAccountId   String?
+  paymentStrategy   String  @default("OFF")
   paymentFixedAmount Float?  @default(5.0)
   paymentPercentage Int?    @default(20)
   paymentMandatory  Boolean @default(false)
-
   locationId        String  @unique
-  location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
+  location          Location @relation(fields: [locationId], references: [id])
   updatedAt         DateTime @updatedAt
-}
-
-// ------------------------------------------------------
-// 2. I SERVIZI OFFERTI (DURATE E PREZZI DINAMICI)
-// ------------------------------------------------------
-model Service {
-  id           String        @id @default(cuid())
-  name         String        // Es. "Pulizia Viso Premium", "Massaggio Relax"
-  duration     Int           // Durata in minuti (Es. 30, 45, 60, 90)
-  price        Float?        // Prezzo base del servizio
-
-  // Collegamento al Tenant
-  tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  appointments Appointment[]
-
-  // Membri dello staff che possono eseguire questo servizio
-  staff        Staff[]
-
-  // Disponibilità per sede con prezzo override
-  locations    ServiceLocation[]
 }
 
 model ServiceLocation {
   id         String   @id @default(cuid())
   serviceId  String
-  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service    Service  @relation(fields: [serviceId], references: [id])
   locationId String
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  price      Float?   // Override prezzo per questa sede (null = usa Service.price)
+  location   Location @relation(fields: [locationId], references: [id])
+  price      Float?
   isActive   Boolean  @default(true)
-
   @@unique([serviceId, locationId])
 }
 
-// ------------------------------------------------------
-// 3. APPUNTAMENTI (MATRICE SAAS CORAZZATA)
-// ------------------------------------------------------
+model Service {
+  id           String        @id @default(cuid())
+  name         String
+  duration     Int
+  price        Float?
+  tenantId     String
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  appointments Appointment[]
+  staff        Staff[]
+  locations    ServiceLocation[]
+}
+
 model Appointment {
-  id            String   @id @default(cuid()) 
-  customerName  String   
-  customerPhone String   // Se inserito da admin (walk-in) può essere "0000000000"
-  date          String   // Giorno (es. "2026-06-22")
-  
-  // Logica temporale elastica
-  time          String   // Ora inizio (es. "10:30")
-  endTime       String?  // Ora fine computata (es. "11:30")
-  
-  // Armatura di Sicurezza & Controllo del Progetto 1
-  cancelToken   String   @unique @default(uuid()) // Token per disdetta autonoma (limite 2h)
-  source        String   @default("ONLINE")       // ONLINE o WALK_IN
-  isPaid        Boolean  @default(false)          // Compatibilità con sistema precedente
-  paymentStatus String   @default("NONE")         // "NONE", "PENDING", "PAID"
-  stripeSession String?                           // ID della sessione di Stripe per confermare
+  id            String   @id @default(cuid())
+  customerName  String
+  customerPhone String
+  date          String
+  time          String
+  endTime       String?
+  cancelToken   String   @unique @default(uuid())
+  source        String   @default("ONLINE")
+  isPaid        Boolean  @default(false)
+  paymentStatus String   @default("NONE")
+  stripeSession String?
   createdAt     DateTime @default(now())
-
-  // Relazione con il Servizio specifico
   serviceId     String?
-  service       Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-
-  // Relazione con lo Staff che esegue il servizio
+  service       Service? @relation(fields: [serviceId], references: [id])
   staffId       String?
-  staff         Staff?   @relation(fields: [staffId], references: [id], onDelete: Cascade)
-
-  // Relazione con il Negozio
+  staff         Staff?   @relation(fields: [staffId], references: [id])
   tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  // Relazione con la Sede (NUOVO - opzionale per retrocompatibilità)
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
   locationId    String?
-  location      Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
+  location      Location? @relation(fields: [locationId], references: [id])
   @@index([locationId])
 }
 
-// ------------------------------------------------------
-// 4. GESTIONE CHIUSURE, PAUSE E FERIE
-// ------------------------------------------------------
 model BlockedSlot {
   id       String  @id @default(cuid())
-  date     String  // Giorno del blocco
-  time     String? // Ora inizio blocco. Se null = Giornata intera di chiusura (Ferie)
-  endTime  String? // Ora fine blocco (opzionale, per pause orarie flessibili)
-
-  // Collegamento al Tenant
+  date     String
+  time     String?
+  endTime  String?
   tenantId String?
-  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant   Tenant? @relation(fields: [tenantId], references: [id])
 }
 
-// ------------------------------------------------------
-// 5. IMPOSTAZIONI SALONE & PORTAFOGLIO SMS (GLOBALI TENANT)
-// ------------------------------------------------------
 model StoreSettings {
   id                        String   @id @default(cuid())
-  smsCredits                Int      @default(0) // Crediti rimanenti Twilio per questo specifico salone (fallback)
-  maxConcurrentAppointments Int      @default(1) // Numero massimo di appuntamenti sovrapposti (Multi-staff)
-  
-  // Stripe Connect
-  stripeAccountId           String?  // ID dell'account Stripe Connect collegato
-  stripeOnboardingComplete  Boolean  @default(false) // Indica se l'onboarding Stripe è completato
-
-  // Stripe Checkout Rules
-  paymentStrategy           String   @default("OFF") // "OFF", "FIXED", "PERCENTAGE", "FULL"
-  paymentFixedAmount        Float?   @default(5.0)   // Es. 5.0 euro
-  paymentPercentage         Int?     @default(20)    // Es. 20%
-  paymentMandatory          Boolean  @default(false) // Se false, l'utente può scegliere di pagare "In salone"
-
+  smsCredits                Int      @default(0)
+  maxConcurrentAppointments Int      @default(1)
+  stripeAccountId           String?
+  stripeOnboardingComplete  Boolean  @default(false)
+  paymentStrategy           String   @default("OFF")
+  paymentFixedAmount        Float?   @default(5.0)
+  paymentPercentage         Int?     @default(20)
+  paymentMandatory          Boolean  @default(false)
   updatedAt                 DateTime @updatedAt
-
-  // Relazione 1-a-1 col Tenant
   tenantId   String   @unique
-  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
 }
 
-// ------------------------------------------------------
-// 6. IL REGISTRO NERO: I NO-SHOW
-// ------------------------------------------------------
 model NoShow {
   id            String   @id @default(cuid())
-  customerPhone String   // Numero tracciato anti-furbi
-  customerName  String?  
-  date          String   // Giorno del "buco"
+  customerPhone String
+  customerName  String?
+  date          String
   createdAt     DateTime @default(now())
-
-  // Collegamento al Tenant per isolamento dati
   tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
 }
 
-// ------------------------------------------------------
-// 7. LA LISTA D'ATTESA INTELLIGENTE
-// ------------------------------------------------------
 model Waitlist {
   id        String   @id @default(cuid())
-  name      String   
-  phone     String   // Contatto WhatsApp
-  date      String   // Giorno desiderato
+  name      String
+  phone     String
+  date      String
   createdAt DateTime @default(now())
-
-  // Collegamento al Tenant per isolamento dati
   tenantId  String?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
 }
 
-// ------------------------------------------------------
-// 8. NOTE E PREFERENZE CLIENTE
-// ------------------------------------------------------
 model CustomerNote {
   id           String   @id @default(cuid())
   phone        String
@@ -286,39 +205,30 @@ model CustomerNote {
   preference   String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  tenantId String
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
   @@unique([tenantId, phone])
 }
 
-// ------------------------------------------------------
-// 8. LEAD CAPTURE (EmailCapture, LeadHunter)
-// ------------------------------------------------------
 model Lead {
   id        String   @id @default(cuid())
   name      String
   email     String?
   phone     String?
-  source    String   @default("web") // "lead_magnet", "lead_hunter", "web"
-  status    String   @default("new") // "new", "contacted", "converted", "lost"
+  source    String   @default("web")
+  status    String   @default("new")
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([status])
   @@index([createdAt])
 }
 
-// ------------------------------------------------------
-// 9. LOG ATTIVITA' RECENTI (ACTIVITY LOG)
-// ------------------------------------------------------
 model ActivityLog {
   id            String   @id @default(cuid())
-  action        String   // es. "CREATE_APPOINTMENT", "DELETE_APPOINTMENT", "MOVE_APPOINTMENT", "NO_SHOW"
-  actor         String   @default("system") // "client", "admin", "system"
-  message       String   // Testo human-readable da mostrare nella UI
+  action        String
+  actor         String   @default("system")
+  message       String
   appointmentId String?
   customerName  String?
   customerPhone String?
@@ -326,51 +236,33 @@ model ActivityLog {
   time          String?
   metadata      String?
   createdAt     DateTime @default(now())
-
   tenantId      String
-  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
   @@index([tenantId])
 }
 
-// ------------------------------------------------------
-// 10. STAFF E SPECIALIZZAZIONI
-// ------------------------------------------------------
 model Staff {
   id           String        @id @default(cuid())
-  name         String        // Es. "Marco", "Giulia"
+  name         String
   tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  // Servizi che questo dipendente può svolgere
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
   services     Service[]
-
-  // Turni e Orari (globali - staff gira tra sedi)
-  baseSchedule    String? @default("{}") // JSON: Orari fissi settimanali
-  shiftExceptions String? @default("[]") // JSON: Ferie, malattie, cambi turno
-  commissionRate  Int     @default(0)    // Provvigione fissa in percentuale (es. 20)
-
-  // Sede di riferimento (nullable = lavora in tutte le sedi dove ha servizi)
-  locationId      String?
-  location        Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
-  // Sedi specifiche per staff multi-sede (relazione molti-a-molti)
-  locations       StaffLocation[]
-
-  // Appuntamenti assegnati a questo dipendente
+  baseSchedule    String? @default("{}")
+  shiftExceptions String? @default("[]")
+  commissionRate  Int     @default(0)
+  locationId   String?
+  location     Location? @relation(fields: [locationId], references: [id])
+  locations    StaffLocation[]
   appointments Appointment[]
-
   @@index([locationId])
 }
 
-// Tabella ponte per staff che lavora in più sedi
 model StaffLocation {
   id         String   @id @default(cuid())
   staffId    String
   staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
   locationId String
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
   @@unique([staffId, locationId])
   @@index([staffId])
   @@index([locationId])
