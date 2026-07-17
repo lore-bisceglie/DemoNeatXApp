@@ -69,8 +69,9 @@ async function run() {
   // L'array slots dovrebbe essere vuoto perché c'è un solo dipendente ed è in ferie
   check("Disponibilità bloccata per ferie", avail.data.slots && avail.data.slots.length === 0, `${avail.data.slots?.length} slots found`);
 
-  // 5. Crea prenotazione dopodomani
+  // 5. Crea prenotazione dopodomani (salta domenica se cade di domenica)
   const dayAfter = new Date(); dayAfter.setDate(dayAfter.getDate() + 2);
+  if (dayAfter.getDay() === 0) dayAfter.setDate(dayAfter.getDate() + 1);
   const dateAfter = dayAfter.toISOString().split("T")[0];
   const avail2 = await jsonFetch(`${BASE}/api/availability?date=${dateAfter}&tenantId=${tenantId}&serviceId=${svcId}`);
   check("Disponibilità sbloccata dopodomani", avail2.data.slots && avail2.data.slots.length > 0);

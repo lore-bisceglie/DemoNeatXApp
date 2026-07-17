@@ -497,15 +497,16 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          phone,
+          customerName: name,
+          customerPhone: phone,
           date,
           time: selectedSlot,
           serviceId: selectedService?.id,
           tenantId: tenantInfo.id,
           staffId: selectedStaffId !== "any" ? selectedStaffId : null,
           locationId: selectedLocationId || null,
-          paymentMethod: paymentMethod
+          paymentMethod: paymentMethod,
+          honey,
         }),
       });
 
