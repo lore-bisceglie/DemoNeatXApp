@@ -513,10 +513,27 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       if (res.ok) {
         const data = await res.json();
         
-        if (data.checkoutUrl) {
-          window.location.href = data.checkoutUrl;
-          // IMPORTANT: Do NOT setIsBooking(false) here to prevent multiple clicks
-          // while Stripe is loading. The page will unload.
+        if (paymentMethod === "deposit") {
+          const checkoutRes = await fetch("/api/payments/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ appointmentId: data.appointment.id }),
+          });
+
+          const checkoutData = await checkoutRes.json().catch(() => ({}));
+
+          if (checkoutRes.ok && checkoutData.url) {
+            window.location.href = checkoutData.url;
+            // IMPORTANT: Do NOT setIsBooking(false) here to prevent multiple clicks
+            // while Stripe is loading. The page will unload.
+            return;
+          }
+
+          setFormError(
+            checkoutData.error ||
+              "Prenotazione salvata, ma l'acconto online non è disponibile. Avvisa il negoziante."
+          );
+          setIsBooking(false);
           return;
         }
 
