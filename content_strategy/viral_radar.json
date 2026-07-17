@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-07-17T11:56:26.842835+02:00",
+  "generated_at": "2026-07-17T17:10:59.577901+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 6,
-    "today_niche": "Coach e Consulenti"
+    "today_niche": "Centri Estetici"
   },
   "ideas": [
     {
       "format": "pain shock",
-      "niche": "Coach e Consulenti",
-      "hook": "Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?",
-      "angle": "Mostra quanto costa davvero turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato.",
+      "niche": "Centri Estetici",
+      "hook": "Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?",
+      "angle": "Mostra quanto costa davvero clienti che dimenticano l'appuntamento e non rispondono al telefono.",
       "cta": "Commenta AGENDA e ti mando il link."
     },
     {
       "format": "before after",
-      "niche": "Coach e Consulenti",
+      "niche": "Centri Estetici",
       "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
       "angle": "Confronto diretto tra caos manuale e link NeatX.",
       "cta": "Scrivi DEMO se vuoi provarlo."
     },
     {
       "format": "calculator",
-      "niche": "Coach e Consulenti",
+      "niche": "Centri Estetici",
       "hook": "Un no-show non è un fastidio, è fatturato perso.",
       "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
       "cta": "Commenta AGENDA."
