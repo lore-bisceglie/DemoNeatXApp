@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const { 
       name, slug, template, adminPassword, ownerEmail,
       phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
-      logoUrl, themeColor
+      logoUrl, themeColor, staffSheetUrl
     } = body;
 
     if (!name || !slug || !template) {
@@ -165,6 +165,7 @@ export async function POST(req: Request) {
         logoUrl: logoUrl || null,
         themeColor: themeColor || 'cyan',
         ownerEmail: ownerEmail || null,
+        staffSheetUrl: staffSheetUrl || null,
         trialStatus: "trial_active",
         isDemoData: false,
         services: {

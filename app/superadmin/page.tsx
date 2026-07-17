@@ -40,6 +40,7 @@ export default function SuperAdminPage() {
   const [closeTime, setCloseTime] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
+  const [staffSheetUrl, setStaffSheetUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPlan, setFilterPlan] = useState<PlanFilter>("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -94,12 +95,12 @@ export default function SuperAdminPage() {
       const res = await fetch("/api/superadmin", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-password": password },
-        body: JSON.stringify({ name, slug, template, adminPassword: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor })
+        body: JSON.stringify({ name, slug, template, adminPassword: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor, staffSheetUrl })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
       setName(""); setSlug(""); setTenantPassword(""); setPhone(""); setAddress("");
-      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan");
+      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan"); setStaffSheetUrl("");
       fetchTenants(password);
     } catch (e: unknown) { setError(e instanceof Error ? e.message : "Errore"); }
     finally { setCreating(false); }
@@ -366,6 +367,10 @@ export default function SuperAdminPage() {
                           {THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                         </select>
                       </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-400 mb-1">Google Sheet URL (Opzionale)</label>
+                      <input type="url" value={staffSheetUrl} onChange={e => setStaffSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className={ISM} />
                     </div>
                   </div>
                 </details>
