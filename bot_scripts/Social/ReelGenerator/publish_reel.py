@@ -404,3 +404,15 @@ if __name__ == "__main__":
         failed = [name for name, result in results.items() if not result.get("ok")]
         if failed:
             raise SystemExit(f"Pubblicazione fallita per: {', '.join(failed)}")
+
+
+def publish_instagram_puppeteer(caption):
+    print('[*] Tentativo di pubblicazione su Instagram via Puppeteer (fallback)...')
+    # Implementazione di emergenza per forzare l'upload via browser
+    import subprocess
+    try:
+        subprocess.run(['node', 'puppeteer_ig_upload.js', VIDEO_FILE, caption], check=True)
+        return platform_result(True, 'Pubblicato via Puppeteer')
+    except Exception as e:
+        return platform_result(False, f'Errore Puppeteer: {e}')
+

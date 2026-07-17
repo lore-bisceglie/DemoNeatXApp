@@ -882,13 +882,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                         }`}>
                           {d.label} {d.isClosed && <span className="text-[10px] ml-1 font-mono">CHIUSO</span>}
                         </div>
-                        {staffList.length > 0 && (
+                        {columns.length > 0 && (
                           <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
-                            {staffList.map(s => (
-                              <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
-                                {s.name.split(' ')[0]}
-                              </div>
-                            ))}
+                            {columns.map(colId => {
+                              const s = staffList.find(staff => staff.id === colId) || { id: colId, name: colId };
+                              return (
+                                <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
+                                  {s.name.split(' ')[0]}
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
