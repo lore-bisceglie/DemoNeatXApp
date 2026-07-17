@@ -513,7 +513,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       if (res.ok) {
         const data = await res.json();
         
-        if (paymentMethod === "deposit") {
+        if ((paymentMethod as string) === "deposit") {
           const checkoutRes = await fetch("/api/payments/checkout", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

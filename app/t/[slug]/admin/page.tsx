@@ -31,6 +31,7 @@ import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 import MessageRechargeCard from "./MessageRechargeCard";
 import StripeConnectButton from "./StripeConnectButton";
 import ReferralCard from "@/components/ReferralCard";
+import AgendaLocationTabbedArea from "@/components/admin/AgendaLocationTabbedArea";
 import LocationTabs from "@/components/admin/LocationTabs";
 
 import LoginScreen from "./LoginScreen";
@@ -81,7 +82,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   // C1 — Primo gruppo di query parallele: tutte dipendono solo da tenantId
   // e sono indipendenti tra loro, quindi partono insieme.
   const [staffList, locationsRaw] = await Promise.all([
-    prisma.staff.findMany({ where: { tenantId } }),
+    prisma.staff.findMany({ where: { tenantId }, include: { locations: true } }),
     prisma.location.findMany({
       where: { tenantId, isActive: true },
       include: { settings: true },
@@ -238,7 +239,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       where: {
         date: { gte: todayItaly },
         tenantId,
-        ...(filterLocationId ? { locationId: filterLocationId } : {}),
       },
       orderBy: [{ date: "asc" }, { time: "asc" }],
       include: { service: true, staff: true },
@@ -249,7 +249,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           where: {
             date: { in: weekDatesArray },
             tenantId,
-            ...(filterLocationId ? { locationId: filterLocationId } : {}),
           },
           include: { service: true },
         })
@@ -283,75 +282,67 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const waitlistData = waitlistItems;
   const radarAppointments = radarAppointmentsRaw;
 
-  const columns = staffList.length > 0 ? staffList.map(s => s.id) : ["unassigned"];
-  const maxConcurrent = columns.length;
-  const radarMap: Record<string, Record<string, Record<string, any>>> = {};
+  const buildAgendaData = (locId: string | null) => {
+    const filteredStaff = !locId ? staffList : staffList.filter(s => 
+      s.locationId === locId || (s.locations && s.locations.some((l: any) => l.locationId === locId)) || (!s.locationId && (!s.locations || s.locations.length === 0))
+    );
+    const cols = filteredStaff.length > 0 ? filteredStaff.map(s => s.id) : ["unassigned"];
+    const map: Record<string, Record<string, Record<string, any>>> = {};
 
-  if (isAgendaTab) {
-    weekDatesArray.forEach((d) => {
-      radarMap[d] = {};
-      for (const colId of columns) {
-        radarMap[d][colId] = {};
-      }
-    });
-  }
-
-
-
-  radarAppointments.forEach((app) => {
-    let durationMins = 15;
-    if (app.time === "ALL_DAY") {
-      durationMins = allSlots.length * 15;
-    } else if (app.service?.duration) {
-      durationMins = app.service.duration;
-    } else if (app.endTime) {
-      const start = app.time.split(":").map(Number);
-      const end = app.endTime.split(":").map(Number);
-      durationMins = end[0] * 60 + end[1] - (start[0] * 60 + start[1]);
-    }
-
-    const slotsToCover = Math.ceil(durationMins / 15);
-    const startIndex = app.time === "ALL_DAY" ? 0 : allSlots.indexOf(app.time);
-
-    if (startIndex !== -1) {
-      const appWithSpan = {
-        ...app,
-        _rowSpan: slotsToCover,
-      };
-
-      // Assegna la colonna in base allo staffId reale dell'appuntamento, fallback sulla prima colonna per appuntamenti vecchi
-      const targetCol = app.staffId && columns.includes(app.staffId) ? app.staffId : columns[0];
-      const actualTime = app.time === "ALL_DAY" ? "09:00" : app.time;
-      radarMap[app.date][targetCol][actualTime] = appWithSpan;
-
-      for (let idx = 1; idx < slotsToCover; idx++) {
-        const coveredSlot = allSlots[startIndex + idx];
-        if (coveredSlot) {
-          radarMap[app.date][targetCol][coveredSlot] = "COVERED";
+    if (isAgendaTab) {
+      weekDatesArray.forEach((d) => {
+        map[d] = {};
+        for (const colId of cols) {
+          map[d][colId] = {};
         }
-      }
-    }
-  });
-  const freeGapReports = weekDays
-    .flatMap((dayInfo) => {
-      const gaps: {
-        date: string;
-        label: string;
-        start: string;
-        end: string;
-        duration: number;
-      }[] = [];
+      });
 
+      const filteredAppointments = !locId ? radarAppointmentsRaw : radarAppointmentsRaw.filter(a => a.locationId === locId);
+
+      filteredAppointments.forEach((app) => {
+        let durationMins = 15;
+        if (app.time === "ALL_DAY") {
+          durationMins = allSlots.length * 15;
+        } else if (app.service?.duration) {
+          durationMins = app.service.duration;
+        } else if (app.endTime) {
+          const start = app.time.split(":").map(Number);
+          const end = app.endTime.split(":").map(Number);
+          durationMins = end[0] * 60 + end[1] - (start[0] * 60 + start[1]);
+        }
+
+        const slotsToCover = Math.ceil(durationMins / 15);
+        const startIndex = app.time === "ALL_DAY" ? 0 : allSlots.indexOf(app.time);
+
+        if (startIndex !== -1) {
+          const appWithSpan = { ...app, _rowSpan: slotsToCover };
+          const targetCol = app.staffId && cols.includes(app.staffId) ? app.staffId : cols[0];
+          const actualTime = app.time === "ALL_DAY" ? "09:00" : app.time;
+
+          if (!map[app.date]) map[app.date] = {};
+          if (!map[app.date][targetCol]) map[app.date][targetCol] = {};
+          map[app.date][targetCol][actualTime] = appWithSpan;
+
+          for (let idx = 1; idx < slotsToCover; idx++) {
+            const coveredSlot = allSlots[startIndex + idx];
+            if (coveredSlot) {
+              map[app.date][targetCol][coveredSlot] = "COVERED";
+            }
+          }
+        }
+      });
+    }
+
+    const gaps = weekDays.flatMap((dayInfo) => {
+      const g: { date: string; label: string; start: string; end: string; duration: number }[] = [];
       let gapStart: string | null = null;
       let gapDuration = 0;
 
       allSlots.forEach((slot) => {
-        const isPastToday =
-          dayInfo.date === todayItaly &&
-          timeToMinutes(slot) <= currentTotalMinutes;
+        const isPastToday = dayInfo.date === todayItaly && timeToMinutes(slot) <= currentTotalMinutes;
         let isSlotCompletelyFree = false;
-        for (const colId of columns) {
-          if (!radarMap[dayInfo.date]?.[colId]?.[slot]) {
+        for (const colId of cols) {
+          if (!map[dayInfo.date]?.[colId]?.[slot]) {
             isSlotCompletelyFree = true;
             break;
           }
@@ -365,7 +356,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         }
 
         if (gapStart && gapDuration >= 30) {
-          gaps.push({
+          g.push({
             date: dayInfo.date,
             label: dayInfo.label,
             start: gapStart,
@@ -373,13 +364,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             duration: gapDuration,
           });
         }
-
         gapStart = null;
         gapDuration = 0;
       });
 
       if (gapStart && gapDuration >= 30) {
-        gaps.push({
+        g.push({
           date: dayInfo.date,
           label: dayInfo.label,
           start: gapStart,
@@ -387,14 +377,21 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           duration: gapDuration,
         });
       }
-
-      return gaps;
+      return g;
     })
     .sort((a, b) => {
       if (a.date === b.date) return a.start.localeCompare(b.start);
       return a.date.localeCompare(b.date);
     })
     .slice(0, 6);
+
+    return { columns: cols, radarMap: map, freeGapReports: gaps };
+  };
+
+  const agendaViews = [{ id: "all", name: "Tutte le sedi", ...buildAgendaData(null) }];
+  locations.forEach((loc: any) => {
+    agendaViews.push({ id: loc.id, name: loc.name, ...buildAgendaData(loc.id) });
+  });
 
   const appointments = rawAppointments.filter((app) => {
     if (app.date > todayItaly) return true;
@@ -773,15 +770,15 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         <TabbedArea initialTab={activeTab} tabConfig={tabConfig} slug={slug}>
           <div data-tab="agenda">
-            {locations.length > 1 && (
-              <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
-                <Link href={`/t/${slug}/admin?tab=agenda`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${!filterLocationId ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>Tutte le sedi</Link>
-                {locations.map((loc: any) => (
-                  <Link key={loc.id} href={`/t/${slug}/admin?tab=agenda&locationId=${loc.id}`} className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${filterLocationId === loc.id ? 'bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]' : 'bg-[#131c31] text-slate-400 border-[#1e2b4a] hover:border-slate-500 hover:bg-[#1a2642]'}`}>{loc.name}</Link>
-                ))}
-              </div>
-            )}
-            {/* AGENDA SETTIMANALE TETRIS */}
+          <AgendaLocationTabbedArea locations={locations} slug={slug}>
+            {agendaViews.map(view => {
+              const columns = view.columns;
+              const radarMap = view.radarMap;
+              const freeGapReports = view.freeGapReports;
+              const maxConcurrent = columns.length;
+              return (
+                <div key={view.id} data-location={view.id} className="w-full">
+                  {/* AGENDA SETTIMANALE TETRIS */}
           {freeGapReports.length > 0 && (
 
             <div className="bg-[#0b1221] border border-[#1a2642] p-5 rounded-3xl shadow-xl shadow-cyan-900/10 mb-6">
@@ -1211,6 +1208,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           </div>
 
+              );
+            })}
+          </AgendaLocationTabbedArea>
+          </div>
           <div data-tab="gestione">
             <TrialLaunchPanel
               slug={slug}
