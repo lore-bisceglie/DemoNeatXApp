@@ -279,9 +279,10 @@ export async function POST(request: Request) {
       if (tenant && service) {
         const locationName = locationForSms?.name || tenant.name;
         const locationAddress = locationForSms?.address || tenant.address || '';
-        const smsBody = `✅ ${tenant.name} - ${locationName} - Prenotazione Confermata!\n${customerName.trim()}, ti aspettiamo il ${date.split('-').reverse().join('/')} alle ${time} per ${service.name}.\n${locationAddress ? `\nSede: ${locationAddress}` : ''}\n\nPer disdire o spostare clicca qui: https://${tenant.slug}.neatx.store/cancel/${newCancelToken}`;
         const formattedDate = date.split('-').reverse().join('/');
         const cancelUrl = `https://${tenant.slug}.neatx.store/cancel/${newCancelToken}`;
+        const locationString = locationAddress ? `\n📍 *Sede:* ${locationAddress}` : '';
+        const smsBody = `✅ *Prenotazione Confermata!*\n🏢 *${tenant.name}*${locationString}\n\n👤 *Cliente:* ${customerName.trim()}\n📅 *Data:* ${formattedDate}\n⏰ *Ora:* ${time}\n💇‍♂️ *Servizio:* ${service.name}\n\n❌ *Per annullare o spostare in autonomia:*\nPuoi usare questo link:\n${cancelUrl}\n\n_Prenotazione gestita tramite NeatX._ 🚀`;
         
         await sendTenantSms(
           tenantId,

@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendTenantSms } from "@/lib/sms";
 import { sendTelegramMessage } from "@/lib/telegram";
@@ -65,10 +65,8 @@ export async function GET(request: Request) {
       const cancelUrl = `https://${appt.tenant.slug}.neatx.store/cancel/${appt.cancelToken}`;
       const displayDate = formatDate(tomorrowString);
 
-      const smsBody =
-        `Promemoria da ${appt.tenant.name}\n` +
-        `Ciao ${appt.customerName.trim()}, ti ricordiamo l appuntamento di domani alle ${appt.time} per ${appt.service?.name || "il tuo servizio"}.\n\n` +
-        `Se non puoi venire, disdici qui: ${cancelUrl}`;
+      const serviceName = appt.service?.name || "il tuo servizio";
+      const smsBody = `🔔 *Promemoria Appuntamento!*\n🏢 *${appt.tenant.name}*\n\n👤 *Cliente:* ${appt.customerName.trim()}\n📅 *Data:* DOMANI (${displayDate})\n⏰ *Ora:* ${appt.time}\n💇‍♂️ *Servizio:* ${serviceName}\n\n❌ *Per annullare o spostare in autonomia:*\nPuoi usare questo link:\n${cancelUrl}\n\n_Prenotazione gestita tramite NeatX._ 🚀`;
 
       const whatsappVars = {
         storeName: appt.tenant.name,
