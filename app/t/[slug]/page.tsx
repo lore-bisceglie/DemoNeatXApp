@@ -529,10 +529,10 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
           `📱 *Telefono:* ${phone || "Non inserito"}\n` +
           `📅 *Data:* ${date.split("-").reverse().join("/")}\n` +
           `⏰ *Ora:* ${selectedSlot}\n` +
-          `✂️ *Servizio:* ${selectedService?.name}${priceString}\n` +
+          `📌 *Servizio:* ${selectedService?.name}${priceString}\n` +
           `💳 *Pagamento:* in salone\n\n` +
           `❌ *Per annullare in autonomia:*\n` +
-          `Puoi usare questo link fino a 2 ore prima del taglio:\n${cancelUrl}\n\n` +
+          `Puoi usare questo link fino a 2 ore prima dell'appuntamento:\n${cancelUrl}\n\n` +
           `_Prenotazione gestita tramite NeatX._ 🚀`;
         
         const tenantPhone = selectedLocation?.phone || tenantInfo.phone;

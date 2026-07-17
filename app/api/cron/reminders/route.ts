@@ -66,7 +66,7 @@ export async function GET(request: Request) {
       const displayDate = formatDate(tomorrowString);
 
       const serviceName = appt.service?.name || "il tuo servizio";
-      const smsBody = `🔔 *Promemoria Appuntamento!*\n🏢 *${appt.tenant.name}*\n\n👤 *Cliente:* ${appt.customerName.trim()}\n📅 *Data:* DOMANI (${displayDate})\n⏰ *Ora:* ${appt.time}\n💇‍♂️ *Servizio:* ${serviceName}\n\n❌ *Per annullare o spostare in autonomia:*\nPuoi usare questo link:\n${cancelUrl}\n\n_Prenotazione gestita tramite NeatX._ 🚀`;
+      const smsBody = `🔔 *Promemoria Appuntamento!*\n🏢 *${appt.tenant.name}*\n\n👤 *Cliente:* ${appt.customerName.trim()}\n📅 *Data:* DOMANI (${displayDate})\n⏰ *Ora:* ${appt.time}\n📌 *Servizio:* ${serviceName}\n\n❌ *Per annullare o spostare in autonomia:*\nPuoi usare questo link:\n${cancelUrl}\n\n_Prenotazione gestita tramite NeatX._ 🚀`;
 
       const whatsappVars = {
         storeName: appt.tenant.name,
