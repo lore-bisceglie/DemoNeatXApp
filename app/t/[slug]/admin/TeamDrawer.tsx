@@ -52,6 +52,14 @@ export default function TeamDrawer({
 
   const [scheduleEditorStaff, setScheduleEditorStaff] = useState<StaffMember | null>(null);
 
+  // Notifiche in stile NeatX
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
   const [savingServices, setSavingServices] = useState(false);
   const [savingLocations, setSavingLocations] = useState(false);
 
@@ -218,21 +226,21 @@ export default function TeamDrawer({
         body: JSON.stringify({ tenantId, staffSheetUrl }),
       });
       if (res.ok) {
-        alert("Link salvato con successo!");
+        showNotification("Link salvato con successo!", "success");
         router.refresh();
       } else {
-        alert("Errore nel salvataggio del link.");
+        showNotification("Errore nel salvataggio del link.", "error");
       }
     } catch (e) {
       console.error(e);
-      alert("Errore di rete.");
+      showNotification("Errore di rete.", "error");
     }
     setSavingUrl(false);
   };
 
   const handleSyncSheets = async () => {
     if (!staffSheetUrl) {
-      alert("Salva prima un link valido!");
+      showNotification("Salva prima un link valido!", "error");
       return;
     }
     setSavingUrl(true);
@@ -243,15 +251,15 @@ export default function TeamDrawer({
         body: JSON.stringify({ tenantId }),
       });
       if (res.ok) {
-        alert("Sincronizzazione completata con successo! Il Database è aggiornato.");
+        showNotification("Sincronizzazione completata con successo! Il Database è aggiornato.", "success");
         await fetchStaff();
       } else {
         const errorText = await res.text();
-        alert("Errore sincronizzazione: " + errorText);
+        showNotification("Errore sincronizzazione: " + errorText, "error");
       }
     } catch (e) {
       console.error(e);
-      alert("Errore di rete durante la sincronizzazione.");
+      showNotification("Errore di rete durante la sincronizzazione.", "error");
     }
     setSavingUrl(false);
   };
@@ -280,7 +288,7 @@ export default function TeamDrawer({
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-5 border-b border-[#1e2b4a] flex items-center justify-between bg-[#131c31]">
+        <div className="p-5 border-b border-[#1e2b4a] flex items-center justify-between bg-[#131c31] relative">
           <h2 className="text-white font-extrabold text-lg flex items-center gap-2">
             <span>👥</span> Gestione Team & Servizi
           </h2>
@@ -290,6 +298,18 @@ export default function TeamDrawer({
           >
             x
           </button>
+
+          {/* Toast Notification in-component */}
+          {notification && (
+            <div className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-4 py-2 rounded-xl shadow-xl border backdrop-blur-md font-medium text-sm animate-in slide-in-from-top-2 fade-in duration-300 flex items-center gap-2 ${
+              notification.type === 'success' 
+                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
+                : 'bg-red-500/20 border-red-500/50 text-red-400'
+            }`}>
+              <span>{notification.type === 'success' ? '✅' : '❌'}</span>
+              {notification.message}
+            </div>
+          )}
         </div>
 
         {!isPremium && (
