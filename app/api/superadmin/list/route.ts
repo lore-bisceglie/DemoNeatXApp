@@ -79,6 +79,8 @@ export async function GET(req: Request) {
     const now = new Date();
     let mrr = 0;
     let payingCount = 0;
+    let proCount = 0;
+    let eliteCount = 0;
     let trialCount = 0;
 
     tenants.forEach(t => {
@@ -86,9 +88,11 @@ export async function GET(req: Request) {
 
       if (t.plan === 'pro') {
         payingCount++;
+        proCount++;
         mrr += 29;
       } else if (t.plan === 'elite') {
         payingCount++;
+        eliteCount++;
         mrr += 59;
       } else if (t.trialEndsAt && t.trialEndsAt > now) {
         trialCount++;
@@ -100,6 +104,8 @@ export async function GET(req: Request) {
       stats: {
         mrr,
         payingCount,
+        proCount,
+        eliteCount,
         trialCount,
       },
     });

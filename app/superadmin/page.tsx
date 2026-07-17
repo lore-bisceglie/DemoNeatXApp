@@ -47,7 +47,7 @@ export default function SuperAdminPage() {
   const [editTarget, setEditTarget] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
   const [editing, setEditing] = useState(false);
-  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, trialCount: 0 });
+  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, proCount: 0, eliteCount: 0, trialCount: 0 });
   const [sortBy, setSortBy] = useState<"date" | "name" | "plan">("date");
   const [detailTenant, setDetailTenant] = useState<any>(null);
   const [password, setPassword] = useState("");
@@ -234,9 +234,9 @@ export default function SuperAdminPage() {
 
   const PLAN_FILTERS: { key: PlanFilter; label: string; active: string }[] = [
     { key: "all",     label: `Tutti (${totalCount})`,              active: "bg-slate-600 text-white" },
-    { key: "pro",     label: `Pro (${stats.payingCount})`,         active: "bg-blue-500/40 text-blue-200 border border-blue-400/50" },
-    { key: "elite",   label: "Elite",                              active: "bg-fuchsia-500/40 text-fuchsia-200 border border-fuchsia-400/50" },
-    { key: "trial",   label: `Trial (${stats.trialCount})`,       active: "bg-amber-500/30 text-amber-200 border border-amber-400/50" },
+    { key: "pro",     label: `Pro (${stats.proCount || 0})`,       active: "bg-blue-500/40 text-blue-200 border border-blue-400/50" },
+    { key: "elite",   label: `Elite (${stats.eliteCount || 0})`,   active: "bg-fuchsia-500/40 text-fuchsia-200 border border-fuchsia-400/50" },
+    { key: "trial",   label: `Trial (${stats.trialCount || 0})`,   active: "bg-amber-500/30 text-amber-200 border border-amber-400/50" },
     { key: "expired", label: `Scaduti (${expiredCount})`,          active: "bg-red-500/30 text-red-200 border border-red-400/50" },
     { key: "never",   label: `Mai attivati (${neverActivated})`,   active: "bg-slate-700 text-slate-300 border border-slate-600" },
   ];
