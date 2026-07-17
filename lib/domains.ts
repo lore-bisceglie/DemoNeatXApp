@@ -12,7 +12,7 @@ export function getTenantPublicUrl(slug: string) {
 }
 
 export function getTenantAdminUrl(slug: string) {
-  return `${getTenantPublicUrl(slug)}/admin`;
+  return `/t/${slug}/admin`;
 }
 
 export function isReservedSubdomain(value: string) {
