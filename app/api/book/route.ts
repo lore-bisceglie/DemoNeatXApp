@@ -270,34 +270,9 @@ export async function POST(request: Request) {
       tenantId: tenantId,
     });
 
-    // 🌟 INVIO SMS/WHATSAPP CON MOTORE REALE
-    if (cleanPhone !== "0000000000") {
-      const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
-      const service = await prisma.service.findUnique({ where: { id: serviceId } });
-      const locationForSms = targetLocationId ? await prisma.location.findUnique({ where: { id: targetLocationId }, select: { name: true, address: true, phone: true } }) : null;
-      
-      if (tenant && service) {
-        const locationName = locationForSms?.name || tenant.name;
-        const locationAddress = locationForSms?.address || tenant.address || '';
-        const formattedDate = date.split('-').reverse().join('/');
-        const cancelUrl = `https://${tenant.slug}.neatx.store/cancel/${newCancelToken}`;
-        const locationString = locationAddress ? `\n📍 *Sede:* ${locationAddress}` : '';
-        const smsBody = `✅ *Prenotazione Confermata!*\n🏢 *${tenant.name}*${locationString}\n\n👤 *Cliente:* ${customerName.trim()}\n📅 *Data:* ${formattedDate}\n⏰ *Ora:* ${time}\n💇‍♂️ *Servizio:* ${service.name}\n\n❌ *Per annullare o spostare in autonomia:*\nPuoi usare questo link:\n${cancelUrl}\n\n_Prenotazione gestita tramite NeatX._ 🚀`;
-        
-        await sendTenantSms(
-          tenantId,
-          cleanPhone,
-          smsBody,
-          { storeName: tenant.name, customerName: customerName.trim(), date: formattedDate, time },
-          targetLocationId || undefined
-        );
-
-        if (locationForSms && locationForSms.phone) {
-          const notifBody = `📅 Nuova prenotazione!\n${customerName.trim()} — ${service.name}\n${formattedDate} alle ${time}\nSede: ${locationForSms.name}`;
-          await sendTenantSms(tenantId, locationForSms.phone, notifBody, undefined, targetLocationId || undefined);
-        }
-      }
-    }
+    // 🌟 INVIO SMS/WHATSAPP CON MOTORE REALE DISATTIVATO
+    // Il cliente invia la conferma manualmente via wa.me dal front-end.
+    // Il motore Green-API viene usato solo per i promemoria del giorno prima.
 
     revalidatePath("/dashboard");
 

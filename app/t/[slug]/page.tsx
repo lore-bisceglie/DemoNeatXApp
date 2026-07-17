@@ -493,7 +493,7 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
         return;
       }
 
-      const res = await fetch("/api/appointments/public", {
+      const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
