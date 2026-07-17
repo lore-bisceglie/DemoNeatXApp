@@ -1343,7 +1343,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                         </p>
                       </div>
                       
-                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-white text-black text-[12px] font-bold py-2.5 px-4 rounded-xl hover:bg-slate-200 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                      <a href="https://business.revolut.com/signup?promo=C2B-JUL2-26-AR-H1&ext=lorebisceglie&context=C2B_REFERRAL" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-white text-black text-[12px] font-bold py-2.5 px-4 rounded-xl hover:bg-slate-200 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
                         Apri conto gratuito →
                       </a>
                     </div>
