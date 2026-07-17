@@ -429,6 +429,8 @@ export default function TenantPage(props: { params: Promise<{ slug: string }> })
       .catch((err) => {
         if (err.name !== "AbortError") {
           console.error(err);
+          setInitialLoad(false);
+          setDateError("Errore nel caricamento degli orari. Riprova tra poco.");
         }
       })
       .finally(() => setLoading(false));

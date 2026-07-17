@@ -101,6 +101,10 @@ export async function syncStaffFromSheet(url: string, tenantId: string, location
   return { success: true, message: "Orari sincronizzati con successo!" };
 }
 
+// Cache in memoria per evitare chiamate ridondanti allo stesso CSV
+const sheetCache = new Map<string, { time: number, text: string }>();
+const CACHE_TTL_MS = 10000; // 10 secondi
+
 export async function fetchStaffSchedule(sheetUrl: string, staffName: string, dateStr: string): Promise<StaffDaySchedule | null> {
   try {
     // Extract sheet ID from standard sharing URL
@@ -114,13 +118,21 @@ export async function fetchStaffSchedule(sheetUrl: string, staffName: string, da
     const sheetId = match[1];
     const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
     
-    const response = await fetch(csvUrl, { cache: "no-store" });
-    if (!response.ok) {
-      console.error("Failed to fetch Google Sheet CSV", response.status);
-      return null;
+    let csvText = "";
+    const cached = sheetCache.get(csvUrl);
+    
+    if (cached && Date.now() - cached.time < CACHE_TTL_MS) {
+      csvText = cached.text;
+    } else {
+      const response = await fetch(csvUrl, { cache: "no-store" });
+      if (!response.ok) {
+        console.error("Failed to fetch Google Sheet CSV", response.status);
+        return null;
+      }
+      csvText = await response.text();
+      sheetCache.set(csvUrl, { time: Date.now(), text: csvText });
     }
     
-    const csvText = await response.text();
     const rows = csvText.split("\n").map(r => r.split(","));
     
     // Find the staff row (case insensitive)
