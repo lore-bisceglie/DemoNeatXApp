@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { isTenantAdminCookieValid } from "@/lib/auth";
 import { appointmentConflictsWithSlot } from "@/lib/booking-conflict";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
+import { parseClosedDays } from "@/lib/opening-hours";
 
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
@@ -283,15 +284,9 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: "Orario in pausa pranzo della sede" }, { status: 400 });
         }
       }
-      if (location.closedDays) {
-        try {
-          const closedDaysArray = JSON.parse(location.closedDays);
-          const dateObj = new Date(date + 'T12:00:00');
-          const dayOfWeek = dateObj.getDay();
-          if (closedDaysArray.includes(dayOfWeek)) {
-            return NextResponse.json({ error: "Sede chiusa in questo giorno" }, { status: 400 });
-          }
-        } catch (e) {}
+      const dayOfWeek = new Date(date + 'T12:00:00Z').getUTCDay();
+      if (parseClosedDays(location.closedDays).includes(dayOfWeek)) {
+        return NextResponse.json({ error: "Sede chiusa in questo giorno" }, { status: 400 });
       }
     }
 

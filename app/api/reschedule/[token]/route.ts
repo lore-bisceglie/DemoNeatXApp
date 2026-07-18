@@ -9,6 +9,7 @@ import {
   parseBaseSchedule,
   parseShiftExceptions,
 } from "@/lib/schedule";
+import { parseClosedDays } from "@/lib/opening-hours";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -116,18 +117,8 @@ export async function POST(
         return NextResponse.json({ error: "Orario durante la pausa della sede" }, { status: 400 });
       }
     }
-    if (scheduleOwner?.closedDays) {
-      try {
-        const closedDays = JSON.parse(scheduleOwner.closedDays) as unknown;
-        if (
-          Array.isArray(closedDays) &&
-          closedDays.some((day) => Number(day) === requestedDate.getDay())
-        ) {
-          return NextResponse.json({ error: "La sede è chiusa in questo giorno" }, { status: 400 });
-        }
-      } catch {
-        return NextResponse.json({ error: "Calendario della sede non valido" }, { status: 500 });
-      }
+    if (parseClosedDays(scheduleOwner?.closedDays).includes(requestedDate.getDay())) {
+      return NextResponse.json({ error: "La sede è chiusa in questo giorno" }, { status: 400 });
     }
 
     if (appointment.staff) {

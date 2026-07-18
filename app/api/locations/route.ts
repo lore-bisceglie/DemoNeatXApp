@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { requireTenantAdmin } from '@/lib/auth';
+import { serializeClosedDays } from '@/lib/opening-hours';
 
 export async function GET(request: Request) {
   try {
@@ -168,7 +169,7 @@ export async function POST(request: Request) {
         closeTime,
         breakStart,
         breakEnd,
-        closedDays: closedDays ? JSON.stringify(closedDays) : null,
+        closedDays: serializeClosedDays(closedDays),
         staffSheetUrl,
         tenantId: tenant.id,
       },

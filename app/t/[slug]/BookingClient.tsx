@@ -13,18 +13,7 @@ import { ActivitySelectionModal } from "@/components/tenant/modals/ActivitySelec
 import { DemoSuccessModal, DemoModalState } from "@/components/tenant/modals/DemoSuccessModal";
 import { BookingInitialData, Service, TenantInfoType, ThemeConfig } from "@/components/tenant/types";
 import { activityProfiles } from "@/components/tenant/constants";
-
-function parseClosedDays(value: string | null) {
-  if (!value) return [];
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed)
-      ? parsed.filter((day): day is number => Number.isInteger(day) && day >= 0 && day <= 6)
-      : [];
-  } catch {
-    return [];
-  }
-}
+import { parseClosedDays } from "@/lib/opening-hours";
 
 function toTenantInfo(data: BookingInitialData): TenantInfoType {
   return {
@@ -69,7 +58,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const firstCapableStaff = firstService
     ? initialData.staff.find((staff) => staff.services.some((service) => service.id === firstService.id))
     : null;
-  const tenantInfo = toTenantInfo(initialData);
+  const tenantInfo = useMemo(() => toTenantInfo(initialData), [initialData]);
 
   const [date, setDate] = useState(today);
   const [slots, setSlots] = useState<string[]>([]);
@@ -214,6 +203,10 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const effectiveOpenTime = selectedLocation?.openTime || tenantInfo.openTime;
   const effectiveBreakStart = selectedLocation?.breakStart ?? tenantInfo.breakStart;
   const effectiveBreakEnd = selectedLocation?.breakEnd ?? tenantInfo.breakEnd;
+  const effectiveClosedDays = useMemo(
+    () => selectedLocation ? parseClosedDays(selectedLocation.closedDays) : tenantInfo.closedDays,
+    [selectedLocation, tenantInfo.closedDays],
+  );
 
   const effectiveServicePrice = useMemo(() => {
     if (!selectedLocation || !selectedService) return selectedService?.price ?? 0;
@@ -359,7 +352,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
       return;
     }
 
-    if (tenantInfo.closedDays.includes(day)) {
+    if (effectiveClosedDays.includes(day)) {
       setDateError("Oggi siamo chiusi! Scegli un altro giorno.");
       setSlots([]);
       setIsHoliday(false);
@@ -405,7 +398,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [date, selectedService, tenantInfo.id, tenantInfo.closedDays, selectedStaffId, selectedLocationId]);
+  }, [date, selectedService, tenantInfo.id, effectiveClosedDays, selectedStaffId, selectedLocationId]);
 
   const handleFirstAvailable = () => {
     if (slots.length > 0) {

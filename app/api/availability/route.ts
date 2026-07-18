@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { fetchStaffSchedule } from "@/lib/sheets";
 import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, minsToTime } from "@/lib/schedule";
+import { parseClosedDays } from "@/lib/opening-hours";
 
 export type StaffDaySchedule = {
   isOff: boolean;
@@ -100,15 +101,8 @@ export async function GET(request: Request) {
   const closeTime = location.closeTime ? timeToMins(location.closeTime) : 19 * 60;
 
   // Check chiusura settimanale
-  if (location.closedDays) {
-    try {
-      const closedDaysArray = JSON.parse(location.closedDays);
-      const dateObj = new Date(date + 'T12:00:00');
-      const dayOfWeek = dateObj.getDay();
-      if (closedDaysArray.includes(dayOfWeek)) {
-        return NextResponse.json({ slots: [], isHoliday: false, isClosedDay: true });
-      }
-    } catch (e) {}
+  if (parseClosedDays(location.closedDays).includes(requestedDate.getUTCDay())) {
+    return NextResponse.json({ slots: [], isHoliday: false, isClosedDay: true });
   }
 
   try {

@@ -1,6 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { parseClosedDays } from "@/lib/opening-hours";
+
+const WEEK_DAYS = [
+  { value: 1, label: "Lun" },
+  { value: 2, label: "Mar" },
+  { value: 3, label: "Mer" },
+  { value: 4, label: "Gio" },
+  { value: 5, label: "Ven" },
+  { value: 6, label: "Sab" },
+  { value: 0, label: "Dom" },
+];
 
 interface LocationFormProps {
   tenantId: string;
@@ -48,6 +59,7 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
   const [closeTime, setCloseTime] = useState(initialData?.closeTime || "");
   const [breakStart, setBreakStart] = useState(initialData?.breakStart || "");
   const [breakEnd, setBreakEnd] = useState(initialData?.breakEnd || "");
+  const [closedDays, setClosedDays] = useState<number[]>(parseClosedDays(initialData?.closedDays));
   const [staffSheetUrl, setStaffSheetUrl] = useState(initialData?.staffSheetUrl || "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -63,7 +75,7 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
         : "/api/locations?slug=" + tenantSlug;
       const method = isEditing ? "PUT" : "POST";
       const body: any = { name, slug, address: address || null, city: city || null, phone: phone || null, mapsLink: mapsLink || null };
-      body.closedDays = initialData?.closedDays || null;
+      body.closedDays = closedDays;
       if (openTime) body.openTime = openTime;
       if (closeTime) body.closeTime = closeTime;
       if (breakStart) body.breakStart = breakStart;
@@ -82,6 +94,14 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
     } finally {
       setSaving(false);
     }
+  }
+
+  function toggleClosedDay(day: number) {
+    setClosedDays((current) =>
+      current.includes(day)
+        ? current.filter((value) => value !== day)
+        : [...current, day],
+    );
   }
 
   return (
@@ -149,6 +169,33 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
               <label className="block text-sm font-medium text-slate-400 mb-1">Pausa Fine</label>
               <input type="time" value={breakEnd} onChange={function (e) { setBreakEnd(e.target.value); }} className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white focus:border-cyan-500 focus:outline-none" />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-400 mb-2">Giorni chiusi</label>
+            <div className="flex flex-wrap gap-2">
+              {WEEK_DAYS.map((day) => {
+                const isClosed = closedDays.includes(day.value);
+                return (
+                  <button
+                    key={day.value}
+                    type="button"
+                    onClick={() => toggleClosedDay(day.value)}
+                    aria-pressed={isClosed}
+                    className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                      isClosed
+                        ? "border-red-500/30 bg-red-500/10 text-red-300"
+                        : "border-[#1e2b4a] bg-[#131c31] text-slate-400 hover:border-slate-500"
+                    }`}
+                  >
+                    {day.label} {isClosed ? "· Chiuso" : "· Aperto"}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Per aprire solo il sabato mattina, imposta 09:00–13:00 e segna chiusi tutti i giorni tranne Sab.
+            </p>
           </div>
 
           <div>

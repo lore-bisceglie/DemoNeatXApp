@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { requireTenantAdmin } from '@/lib/auth';
+import { serializeClosedDays } from '@/lib/opening-hours';
 
 async function getTenantId(slug?: string): Promise<{ id: string; plan: string } | null> {
   if (!slug) return null;
@@ -124,7 +125,7 @@ export async function PUT(
         closeTime: closeTime ?? location.closeTime,
         breakStart: breakStart ?? location.breakStart,
         breakEnd: breakEnd ?? location.breakEnd,
-        closedDays: closedDays !== undefined ? (closedDays ? JSON.stringify(closedDays) : null) : location.closedDays,
+        closedDays: closedDays !== undefined ? serializeClosedDays(closedDays) : location.closedDays,
         staffSheetUrl: staffSheetUrl ?? location.staffSheetUrl,
       },
       include: { settings: true },
