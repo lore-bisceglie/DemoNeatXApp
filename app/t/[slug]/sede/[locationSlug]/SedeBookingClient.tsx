@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Calendar, Clock, MapPin, Phone, Users, CheckCircle, ChevronRight, ChevronLeft, X, AlertCircle, Loader2, Navigation } from "lucide-react";
+import { getRomeDate } from "@/lib/rome-time";
 
 interface Props {
   tenant: {
@@ -48,9 +49,16 @@ interface Props {
 const SLASH = "/";
 
 export default function SedeBookingClient({ tenant, location, services, staff }: Props) {
+  const [calendarBounds] = useState(function () {
+    var now = new Date();
+    return {
+      today: getRomeDate(now),
+      maxDate: getRomeDate(new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)),
+    };
+  });
   const [step, setStep] = useState<"service" | "datetime" | "details" | "confirm">("service");
   const [selectedService, setSelectedService] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(calendarBounds.today);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -61,13 +69,6 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
-  useEffect(function () {
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    var formatted = today.toISOString().split("T")[0];
-    setSelectedDate(formatted);
-  }, []);
 
   useEffect(function () {
     if (!selectedDate || !selectedService) {
@@ -288,11 +289,6 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   }
 
   function renderDateTimeStep() {
-    var today = new Date();
-    var todayStr = today.toISOString().split("T")[0];
-    var maxDate = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000);
-    var maxStr = maxDate.toISOString().split("T")[0];
-
     function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
       setSelectedDate(e.target.value);
       setSelectedTime(null);
@@ -326,8 +322,8 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
             type="date"
             value={selectedDate}
             onChange={handleDateChange}
-            min={todayStr}
-            max={maxStr}
+            min={calendarBounds.today}
+            max={calendarBounds.maxDate}
             className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
           />
         </div>

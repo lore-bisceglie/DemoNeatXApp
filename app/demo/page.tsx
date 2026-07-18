@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, type CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import WaitlistButton from "../WaitlistButton";
+import { getRomeClock, getRomeDate } from "@/lib/rome-time";
 
 type Service = {
   id: string;
@@ -82,11 +83,14 @@ const activityProfiles = [
 ];
 
 export default function Home() {
-  const today = new Date().toISOString().split("T")[0];
-
-  const maxDateObj = new Date();
-  maxDateObj.setDate(maxDateObj.getDate() + 60);
-  const maxDate = maxDateObj.toISOString().split("T")[0];
+  const [calendarBounds] = useState(() => {
+    const now = new Date();
+    return {
+      today: getRomeDate(now),
+      maxDate: getRomeDate(new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)),
+    };
+  });
+  const { today, maxDate } = calendarBounds;
 
   const [date, setDate] = useState(today);
   const [slots, setSlots] = useState<string[]>([]);
@@ -112,6 +116,7 @@ export default function Home() {
   const [honey, setHoney] = useState("");
   const [isHoliday, setIsHoliday] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [romeClock, setRomeClock] = useState<{ date: string; minutes: number } | null>(null);
   
   // ✅ NUOVO STATO PER L'EASTER EGG DELL'IMMAGINE
   const [logoClicked, setLogoClicked] = useState(false);
@@ -214,6 +219,13 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const refreshClock = () => setRomeClock(getRomeClock(new Date()));
+    refreshClock();
+    const timer = window.setInterval(refreshClock, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     if (
       typeof window !== "undefined" &&
       window.location.search.includes("canceled=true")
@@ -252,11 +264,11 @@ export default function Home() {
   useEffect(() => {
     if (!date || !selectedService) return;
 
-    const d = new Date(date);
-    const day = d.getDay();
+    const d = new Date(`${date}T12:00:00Z`);
+    const day = d.getUTCDay();
 
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const dayOfMonth = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const dayOfMonth = String(d.getUTCDate()).padStart(2, "0");
     const giornoMese = `${dayOfMonth}-${month}`;
 
     const festeNazionali = [
@@ -315,12 +327,10 @@ export default function Home() {
         let fetchedSlots = data.slots || [];
 
         const now = new Date();
-        const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
-          .toISOString()
-          .split("T")[0];
+        const currentRomeClock = getRomeClock(now);
 
-        if (date === localToday) {
-          const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+        if (date === currentRomeClock.date) {
+          const currentTotalMinutes = currentRomeClock.minutes;
 
           fetchedSlots = fetchedSlots.filter((slot: string) => {
             const [hours, minutes] = slot.split(":").map(Number);
@@ -353,7 +363,7 @@ export default function Home() {
     }
   };
 
-  const isSaturday = date ? new Date(date).getDay() === 6 : false;
+  const isSaturday = date ? new Date(`${date}T12:00:00Z`).getUTCDay() === 6 : false;
   const isScarce = slots.length > 0 && slots.length <= 5;
   const isVeryScarce = slots.length > 0 && slots.length <= 2;
   const shownSlots = slots.slice(0, 3).join(", ");
@@ -537,20 +547,11 @@ export default function Home() {
   const closingHour = 19;
   const closingMinute = 0;
 
-  const nowForMessage = new Date();
-  const localTodayForMessage = new Date(
-    nowForMessage.getTime() - nowForMessage.getTimezoneOffset() * 60000
-  )
-    .toISOString()
-    .split("T")[0];
-
-  const currentTotalMinutesForMessage =
-    nowForMessage.getHours() * 60 + nowForMessage.getMinutes();
   const closingTotalMinutes = closingHour * 60 + closingMinute;
 
-  const isTodaySelected = date === localTodayForMessage;
+  const isTodaySelected = date === romeClock?.date;
   const isSalonClosedNow =
-    isTodaySelected && currentTotalMinutesForMessage >= closingTotalMinutes;
+    Boolean(romeClock && isTodaySelected && romeClock.minutes >= closingTotalMinutes);
 
   const noSlotsMessage = isSalonClosedNow
     ? {
