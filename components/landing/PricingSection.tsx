@@ -84,13 +84,13 @@ export default function PricingSection() {
             </p>
             <div className="flex flex-wrap gap-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">500</span> messaggi = 39€
+                <span className="text-emerald-400">500</span> messaggi = 29€
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">1000</span> messaggi = 69€
+                <span className="text-emerald-400">1000</span> messaggi = 55€
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">2000</span> messaggi = 149€
+                <span className="text-emerald-400">2000</span> messaggi = 99€
               </span>
             </div>
           </div>
