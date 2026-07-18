@@ -1,15 +1,18 @@
 import html
+import os
 import re
 import sys
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageOps
 from playwright.sync_api import sync_playwright
 
 
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
 MASTER_BACKGROUND = ASSETS_DIR / "cover_templates" / "neatx_instagram_cover_master_v2.jpg"
+BRAND_HERO_BACKGROUND = ASSETS_DIR / "cover_templates" / "neatx_instagram_brand_hero_v4.jpg"
+FIXED_BRAND_COVER = ASSETS_DIR / "cover_templates" / "neatx_instagram_cover_fixed_v4.jpg"
 
 
 def split_title(value: str, max_line_length: int = 17) -> str:
@@ -34,11 +37,117 @@ def split_title(value: str, max_line_length: int = 17) -> str:
     return "<br>".join(html.escape(line) for line in lines)
 
 
+def build_fixed_brand_cover(output_path: Path = FIXED_BRAND_COVER):
+    """Build the permanent NeatX cover once, with exact text over the generated hero."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    background = BRAND_HERO_BACKGROUND if BRAND_HERO_BACKGROUND.exists() else MASTER_BACKGROUND
+    background_css = (
+        f"url('{background.as_uri()}') center center / cover no-repeat"
+        if background.exists()
+        else "linear-gradient(145deg, #020617 0%, #071a36 48%, #020617 100%)"
+    )
+    html_content = f"""
+    <!doctype html>
+    <html lang="it">
+    <head>
+      <meta charset="utf-8">
+      <style>
+        * {{ box-sizing: border-box; }}
+        html, body {{ margin: 0; width: 1080px; height: 1920px; overflow: hidden; }}
+        body {{ font-family: "Segoe UI", Arial, sans-serif; color: white; background: #020617; }}
+        .background {{ position: absolute; inset: 0; background: {background_css}; transform: scale(1.02); }}
+        .scrim {{
+          position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(2,6,23,.40) 0%, rgba(2,6,23,.08) 34%, rgba(2,6,23,.04) 67%, rgba(2,6,23,.76) 100%);
+        }}
+        .frame {{
+          position: absolute; inset: 54px; border: 2px solid rgba(56,189,248,.38); border-radius: 42px;
+          box-shadow: inset 0 0 50px rgba(14,165,233,.08), 0 0 45px rgba(14,165,233,.10);
+        }}
+        .brand {{
+          position: absolute; top: 475px; left: 50%; transform: translateX(-50%);
+          font-size: 70px; line-height: 1; font-weight: 310; letter-spacing: -4px;
+          text-shadow: 0 8px 28px rgba(0,0,0,.95), 0 0 28px rgba(14,165,233,.25);
+        }}
+        .brand strong {{ color: #08bdf2; font-weight: 560; }}
+        .features {{
+          position: absolute; left: 90px; right: 90px; top: 1472px;
+          display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px;
+        }}
+        .feature {{
+          height: 75px; display: flex; align-items: center; justify-content: center; gap: 13px;
+          border-radius: 24px; color: #f8fbff;
+          font-size: 21px; font-weight: 850; letter-spacing: .4px;
+          text-shadow: 0 4px 16px rgba(0,0,0,.95);
+        }}
+        .dot {{ width: 14px; height: 14px; border-radius: 50%; background: #2dd4bf; box-shadow: 0 0 20px #2dd4bf; }}
+        .dot.blue {{ background: #22d3ee; box-shadow: 0 0 22px #22d3ee; }}
+        .cta {{
+          position: absolute; left: 85px; right: 85px; top: 1665px; height: 155px;
+          border-radius: 34px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }}
+        .cta strong {{ color: white; font-size: 39px; line-height: 1.05; font-weight: 950; letter-spacing: -1px; text-align: center; text-shadow: 0 7px 22px rgba(0,0,0,.9); }}
+        .cta strong span {{ color: #20cfff; }}
+        .cta small {{ margin-top: 12px; color: #b9eeff; font-size: 23px; font-weight: 850; letter-spacing: 3px; }}
+      </style>
+    </head>
+    <body>
+      <div class="background"></div><div class="scrim"></div><div class="frame"></div>
+      <div class="brand">Neat<strong>X</strong></div>
+      <div class="features">
+        <div class="feature"><span class="dot"></span>PRENOTAZIONI 24/7</div>
+        <div class="feature"><span class="dot blue"></span>PAGAMENTI E ACCONTI</div>
+        <div class="feature"><span class="dot blue"></span>STAFF, TURNI E FERIE</div>
+        <div class="feature"><span class="dot"></span>0% COMMISSIONI</div>
+      </div>
+      <div class="cta"><strong>MENO MESSAGGI. <span>PIÙ APPUNTAMENTI.</span></strong><small>NEATX.STORE</small></div>
+    </body>
+    </html>
+    """
+
+    html_path = BASE_DIR / "temp_fixed_cover.html"
+    png_path = output_path.with_suffix(".png")
+    html_path.write_text(html_content, encoding="utf-8")
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1080, "height": 1920})
+            page.goto(html_path.as_uri())
+            page.wait_for_timeout(800)
+            page.screenshot(path=str(png_path))
+            browser.close()
+        with Image.open(png_path) as cover:
+            cover.convert("RGB").save(output_path, "JPEG", quality=95, optimize=True, progressive=True)
+    finally:
+        html_path.unlink(missing_ok=True)
+        png_path.unlink(missing_ok=True)
+
+    print(f"[+] Copertina fissa NeatX creata: {output_path.name}")
+
+
+def use_fixed_brand_cover(output: Path) -> bool:
+    dynamic_requested = os.environ.get("INSTAGRAM_DYNAMIC_COVER", "false").lower() in {
+        "1", "true", "yes", "y"
+    }
+    if dynamic_requested or not FIXED_BRAND_COVER.exists():
+        return False
+
+    with Image.open(FIXED_BRAND_COVER) as source:
+        cover = ImageOps.fit(source.convert("RGB"), (1080, 1920), method=Image.Resampling.LANCZOS)
+        cover.save(output, "PNG", optimize=True)
+        cover.save(output.with_suffix(".jpg"), "JPEG", quality=95, optimize=True, progressive=True)
+    print(f"[+] Copertina Instagram fissa applicata: {FIXED_BRAND_COVER.name}")
+    return True
+
+
 def generate_cover_with_playwright(cover_title: str, output_path: str = "assets/cover.png"):
     output = Path(output_path)
     if not output.is_absolute():
         output = BASE_DIR / output
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    if use_fixed_brand_cover(output):
+        return
 
     title_html = split_title(cover_title)
     background_url = MASTER_BACKGROUND.as_uri() if MASTER_BACKGROUND.exists() else ""
@@ -139,4 +248,7 @@ def generate_cover_with_playwright(cover_title: str, output_path: str = "assets/
 
 
 if __name__ == "__main__":
-    generate_cover_with_playwright(sys.argv[1] if len(sys.argv) > 1 else "PRENOTAZIONI SENZA STRESS")
+    if len(sys.argv) > 1 and sys.argv[1] == "--build-fixed":
+        build_fixed_brand_cover()
+    else:
+        generate_cover_with_playwright(sys.argv[1] if len(sys.argv) > 1 else "PRENOTAZIONI SENZA STRESS")
