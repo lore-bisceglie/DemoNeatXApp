@@ -131,7 +131,7 @@ export default function GoogleTranslateWidget() {
         
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-[#0b1221] border border-[#1e2b4a] text-slate-300 hover:text-white p-3 rounded-full shadow-lg hover:shadow-cyan-500/20 transition-all flex items-center justify-center group"
+          className="bg-[#0b1221] border border-[#1e2b4a] text-slate-300 hover:text-white p-2 sm:p-3 rounded-full shadow-lg hover:shadow-cyan-500/20 transition-all flex items-center justify-center group"
           aria-label="Cambia Lingua"
         >
           <Globe className="w-5 h-5 group-hover:scale-110 transition-transform" />
