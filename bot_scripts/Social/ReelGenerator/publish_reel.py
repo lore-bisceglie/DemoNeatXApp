@@ -3,6 +3,7 @@ import time
 import requests
 import json
 import sys
+import re
 from datetime import datetime
 from dotenv import load_dotenv
 from tiktok_cookies import load_tiktok_cookies
@@ -81,12 +82,28 @@ def get_caption():
             data = json.load(f)
             return data.get("caption", "Scopri come automatizzare il tuo business con NeatX! #perte #fyp #foryou #viral #imprenditore #businessitalia")
     return "Scopri come automatizzare il tuo business con NeatX! 🚀 #NeatX #Business #Automazione"
+def parse_tmpfiles_direct_url(response):
+    """Resolve the tmpfiles landing page to the actual downloadable file."""
+    landing_url = response.json().get("data", {}).get("url", "")
+    if not landing_url.startswith("http"):
+        return ""
+
+    page = requests.get(landing_url, timeout=30)
+    page.raise_for_status()
+    match = re.search(
+        r'<a[^>]+class=["\']download["\'][^>]+href=["\']([^"\']+)',
+        page.text,
+        re.IGNORECASE,
+    )
+    return match.group(1) if match else ""
+
+
 # Servizi di fallback per l'upload (sia video che copertina)
 FALLBACK_SERVICES = [
     {
         "url": "https://tmpfiles.org/api/v1/upload",
         "files_name": "file",
-        "parse": lambda r: r.json().get("data", {}).get("url", "").replace("tmpfiles.org/", "tmpfiles.org/dl/"),
+        "parse": parse_tmpfiles_direct_url,
     },
     {
         "url": "https://file.io",
@@ -179,7 +196,7 @@ def publish_to_instagram():
     # 2. Caricamento temporaneo della copertina (con retry)
     cover_url = ""
     path_cover = "assets/cover.png"
-    if os.path.exists(path_cover):
+    if os.path.exists(path_cover) and path_cover.lower().endswith((".jpg", ".jpeg")):
         print(f"[*] Caricamento della copertina {path_cover} su server temporaneo...")
         for attempt in range(1, 4):
             try:
