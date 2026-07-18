@@ -3,6 +3,7 @@ import os
 import html
 import random
 from playwright.sync_api import sync_playwright
+from PIL import Image
 
 BG_PALETTES = [
     # (top/bg, bottom, accent)
@@ -115,12 +116,16 @@ def generate_cover_with_playwright(cover_title, output_path="assets/cover.png"):
         page.wait_for_timeout(500)
         page.screenshot(path=output_path)
         browser.close()
+
+    jpeg_path = os.path.splitext(output_path)[0] + ".jpg"
+    with Image.open(output_path) as cover:
+        cover.convert("RGB").save(jpeg_path, "JPEG", quality=94, optimize=True)
         
     try:
         os.remove(html_path)
     except:
         pass
-    print(f"[+] Copertina: \"{cover_title}\" su sfondo variato (Playwright): {output_path}")
+    print(f"[+] Copertina: \"{cover_title}\" generata in PNG e JPEG: {jpeg_path}")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

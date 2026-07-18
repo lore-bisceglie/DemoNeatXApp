@@ -195,7 +195,7 @@ def publish_to_instagram():
         
     # 2. Caricamento temporaneo della copertina (con retry)
     cover_url = ""
-    path_cover = "assets/cover.png"
+    path_cover = "assets/cover.jpg"
     if os.path.exists(path_cover) and path_cover.lower().endswith((".jpg", ".jpeg")):
         print(f"[*] Caricamento della copertina {path_cover} su server temporaneo...")
         for attempt in range(1, 4):
@@ -233,7 +233,8 @@ def publish_to_instagram():
                                 break
                         except Exception as e_alt:
                             print(f"    [!] Alternativa copertina fallita: {e_alt}")
-                    print("[!] Caricamento copertina fallito dopo 3 tentativi, proseguo senza.")
+                    if not cover_url:
+                        print("[!] Caricamento copertina fallito dopo 3 tentativi, proseguo senza.")
     
     # 3. Creazione Container (Fase 1 Meta API)
     print("[*] Invio richiesta di caricamento a Instagram...")

@@ -4,7 +4,7 @@ import glob
 import math
 import re
 import unicodedata
-from moviepy.editor import VideoFileClip, VideoClip, AudioFileClip, TextClip, CompositeVideoClip, clips_array, ImageClip, vfx
+from moviepy.editor import VideoFileClip, VideoClip, AudioFileClip, TextClip, CompositeVideoClip, clips_array, ImageClip, vfx, concatenate_videoclips
 import edge_tts
 import numpy as np
 from PIL import Image, ImageDraw
@@ -372,6 +372,10 @@ def genera_immagine_ai(nicchia):
 def seleziona_video_gameplay_locale():
     patterns = [
         "assets/gameplay/*.mp4",
+        "assets/*_bg.mp4",
+        "assets/background*.mp4",
+        "assets/satisfying*.mp4",
+        "assets/app_demo*.mp4",
         "assets/*subway*.mp4",
         "assets/*minecraft*.mp4",
         "assets/*runner*.mp4",
@@ -547,6 +551,100 @@ def zoom_in_effect(clip, zoom_ratio=0.04):
         
     return clip.fl(effect)
 
+def seleziona_immagini_montaggio(nicchia, primary_path, count=4):
+    premium_dir = "assets/premium_images"
+    premium_images = []
+    for pattern in ("*.jpg", "*.jpeg", "*.png", "*.webp"):
+        premium_images.extend(glob.glob(os.path.join(premium_dir, pattern)))
+
+    premium_images = sorted(set(path for path in premium_images if os.path.getsize(path) > 0))
+    if not premium_images:
+        return [primary_path]
+
+    topic = nicchia.lower()
+    keyword_groups = [
+        (("parrucch", "barbier"), ("barber", "parrucch")),
+        (("estetic", "nail"), ("estetista", "nail")),
+        (("fisioterap", "osteopat"), ("fisioterapista", "osteopat")),
+        (("tatuat",), ("tatuatore", "tattoo")),
+        (("personal trainer", "palestr"), ("personal_trainer", "gym")),
+        (("psicolog",), ("psicologo",)),
+        (("nutrizion",), ("nutrizionista",)),
+        (("commercialist", "avvocat"), ("commercialista", "avvocato")),
+    ]
+
+    relevant_tokens = ()
+    for niche_tokens, filename_tokens in keyword_groups:
+        if any(token in topic for token in niche_tokens):
+            relevant_tokens = filename_tokens
+            break
+
+    relevant = [
+        path for path in premium_images
+        if relevant_tokens and any(token in os.path.basename(path).lower() for token in relevant_tokens)
+    ]
+    generic_tokens = ("dashboard", "prenota", "booking", "roi", "notifica", "prima_dopo")
+    generic = [
+        path for path in premium_images
+        if any(token in os.path.basename(path).lower() for token in generic_tokens)
+    ]
+
+    rotation_path = os.path.join("logs", "visual_rotation.json")
+    try:
+        with open(rotation_path, "r", encoding="utf-8") as rotation_file:
+            recent = json.load(rotation_file).get("recent", [])
+    except (OSError, ValueError, AttributeError):
+        recent = []
+
+    recent_set = set(recent[-12:])
+    primary_abs = os.path.abspath(primary_path)
+    selected = [primary_path]
+
+    def add_candidates(candidates, allow_recent=False):
+        available = [
+            path for path in candidates
+            if os.path.abspath(path) != primary_abs
+            and path not in selected
+            and (allow_recent or os.path.basename(path) not in recent_set)
+        ]
+        random.shuffle(available)
+        for path in available:
+            if len(selected) >= count:
+                break
+            selected.append(path)
+
+    for candidate_group in (relevant, generic, premium_images):
+        add_candidates(candidate_group, allow_recent=False)
+    if len(selected) < count:
+        for candidate_group in (relevant, generic, premium_images):
+            add_candidates(candidate_group, allow_recent=True)
+
+    try:
+        os.makedirs(os.path.dirname(rotation_path), exist_ok=True)
+        updated_recent = (recent + [os.path.basename(path) for path in selected])[-12:]
+        with open(rotation_path, "w", encoding="utf-8") as rotation_file:
+            json.dump({"recent": updated_recent}, rotation_file, ensure_ascii=False, indent=2)
+    except OSError as rotation_error:
+        print(f"[!] Impossibile aggiornare la rotazione visual: {rotation_error}")
+
+    return selected
+
+def crea_montaggio_immagini(paths, duration):
+    usable_paths = [path for path in paths if os.path.exists(path) and os.path.getsize(path) > 0]
+    if not usable_paths:
+        raise RuntimeError("Nessuna immagine disponibile per il montaggio")
+
+    segment_duration = duration / len(usable_paths)
+    segments = []
+    for index, path in enumerate(usable_paths):
+        segment = ImageClip(path).set_duration(segment_duration)
+        segment = resize_and_crop(segment, REEL_WIDTH, REEL_HEIGHT // 2)
+        segment = zoom_in_effect(segment, zoom_ratio=0.045 + (index % 3) * 0.02)
+        segments.append(segment)
+
+    print(f"[*] Creo {len(segments)} micro-clip visuali senza audio, sincronizzate con il parlato.")
+    return concatenate_videoclips(segments, method="compose").set_duration(duration)
+
 def crea_video():
     print("[*] Montaggio video SPLIT-SCREEN in corso...")
     
@@ -559,15 +657,8 @@ def crea_video():
     # 2. Carica l'immagine generata dall'AI (Metà Inferiore)
     path_app = genera_immagine_ai(NICHE)
     
-    # Crea una ImageClip e dalle la durata dell'audio
-    clip_bottom = ImageClip(path_app).set_duration(duration)
-    
-    # Ridimensiona l'immagine per riempire la metà inferiore
-    clip_bottom = resize_and_crop(clip_bottom, REEL_WIDTH, REEL_HEIGHT // 2)
-    
-    # Applica il Ken Burns (Slow Zoom) per dare movimento
-    print("[*] Applicazione effetto Zoom Cinematografico sull'immagine...")
-    clip_bottom = zoom_in_effect(clip_bottom, zoom_ratio=0.08)
+    montage_paths = seleziona_immagini_montaggio(NICHE, path_app, count=4)
+    clip_bottom = crea_montaggio_immagini(montage_paths, duration)
 
     # 3. Unisce i due video (Split-Screen Array)
     final_bg = clips_array([[clip_top], [clip_bottom]])
@@ -633,6 +724,7 @@ def crea_video():
         print(f"[!] Errore generazione copertina grafica: {e}")
         fallback = Image.new("RGB", (REEL_WIDTH, REEL_HEIGHT), color=(5, 8, 20))
         fallback.save("assets/cover.png")
+        fallback.save("assets/cover.jpg", "JPEG", quality=94)
         print("[!] Creata copertina di ripiego.")
     
     print("[+] Finito! Video pronto.")
