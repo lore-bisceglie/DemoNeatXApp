@@ -86,6 +86,12 @@ export function BookingForm({
   fillDemoCustomer,
   handleBook,
 }: BookingFormProps) {
+  const canPayOnline = Boolean(
+    tenantInfo.storeSettings?.stripeOnboardingComplete ||
+    tenantInfo.storeSettings?.stripeConnected ||
+    isPlaygroundDemo
+  );
+
   return (
     <>
       <div className="mb-6">
@@ -307,12 +313,12 @@ export function BookingForm({
                 <button
                   type="button"
                   onClick={() => {
-                    if (tenantInfo.storeSettings?.stripeOnboardingComplete || isPlaygroundDemo || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_")) {
+                    if (canPayOnline) {
                       setPaymentMethod("online");
                     }
                   }}
                   className={`py-3 px-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all ${
-                    !(tenantInfo.storeSettings?.stripeOnboardingComplete || isPlaygroundDemo || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_"))
+                    !canPayOnline
                       ? "bg-[#131c31] border-[#1e2b4a] text-slate-600 cursor-not-allowed"
                       : paymentMethod === "online"
                       ? "bg-[#00b4ff]/10 border-[#00b4ff] text-[#00b4ff] shadow-[0_0_15px_rgba(0,180,255,0.15)]"
@@ -321,7 +327,7 @@ export function BookingForm({
                 >
                   <span className="text-xs font-bold">Acconto online</span>
                   <span className="text-[9px] opacity-70">
-                    {!(tenantInfo.storeSettings?.stripeOnboardingComplete || isPlaygroundDemo || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_"))
+                    {!canPayOnline
                       ? "Da attivare"
                       : isPlaygroundDemo
                       ? "Simulazione"
@@ -367,7 +373,7 @@ export function BookingForm({
               ? "⏳ Elaborazione..."
               : isPlaygroundDemo && paymentMethod === "online"
               ? "Prenota e simula pagamento"
-              : (!isPlaygroundDemo && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && (tenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online") && (tenantInfo.storeSettings?.stripeOnboardingComplete || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_")))
+              : (!isPlaygroundDemo && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && (tenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online") && canPayOnline)
               ? "💳 Procedi al pagamento"
               : isSelectedLastMinute
               ? "🔥 Prenota Subito!"
@@ -377,7 +383,7 @@ export function BookingForm({
           <p className="text-[10px] text-slate-500 mt-5 text-center mb-8">
             {isPlaygroundDemo
               ? "In demo non apriamo WhatsApp: lo slot viene salvato nel calendario demo."
-              : (!isPlaygroundDemo && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && (tenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online") && (tenantInfo.storeSettings?.stripeOnboardingComplete || tenantInfo.storeSettings?.stripeAccountId?.startsWith("acct_demo_")))
+              : (!isPlaygroundDemo && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && (tenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online") && canPayOnline)
               ? "Verrai reindirizzato al modulo sicuro di Stripe per il pagamento."
               : "Verrai reindirizzato a WhatsApp per confermare."}
           </p>

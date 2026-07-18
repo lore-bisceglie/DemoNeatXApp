@@ -15,8 +15,9 @@ function formatName(slug: string) {
     .join(' ');
 }
 
-export default function AuditPage({ params }: { params: { slug: string } }) {
-  const salonName = formatName(params.slug);
+export default async function AuditPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const salonName = formatName(slug);
   
   // Dati finti ad alto impatto emotivo (Calcolati su 10 appuntamenti/giorno a ~25€ = 250€ * 25gg = 6250€/mese -> 20% = 1250€/mese)
   const monthlyLost = 1250;

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import { requireTenantAdmin } from '@/lib/auth';
 
 export async function GET(request: Request) {
   try {
@@ -21,6 +22,9 @@ export async function GET(request: Request) {
     if (!tenant) {
       return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
     }
+
+    const authError = await requireTenantAdmin(tenant.id);
+    if (authError) return authError;
 
     const locations = await prisma.location.findMany({
       where: { tenantId: tenant.id },
@@ -91,6 +95,9 @@ export async function POST(request: Request) {
     if (!tenant) {
       return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
     }
+
+    const authError = await requireTenantAdmin(tenant.id);
+    if (authError) return authError;
 
     // Check Elite plan for multi-location
     const locationCount = await prisma.location.count({ where: { tenantId: tenant.id } });

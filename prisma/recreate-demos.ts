@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '../lib/password';
 
 const prisma = new PrismaClient();
 
@@ -23,7 +24,7 @@ async function main() {
           name: t.name,
           slug: t.slug,
           template: t.template,
-          adminPassword: "Password123!",
+          ownerPasswordHash: hashPassword("Password123!"),
           ownerEmail: `admin@${t.slug}.com`,
           isDemoData: t.isDemoData,
           trialStatus: "trial_active",

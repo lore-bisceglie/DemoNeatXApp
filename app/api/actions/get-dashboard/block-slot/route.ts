@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
 
@@ -10,6 +11,8 @@ function timeToMins(t: string) {
 
 export async function POST(req: Request) {
   try {
+    const rate = await checkRequestRateLimit(req, "demo-block-slot", 20, 60 * 60);
+    if (!rate.success) return NextResponse.json({ error: "Riprova più tardi" }, { status: 429 });
     const formData = await req.formData();
 
     const date = formData.get("date") as string;

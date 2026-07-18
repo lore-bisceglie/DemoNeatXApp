@@ -232,7 +232,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch(`/api/services?tenantId=${tenantInfo.id}`)
+    fetch("/api/demo/services")
       .then((res) => res.json())
       .then((data) => {
         if (data.services && data.services.length > 0) {
@@ -308,7 +308,7 @@ export default function Home() {
     setLoading(true);
 
     fetch(
-      `/api/availability?date=${date}&tenantId=${tenantInfo.id}&duration=${selectedService.duration}`
+      `/api/availability?date=${date}&tenantId=${tenantInfo.id}&serviceId=${selectedService.id}`
     )
       .then((res) => res.json())
       .then((data) => {

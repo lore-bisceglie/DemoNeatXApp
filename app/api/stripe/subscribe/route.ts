@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
     const { tenantId, slug, plan = 'pro', interval = 'month' } = await request.json();
+
+    if (!tenantId || !['pro', 'elite'].includes(plan) || !['month', 'year'].includes(interval)) {
+      return NextResponse.json({ error: "Dati abbonamento non validi" }, { status: 400 });
+    }
+    const authError = await requireTenantAdmin(tenantId);
+    if (authError) return authError;
 
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
@@ -12,6 +19,9 @@ export async function POST(request: Request) {
 
     if (!tenant) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    }
+    if (tenant.slug !== slug) {
+      return NextResponse.json({ error: "Tenant non valido" }, { status: 400 });
     }
 
     const host = request.headers.get("host") || "localhost:3000";
@@ -50,7 +60,7 @@ export async function POST(request: Request) {
       mode: "subscription",
       customer_email: tenant.ownerEmail || undefined,
       client_reference_id: tenantId,
-      metadata: { plan, interval },
+      metadata: { type: "subscription", plan, interval },
       subscription_data: {
         metadata: { tenant_id: tenantId, plan, interval },
       },

@@ -36,9 +36,6 @@ export async function GET(req: Request) {
         breakStart: true,
         breakEnd: true,
         closedDays: true,
-        // Endpoint protetto da password superadmin: adminPassword è necessario
-        // per la funzione "impersonate" e "copia credenziali"
-        adminPassword: true,
         // Stato abbonamento
         trialStartedAt: true,
         trialEndsAt: true,

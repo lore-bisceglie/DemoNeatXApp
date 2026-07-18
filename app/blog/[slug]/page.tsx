@@ -4,6 +4,24 @@ import matter from 'gray-matter'
 import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  if (!/^[a-z0-9-]+$/.test(slug)) return {}
+  const filePath = path.join(process.cwd(), 'content', 'blog', `${slug}.md`)
+  if (!fs.existsSync(filePath)) return {}
+  const { data, content } = matter(fs.readFileSync(filePath, 'utf-8'))
+  const description = String(data.description || content.replace(/[#*_`\n]/g, ' ').trim().slice(0, 155))
+  const title = String(data.title || 'NeatX Blog')
+  const canonical = `https://www.neatx.store/blog/${slug}`
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, type: 'article' },
+  }
+}
 
 export async function generateStaticParams() {
   const blogDir = path.join(process.cwd(), 'content', 'blog')
@@ -18,6 +36,7 @@ export async function generateStaticParams() {
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const { slug } = resolvedParams;
+  if (!/^[a-z0-9-]+$/.test(slug)) notFound()
   
   const blogDir = path.join(process.cwd(), 'content', 'blog')
   const filePath = path.join(blogDir, `${slug}.md`)

@@ -2,11 +2,16 @@
   "name": "barber-saas",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9 <25"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint app components lib proxy.ts",
+    "typecheck": "tsc --noEmit --incremental false",
+    "check": "npm run lint && npm run typecheck && npm run build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"
@@ -23,7 +28,7 @@
     "ai": "^7.0.16",
     "gray-matter": "^4.0.3",
     "lucide-react": "^1.23.0",
-    "next": "16.2.7",
+    "next": "16.2.10",
     "nodemailer": "^9.0.3",
     "puppeteer": "^25.3.0",
     "react": "19.2.4",
@@ -41,7 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.2.10",
     "prisma": "^5.22.0",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
@@ -49,5 +54,8 @@
   },
   "prisma": {
     "seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
+  "overrides": {
+    "postcss": "8.5.19"
   }
 }

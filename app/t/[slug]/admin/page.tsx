@@ -6,11 +6,6 @@ import { isTenantAdminCookieValid } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export function headers() {
-  return {
-    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-  };
-}
 import { BarChart3, CalendarDays, Users, Receipt, Globe, CreditCard, CheckCircle, Gift } from "lucide-react";
 import DeleteButton from "../../../dashboard/DeleteButton";
 import WalkInButton from "../../../dashboard/WalkInButton";
@@ -38,7 +33,7 @@ import LocationTabs from "@/components/admin/LocationTabs";
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
 import SupportWidget from "./SupportWidget";
-import crypto from "crypto";
+import LogoutButton from "./LogoutButton";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -59,13 +54,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   if (!tenant) return <div className="p-10 text-white">Attività non trovata.</div>;
 
-  if (!tenant.adminPassword) {
-    const newPassword = crypto.randomUUID().substring(0, 8);
-    await prisma.tenant.update({ where: { slug }, data: { adminPassword: newPassword } });
-    return <LoginScreen slug={slug} tenantName={tenant.name} showLegacyHint />;
-  }
-
-  if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
+  if (!isTenantAdminCookieValid(authCookie, slug)) {
     return (
       <LoginScreen
         slug={slug}
@@ -694,6 +683,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             >
               <Globe size={16} /> Pagina Clienti
             </Link>
+            <LogoutButton slug={slug} />
           </div>
         </div>
 

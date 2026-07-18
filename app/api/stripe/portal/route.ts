@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Negozio non trovato" }, { status: 404 });
     }
 
-    if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
+    if (!isTenantAdminCookieValid(authCookie, slug)) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 

@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Plan {
+  basic
+  pro
+  elite
+}
+
 model Tenant {
   id            String        @id @default(cuid()) 
   slug          String        @unique
@@ -33,7 +39,6 @@ model Tenant {
   breakStart    String?
   breakEnd      String?
   closedDays    String?
-  adminPassword String?
   trialStartedAt DateTime?
   trialEndsAt   DateTime?
   trialStatus   String        @default("demo")
@@ -43,7 +48,7 @@ model Tenant {
   activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
-  plan          String        @default("basic")
+  plan          Plan          @default(basic)
   stripeCustomerId String?
   stripeSubscriptionId String?
   createdAt     DateTime      @default(now())
@@ -85,7 +90,7 @@ model Location {
   closedDays    String?
   staffSheetUrl String?
   tenantId      String
-  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   staff         Staff[]
   staffLocations StaffLocation[]
   services      ServiceLocation[]
@@ -104,16 +109,16 @@ model LocationSettings {
   paymentPercentage Int?    @default(20)
   paymentMandatory  Boolean @default(false)
   locationId        String  @unique
-  location          Location @relation(fields: [locationId], references: [id])
+  location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   updatedAt         DateTime @updatedAt
 }
 
 model ServiceLocation {
   id         String   @id @default(cuid())
   serviceId  String
-  service    Service  @relation(fields: [serviceId], references: [id])
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   locationId String
-  location   Location @relation(fields: [locationId], references: [id])
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   price      Float?
   isActive   Boolean  @default(true)
   @@unique([serviceId, locationId])
@@ -125,7 +130,7 @@ model Service {
   duration     Int
   price        Float?
   tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   appointments Appointment[]
   staff        Staff[]
   locations    ServiceLocation[]
@@ -145,14 +150,15 @@ model Appointment {
   stripeSession String?
   createdAt     DateTime @default(now())
   serviceId     String?
-  service       Service? @relation(fields: [serviceId], references: [id])
+  service       Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   staffId       String?
-  staff         Staff?   @relation(fields: [staffId], references: [id])
+  staff         Staff?   @relation(fields: [staffId], references: [id], onDelete: SetNull)
   tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   locationId    String?
-  location      Location? @relation(fields: [locationId], references: [id])
+  location      Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
   @@index([locationId])
+  @@index([tenantId, date])
 }
 
 model BlockedSlot {
@@ -161,7 +167,7 @@ model BlockedSlot {
   time     String?
   endTime  String?
   tenantId String?
-  tenant   Tenant? @relation(fields: [tenantId], references: [id])
+  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model StoreSettings {
@@ -176,7 +182,7 @@ model StoreSettings {
   paymentMandatory          Boolean  @default(false)
   updatedAt                 DateTime @updatedAt
   tenantId   String   @unique
-  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model NoShow {
@@ -186,7 +192,7 @@ model NoShow {
   date          String
   createdAt     DateTime @default(now())
   tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model Waitlist {
@@ -196,7 +202,7 @@ model Waitlist {
   date      String
   createdAt DateTime @default(now())
   tenantId  String?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model CustomerNote {
@@ -208,7 +214,7 @@ model CustomerNote {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   tenantId     String
-  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@unique([tenantId, phone])
 }
 
@@ -239,7 +245,7 @@ model ActivityLog {
   metadata      String?
   createdAt     DateTime @default(now())
   tenantId      String
-  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   @@index([tenantId])
 }
 
@@ -247,13 +253,13 @@ model Staff {
   id           String        @id @default(cuid())
   name         String
   tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   services     Service[]
   baseSchedule    String? @default("{}")
   shiftExceptions String? @default("[]")
   commissionRate  Int     @default(0)
   locationId   String?
-  location     Location? @relation(fields: [locationId], references: [id])
+  location     Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
   locations    StaffLocation[]
   appointments Appointment[]
   @@index([locationId])

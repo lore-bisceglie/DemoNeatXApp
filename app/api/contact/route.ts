@@ -1,10 +1,20 @@
 import nodemailer from "nodemailer";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 export async function POST(request: Request) {
   try {
+    const rate = await checkRequestRateLimit(request, "contact", 10, 60 * 60);
+    if (!rate.success) {
+      return Response.json({ error: "Troppe richieste" }, { status: 429 });
+    }
     const { name, email, message } = await request.json();
 
-    if (!name || !email || !message) {
+    if (
+      !name || !email || !message ||
+      typeof name !== "string" || name.length > 100 ||
+      typeof email !== "string" || email.length > 254 ||
+      typeof message !== "string" || message.length > 5000
+    ) {
       return Response.json({ error: "Campi mancanti" }, { status: 400 });
     }
 

@@ -1,14 +1,25 @@
 name: NeatX Build Health
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   schedule:
     # 07:12 Europe/Rome in estate.
     - cron: '0 5 * * *'
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: build-health-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build-and-check:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/neatx
+      STRIPE_SECRET_KEY: sk_test_ci_placeholder
+      SESSION_SECRET: ci-session-secret-not-for-production
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -19,6 +30,10 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
       - name: Build site
         run: npm run build
       - name: Check production domain

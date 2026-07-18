@@ -34,7 +34,7 @@ async function run() {
     }),
   });
   check("Registrazione QA", reg.status === 200 && reg.data.success);
-  const { slug, adminPassword } = reg.data;
+  const { slug } = reg.data;
 
   const ten = await jsonFetch(`${BASE}/api/tenant/${slug}`);
   const tenantId = ten.data.id;
@@ -95,7 +95,7 @@ async function run() {
   check("Spostamento riuscito", resched.status === 200 && resched.data.appointment, resched.status + " " + JSON.stringify(resched.data));
 
   // 7. Esportazione commercialista
-  const exportRes = await jsonFetch(`${BASE}/api/export/timesheets?tenantId=${tenantId}`, { headers: { Cookie: `admin_auth_${slug}=${adminPassword}` }});
+  const exportRes = await jsonFetch(`${BASE}/api/export/timesheets?tenantId=${tenantId}`, { headers: { Cookie: cookie }});
   check("Export Commercialista HTTP 200", exportRes.status === 200);
   check("Export Commercialista CSV generato", typeof exportRes.data.raw === "string" && exportRes.data.raw.includes("Ferie"), "Manca voce Ferie");
 

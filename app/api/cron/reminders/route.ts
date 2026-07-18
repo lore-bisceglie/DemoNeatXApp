@@ -12,10 +12,8 @@ function formatDate(isoDate: string) {
 export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get("authorization");
-    if (
-      process.env.NODE_ENV === "production" &&
-      authHeader !== `Bearer ${process.env.CRON_SECRET}`
-    ) {
+    const cronSecret = process.env.CRON_SECRET;
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: "Accesso negato" }, { status: 401 });
     }
 

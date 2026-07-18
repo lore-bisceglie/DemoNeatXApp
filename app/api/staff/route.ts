@@ -55,8 +55,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
     }
 
-    const selectedLocations = locationIds || (locationId ? [locationId] : []);
+    const authError = await requireTenantAdmin(tenantId);
+    if (authError) return authError;
+
+    const selectedLocations = Array.isArray(locationIds)
+      ? locationIds
+      : locationId
+        ? [locationId]
+        : [];
     const selectedServices = Array.isArray(serviceIds) ? serviceIds : [];
+
+    const [validLocationCount, validServiceCount] = await Promise.all([
+      prisma.location.count({ where: { tenantId, id: { in: selectedLocations } } }),
+      prisma.service.count({ where: { tenantId, id: { in: selectedServices } } }),
+    ]);
+    if (
+      validLocationCount !== new Set(selectedLocations).size ||
+      validServiceCount !== new Set(selectedServices).size
+    ) {
+      return NextResponse.json({ error: "Sedi o servizi non validi" }, { status: 400 });
+    }
 
     const newStaff = await prisma.staff.create({
       data: {
@@ -89,6 +107,36 @@ export async function PUT(req: Request) {
 
     if (!staffId || !Array.isArray(serviceIds)) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
+    }
+
+    const existingStaff = await prisma.staff.findUnique({
+      where: { id: staffId },
+      select: { tenantId: true },
+    });
+    if (!existingStaff) {
+      return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
+    }
+    const authError = await requireTenantAdmin(existingStaff.tenantId);
+    if (authError) return authError;
+
+    const selectedLocations = Array.isArray(locationIds)
+      ? locationIds
+      : locationId
+        ? [locationId]
+        : [];
+    const [validLocationCount, validServiceCount] = await Promise.all([
+      prisma.location.count({
+        where: { tenantId: existingStaff.tenantId, id: { in: selectedLocations } },
+      }),
+      prisma.service.count({
+        where: { tenantId: existingStaff.tenantId, id: { in: serviceIds } },
+      }),
+    ]);
+    if (
+      validLocationCount !== new Set(selectedLocations).size ||
+      validServiceCount !== new Set(serviceIds).size
+    ) {
+      return NextResponse.json({ error: "Sedi o servizi non validi" }, { status: 400 });
     }
 
     const data: any = {
@@ -133,6 +181,16 @@ export async function DELETE(req: Request) {
     if (!id) {
       return NextResponse.json({ error: "ID mancante" }, { status: 400 });
     }
+
+    const existingStaff = await prisma.staff.findUnique({
+      where: { id },
+      select: { tenantId: true },
+    });
+    if (!existingStaff) {
+      return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
+    }
+    const authError = await requireTenantAdmin(existingStaff.tenantId);
+    if (authError) return authError;
 
     await prisma.appointment.updateMany({
       where: { staffId: id },

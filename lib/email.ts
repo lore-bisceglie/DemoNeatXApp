@@ -52,7 +52,7 @@ export async function sendVerificationEmail(tenantEmail: string, ownerName: stri
   });
 }
 
-export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, adminPassword: string, tenantUrl: string) {
+export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, tenantUrl: string) {
   const safeName = esc(ownerName);
   return send({
     to: tenantEmail,

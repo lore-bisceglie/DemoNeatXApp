@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { checkRequestRateLimit } from '@/lib/request-rate-limit';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -66,12 +67,32 @@ STRATEGIA DI CONVERSAZIONE
 
 export async function POST(req: Request) {
   try {
+    const rate = await checkRequestRateLimit(req, 'public-chat', 20, 60 * 60);
+    if (!rate.success) {
+      return Response.json(
+        { reply: 'Hai raggiunto il limite di messaggi. Riprova più tardi.' },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } }
+      );
+    }
         const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return Response.json({ reply: "Sistema in manutenzione. Chiave API non configurata." }, { status: 200 });
     }
 
     const { messages } = await req.json();
+    if (
+      !Array.isArray(messages) ||
+      messages.length === 0 ||
+      messages.length > 20 ||
+      messages.some((message) =>
+        !message ||
+        !['user', 'assistant', 'model'].includes(message.role) ||
+        typeof message.content !== 'string' ||
+        message.content.length > 2000
+      )
+    ) {
+      return Response.json({ reply: 'Messaggio non valido.' }, { status: 400 });
+    }
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 

@@ -6,8 +6,6 @@ import { usePathname } from "next/navigation";
 export default function PublicWidgetsWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname?.startsWith("/t/") || pathname?.startsWith("/godmode")) return null;
-
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -21,6 +19,6 @@ export default function PublicWidgetsWrapper({ children }: { children: React.Rea
     setShow(isMainDomain && !isSuperAdmin);
   }, []);
 
-  if (!show) return null;
+  if (pathname?.startsWith("/t/") || pathname?.startsWith("/godmode") || !show) return null;
   return <>{children}</>;
 }

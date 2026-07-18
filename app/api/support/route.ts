@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendTelegramMessage } from '@/lib/telegram';
+import { requireTenantAdmin } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -8,6 +9,12 @@ export async function POST(req: Request) {
 
     if (!tenantId || !message) {
       return NextResponse.json({ error: 'Dati mancanti' }, { status: 400 });
+    }
+
+    const authError = await requireTenantAdmin(tenantId);
+    if (authError) return authError;
+    if (typeof message !== 'string' || message.trim().length > 2000) {
+      return NextResponse.json({ error: 'Messaggio non valido' }, { status: 400 });
     }
 
     const tenant = await prisma.tenant.findUnique({

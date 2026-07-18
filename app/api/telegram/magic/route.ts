@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTenantAdminUrl } from "@/lib/domains";
+import { getTenantAdminUrl, ROOT_DOMAIN } from "@/lib/domains";
 import { prisma } from "@/lib/prisma";
 import { verifyTenantSessionToken, createTenantSessionToken } from "@/lib/auth";
 
@@ -26,8 +26,10 @@ export async function GET(req: Request) {
     response.cookies.set(`admin_auth_${slug}`, createTenantSessionToken(slug, 60 * 60 * 24), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 60 * 60 * 24, // 24 ore
       path: "/",
+      domain: process.env.NODE_ENV === "production" ? `.${ROOT_DOMAIN}` : undefined,
     });
 
     return response;

@@ -2,87 +2,138 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
+function getBaseUrl(request: Request) {
+  const configured =
+    process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BASE_URL;
+  if (configured) return configured.replace(/\/$/, "");
+  return new URL(request.url).origin;
+}
+
 export async function POST(request: Request) {
   try {
-    const { appointmentId, tenantSlug, amountEur, serviceName } = await request.json();
+    const { appointmentId, bookingToken } = await request.json();
+    if (
+      typeof appointmentId !== "string" ||
+      !appointmentId ||
+      typeof bookingToken !== "string" ||
+      !bookingToken
+    ) {
+      return NextResponse.json({ error: "Appuntamento mancante" }, { status: 400 });
+    }
 
-    const tenant = await prisma.tenant.findUnique({
-      where: { slug: tenantSlug },
-      include: { storeSettings: true }
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        service: { select: { id: true, name: true, price: true } },
+        tenant: { include: { storeSettings: true } },
+        location: { include: { settings: true } },
+      },
     });
 
-    if (!tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    if (!appointment?.tenant || !appointment.service) {
+      return NextResponse.json({ error: "Appuntamento non valido" }, { status: 404 });
+    }
+    if (appointment.cancelToken !== bookingToken) {
+      return NextResponse.json({ error: "Prenotazione non autorizzata" }, { status: 401 });
+    }
+    if (appointment.isPaid || appointment.paymentStatus === "PAID") {
+      return NextResponse.json({ error: "Appuntamento già pagato" }, { status: 409 });
     }
 
-    const host = request.headers.get("host") || "localhost:3000";
-    const protocol = host.includes("localhost") ? "http" : "https";
-    const baseUrl = `${protocol}://${host}`;
+    const tenant = appointment.tenant;
+    const locationSettings = appointment.location?.settings;
+    const settings = locationSettings && locationSettings.paymentStrategy !== "OFF"
+      ? locationSettings
+      : tenant.storeSettings;
+    const stripeAccountId =
+      appointment.location?.settings?.stripeAccountId || tenant.storeSettings?.stripeAccountId;
 
-    const successUrl = `${baseUrl}/t/${tenantSlug}/success?session_id={CHECKOUT_SESSION_ID}&app_id=${appointmentId}`;
-    const cancelUrl = `${baseUrl}/t/${tenantSlug}`;
+    if (!settings || settings.paymentStrategy === "OFF") {
+      return NextResponse.json({ error: "Pagamento online non attivo" }, { status: 400 });
+    }
+    if (!stripeAccountId || stripeAccountId.startsWith("acct_demo_")) {
+      return NextResponse.json({ error: "Account Stripe non configurato" }, { status: 400 });
+    }
 
-    const isDemoAccount = !tenant.storeSettings?.stripeAccountId || tenant.storeSettings.stripeAccountId.startsWith("acct_demo_");
-
-    // Crea la sessione di checkout per l'account collegato (Stripe Connect) oppure per l'account principale se demo
-    const sessionConfig: any = {
-      payment_method_types: ["card"],
-      metadata: {
-        type: "appointment_deposit",
-        appointmentId,
-        tenantSlug,
-      },
-      line_items: [
-        {
-          price_data: {
-            currency: "eur",
-            product_data: {
-              name: `Prenotazione: ${serviceName}`,
-            },
-            unit_amount: Math.round(amountEur * 100), // converti in centesimi
+    let servicePrice = appointment.service.price || 0;
+    if (appointment.locationId) {
+      const locationPrice = await prisma.serviceLocation.findUnique({
+        where: {
+          serviceId_locationId: {
+            serviceId: appointment.service.id,
+            locationId: appointment.locationId,
           },
-          quantity: 1,
         },
-      ],
-      mode: "payment",
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-    };
-
-    if (!isDemoAccount) {
-      sessionConfig.payment_intent_data = {
-        // Applichiamo una commissione della piattaforma fissa (es. 1 euro o 5% per questa demo)
-        application_fee_amount: amountEur >= 5 ? 100 : 0, 
-      };
+        select: { price: true, isActive: true },
+      });
+      if (!locationPrice?.isActive) {
+        return NextResponse.json({ error: "Servizio non disponibile" }, { status: 400 });
+      }
+      servicePrice = locationPrice.price ?? servicePrice;
     }
 
-    const stripeOptions = isDemoAccount ? undefined : {
-      stripeAccount: tenant.storeSettings!.stripeAccountId || undefined,
-    };
+    const strategy = settings.paymentStrategy.toUpperCase();
+    let amountEur = 0;
+    if (strategy === "FIXED") {
+      amountEur = settings.paymentFixedAmount || 0;
+    } else if (strategy === "PERCENTAGE") {
+      amountEur = servicePrice * ((settings.paymentPercentage || 0) / 100);
+    } else {
+      return NextResponse.json({ error: "Strategia pagamento non valida" }, { status: 400 });
+    }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig, stripeOptions);
+    const unitAmount = Math.round(amountEur * 100);
+    if (!Number.isFinite(unitAmount) || unitAmount < 50 || unitAmount > 1_000_000) {
+      return NextResponse.json({ error: "Importo pagamento non valido" }, { status: 400 });
+    }
 
-    // Salva il sessionId nell'appuntamento
+    const baseUrl = getBaseUrl(request);
+    const successUrl = `${baseUrl}/t/${encodeURIComponent(tenant.slug)}/success?session_id={CHECKOUT_SESSION_ID}&app_id=${encodeURIComponent(appointment.id)}`;
+    const cancelUrl = `${baseUrl}/t/${encodeURIComponent(tenant.slug)}?canceled=true`;
+    const applicationFee = unitAmount >= 500 ? Math.min(100, unitAmount - 1) : 0;
+
+    const session = await stripe.checkout.sessions.create(
+      {
+        payment_method_types: ["card"],
+        metadata: {
+          type: "appointment_deposit",
+          appointmentId: appointment.id,
+          tenantSlug: tenant.slug,
+        },
+        line_items: [
+          {
+            price_data: {
+              currency: "eur",
+              product_data: { name: `Prenotazione: ${appointment.service.name}` },
+              unit_amount: unitAmount,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        payment_intent_data: applicationFee
+          ? { application_fee_amount: applicationFee }
+          : undefined,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+      },
+      { stripeAccount: stripeAccountId }
+    );
+
+    if (!session.url) {
+      return NextResponse.json({ error: "Checkout Stripe non disponibile" }, { status: 502 });
+    }
+
     await prisma.appointment.update({
-      where: { id: appointmentId },
-      data: { stripeSession: session.id }
+      where: { id: appointment.id },
+      data: { stripeSession: session.id, paymentStatus: "PENDING" },
     });
 
     return NextResponse.json({ url: session.url });
-
-  } catch (error: any) {
+  } catch (error) {
     console.error("Stripe Checkout Error:", error);
-    
-    // DEMO MOCK: Se c'è un errore con Stripe (chiavi di test scadute), simula successo
-    const { appointmentId, tenantSlug } = await request.json().catch(() => ({}));
-    if (tenantSlug && appointmentId) {
-       const host = request.headers.get("host") || "localhost:3000";
-       const protocol = host.includes("localhost") ? "http" : "https";
-       return NextResponse.json({ url: `${protocol}://${host}/t/${tenantSlug}/success?session_id=mock_fallback&app_id=${appointmentId}` });
-    }
-    
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Pagamento temporaneamente non disponibile. Riprova più tardi." },
       { status: 500 }
     );
   }

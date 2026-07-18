@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireTenantAdmin } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 export async function POST(req: Request) {
   try {
@@ -8,10 +9,22 @@ export async function POST(req: Request) {
 
     const { name, phone, date, tenantId } = body;
 
-    if (!name || !phone || !date) {
+    if (!name || !phone || !date || !tenantId) {
       return NextResponse.json(
         { error: "Dati mancanti." },
         { status: 400 }
+      );
+    }
+
+    const tenantExists = await prisma.tenant.count({ where: { id: tenantId } });
+    if (!tenantExists || String(name).trim().length > 100 || String(phone).length > 30) {
+      return NextResponse.json({ error: "Dati non validi." }, { status: 400 });
+    }
+    const rate = await checkRequestRateLimit(req, "waitlist", 20, 60 * 60, tenantId);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Troppe richieste. Riprova più tardi." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
       );
     }
 
@@ -46,8 +59,8 @@ export async function GET(req: Request) {
     if (!tenantId) {
       return NextResponse.json({ error: "Tenant ID mancante" }, { status: 400 });
     }
-  const authError = await requireTenantAdmin(tenantId);
-  if (authError) return authError;
+    const authError = await requireTenantAdminOrDemo(req, tenantId, "waitlist-read", 100);
+    if (authError) return authError;
 
     const waitlist = await prisma.waitlist.findMany({
       where: { tenantId },
@@ -80,6 +93,16 @@ export async function DELETE(req: Request) {
         { status: 400 }
       );
     }
+
+    const item = await prisma.waitlist.findUnique({
+      where: { id },
+      select: { tenantId: true },
+    });
+    if (!item?.tenantId) {
+      return NextResponse.json({ error: "Elemento non trovato." }, { status: 404 });
+    }
+    const authError = await requireTenantAdminOrDemo(req, item.tenantId, "waitlist-delete", 30);
+    if (authError) return authError;
 
     await prisma.waitlist.delete({
       where: {

@@ -13,7 +13,6 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
   const [paymentFixedAmount, setPaymentFixedAmount] = useState(5);
   const [paymentPercentage, setPaymentPercentage] = useState(20);
   const [paymentMandatory, setPaymentMandatory] = useState(false);
-  const [stripeAccountId, setStripeAccountId] = useState("");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,7 +30,6 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
         setPaymentFixedAmount(data.paymentFixedAmount ?? 5);
         setPaymentPercentage(data.paymentPercentage ?? 20);
         setPaymentMandatory(data.paymentMandatory ?? false);
-        setStripeAccountId(data.stripeAccountId ?? "");
       }
     } catch (e) {
       setError("Errore caricamento impostazioni");
@@ -50,12 +48,10 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          smsCredits: 0,
           paymentStrategy,
           paymentFixedAmount: paymentStrategy !== "OFF" ? paymentFixedAmount : null,
           paymentPercentage: paymentStrategy !== "OFF" ? paymentPercentage : null,
           paymentMandatory: paymentStrategy !== "OFF" ? paymentMandatory : false,
-          stripeAccountId: stripeAccountId || null,
         }),
       });
 
@@ -119,10 +115,6 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
                 <label className="text-sm text-slate-300">Pagamento obbligatorio</label>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Stripe Account ID</label>
-                <input value={stripeAccountId} onChange={function (e) { setStripeAccountId(e.target.value); }} className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="acct_..." />
-              </div>
             </>
           )}
 

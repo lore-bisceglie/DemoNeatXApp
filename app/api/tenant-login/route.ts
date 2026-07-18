@@ -3,6 +3,7 @@ import { ROOT_DOMAIN } from "@/lib/domains";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 import { createTenantSessionToken } from "@/lib/auth";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 function cookieDomain(req: Request) {
   const hostname = new URL(req.url).hostname;
@@ -20,14 +21,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Credenziali mancanti." }, { status: 400 });
     }
 
+    const rate = await checkRequestRateLimit(req, "tenant-login", 20, 15 * 60, `${slug}:${email || ""}`);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Troppi tentativi. Riprova più tardi." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
 
-    if (!tenant?.adminPassword) {
+    if (!tenant) {
       return NextResponse.json({ error: "Account non trovato." }, { status: 404 });
     }
 
     // 1. Controllo Lockout (Anti-Bruteforce)
-    if (tenant.lockoutUntil && tenant.lockoutUntil > new Date()) {
+    const now = new Date();
+    if (tenant.lockoutUntil && tenant.lockoutUntil > now) {
       const remainingMinutes = Math.ceil((tenant.lockoutUntil.getTime() - Date.now()) / 60000);
       return NextResponse.json(
         { error: `Troppi tentativi falliti. Sicurezza attivata: riprova tra ${remainingMinutes} minuti.` },
@@ -35,28 +45,37 @@ export async function POST(req: Request) {
       );
     }
 
-    const emailMatches =
-      !tenant.ownerEmail ||
-      !email ||
-      tenant.ownerEmail.toLowerCase() === String(email).trim().toLowerCase();
+    const emailMatches = Boolean(
+      tenant.ownerEmail &&
+      email &&
+      tenant.ownerEmail.toLowerCase() === String(email).trim().toLowerCase()
+    );
 
     const passwordMatches = tenant.ownerPasswordHash
       ? verifyPassword(password, tenant.ownerPasswordHash)
-      : password === tenant.adminPassword;
+      : false;
 
     // 2. Se credenziali sbagliate: incrementa errori e blocca
     if (!emailMatches || !passwordMatches) {
-      const newAttempts = tenant.failedLoginAttempts + 1;
-      const willLock = newAttempts >= 5;
-      const newLockout = willLock ? new Date(Date.now() + 15 * 60000) : null; // 15 min lock
-
-      await prisma.tenant.update({
+      if (tenant.lockoutUntil && tenant.lockoutUntil <= now) {
+        await prisma.tenant.update({
+          where: { id: tenant.id },
+          data: { failedLoginAttempts: 0, lockoutUntil: null },
+        });
+      }
+      const failedTenant = await prisma.tenant.update({
         where: { id: tenant.id },
         data: {
-          failedLoginAttempts: newAttempts,
-          lockoutUntil: newLockout,
+          failedLoginAttempts: { increment: 1 },
         },
+        select: { failedLoginAttempts: true },
       });
+      if (failedTenant.failedLoginAttempts >= 5) {
+        await prisma.tenant.update({
+          where: { id: tenant.id },
+          data: { lockoutUntil: new Date(Date.now() + 15 * 60000) },
+        });
+      }
 
       // Segnala il tentativo sospetto nel registro attività del proprietario
       await prisma.activityLog.create({
@@ -69,6 +88,16 @@ export async function POST(req: Request) {
       });
 
       return NextResponse.json({ error: "Email o password non valide." }, { status: 401 });
+    }
+
+    if (!tenant.emailVerified) {
+      return NextResponse.json(
+        {
+          error: "Email non verificata. Controlla la tua casella di posta.",
+          needsVerification: true,
+        },
+        { status: 403 }
+      );
     }
 
     // 3. Login VERO: resetta errori e fai entrare

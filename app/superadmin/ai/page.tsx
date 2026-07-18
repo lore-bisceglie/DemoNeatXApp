@@ -50,25 +50,24 @@ export default function SuperadminAISuite() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("superadmin_pwd");
-    if (saved) {
-      setPassword(saved);
-      setIsAuthenticated(true);
-    }
-    setChecking(false);
+    fetch("/api/superadmin/list")
+      .then((response) => setIsAuthenticated(response.ok))
+      .finally(() => setChecking(false));
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/superadmin/list", {
-        headers: { "x-admin-password": password },
+      const res = await fetch("/api/superadmin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
       });
       if (res.status === 401) {
         setError("Password errata. Riprova.");
         return;
       }
-      sessionStorage.setItem("superadmin_pwd", password);
+      setPassword("");
       setIsAuthenticated(true);
       setError("");
     } catch {
@@ -107,7 +106,6 @@ export default function SuperadminAISuite() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "x-admin-password": password,
         },
         body: JSON.stringify({
           botId: activeBot.id,

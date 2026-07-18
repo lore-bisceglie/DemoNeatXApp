@@ -13,30 +13,65 @@ export async function GET(request: Request) {
   const date = searchParams.get("date");
   const tenantId = searchParams.get("tenantId");
   const locationId = searchParams.get("locationId");
-  const duration = parseInt(searchParams.get("duration") || "30", 10);
   const serviceId = searchParams.get("serviceId");
+  const requestedStaffId = searchParams.get("staffId");
 
-  if (!date || !tenantId) {
+  if (!date || !tenantId || !serviceId) {
     return NextResponse.json({ error: "Mancano parametri essenziali" }, { status: 400 });
   }
 
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return NextResponse.json({ error: "Data non valida" }, { status: 400 });
+  }
+  const requestedDate = new Date(`${date}T12:00:00Z`);
+  if (Number.isNaN(requestedDate.getTime())) {
+    return NextResponse.json({ error: "Data non valida" }, { status: 400 });
+  }
+  const maxBookingDate = new Date();
+  maxBookingDate.setUTCDate(maxBookingDate.getUTCDate() + 60);
+  const todayInRome = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  if (date < todayInRome) {
+    return NextResponse.json({ error: "Data nel passato" }, { status: 400 });
+  }
+  if (requestedDate.getTime() > maxBookingDate.getTime() + 24 * 60 * 60 * 1000) {
+    return NextResponse.json({ error: "Data oltre il limite prenotabile" }, { status: 400 });
+  }
+
+  const service = await prisma.service.findFirst({
+    where: { id: serviceId, tenantId },
+    select: { duration: true },
+  });
+  if (!service || service.duration < 5 || service.duration > 720) {
+    return NextResponse.json({ error: "Servizio non valido" }, { status: 400 });
+  }
+  const duration = service.duration;
+
   // Se tenant ha 2+ sedi attive, locationId è obbligatorio
-  const activeLocationsCount = await prisma.location.count({
+  const activeLocations = await prisma.location.findMany({
     where: { tenantId, isActive: true },
+    select: { id: true },
+    take: 2,
   });
 
-  if (activeLocationsCount > 1 && !locationId) {
+  if (activeLocations.length > 1 && !locationId) {
     return NextResponse.json(
       { error: "Parametro locationId obbligatorio per tenant multi-sede" },
       { status: 400 }
     );
   }
 
+  const effectiveLocationId = locationId || activeLocations[0]?.id || null;
+
   // Determina quale sede usare
   let location = null;
-  if (locationId) {
-    location = await prisma.location.findUnique({
-      where: { id: locationId },
+  if (effectiveLocationId) {
+    location = await prisma.location.findFirst({
+      where: { id: effectiveLocationId, tenantId },
       select: {
         id: true,
         openTime: true,
@@ -63,7 +98,6 @@ export async function GET(request: Request) {
 
   const openTime = location.openTime ? timeToMins(location.openTime) : 9 * 60;
   const closeTime = location.closeTime ? timeToMins(location.closeTime) : 19 * 60;
-  const interval = 15;
 
   // Check chiusura settimanale
   if (location.closedDays) {
@@ -85,19 +119,38 @@ export async function GET(request: Request) {
 
     const appointments = await prisma.appointment.findMany({
       where: appointmentWhere,
-      select: { time: true, endTime: true, customerName: true, staffId: true },
+      select: {
+        time: true,
+        endTime: true,
+        customerName: true,
+        staffId: true,
+        locationId: true,
+      },
     });
 
-    const isHoliday = appointments.some((app) => app.time === "ALL_DAY" || app.customerName.includes("FERIE"));
-    if (isHoliday) {
+    const holidayAppointments = appointments.filter(
+      (app) => app.time === "ALL_DAY" || app.customerName.includes("FERIE")
+    );
+    const isGlobalHoliday = holidayAppointments.some(
+      (app) =>
+        !app.staffId &&
+        (app.locationId === null || app.locationId === effectiveLocationId),
+    );
+    if (isGlobalHoliday) {
       return NextResponse.json({ slots: [], isHoliday: true });
     }
+    const staffOnHoliday = new Set(
+      holidayAppointments.flatMap((app) => (app.staffId ? [app.staffId] : []))
+    );
 
     // Intervalli occupati per staff
     const bookedIntervalsByStaff: Record<string, { start: number; end: number }[]> = {};
-    appointments.forEach((app) => {
+    appointments
+      .filter((app) => app.time !== "ALL_DAY" && !app.customerName.includes("FERIE"))
+      .forEach((app) => {
       const start = timeToMins(app.time);
       const end = app.endTime ? timeToMins(app.endTime) : start + 15;
+      if (!app.staffId && app.locationId !== effectiveLocationId) return;
       const sId = app.staffId || 'unassigned';
       if (!bookedIntervalsByStaff[sId]) bookedIntervalsByStaff[sId] = [];
       bookedIntervalsByStaff[sId].push({ start, end });
@@ -108,8 +161,8 @@ export async function GET(request: Request) {
     let allStaff: { id: string; name: string; baseSchedule: string | null; shiftExceptions: string | null }[] = [];
 
     if (serviceId) {
-      const serviceWithStaff = await prisma.service.findUnique({
-        where: { id: serviceId },
+      const serviceWithStaff = await prisma.service.findFirst({
+        where: { id: serviceId, tenantId },
         include: {
           staff: {
             select: { id: true, name: true, baseSchedule: true, shiftExceptions: true, locationId: true, locations: { select: { locationId: true } } },
@@ -119,9 +172,10 @@ export async function GET(request: Request) {
       if (serviceWithStaff && serviceWithStaff.staff.length > 0) {
         // Filtra staff per locationId (StaffLocation + backward compat)
         const filteredStaff = serviceWithStaff.staff.filter((s) => {
+          if (requestedStaffId && s.id !== requestedStaffId) return false;
           const hasExplicitLocation = s.locations && s.locations.length > 0;
-          if (hasExplicitLocation) return s.locations.some((l: any) => l.locationId === locationId);
-          return !s.locationId || s.locationId === locationId;
+          if (hasExplicitLocation) return s.locations.some((l: any) => l.locationId === effectiveLocationId);
+          return !s.locationId || s.locationId === effectiveLocationId;
         });
         if (filteredStaff.length > 0) {
           capableStaffIds = filteredStaff.map((s) => s.id);
@@ -130,14 +184,22 @@ export async function GET(request: Request) {
       }
     }
 
+    if (requestedStaffId && capableStaffIds.length === 0) {
+      return NextResponse.json(
+        { error: "Operatore non disponibile per questo servizio o questa sede" },
+        { status: 400 },
+      );
+    }
+
     if (capableStaffIds.length === 0) {
       // Fallback: tutto lo staff del tenant che lavora in questa sede
       const allStaffWhere: any = { tenantId };
-      if (locationId) {
+      if (requestedStaffId) allStaffWhere.id = requestedStaffId;
+      if (effectiveLocationId) {
         allStaffWhere.OR = [
-          { locations: { some: { locationId } } },
+          { locations: { some: { locationId: effectiveLocationId } } },
           { AND: [{ locations: { none: {} } }, { locationId: null }] },
-          { AND: [{ locations: { none: {} } }, { locationId }] },
+          { AND: [{ locations: { none: {} } }, { locationId: effectiveLocationId }] },
         ];
       }
       const allStaffResult = await prisma.staff.findMany({
@@ -197,6 +259,7 @@ export async function GET(request: Request) {
       let availableStaffCount = 0;
 
       for (const sId of capableStaffIds) {
+        if (staffOnHoliday.has(sId)) continue;
         if (staffSchedules[sId]) {
           const schedule = staffSchedules[sId];
           if (schedule.isOff) continue;
@@ -243,9 +306,6 @@ export async function GET(request: Request) {
       if (availableStaffCount > overlappingUnassignedCount) {
         availableSlots.push(minsToTime(potentialStart));
       }
-      if (potentialStart === openTime) {
-          console.log(`[DEBUG QA] date=${date}, capableStaffIds=${capableStaffIds}, staffSchedules=`, staffSchedules, `, availableStaffCount=${availableStaffCount}, overlappingUnassignedCount=${overlappingUnassignedCount}`);
-      }
     }
 
     // Filtro passato
@@ -263,7 +323,11 @@ export async function GET(request: Request) {
       availableSlots = availableSlots.filter((slot) => timeToMins(slot) > currentTotalMinutes);
     }
 
-    return NextResponse.json({ slots: availableSlots, isHoliday: false, locationId: location.id });
+    return NextResponse.json({
+      slots: availableSlots,
+      isHoliday: false,
+      locationId: effectiveLocationId,
+    });
 
   } catch (error) {
     console.error("Errore Availability:", error);

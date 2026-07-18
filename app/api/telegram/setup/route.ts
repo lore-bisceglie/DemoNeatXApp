@@ -1,19 +1,26 @@
 import { NextResponse } from "next/server";
+import { requireSuperAdmin } from "@/lib/auth";
+import { getTelegramWebhookSecret } from "@/lib/telegram-auth";
 
 export async function GET(req: Request) {
+  const authError = requireSuperAdmin(req);
+  if (authError) return authError;
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const publicBotToken = process.env.TELEGRAM_PUBLIC_BOT_TOKEN;
+  const webhookSecret = getTelegramWebhookSecret();
   
-  if (!botToken) {
-    return NextResponse.json({ error: "Token non configurato" }, { status: 500 });
+  if (!botToken || !webhookSecret) {
+    return NextResponse.json({ error: "Telegram non configurato" }, { status: 500 });
   }
 
   // Costruisce l'URL completo del server in produzione (Vercel) o lo prende da env
-  const host = req.headers.get("host");
-  const protocol = host?.includes("localhost") ? "http" : "https";
-  const webhookUrl = `${protocol}://${host}/api/telegram/webhook`;
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = configuredBaseUrl
+    ? configuredBaseUrl.replace(/\/$/, "")
+    : new URL(req.url).origin;
+  const webhookUrl = `${baseUrl}/api/telegram/webhook`;
 
-  const url = `https://api.telegram.org/bot${botToken}/setWebhook?url=${encodeURIComponent(webhookUrl)}`;
+  const url = `https://api.telegram.org/bot${botToken}/setWebhook?url=${encodeURIComponent(webhookUrl)}&secret_token=${encodeURIComponent(webhookSecret)}`;
   const commandsUrl = `https://api.telegram.org/bot${botToken}/setMyCommands`;
 
   try {
@@ -43,8 +50,8 @@ export async function GET(req: Request) {
     let publicMenuData = null;
 
     if (publicBotToken) {
-      const publicWebhookUrl = `${protocol}://${host}/api/telegram/public-bot`;
-      const publicUrl = `https://api.telegram.org/bot${publicBotToken}/setWebhook?url=${encodeURIComponent(publicWebhookUrl)}`;
+      const publicWebhookUrl = `${baseUrl}/api/telegram/public-bot`;
+      const publicUrl = `https://api.telegram.org/bot${publicBotToken}/setWebhook?url=${encodeURIComponent(publicWebhookUrl)}&secret_token=${encodeURIComponent(webhookSecret)}`;
       const publicRes = await fetch(publicUrl);
       publicWebhookData = await publicRes.json();
 

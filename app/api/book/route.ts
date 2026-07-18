@@ -5,17 +5,16 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { logActivity } from "@/lib/activity";
 import { revalidatePath } from "next/cache";
+import { isTenantAdminCookieValid } from "@/lib/auth";
+import { appointmentConflictsWithSlot } from "@/lib/booking-conflict";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
 
-const hasUpstash = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN;
-
 export async function POST(request: Request) {
   try {
     const cookieStore = await cookies();
-    const authCookie = cookieStore.get("neatx_auth");
-    const isAdmin = authCookie?.value === "true";
     const body = await request.json();
     const {
       customerName,
@@ -26,26 +25,50 @@ export async function POST(request: Request) {
       source,
       tenantId,
       serviceId,
-      duration,
       paymentMethod,
+      privacyAccepted,
       staffId: explicitStaffId,
       locationId,
     } = body;
     let isPlaygroundDemo = tenantId === "cmqtds1840000yyqbd23x1jdj";
     let isTrialExpired = false;
-    if (tenantId) {
-      const bookingTenant = await prisma.tenant.findUnique({
-        where: { id: tenantId },
-        select: { isDemoData: true, trialStatus: true, trialEndsAt: true, plan: true },
-      });
-      isPlaygroundDemo =
-        isPlaygroundDemo ||
-        Boolean(bookingTenant?.isDemoData && bookingTenant.trialStatus === "demo");
-      isTrialExpired = Boolean(
-        bookingTenant?.trialEndsAt &&
-          new Date(bookingTenant.trialEndsAt) < new Date() &&
-          bookingTenant.plan !== "pro" && bookingTenant.plan !== "elite" &&
-          bookingTenant.trialStatus !== "converted"
+    const bookingTenant = tenantId
+      ? await prisma.tenant.findUnique({
+          where: { id: tenantId },
+          select: {
+            slug: true,
+            isDemoData: true,
+            trialStatus: true,
+            trialEndsAt: true,
+            plan: true,
+            openTime: true,
+            closeTime: true,
+            breakStart: true,
+            breakEnd: true,
+            closedDays: true,
+          },
+        })
+      : null;
+    if (!bookingTenant) {
+      return NextResponse.json({ error: "Negozio non trovato." }, { status: 404 });
+    }
+    const tenantAuthCookie = cookieStore.get(`admin_auth_${bookingTenant.slug}`)?.value;
+    const isAdmin = isTenantAdminCookieValid(tenantAuthCookie, bookingTenant.slug);
+    isPlaygroundDemo =
+      isPlaygroundDemo ||
+      Boolean(bookingTenant.isDemoData && bookingTenant.trialStatus === "demo");
+    isTrialExpired = Boolean(
+      bookingTenant.trialEndsAt &&
+        new Date(bookingTenant.trialEndsAt) < new Date() &&
+        bookingTenant.plan !== "pro" && bookingTenant.plan !== "elite" &&
+        bookingTenant.trialStatus !== "converted"
+    );
+    const isPublicDemoWalkIn = isPlaygroundDemo && source === "WALK_IN";
+
+    if (!isAdmin && !isPublicDemoWalkIn && privacyAccepted !== true) {
+      return NextResponse.json(
+        { error: "Accetta la Privacy Policy per continuare." },
+        { status: 400 },
       );
     }
 
@@ -53,25 +76,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "La prova gratuita è scaduta." }, { status: 402 });
     }
 
-    if (!isAdmin && !isPlaygroundDemo && hasUpstash) {
-      const { Ratelimit } = await import("@upstash/ratelimit");
-      const { Redis } = await import("@upstash/redis");
-      const redis = new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL!,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-      });
-      const ratelimit = new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(5, "24 h"),
-      });
-      try {
-        const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
-        const { success } = await ratelimit.limit(ip);
-        if (!success) {
-          return NextResponse.json({ error: "Hai raggiunto il limite massimo di prenotazioni." }, { status: 429 });
-        }
-      } catch (e) {
-        console.warn("Rate limit non disponibile, salto controllo:", e);
+    if (!isAdmin) {
+      const rate = await checkRequestRateLimit(
+        request,
+        `booking:${tenantId}`,
+        isPlaygroundDemo ? 30 : 10,
+        60 * 60,
+      );
+      if (!rate.success) {
+        return NextResponse.json(
+          { error: "Hai raggiunto il limite massimo di prenotazioni." },
+          { status: 429 },
+        );
       }
     }
 
@@ -81,6 +97,36 @@ export async function POST(request: Request) {
     
     if (!customerName || !date || !time || !tenantId || !serviceId) {
       return NextResponse.json({ error: "Per favore, compila tutti i campi obbligatori." }, { status: 400 });
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+      return NextResponse.json({ error: "Data o orario non validi." }, { status: 400 });
+    }
+    const bookingDate = new Date(`${date}T12:00:00`);
+    if (Number.isNaN(bookingDate.getTime())) {
+      return NextResponse.json({ error: "Data non valida." }, { status: 400 });
+    }
+    const todayInRome = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Europe/Rome",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+    if (date < todayInRome) {
+      return NextResponse.json({ error: "Non puoi prenotare una data passata." }, { status: 400 });
+    }
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 60);
+    if (bookingDate > maxDate) {
+      return NextResponse.json({ error: "Puoi prenotare con massimo 60 giorni di anticipo." }, { status: 400 });
+    }
+
+    const service = await prisma.service.findFirst({
+      where: { id: serviceId, tenantId },
+      select: { id: true, duration: true },
+    });
+    if (!service || service.duration < 5 || service.duration > 720) {
+      return NextResponse.json({ error: "Servizio non valido." }, { status: 400 });
     }
 
     if (!isAdmin && !isPlaygroundDemo && !customerPhone) {
@@ -131,6 +177,7 @@ export async function POST(request: Request) {
 
     // 🌟 VALIDAZIONE STAFF IN SEDE
     let chosenStaffId = explicitStaffId;
+    let candidateStaffIds: string[] = [];
     if (explicitStaffId) {
       const staff = await prisma.staff.findUnique({
         where: { id: explicitStaffId },
@@ -165,29 +212,54 @@ export async function POST(request: Request) {
         select: { id: true },
       });
       if (capableStaff.length > 0) {
-        chosenStaffId = capableStaff[0].id;
+        candidateStaffIds = capableStaff.map((member) => member.id);
       }
     }
 
     // 🌟 CALCOLO FINE SERVIZIO
     const startMins = timeToMins(time);
-    const parsedDuration = parseInt(String(duration ?? "30"), 10);
-    const safeDuration = isNaN(parsedDuration) || parsedDuration <= 0 ? 30 : parsedDuration;
+    const safeDuration = service.duration;
     const endMins = startMins + safeDuration;
     const endTime = minsToTime(endMins);
 
     // 🌟 VERIFICA SOVRAPPOSIZIONE SOLO PER QUESTA SEDE
     const overlappingApps = await prisma.appointment.findMany({
-      where: { date: date, locationId: targetLocationId },
-      select: { time: true, endTime: true, customerName: true, staffId: true }
+      where: { date, tenantId },
+      select: {
+        time: true,
+        endTime: true,
+        customerName: true,
+        staffId: true,
+        locationId: true,
+      },
     });
 
-    const hasOverlap = overlappingApps.some(app => {
-      const appStart = timeToMins(app.time);
-      const appEnd = app.endTime ? timeToMins(app.endTime) : appStart + 15;
-      if (chosenStaffId && app.staffId && app.staffId !== chosenStaffId) return false;
-      return Math.max(startMins, appStart) < Math.min(endMins, appEnd);
-    });
+    if (!explicitStaffId && candidateStaffIds.length > 0) {
+      chosenStaffId = candidateStaffIds.find((candidateId) =>
+        !overlappingApps.some((app) =>
+          appointmentConflictsWithSlot(
+            app,
+            startMins,
+            endMins,
+            candidateId,
+            targetLocationId,
+          ),
+        ),
+      );
+      if (!chosenStaffId) {
+        return NextResponse.json({ error: "Nessun operatore disponibile in questo orario." }, { status: 409 });
+      }
+    }
+
+    const hasOverlap = overlappingApps.some((app) =>
+      appointmentConflictsWithSlot(
+        app,
+        startMins,
+        endMins,
+        chosenStaffId,
+        targetLocationId,
+      ),
+    );
 
     if (hasOverlap) {
       return NextResponse.json({ error: "Spiacenti, qualcuno ha appena prenotato questo orario!" }, { status: 400 });
@@ -197,7 +269,7 @@ export async function POST(request: Request) {
     const location = targetLocationId ? await prisma.location.findUnique({
       where: { id: targetLocationId },
       select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true },
-    }) : null;
+    }) : bookingTenant;
     if (location) {
       const openMins = location.openTime ? timeToMins(location.openTime) : 9 * 60;
       const closeMins = location.closeTime ? timeToMins(location.closeTime) : 19 * 60;
@@ -239,22 +311,63 @@ export async function POST(request: Request) {
 
     const newCancelToken = crypto.randomUUID();
 
-    const newAppointment = await prisma.appointment.create({
-      data: {
-        customerName: customerName.trim(),
-        customerPhone: cleanPhone,
-        date: date,
-        time: time,
-        endTime: endTime,
-        source: source || "ONLINE",
-        cancelToken: newCancelToken,
-        tenantId: tenantId,
-        serviceId: serviceId,
-        isPaid: isPlaygroundDemo && paymentMethod === "online",
-        staffId: chosenStaffId || undefined,
-        locationId: targetLocationId,
+    const newAppointment = await prisma.$transaction(
+      async (tx) => {
+        const currentAppointments = await tx.appointment.findMany({
+          where: { date, tenantId },
+          select: {
+            time: true,
+            endTime: true,
+            customerName: true,
+            staffId: true,
+            locationId: true,
+          },
+        });
+        const slotTaken = currentAppointments.some((app) =>
+          appointmentConflictsWithSlot(
+            app,
+            startMins,
+            endMins,
+            chosenStaffId,
+            targetLocationId,
+          ),
+        );
+        if (slotTaken) throw new Error("SLOT_TAKEN");
+
+        return tx.appointment.create({
+          data: {
+            customerName: customerName.trim(),
+            customerPhone: cleanPhone,
+            date,
+            time,
+            endTime,
+            source: source || "ONLINE",
+            cancelToken: newCancelToken,
+            tenantId,
+            serviceId,
+            isPaid: isPlaygroundDemo && paymentMethod === "online",
+            paymentStatus:
+              isPlaygroundDemo && paymentMethod === "online" ? "PAID" : "NONE",
+            staffId: chosenStaffId || undefined,
+            locationId: targetLocationId,
+          },
+        });
       },
+      { isolationLevel: "Serializable" }
+    ).catch((error) => {
+      if (
+        (error instanceof Error && error.message === "SLOT_TAKEN") ||
+        (typeof error === "object" && error !== null && "code" in error && error.code === "P2034")
+      ) return null;
+      throw error;
     });
+
+    if (!newAppointment) {
+      return NextResponse.json(
+        { error: "Spiacenti, qualcuno ha appena prenotato questo orario!" },
+        { status: 409 }
+      );
+    }
 
     await logActivity({
       action: "CREATE_APPOINTMENT",

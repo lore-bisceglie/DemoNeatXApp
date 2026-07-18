@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireTenantAdmin } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 
 export async function POST(
   request: Request,
@@ -32,7 +32,7 @@ export async function POST(
         { status: 404 }
       );
     }
-    const authError = await requireTenantAdmin(existing.tenantId);
+    const authError = await requireTenantAdminOrDemo(request, existing.tenantId, "payment", 60);
     if (authError) return authError;
 
     const updatedAppointment = await prisma.appointment.update({
@@ -56,4 +56,4 @@ export async function POST(
       { status: 500 }
     );
   }
-}
+}

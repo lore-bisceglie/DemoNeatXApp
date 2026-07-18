@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { DEMO_TENANT_ID } from "@/lib/demoService";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
-const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
-
-export async function GET() {
-  const cookieStore = await cookies();
-  if (!cookieStore.get("neatx_auth")) {
-    return NextResponse.json({ error: "Non autenticato" }, { status: 401 });
+export async function GET(request: Request) {
+  const rate = await checkRequestRateLimit(request, "demo-dashboard-read", 120, 60 * 60);
+  if (!rate.success) {
+    return NextResponse.json({ error: "Troppe richieste" }, { status: 429 });
   }
 
   const now = new Date();

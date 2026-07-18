@@ -66,16 +66,14 @@ export default function SuperAdminPage() {
     return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
   }).length;
 
-  const fetchTenants = async (pwd: string) => {
+  const fetchTenants = async () => {
     try {
-      const res = await fetch("/api/superadmin/list", { headers: { "x-admin-password": pwd } });
+      const res = await fetch("/api/superadmin/list");
       if (res.status === 401) { setAuthError("Password errata"); setIsAuthenticated(false); setLoading(false); return; }
       if (!res.ok) { const err = await res.json(); setAuthError("Errore: " + (err.error || res.statusText)); setIsAuthenticated(false); setLoading(false); return; }
       const data = await res.json();
       setTenants(data.tenants || (Array.isArray(data) ? data : []));
       if (data.stats) setStats(data.stats);
-      document.cookie = "superadmin_god_eye=true; path=/; max-age=86400";
-      sessionStorage.setItem("superadmin_pwd", pwd);
       setIsAuthenticated(true);
       setAuthError("");
     } catch (e: unknown) {
@@ -85,25 +83,47 @@ export default function SuperAdminPage() {
     }
   };
 
-  useEffect(() => { setLoading(false); }, []);
+  useEffect(() => { fetchTenants(); }, []);
 
-  const handleLogin = (e: React.FormEvent) => { e.preventDefault(); setLoading(true); fetchTenants(password); };
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const response = await fetch("/api/superadmin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    if (!response.ok) {
+      setAuthError("Password errata");
+      setLoading(false);
+      return;
+    }
+    setPassword("");
+    await fetchTenants();
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault(); setCreating(true); setError("");
     try {
       const res = await fetch("/api/superadmin", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-password": password },
-        body: JSON.stringify({ name, slug, template, adminPassword: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor, staffSheetUrl })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, slug, template, password: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor, staffSheetUrl })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
       setName(""); setSlug(""); setTenantPassword(""); setPhone(""); setAddress("");
       setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan"); setStaffSheetUrl("");
-      fetchTenants(password);
+      fetchTenants();
     } catch (e: unknown) { setError(e instanceof Error ? e.message : "Errore"); }
     finally { setCreating(false); }
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/superadmin/login", { method: "DELETE" }).catch(() => null);
+    setTenants([]);
+    setIsAuthenticated(false);
+    setPassword("");
   };
 
   const handleDelete = async (tenantId: string, tenantName: string) => {
@@ -112,7 +132,7 @@ export default function SuperAdminPage() {
       const res = await fetch("/api/superadmin/delete", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
-      fetchTenants(password);
+      fetchTenants();
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
@@ -125,7 +145,7 @@ export default function SuperAdminPage() {
       const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId, plan }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
-      fetchTenants(password);
+      fetchTenants();
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
@@ -139,20 +159,27 @@ export default function SuperAdminPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
       alert(`Crediti aggiornati: ${data.newTotal}`);
-      fetchTenants(password);
+      fetchTenants();
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
-  const handleImpersonate = (slug: string, adminPassword: string | null) => {
-    if (!adminPassword) { alert("Nessuna password admin configurata."); return; }
-    const isLocal = window.location.hostname.includes("localhost");
-    document.cookie = `admin_auth_${slug}=${adminPassword}; path=/; max-age=86400${isLocal ? "" : "; domain=.neatx.store"}`;
-    window.open(isLocal ? `http://localhost:3000/t/${slug}/admin` : `https://${slug}.neatx.store/admin`, "_blank");
+  const handleImpersonate = async (slug: string) => {
+    try {
+      const res = await fetch("/api/superadmin/impersonate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Accesso non riuscito");
+      window.open(data.magicUrl, "_blank", "noopener,noreferrer");
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Accesso non riuscito");
+    }
   };
 
   const handleCopyCredentials = (tenant: any) => {
-    const pwd = tenant.adminPassword || "(non impostata)";
-    const text = `Negozio: ${tenant.name}\nSito: https://${tenant.slug}.neatx.store\nAdmin: https://${tenant.slug}.neatx.store/admin\nPassword: ${pwd}`;
+    const text = `Negozio: ${tenant.name}\nSito: https://${tenant.slug}.neatx.store\nAdmin: https://neatx.store/t/${tenant.slug}/admin`;
     navigator.clipboard.writeText(text).then(() => {
       setCopiedId(tenant.id);
       setTimeout(() => setCopiedId(null), 2000);
@@ -165,7 +192,7 @@ export default function SuperAdminPage() {
       name: tenant.name || "", ownerEmail: tenant.ownerEmail || "", phone: tenant.phone || "",
       address: tenant.address || "", instagramUrl: tenant.instagramUrl || "", mapsLink: tenant.mapsLink || "",
       description: tenant.description || "", openTime: tenant.openTime || "", closeTime: tenant.closeTime || "",
-      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", adminPassword: tenant.adminPassword || ""
+      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", password: ""
     });
   };
 
@@ -177,7 +204,7 @@ export default function SuperAdminPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore aggiornamento");
       setEditTarget(null);
-      fetchTenants(password);
+      fetchTenants();
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
     finally { setEditing(false); }
   };
@@ -251,7 +278,14 @@ export default function SuperAdminPage() {
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               <Link href="/" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🏠 Sito</Link>
               <Link href="/superadmin/agents" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🤖 Agenti</Link>
-              <button onClick={() => { setLoading(true); fetchTenants(password); }} className="text-sm font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-full transition-colors">🔄 Aggiorna</button>
+              <button onClick={() => { setLoading(true); fetchTenants(); }} className="text-sm font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-full transition-colors">🔄 Aggiorna</button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/20"
+              >
+                Esci
+              </button>
             </div>
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Pannello Super Admin</h1>
             <p className="text-slate-400 text-sm mt-0.5">NeatX SaaS — Godmode Control Panel</p>
@@ -446,7 +480,7 @@ export default function SuperAdminPage() {
                         <div className="flex flex-col gap-1.5 mt-auto pt-3 border-t border-slate-800/50">
                           <div className="flex gap-1 w-full">
                             <a href={`https://${tenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" title="Sito pubblico" className="flex-1 text-center text-[11px] text-indigo-400 hover:text-indigo-300 font-medium bg-indigo-500/10 py-1.5 rounded-lg transition flex items-center justify-center">🌐</a>
-                            <button onClick={() => handleImpersonate(tenant.slug, tenant.adminPassword)} title="Entra come Admin" className="flex-1 text-[11px] text-amber-400 font-medium bg-amber-500/10 py-1.5 rounded-lg border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/20 transition">🕵️</button>
+                            <button onClick={() => handleImpersonate(tenant.slug)} title="Entra come Admin" className="flex-1 text-[11px] text-amber-400 font-medium bg-amber-500/10 py-1.5 rounded-lg border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/20 transition">🕵️</button>
                             <button onClick={() => handleCopyCredentials(tenant)} title="Copia credenziali per il cliente" className={`flex-1 text-[11px] font-medium py-1.5 rounded-lg transition flex items-center justify-center ${copied ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"}`}>{copied ? "✅" : "📋"}</button>
                             <button onClick={() => openEdit(tenant)} title="Modifica" className="text-[11px] font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-1.5 rounded-lg transition">✏️</button>
                             {tenant.slug === 'demo-vetrina' || tenant.slug === 'demo-neatx' ? (
@@ -517,12 +551,12 @@ export default function SuperAdminPage() {
                 <div><label className="block text-xs text-slate-400 mb-1">Tema</label><select value={editData.themeColor} onChange={e => setEditData({ ...editData, themeColor: e.target.value })} className={IC}>{THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1">Password Admin</label>
+                <label className="block text-xs text-slate-400 mb-1">Nuova password admin (opzionale)</label>
                 <div className="flex gap-2">
-                  <input type="text" value={editData.adminPassword} onChange={e => setEditData({ ...editData, adminPassword: e.target.value })} className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500 font-mono tracking-wider" />
-                  <button type="button" onClick={() => setEditData({ ...editData, adminPassword: generateSecurePassword() })} title="Genera" className="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 px-3 rounded-lg text-xl transition shrink-0">🎲</button>
+                  <input type="password" value={editData.password || ""} onChange={e => setEditData({ ...editData, password: e.target.value })} placeholder="Lascia vuoto per non cambiarla" className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500 font-mono tracking-wider" />
+                  <button type="button" onClick={() => setEditData({ ...editData, password: generateSecurePassword() })} title="Genera" className="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 px-3 rounded-lg text-xl transition shrink-0">🎲</button>
                 </div>
-                <p className="text-[10px] text-slate-500 mt-1">Clicca 🎲 per generarne una sicura. Comunicala al cliente dopo aver salvato.</p>
+                <p className="text-[10px] text-slate-500 mt-1">La password viene salvata solo in forma cifrata e non sarà più visualizzabile.</p>
               </div>
             </div>
             <div className="flex gap-3 mt-6 pt-4 border-t border-slate-800">
@@ -570,7 +604,7 @@ export default function SuperAdminPage() {
               </div>
 
               {detailTenant.trialEndsAt && (() => {
-                const dl = Math.ceil((new Date(detailTenant.trialEndsAt).getTime() - Date.now()) / 86400000);
+                const dl = Math.ceil((new Date(detailTenant.trialEndsAt).getTime() - new Date().getTime()) / 86400000);
                 const e = dl <= 0;
                 return (
                   <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
@@ -635,7 +669,7 @@ export default function SuperAdminPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <a href={`https://${detailTenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" className="text-center text-sm font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 px-4 py-3 rounded-xl hover:bg-indigo-600/30 transition">🌐 Sito</a>
-                <button onClick={() => handleImpersonate(detailTenant.slug, detailTenant.adminPassword)} className="text-sm font-bold bg-amber-600/20 text-amber-400 border border-amber-600/30 px-4 py-3 rounded-xl hover:bg-amber-600/30 transition">🕵️ Entra Admin</button>
+                <button onClick={() => handleImpersonate(detailTenant.slug)} className="text-sm font-bold bg-amber-600/20 text-amber-400 border border-amber-600/30 px-4 py-3 rounded-xl hover:bg-amber-600/30 transition">🕵️ Entra Admin</button>
                 <button onClick={() => handleCopyCredentials(detailTenant)} className={`text-sm font-bold border px-4 py-3 rounded-xl transition ${copiedId === detailTenant.id ? "bg-emerald-600/30 text-emerald-300 border-emerald-600/50" : "bg-emerald-600/20 text-emerald-400 border-emerald-600/30 hover:bg-emerald-600/30"}`}>{copiedId === detailTenant.id ? "✅ Copiato!" : "📋 Copia Credenziali"}</button>
                 <button onClick={() => { setDetailTenant(null); openEdit(detailTenant); }} className="text-sm font-bold bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 px-4 py-3 rounded-xl hover:bg-cyan-600/30 transition">✏️ Modifica</button>
               </div>

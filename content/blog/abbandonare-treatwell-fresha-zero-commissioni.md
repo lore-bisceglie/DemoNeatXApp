@@ -9,7 +9,7 @@ Nel competitivo mondo del beauty e del wellness, la transizione verso il digital
 
 Ma cosa sta guidando questo esodo di massa dai grandi portali? Scopriamo nel dettaglio perché riprendere il pieno controllo delle proprie prenotazioni è diventata la chiave strategica per la sopravvivenza e la redditività a lungo termine del tuo salone.
 
-![Titolare frustrato per le commissioni](/blog/costi-commissioni.jpg)
+![Titolare frustrato per le commissioni](/blog/costi-commissioni.webp)
 
 ## L'Illusione della Visibilità e il Peso Nascosto delle Commissioni
 
@@ -32,7 +32,7 @@ Questo è forse l'aspetto più critico. Chi prenota tramite Treatwell o un porta
 ### 3. Regole Stringenti e Mancanza di Controllo
 Operare su piattaforme esterne significa sottostare alle loro regole. Sei soggetto alle loro politiche di cancellazione, ai loro sistemi di rimborso e, soprattutto, ai loro algoritmi. Se la piattaforma decide di dare maggiore visibilità a chi paga di più per le inserzioni sponsorizzate o cambia le regole di posizionamento, il tuo salone potrebbe sparire dalla prima pagina dall'oggi al domani, con un crollo verticale delle prenotazioni.
 
-![Appuntamenti Zero Commissioni su Smartphone](/blog/appuntamenti-smartphone.jpg)
+![Appuntamenti Zero Commissioni su Smartphone](/blog/appuntamenti-smartphone.webp)
 
 ## I Vantaggi dei Sistemi di Appuntamenti Online Zero Commissioni
 
@@ -51,7 +51,7 @@ Il timore principale di molti titolari è che, uscendo dai grandi portali, il te
 2.  **Sfrutta i Social Media e Google:** Ottimizza la tua presenza online. Inserisci il link diretto al tuo sistema di prenotazione nella bio di Instagram, sulla pagina Facebook e, soprattutto, sul tuo profilo **Google My Business**.
 3.  **Crea un Sito Web Ottimizzato:** Un sito web veloce, chiaro e posizionato localmente fungerà da hub centrale per la tua attività.
 
-![Clienti felici per prenotazioni dirette](/blog/fidelizzazione.jpg)
+![Clienti felici per prenotazioni dirette](/blog/fidelizzazione.webp)
 
 ### Il Futuro è l'Indipendenza Digitale
 Affidare il cuore pulsante del proprio business—i clienti e il flusso di cassa—a piattaforme di terze parti è un rischio eccessivo. Scegliere un sistema per appuntamenti online senza commissioni significa investire nel valore del proprio marchio. È arrivato il momento di smettere di pagare per ciò che hai costruito con le tue mani e iniziare a possedere il tuo successo al 100%.

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 import { prisma } from "@/lib/prisma";
 import {
   addMinutes,
@@ -74,12 +75,25 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
 
 export async function POST(req: Request) {
   try {
+    const rate = await checkRequestRateLimit(req, "onboarding", 5, 60 * 60);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Troppe registrazioni da questa rete. Riprova più tardi." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
     const body = await req.json();
+    if (body.legalAccepted !== true) {
+      return NextResponse.json(
+        { error: "Accetta Privacy Policy e Termini di servizio per continuare." },
+        { status: 400 },
+      );
+    }
     const businessName = cleanText(body.businessName || body.name);
     const category = cleanText(body.category || body.template, "barber");
     const city = cleanText(body.city);
     const ownerName = cleanText(body.ownerName);
-    const email = cleanText(body.email);
+    const email = cleanText(body.email).toLowerCase();
     const password = cleanText(body.password);
     const phone = normalizeWhatsappPhone(body.phone);
     const address = cleanText(body.address, city) || city;
@@ -892,9 +906,6 @@ export async function POST(req: Request) {
 
     const template = getDemoShopTemplate(category);
     const slug = await uniqueSlug(businessName);
-    const adminPassword = `${sanitizeSlug(ownerName).slice(0, 4) || "demo"}${Math.floor(
-      1000 + Math.random() * 9000
-    )}`;
     const now = new Date();
 
     const trialEndsAt = new Date();
@@ -913,7 +924,8 @@ export async function POST(req: Request) {
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
     const verifyUrl = `${protocol}://${ROOT_DOMAIN}/api/verify-email?token=${emailVerifyToken}&slug=${slug}`;
 
-    const tenant = await prisma.tenant.create({
+    const tenant = await prisma.$transaction(async (tx) => {
+      const tenant = await tx.tenant.create({
       data: {
         name: businessName,
         slug,
@@ -940,12 +952,11 @@ export async function POST(req: Request) {
         breakStart: template.breakStart || null,
         breakEnd: template.breakEnd || null,
         closedDays: JSON.stringify(template.closedDays),
-        adminPassword,
         trialStartedAt: now,
         trialEndsAt,
         trialStatus: "trial_active",
         isDemoData: true,
-        plan: "elite",
+          plan: "basic",
         referredByCode,
         referredAt: referredByCode ? now : null,
         services: {
@@ -962,8 +973,8 @@ export async function POST(req: Request) {
           },
         },
       },
-      include: { services: true },
-    });
+        include: { services: true },
+      });
 
     const serviceByName = new Map(tenant.services.map((service) => [service.name, service]));
     const staffByName = new Map<string, { id: string; name: string }>();
@@ -977,7 +988,7 @@ export async function POST(req: Request) {
             .filter(Boolean)
         : tenant.services;
 
-      const staff = await prisma.staff.create({
+      const staff = await tx.staff.create({
         data: {
           name: member.name,
           tenantId: tenant.id,
@@ -990,7 +1001,7 @@ export async function POST(req: Request) {
     }
 
     // CREA SEDE PRINCIPALE DI DEFAULT
-    const mainLocation = await prisma.location.create({
+    const mainLocation = await tx.location.create({
       data: {
         name: "Sede Principale",
         slug: slug + "-sede-principale",
@@ -1015,7 +1026,7 @@ export async function POST(req: Request) {
 
     // COLLEGA SERVIZI ALLA SEDE PRINCIPALE
     for (const service of tenant.services) {
-      await prisma.serviceLocation.create({
+      await tx.serviceLocation.create({
         data: {
           serviceId: service.id,
           locationId: mainLocation.id,
@@ -1027,7 +1038,7 @@ export async function POST(req: Request) {
 
     // COLLEGA STAFF ALLA SEDE PRINCIPALE
     for (const [, staff] of staffByName) {
-      await prisma.staff.update({
+      await tx.staff.update({
         where: { id: staff.id },
         data: { locationId: mainLocation.id },
       });
@@ -1059,7 +1070,7 @@ export async function POST(req: Request) {
     }
     */
 
-    await prisma.activityLog.create({
+    await tx.activityLog.create({
       data: {
         tenantId: tenant.id,
         action: "CREATE_DEMO_SHOP",
@@ -1070,6 +1081,9 @@ export async function POST(req: Request) {
     });
 
     // 🚀 Invia notifica Telegram al founder
+      return tenant;
+    }, { isolationLevel: "Serializable", timeout: 15_000 });
+
     await sendTelegramNotification(tenant, ownerName, template.id);
 
     // 🚀 Invia email verifica indirizzo
@@ -1078,7 +1092,7 @@ export async function POST(req: Request) {
     );
 
     // 🚀 Invia Email di Benvenuto
-    await sendWelcomeEmail(email, ownerName, adminPassword, getTenantAdminUrl(tenant.slug)).catch(e =>
+    await sendWelcomeEmail(email, ownerName, getTenantAdminUrl(tenant.slug)).catch(e =>
       console.error("[Email] Errore invio benvenuto:", e)
     );
 
@@ -1088,7 +1102,6 @@ export async function POST(req: Request) {
       publicUrl: getTenantPublicUrl(tenant.slug),
       adminUrl: getTenantAdminUrl(tenant.slug),
       needsVerification: true,
-      adminPassword: adminPassword,
     });
   } catch (error) {
     console.error("Errore Onboarding:", error);

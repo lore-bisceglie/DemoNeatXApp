@@ -42,16 +42,16 @@ async function requireTenantAdmin(request: NextRequest) {
 
   if (!tenantSlug) return null;
   const tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlug } });
-  if (!tenant?.adminPassword) return null;
+  if (!tenant) return null;
 
   const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
   if (!authCookie) {
     const headerAuth = request.headers.get("x-middleware-auth");
-    if (headerAuth) return isTenantAdminCookieValid(headerAuth, tenant.slug, tenant.adminPassword) ? tenant : null;
+    if (headerAuth) return isTenantAdminCookieValid(headerAuth, tenant.slug) ? tenant : null;
     return null;
   }
 
-  return isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword) ? tenant : null;
+  return isTenantAdminCookieValid(authCookie, tenant.slug) ? tenant : null;
 }
 
 export async function GET(request: NextRequest) {

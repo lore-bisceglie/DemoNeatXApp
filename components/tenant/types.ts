@@ -21,10 +21,10 @@ export type PublicLocation = {
   isActive: boolean;
   settings?: {
     paymentStrategy: string;
-    paymentFixedAmount: number;
-    paymentPercentage: number;
+    paymentFixedAmount: number | null;
+    paymentPercentage: number | null;
     paymentMandatory: boolean;
-    stripeAccountId?: string | null;
+    stripeConnected?: boolean;
     stripeOnboardingComplete?: boolean;
   } | null;
 };
@@ -76,10 +76,40 @@ export type TenantInfoType = {
   themeColor: string;
   storeSettings: {
     paymentStrategy: string;
-    paymentFixedAmount: number;
-    paymentPercentage: number;
+    paymentFixedAmount: number | null;
+    paymentPercentage: number | null;
     paymentMandatory: boolean;
-    stripeAccountId?: string | null;
+    stripeConnected?: boolean;
     stripeOnboardingComplete?: boolean;
   } | null;
+};
+
+export type BookingInitialData = {
+  id: string;
+  name: string;
+  address: string | null;
+  phone: string | null;
+  openTime: string | null;
+  closeTime: string | null;
+  breakStart: string | null;
+  breakEnd: string | null;
+  closedDays: string | null;
+  instagramUrl: string | null;
+  mapsLink: string | null;
+  tiktokUrl: string | null;
+  bookingUrl: string | null;
+  trialEndsAt: string;
+  isDemoData: boolean;
+  trialExpired: boolean;
+  trialStatus: string;
+  category: string;
+  description: string | null;
+  city: string | null;
+  isPremium: boolean;
+  logoUrl: string | null;
+  themeColor: string;
+  services: Service[];
+  staff: PublicStaffMember[];
+  locations: PublicLocation[];
+  storeSettings: TenantInfoType["storeSettings"];
 };

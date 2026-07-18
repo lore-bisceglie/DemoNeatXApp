@@ -3,6 +3,7 @@ import { getTenantAdminUrl, ROOT_DOMAIN } from "@/lib/domains";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 import { createTenantSessionToken } from "@/lib/auth";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 function cleanText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -26,14 +27,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Inserisci email e password." }, { status: 400 });
     }
 
+    const rate = await checkRequestRateLimit(req, "account-login", 20, 15 * 60, email);
+    if (!rate.success) {
+      return NextResponse.json(
+        { error: "Troppi tentativi. Riprova più tardi." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const tenants = await prisma.tenant.findMany({
-      where: { ownerEmail: email },
+      where: { ownerEmail: { equals: email, mode: "insensitive" } },
       orderBy: { createdAt: "desc" },
     });
 
     // Lockout condiviso (anti-bruteforce): se un account con questa email è bloccato, rifiuta
+    const now = new Date();
     const lockedTenant = tenants.find(
-      (item) => item.lockoutUntil && item.lockoutUntil > new Date()
+      (item) => item.lockoutUntil && item.lockoutUntil > now
     );
     if (lockedTenant) {
       const remainingMinutes = Math.ceil(
@@ -50,20 +60,30 @@ export async function POST(req: Request) {
       return verifyPassword(password, item.ownerPasswordHash);
     });
 
-    if (!tenant?.adminPassword) {
+    if (!tenant) {
       // Incrementa i tentativi falliti su tutti gli account con questa email
       if (tenants.length > 0) {
         await Promise.all(
-          tenants.map((item) => {
-            const newAttempts = item.failedLoginAttempts + 1;
-            const willLock = newAttempts >= 5;
-            return prisma.tenant.update({
+          tenants.map(async (item) => {
+            if (item.lockoutUntil && item.lockoutUntil <= now) {
+              await prisma.tenant.update({
+                where: { id: item.id },
+                data: { failedLoginAttempts: 0, lockoutUntil: null },
+              });
+            }
+            const failedTenant = await prisma.tenant.update({
               where: { id: item.id },
               data: {
-                failedLoginAttempts: newAttempts,
-                lockoutUntil: willLock ? new Date(Date.now() + 15 * 60000) : null,
+                failedLoginAttempts: { increment: 1 },
               },
+              select: { failedLoginAttempts: true },
             });
+            if (failedTenant.failedLoginAttempts >= 5) {
+              await prisma.tenant.update({
+                where: { id: item.id },
+                data: { lockoutUntil: new Date(Date.now() + 15 * 60000) },
+              });
+            }
           })
         );
       }

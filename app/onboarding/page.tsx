@@ -112,6 +112,7 @@ export default function Onboarding() {
   const [tiktokUrl, setTiktokUrl] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<{
@@ -167,6 +168,10 @@ export default function Onboarding() {
       setError("La password deve avere almeno 8 caratteri.");
       return;
     }
+    if (!legalAccepted) {
+      setError("Accetta Privacy Policy e Termini di servizio per continuare.");
+      return;
+    }
 
     setIsGenerating(true);
 
@@ -189,6 +194,7 @@ export default function Onboarding() {
           tiktokUrl,
           logoUrl,
           themeColor,
+          legalAccepted,
           ref: referredByCode,
         }),
       });
@@ -527,10 +533,32 @@ export default function Onboarding() {
             </div>
           )}
 
+          <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#1e2b4a] bg-[#050814] p-4">
+            <input
+              id="onboarding-legal"
+              type="checkbox"
+              checked={legalAccepted}
+              onChange={(event) => setLegalAccepted(event.target.checked)}
+              className="mt-1 h-4 w-4 accent-cyan-500"
+            />
+            <label htmlFor="onboarding-legal" className="text-xs leading-relaxed text-slate-400">
+              Ho letto e accetto la{" "}
+              <Link href="/privacy" className="text-cyan-300 underline">
+                Privacy Policy
+              </Link>{" "}
+              e i{" "}
+              <Link href="/termini" className="text-cyan-300 underline">
+                Termini di servizio
+              </Link>
+              .
+            </label>
+          </div>
+
           <button
             type="button"
             onClick={handleCreate}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-400 px-5 py-4 text-base font-extrabold text-[#03111f] shadow-xl shadow-cyan-950/40 transition hover:bg-cyan-300"
+            disabled={!legalAccepted}
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-400 px-5 py-4 text-base font-extrabold text-[#03111f] shadow-xl shadow-cyan-950/40 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Crea la mia pagina prenotazioni
             <ArrowRight size={19} />

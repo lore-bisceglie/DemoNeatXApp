@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 const DEMO_TENANT_ID = "cmqtds1840000yyqbd23x1jdj";
 
 export async function POST(req: Request) {
   try {
+    const rate = await checkRequestRateLimit(req, "demo-block-holiday", 10, 60 * 60);
+    if (!rate.success) return NextResponse.json({ error: "Riprova più tardi" }, { status: 429 });
     const formData = await req.formData();
 
     const startDate = formData.get("startDate") as string;

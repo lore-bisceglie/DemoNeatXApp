@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { createHmac, timingSafeEqual } from "crypto";
+import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/prisma";
 
 export const AUTH_COOKIE_NAME = "neatx_auth";
@@ -112,6 +112,13 @@ export function loginRedirectUrl(requestUrl: string, nextPath = "/dashboard") {
 // ── Superadmin auth ──────────────────────────────────
 
 export function requireSuperAdmin(req: Request) {
+  const sessionCookie = (req.headers.get("cookie") || "")
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("superadmin_session="))
+    ?.slice("superadmin_session=".length);
+  if (verifySuperAdminSessionToken(sessionCookie)) return null;
+
   const pwd = req.headers.get("x-admin-password");
   const expected = process.env.SUPERADMIN_PASSWORD;
   if (!expected || !pwd || !safeEqual(pwd, expected)) {
@@ -122,8 +129,25 @@ export function requireSuperAdmin(req: Request) {
 
 // ── Tenant Admin auth (IDOR protection) ────────────────
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET || process.env.SUPERADMIN_PASSWORD || "";
+const SESSION_SECRET = (() => {
+  if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+
+  const existingSecretMaterial = [
+    process.env.SUPERADMIN_PASSWORD,
+    process.env.CRON_SECRET,
+    process.env.STRIPE_WEBHOOK_SECRET,
+  ].filter((value): value is string => Boolean(value));
+
+  if (existingSecretMaterial.length > 0) {
+    return createHash("sha256")
+      .update(`neatx-session-v1\0${existingSecretMaterial.join("\0")}`)
+      .digest("hex");
+  }
+
+  return process.env.NODE_ENV !== "production"
+    ? "neatx-local-development-only"
+    : "";
+})();
 export const TENANT_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 giorni
 
 function safeEqual(a: string, b: string) {
@@ -131,6 +155,26 @@ function safeEqual(a: string, b: string) {
   const bufB = Buffer.from(b);
   if (bufA.length !== bufB.length) return false;
   return timingSafeEqual(bufA, bufB);
+}
+
+export function createSuperAdminSessionToken(maxAgeSeconds = 8 * 60 * 60) {
+  if (!SESSION_SECRET) throw new Error("SESSION_SECRET non configurato");
+  const expires = Date.now() + maxAgeSeconds * 1000;
+  const payload = `superadmin.${expires}`;
+  const signature = createHmac("sha256", SESSION_SECRET).update(payload).digest("hex");
+  return `v1.${payload}.${signature}`;
+}
+
+export function verifySuperAdminSessionToken(token: string | null | undefined) {
+  if (!token || !SESSION_SECRET) return false;
+  const parts = token.split(".");
+  if (parts.length !== 4 || parts[0] !== "v1" || parts[1] !== "superadmin") return false;
+  const expires = Number(parts[2]);
+  if (!Number.isFinite(expires) || expires <= Date.now()) return false;
+  const expected = createHmac("sha256", SESSION_SECRET)
+    .update(`superadmin.${parts[2]}`)
+    .digest("hex");
+  return safeEqual(parts[3], expected);
 }
 
 /**
@@ -141,6 +185,9 @@ export function createTenantSessionToken(
   slug: string,
   maxAgeSeconds = TENANT_SESSION_MAX_AGE
 ) {
+  if (!SESSION_SECRET) {
+    throw new Error("SESSION_SECRET non configurato");
+  }
   const expires = Date.now() + maxAgeSeconds * 1000;
   const payload = `${slug}.${expires}`;
   const sig = createHmac("sha256", SESSION_SECRET).update(payload).digest("hex");
@@ -165,19 +212,14 @@ export function verifyTenantSessionToken(
 }
 
 /**
- * Verifica il cookie admin del tenant: accetta il token firmato (nuovo)
- * o, in fallback legacy, la password admin (vecchi cookie ancora attivi).
+ * Verifica il cookie admin del tenant: accetta esclusivamente token firmati.
  */
 export function isTenantAdminCookieValid(
   cookieValue: string | null | undefined,
-  slug: string,
-  adminPassword: string | null | undefined
+  slug: string
 ) {
   if (!cookieValue) return false;
-  if (verifyTenantSessionToken(cookieValue, slug)) return true;
-  // Legacy: cookie = password in chiaro (da rimuovere quando i vecchi cookie scadono)
-  if (adminPassword && safeEqual(cookieValue, adminPassword)) return true;
-  return false;
+  return verifyTenantSessionToken(cookieValue, slug);
 }
 
 export async function requireTenantAdmin(tenantId: string | null | undefined) {
@@ -186,7 +228,7 @@ export async function requireTenantAdmin(tenantId: string | null | undefined) {
   }
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { slug: true, adminPassword: true },
+    select: { slug: true },
   });
   if (!tenant) {
     return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
@@ -195,9 +237,23 @@ export async function requireTenantAdmin(tenantId: string | null | undefined) {
   const cookieStore = await cookies();
   const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
 
-  if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword)) {
+  if (!isTenantAdminCookieValid(authCookie, tenant.slug)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
 
   return null; // Authorized
+}
+
+export async function requireTenantAdminBySlug(slug: string | null | undefined) {
+  if (!slug) {
+    return NextResponse.json({ error: "Tenant non identificato" }, { status: 400 });
+  }
+
+  const cookieStore = await cookies();
+  const authCookie = cookieStore.get(`admin_auth_${slug}`)?.value;
+  if (!isTenantAdminCookieValid(authCookie, slug)) {
+    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+  }
+
+  return null;
 }

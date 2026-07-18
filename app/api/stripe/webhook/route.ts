@@ -34,11 +34,22 @@ export async function POST(req: Request) {
         const tenantId = session.client_reference_id;
         const metadataType = session.metadata?.type;
 
-        if (metadataType === 'appointment_deposit' && session.metadata?.appointmentId) {
-          await prisma.appointment.update({
-            where: { id: session.metadata.appointmentId },
+        if (
+          metadataType === 'appointment_deposit' &&
+          session.payment_status === 'paid' &&
+          session.metadata?.appointmentId &&
+          session.metadata?.tenantSlug
+        ) {
+          const paid = await prisma.appointment.updateMany({
+            where: {
+              id: session.metadata.appointmentId,
+              stripeSession: session.id,
+              isPaid: false,
+              tenant: { slug: session.metadata.tenantSlug },
+            },
             data: { isPaid: true, paymentStatus: 'PAID' },
           });
+          if (paid.count === 0) break;
           const appt = await prisma.appointment.findUnique({
             where: { id: session.metadata.appointmentId },
             include: { tenant: true },
@@ -49,15 +60,37 @@ export async function POST(req: Request) {
             `📅 Prenotazione: <b>${appt?.date || ''}</b> alle <b>${appt?.time || ''}</b>\n` +
             `👤 Cliente: <b>${appt?.customerName || ''}</b>`
           );
-        } else if (tenantId && metadataType === 'message_package') {
+        } else if (tenantId && metadataType === 'message_package' && session.payment_status === 'paid') {
           const creditsToAdd = parseInt(session.metadata?.credits || '0', 10);
           const packageId = session.metadata?.packageId || 'unknown';
           if (creditsToAdd > 0) {
-            const ss = await prisma.storeSettings.upsert({
-              where: { tenantId },
-              create: { tenantId, smsCredits: creditsToAdd },
-              update: { smsCredits: { increment: creditsToAdd } },
-            });
+            const ss = await prisma.$transaction(async (tx) => {
+              const alreadyProcessed = await tx.activityLog.findFirst({
+                where: {
+                  tenantId,
+                  action: 'STRIPE_MESSAGE_PACKAGE',
+                  metadata: session.id,
+                },
+                select: { id: true },
+              });
+              if (alreadyProcessed) return null;
+              const updatedSettings = await tx.storeSettings.upsert({
+                where: { tenantId },
+                create: { tenantId, smsCredits: creditsToAdd },
+                update: { smsCredits: { increment: creditsToAdd } },
+              });
+              await tx.activityLog.create({
+                data: {
+                  tenantId,
+                  action: 'STRIPE_MESSAGE_PACKAGE',
+                  actor: 'stripe',
+                  message: `Pacchetto ${packageId} accreditato`,
+                  metadata: session.id,
+                },
+              });
+              return updatedSettings;
+            }, { isolationLevel: 'Serializable' });
+            if (!ss) break;
             const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
             await sendTelegramMessage(
               `💬 <b>PACCHETTO MESSAGGI</b>\n\n` +
@@ -66,9 +99,14 @@ export async function POST(req: Request) {
               `📊 Saldo attuale: <b>${ss.smsCredits}</b> messaggi`
             );
           }
-        } else if (tenantId) {
-          const purchasedPlan = session.metadata?.plan || 'pro';
-          const interval = session.metadata?.interval || 'month';
+        } else if (tenantId && metadataType === 'subscription' && session.status === 'complete') {
+          const purchasedPlan = ['pro', 'elite'].includes(session.metadata?.plan)
+            ? session.metadata.plan
+            : null;
+          const interval = ['month', 'year'].includes(session.metadata?.interval)
+            ? session.metadata.interval
+            : null;
+          if (!purchasedPlan || !interval) break;
           const stripeCustomerId = session.customer as string;
           const stripeSubscriptionId = session.subscription as string;
           const updateData: any = {
@@ -78,10 +116,13 @@ export async function POST(req: Request) {
           };
           if (stripeCustomerId) updateData.stripeCustomerId = stripeCustomerId;
           if (stripeSubscriptionId) updateData.stripeSubscriptionId = stripeSubscriptionId;
-          const updatedTenant = await prisma.tenant.update({
-            where: { id: tenantId },
+          const activated = await prisma.tenant.updateMany({
+            where: { id: tenantId, trialStatus: { not: 'converted' } },
             data: updateData,
           });
+          if (activated.count === 0) break;
+          const updatedTenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+          if (!updatedTenant) break;
           await sendTelegramMessage(
             `🟢 <b>NUOVO ABBONAMENTO</b>\n\n` +
             `🏪 <b>${updatedTenant.name}</b>\n` +

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sendTelegramMessage } from "@/lib/telegram";
+import { getTelegramWebhookSecret } from "@/lib/telegram-auth";
 
 async function answerCallbackQuery(botToken: string, callbackQueryId: string, text?: string) {
   const url = `https://api.telegram.org/bot${botToken}/answerCallbackQuery`;
@@ -44,6 +45,13 @@ async function sendMessage(botToken: string, chatId: string, text: string, reply
 }
 
 export async function POST(req: Request) {
+  const webhookSecret = getTelegramWebhookSecret();
+  if (
+    !webhookSecret ||
+    req.headers.get("x-telegram-bot-api-secret-token") !== webhookSecret
+  ) {
+    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+  }
   try {
     const body = await req.json();
     const botToken = process.env.TELEGRAM_PUBLIC_BOT_TOKEN;

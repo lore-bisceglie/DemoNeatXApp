@@ -1,6 +1,24 @@
 import { NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 
 export const dynamic = "force-dynamic";
+
+function validTwilioSignature(req: Request, params: URLSearchParams) {
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const signature = req.headers.get("x-twilio-signature");
+  if (!authToken || !signature) return false;
+
+  const configuredBase = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BASE_URL;
+  const requestUrl = configuredBase
+    ? `${configuredBase.replace(/\/$/, "")}${new URL(req.url).pathname}`
+    : req.url;
+  const sorted = Array.from(params.entries()).sort(([a], [b]) => a.localeCompare(b));
+  const payload = sorted.reduce((value, [key, item]) => value + key + item, requestUrl);
+  const expected = createHmac("sha1", authToken).update(payload).digest("base64");
+  const actualBuffer = Buffer.from(signature);
+  const expectedBuffer = Buffer.from(expected);
+  return actualBuffer.length === expectedBuffer.length && timingSafeEqual(actualBuffer, expectedBuffer);
+}
 
 // Questo endpoint viene chiamato da Twilio ogni volta che un cliente risponde
 // al numero NeatX su WhatsApp o SMS.
@@ -11,6 +29,10 @@ export async function POST(req: Request) {
   try {
     const formData = await req.text();
     const params = new URLSearchParams(formData);
+
+    if (!validTwilioSignature(req, params)) {
+      return NextResponse.json({ error: "Firma non valida" }, { status: 401 });
+    }
 
     const from = params.get("From") || "";
     const body = params.get("Body") || "";

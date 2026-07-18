@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireTenantAdmin } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 
 export async function POST(request: Request) {
   try {
@@ -17,8 +17,12 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-  const authError = await requireTenantAdmin(tenantId);
-  if (authError) return authError;
+    const authError = await requireTenantAdminOrDemo(request, tenantId, "customer-note", 30);
+    if (authError) return authError;
+
+    if (phone.length < 6 || phone.length > 20 || note.length > 2_000 || (preference?.length || 0) > 500) {
+      return NextResponse.json({ error: "Dati non validi" }, { status: 400 });
+    }
 
     const customerNote = await prisma.customerNote.upsert({
       where: {

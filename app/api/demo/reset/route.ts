@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
+import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ const addMinutes = (time: string, minutesToAdd: number) => {
 
 const getVisibleWeekDates = () => {
   const refDate = new Date();
+  refDate.setHours(12, 0, 0, 0);
 
   if (refDate.getDay() === 0) {
     refDate.setDate(refDate.getDate() + 2);
@@ -25,6 +27,10 @@ const getVisibleWeekDates = () => {
 
   if (refDate.getDay() === 1) {
     refDate.setDate(refDate.getDate() + 1);
+  }
+
+  if (refDate.getDay() === 6) {
+    refDate.setDate(refDate.getDate() + 3);
   }
 
   const diffToTue = 2 - refDate.getDay();
@@ -38,8 +44,12 @@ const getVisibleWeekDates = () => {
   });
 };
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const rate = await checkRequestRateLimit(request, "demo-reset", 5, 60 * 60);
+    if (!rate.success) {
+      return NextResponse.json({ error: "Riprova più tardi" }, { status: 429 });
+    }
     const services = await prisma.service.findMany({
       where: {
         tenantId: DEMO_TENANT_ID,

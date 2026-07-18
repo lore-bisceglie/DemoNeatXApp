@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,6 +10,9 @@ export async function GET(request: Request) {
   if (!tenantId) {
     return NextResponse.json({ error: "Missing tenantId" }, { status: 400 });
   }
+
+  const authError = await requireTenantAdmin(tenantId);
+  if (authError) return authError;
 
   try {
     const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });

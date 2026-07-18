@@ -1,67 +1,65 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
-import { cookies } from "next/headers";
-import { isTenantAdminCookieValid } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 
 export async function POST(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
     const id = searchParams.get("id");
-    const phone = searchParams.get("phone");
-    const name = searchParams.get("name");
-    const date = searchParams.get("date");
-
-    if (!id || !phone || !date) {
+    if (!id) {
       return NextResponse.json(
         { error: "Parametri mancanti" },
         { status: 400 }
       );
     }
 
-    const cookieStore = await cookies();
     const appointment = await prisma.appointment.findUnique({
       where: { id },
-      select: { id: true, tenantId: true, tenant: { select: { slug: true, adminPassword: true } } },
+      select: {
+        id: true,
+        tenantId: true,
+        customerPhone: true,
+        customerName: true,
+        date: true,
+        time: true,
+      },
     });
 
-    if (!appointment) {
+    if (!appointment || !appointment.tenantId) {
       return NextResponse.json(
         { error: "Appuntamento non trovato" },
         { status: 404 }
       );
     }
 
-    const authCookie = cookieStore.get("admin_auth_" + appointment.tenant?.slug)?.value;
-    if (!appointment.tenant || !isTenantAdminCookieValid(authCookie, appointment.tenant.slug, appointment.tenant.adminPassword)) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-    }
+    const tenantId = appointment.tenantId;
+    const authError = await requireTenantAdminOrDemo(request, tenantId, "no-show", 30);
+    if (authError) return authError;
 
-    await prisma.noShow.create({
-      data: {
-        customerPhone: phone,
-        customerName: name || "Sconosciuto",
-        date,
-        tenantId: appointment.tenantId,
-      },
-    });
-
-    await prisma.appointment.delete({
-      where: {
-        id,
-      },
-    });
+    await prisma.$transaction([
+      prisma.noShow.create({
+        data: {
+          customerPhone: appointment.customerPhone,
+          customerName: appointment.customerName,
+          date: appointment.date,
+          tenantId,
+        },
+      }),
+      prisma.appointment.delete({ where: { id } }),
+    ]);
 
     await logActivity({
       action: "NO_SHOW",
       actor: "admin",
-      message: `${name || "Sconosciuto"} segnato come assente (No-Show)`,
-      appointmentId: id || undefined,
-      customerName: name || "Sconosciuto",
-      customerPhone: phone || undefined,
-      date: date || undefined,
-      tenantId: appointment.tenantId || undefined,
+      message: `${appointment.customerName} segnato come assente (No-Show)`,
+      appointmentId: id,
+      customerName: appointment.customerName,
+      customerPhone: appointment.customerPhone,
+      date: appointment.date,
+      time: appointment.time,
+      tenantId,
     });
 
     return NextResponse.json({

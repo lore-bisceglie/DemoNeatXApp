@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
+import { prisma } from '@/lib/prisma';
+import { requireTenantAdmin } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +17,15 @@ export async function POST(req: Request) {
 
     if (!tenantId || !packageId) {
       return NextResponse.json({ error: 'Dati mancanti' }, { status: 400 });
+    }
+    const authError = await requireTenantAdmin(tenantId);
+    if (authError) return authError;
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { slug: true },
+    });
+    if (!tenant || (slug && slug !== tenant.slug)) {
+      return NextResponse.json({ error: 'Tenant non valido' }, { status: 400 });
     }
 
     const pkg = PACKAGES[packageId];
@@ -44,8 +55,8 @@ export async function POST(req: Request) {
         credits: String(pkg.credits),
         packageId,
       },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://neatx.store'}/t/${slug || 'demo'}/admin?tab=agenda&recharge=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://neatx.store'}/t/${slug || 'demo'}/admin?tab=agenda&recharge=cancelled`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://neatx.store'}/t/${tenant.slug}/admin?tab=agenda&recharge=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://neatx.store'}/t/${tenant.slug}/admin?tab=agenda&recharge=cancelled`,
     });
 
     return NextResponse.json({ url: session.url });

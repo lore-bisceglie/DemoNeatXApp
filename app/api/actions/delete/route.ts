@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { isTenantAdminCookieValid } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +14,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "ID mancante" }, { status: 400 });
   }
 
-  const cookieStore = await cookies();
   const appointment = await prisma.appointment.findUnique({
     where: { id },
-    select: { id: true, customerName: true, customerPhone: true, date: true, time: true, tenantId: true, tenant: { select: { slug: true, adminPassword: true } } },
+    select: { id: true, customerName: true, customerPhone: true, date: true, time: true, tenantId: true },
   });
   if (!appointment) {
     return NextResponse.json({ error: "Appuntamento non trovato" }, { status: 404 });
   }
 
-  const authCookie = cookieStore.get("admin_auth_" + appointment.tenant?.slug)?.value;
-  if (!appointment.tenant || !isTenantAdminCookieValid(authCookie, appointment.tenant.slug, appointment.tenant.adminPassword)) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-  }
+  const authError = await requireTenantAdminOrDemo(req, appointment.tenantId, "delete", 30);
+  if (authError) return authError;
 
   await prisma.appointment.delete({ where: { id } });
 

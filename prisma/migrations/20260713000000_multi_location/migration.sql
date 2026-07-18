@@ -69,6 +69,8 @@ ADD COLUMN IF NOT EXISTS "locationId" TEXT;
 CREATE INDEX IF NOT EXISTS "Appointment_locationId_idx" ON "Appointment"("locationId");
 
 ALTER TABLE "Appointment" 
+DROP CONSTRAINT IF EXISTS "Appointment_locationId_fkey";
+ALTER TABLE "Appointment"
 ADD CONSTRAINT "Appointment_locationId_fkey" 
 FOREIGN KEY ("locationId") REFERENCES "Location"("id") 
 ON DELETE SET NULL ON UPDATE CASCADE;
@@ -80,36 +82,40 @@ ADD COLUMN IF NOT EXISTS "locationId" TEXT;
 CREATE INDEX IF NOT EXISTS "Staff_locationId_idx" ON "Staff"("locationId");
 
 ALTER TABLE "Staff" 
+DROP CONSTRAINT IF EXISTS "Staff_locationId_fkey";
+ALTER TABLE "Staff"
 ADD CONSTRAINT "Staff_locationId_fkey" 
 FOREIGN KEY ("locationId") REFERENCES "Location"("id") 
 ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- Location FKs
 ALTER TABLE "Location" 
+DROP CONSTRAINT IF EXISTS "Location_tenantId_fkey";
+ALTER TABLE "Location"
 ADD CONSTRAINT "Location_tenantId_fkey" 
 FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") 
 ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "LocationSettings" 
+DROP CONSTRAINT IF EXISTS "LocationSettings_locationId_fkey";
+ALTER TABLE "LocationSettings"
 ADD CONSTRAINT "LocationSettings_locationId_fkey" 
 FOREIGN KEY ("locationId") REFERENCES "Location"("id") 
 ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- ServiceLocation FKs
 ALTER TABLE "ServiceLocation" 
+DROP CONSTRAINT IF EXISTS "ServiceLocation_serviceId_fkey";
+ALTER TABLE "ServiceLocation"
 ADD CONSTRAINT "ServiceLocation_serviceId_fkey" 
 FOREIGN KEY ("serviceId") REFERENCES "Service"("id") 
 ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE "ServiceLocation" 
+DROP CONSTRAINT IF EXISTS "ServiceLocation_locationId_fkey";
+ALTER TABLE "ServiceLocation"
 ADD CONSTRAINT "ServiceLocation_locationId_fkey" 
 FOREIGN KEY ("locationId") REFERENCES "Location"("id") 
-ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- Location FKs
-ALTER TABLE "Location" 
-ADD CONSTRAINT "Location_tenantId_fkey" 
-FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") 
 ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- Staff FK (già esiste per tenantId, aggiungiamo locationId)

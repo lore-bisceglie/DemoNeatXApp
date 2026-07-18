@@ -8,7 +8,7 @@ async function run() {
   const tenant = await prisma.tenant.create({
     data: {
       id: tenantId, slug, name: 'Salone Premium Test', ownerEmail: 'premium2@test.com', phone: '393330000000',
-      plan: 'elite', trialStatus: 'converted', isDemoData: true, adminPassword: 'admin',
+      plan: 'elite', trialStatus: 'converted', isDemoData: true,
     }
   });
 

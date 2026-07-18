@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../lib/password";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +22,7 @@ async function runTests() {
         city: "Testville",
         phone: "+390000000000",
         address: "Via dei Test 1",
-        adminPassword: "password123",
+        ownerPasswordHash: hashPassword("password123"),
         plan: "pro",
         trialStatus: "active",
         services: {

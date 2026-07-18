@@ -35,43 +35,44 @@ export default function SuperAdminAgentsPage() {
   const [authError, setAuthError] = useState("");
 
   useEffect(() => {
-    const saved = sessionStorage.getItem("superadmin_pwd");
-    if (saved) {
-      setPassword(saved);
-      setIsAuthenticated(true);
-    } else {
-      setLoading(false);
-    }
+    fetchStatus();
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && password) {
+    if (isAuthenticated) {
       fetchStatus();
     }
   }, [isAuthenticated]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    sessionStorage.setItem("superadmin_pwd", password);
-    setIsAuthenticated(true);
-    setAuthError("");
-    setLoading(false);
+    const res = await fetch("/api/superadmin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+    if (!res.ok) {
+      setAuthError("Password errata");
+      setLoading(false);
+      return;
+    }
+    setPassword("");
+    await fetchStatus();
   };
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch("/api/agents/status", {
-        headers: { "x-admin-password": password },
-      });
+      const res = await fetch("/api/agents/status");
       if (res.status === 401) {
         setAuthError("Password errata");
         setIsAuthenticated(false);
-        sessionStorage.removeItem("superadmin_pwd");
         setLoading(false);
         return;
       }
       const data = await res.json();
+      setIsAuthenticated(true);
+      setAuthError("");
       setStatus(data);
     } catch (e) {
       console.error(e);
@@ -85,7 +86,6 @@ export default function SuperAdminAgentsPage() {
     try {
       const res = await fetch("/api/agents/trigger", {
         method: "POST",
-        headers: { "x-admin-password": password },
       });
       if (res.ok) {
         setLog(prev => [...prev, `[${agentId}] ✅ Workflow triggerato su GitHub. Controlla Actions > auto-neatx-agents.`]);

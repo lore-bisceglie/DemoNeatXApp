@@ -111,11 +111,7 @@ export default function DeleteButton({
       const noCache = Date.now();
 
       const res = await fetch(
-        `/api/actions/noshow?id=${appointmentId}&phone=${encodeURIComponent(
-          phone
-        )}&name=${encodeURIComponent(customerName)}&date=${encodeURIComponent(
-          date
-        )}&t=${noCache}`,
+        `/api/actions/noshow?id=${appointmentId}&t=${noCache}`,
         {
           method: "POST",
         }

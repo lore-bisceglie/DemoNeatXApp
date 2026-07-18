@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sendTelegramMessage } from "@/lib/telegram";
 import { prisma } from "@/lib/prisma";
 import { createTenantSessionToken } from "@/lib/auth";
+import { getTelegramWebhookSecret } from "@/lib/telegram-auth";
 
 // Invia una risposta al click di un bottone inline per far smettere di caricare l'orologino
 async function answerCallbackQuery(callbackQueryId: string, text?: string) {
@@ -39,6 +40,13 @@ async function editMessageText(chatId: string, messageId: number, text: string) 
 
 export async function POST(req: Request) {
   try {
+    const webhookSecret = getTelegramWebhookSecret();
+    if (
+      !webhookSecret ||
+      req.headers.get("x-telegram-bot-api-secret-token") !== webhookSecret
+    ) {
+      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+    }
     const body = await req.json();
     const authorizedChatId = process.env.TELEGRAM_CHAT_ID;
 

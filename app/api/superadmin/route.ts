@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { sendWelcomeEmail } from '@/lib/email';
 import { sendTelegramMessage } from '@/lib/telegram';
 import { requireSuperAdmin } from '@/lib/auth';
+import { hashPassword } from '@/lib/password';
 
 export async function POST(req: Request) {
   const auth = requireSuperAdmin(req);
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { 
-      name, slug, template, adminPassword, ownerEmail,
+      name, slug, template, password, ownerEmail,
       phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
       logoUrl, themeColor, staffSheetUrl
     } = body;
@@ -21,7 +22,10 @@ export async function POST(req: Request) {
     }
 
     // Genera una password casuale se l'admin non la fornisce
-    const finalPassword = adminPassword || Math.random().toString(36).slice(-8);
+    if (typeof password !== 'string' || password.length < 8) {
+      return NextResponse.json({ error: 'La password deve avere almeno 8 caratteri' }, { status: 400 });
+    }
+    const finalPassword = password;
 
     // Controlla se lo slug esiste già
     const existing = await prisma.tenant.findUnique({
@@ -153,7 +157,7 @@ export async function POST(req: Request) {
       data: {
         name,
         slug,
-        adminPassword: finalPassword,
+        ownerPasswordHash: hashPassword(finalPassword),
         trialEndsAt: trialLimit,
         phone: phone || null,
         address: address || null,
@@ -229,7 +233,7 @@ export async function POST(req: Request) {
 
     if (ownerEmail) {
       const tenantUrl = `https://${slug}.neatx.store`;
-      await sendWelcomeEmail(ownerEmail, name, finalPassword, tenantUrl).catch(e =>
+      await sendWelcomeEmail(ownerEmail, name, tenantUrl).catch(e =>
         console.error("[Email] Errore invio benvenuto da superadmin:", e)
       );
     }
@@ -242,7 +246,10 @@ export async function POST(req: Request) {
       `🔗 https://${slug}.neatx.store`
     );
 
-    return NextResponse.json({ success: true, tenant: newTenant });
+    return NextResponse.json({
+      success: true,
+      tenant: { id: newTenant.id, slug: newTenant.slug, name: newTenant.name },
+    });
   } catch (error) {
     console.error('Errore SuperAdmin:', error);
     return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
@@ -263,7 +270,7 @@ export async function PATCH(req: Request) {
 
     const allowedFields = [
       'name', 'ownerEmail', 'phone', 'address', 'instagramUrl', 'mapsLink',
-      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor', 'adminPassword',
+      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor',
     ];
 
     const updateData: Record<string, any> = {};
@@ -271,6 +278,13 @@ export async function PATCH(req: Request) {
       if (data[field] !== undefined) {
         updateData[field] = data[field];
       }
+    }
+
+    if (typeof data.password === 'string' && data.password.trim()) {
+      if (data.password.length < 8) {
+        return NextResponse.json({ error: 'La password deve avere almeno 8 caratteri' }, { status: 400 });
+      }
+      updateData.ownerPasswordHash = hashPassword(data.password);
     }
 
     if (Object.keys(updateData).length === 0) {

@@ -56,8 +56,8 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [notes, setNotes] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [cancelToken, setCancelToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -101,7 +101,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
       }
     }
     fetchSlots();
-  }, [selectedDate, selectedService, location.id, tenant.id]);
+  }, [selectedDate, selectedService, location.id, tenant.id, services]);
 
   var selectedServiceData = useMemo(function () {
     return services.find(function (s) { return s.id === selectedService; });
@@ -110,7 +110,10 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   function handleNext() {
     if (step === "service" && selectedService) { setStep("datetime"); return; }
     if (step === "datetime" && selectedTime) { setStep("details"); return; }
-    if (step === "details" && name && phone) { setStep("confirm"); return; }
+    if (step === "details" && name.trim() && phone.trim() && privacyAccepted) {
+      setStep("confirm");
+      return;
+    }
   }
 
   function handlePrev() {
@@ -120,7 +123,16 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   }
 
   async function handleSubmit() {
-    if (!name || !phone || !selectedService || !selectedDate || !selectedTime) { return; }
+    if (
+      !name.trim() ||
+      !phone.trim() ||
+      !privacyAccepted ||
+      !selectedService ||
+      !selectedDate ||
+      !selectedTime
+    ) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -139,6 +151,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
           duration: selectedServiceData ? selectedServiceData.duration : 30,
           locationId: location.id,
           source: "ONLINE",
+          privacyAccepted,
         }),
       });
 
@@ -146,6 +159,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
 
       if (!res.ok) { throw new Error(data.error || "Errore prenotazione"); }
 
+      setCancelToken(typeof data.cancelToken === "string" ? data.cancelToken : "");
       setSuccess(true);
     } catch (e: any) {
       setError(e.message);
@@ -185,13 +199,21 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Prenotazione Confermata!</h1>
           <p className="text-slate-400 mb-6">
-            Ti abbiamo inviato un WhatsApp/SMS con i dettagli e il link per disdire.
+            La prenotazione è stata registrata correttamente.
           </p>
           <div className="bg-[#131c31] rounded-2xl p-4 mb-6 text-left">
             <p className="font-bold text-white mb-2">{selectedServiceData ? selectedServiceData.name : ""}</p>
             <p className="text-slate-300">{dateStr} alle {selectedTime}</p>
             <p className="text-slate-400 text-sm mt-1">Sede: {location.name}</p>
           </div>
+          {cancelToken && (
+            <Link
+              href={`/cancel/${cancelToken}`}
+              className="mb-3 block w-full rounded-xl border border-red-500/30 bg-red-500/10 py-3 font-bold text-red-300"
+            >
+              Gestisci o annulla prenotazione
+            </Link>
+          )}
           <Link href={"/t/" + tenant.slug} className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-3 rounded-xl block">
             Torna alla Home
           </Link>
@@ -224,16 +246,19 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
 
   function renderServiceStep() {
     var cards = [];
-    for (var i = 0; i < services.length; i++) {
-      var svc = services[i];
-      var isSelected = selectedService === svc.id;
-      var cardClass = isSelected
+    for (let i = 0; i < services.length; i++) {
+      const svc = services[i];
+      const isSelected = selectedService === svc.id;
+      const cardClass = isSelected
         ? "w-full relative p-5 rounded-2xl border-2 border-cyan-500 bg-cyan-500/5"
         : "w-full relative p-5 rounded-2xl border-2 border-[#1a264a] bg-[#0b1221] hover:border-cyan-500/30";
       cards.push(
         <button
           key={svc.id}
-          onClick={function () { setSelectedService(svc.id); }}
+          onClick={function () {
+            setSelectedService(svc.id);
+            setSelectedTime(null);
+          }}
           className={cardClass}
         >
           <div className="flex items-start gap-4">
@@ -265,7 +290,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   function renderDateTimeStep() {
     var today = new Date();
     var todayStr = today.toISOString().split("T")[0];
-    var maxDate = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
+    var maxDate = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000);
     var maxStr = maxDate.toISOString().split("T")[0];
 
     function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -276,10 +301,10 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
     var slotButtons: any[] = [];
     var noSlots = availableSlots.length === 0 && !loadingSlots;
 
-    for (var i = 0; i < availableSlots.length; i++) {
-      var sl = availableSlots[i];
-      var isSlotSelected = selectedTime === sl;
-      var btnClass = isSlotSelected
+    for (let i = 0; i < availableSlots.length; i++) {
+      const sl = availableSlots[i];
+      const isSlotSelected = selectedTime === sl;
+      const btnClass = isSlotSelected
         ? "px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-cyan-500 text-white"
         : "px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-[#131c31] border border-[#1a264a] text-slate-300 hover:border-cyan-500/30 hover:text-white";
       slotButtons.push(
@@ -360,26 +385,21 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-1">Email</label>
+        <div className="flex items-start gap-3 rounded-xl border border-[#1e2b4a] bg-[#131c31] p-4">
           <input
-            type="email"
-            value={email}
-            onChange={function (e) { setEmail(e.target.value); }}
-            placeholder="mario@email.com"
-            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+            id="location-booking-privacy"
+            type="checkbox"
+            checked={privacyAccepted}
+            onChange={(event) => setPrivacyAccepted(event.target.checked)}
+            className="mt-1 h-4 w-4 accent-cyan-500"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-slate-400 mb-1">Note (opzionale)</label>
-          <textarea
-            value={notes}
-            onChange={function (e) { setNotes(e.target.value); }}
-            rows={3}
-            placeholder="Allergie, preferenze, note particolari..."
-            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none resize-none"
-          />
+          <label htmlFor="location-booking-privacy" className="text-xs leading-relaxed text-slate-400">
+            Ho letto e accetto la{" "}
+            <Link href="/privacy" className="text-cyan-300 underline">
+              Privacy Policy
+            </Link>{" "}
+            per la gestione dell&apos;appuntamento.
+          </label>
         </div>
       </div>
     );
@@ -417,18 +437,11 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
           </dl>
         </div>
 
-        {notes && (
-          <div className="bg-[#131c31] rounded-xl p-4 border border-[#1a2642]">
-            <p className="text-xs text-slate-500 mb-1">Note</p>
-            <p className="text-slate-300">{notes}</p>
-          </div>
-        )}
-
         <div className="flex items-center gap-2 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
           <AlertCircle size={20} className="text-amber-400 flex-shrink-0" />
           <p className="text-amber-300 text-sm">
-            Riceverai un WhatsApp/SMS di conferma con link per disdire.
-            Cancella almeno 2 ore prima per non perdere credito.
+            Dopo la conferma potrai aprire il link personale per gestire o annullare
+            l&apos;appuntamento.
           </p>
         </div>
       </div>
@@ -438,7 +451,9 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   var canNext = false;
   if (step === "service") { canNext = selectedService !== null; }
   else if (step === "datetime") { canNext = selectedTime !== null; }
-  else if (step === "details") { canNext = name !== "" && phone !== ""; }
+  else if (step === "details") {
+    canNext = name.trim() !== "" && phone.trim() !== "" && privacyAccepted;
+  }
 
   var nextBtnClass = canNext
     ? "flex-1 px-6 py-3 rounded-xl font-bold transition-all bg-gradient-to-r " + gradient + " text-white hover:from-cyan-400 hover:to-blue-500"

@@ -60,12 +60,10 @@ export default function CancelPage() {
   }, [token]);
 
   useEffect(() => {
-    if (!appointment || !rescheduleDate || !appointment.tenantId) return;
-
-    const duration = appointment.service?.duration || 15;
+    if (!appointment || !rescheduleDate || !appointment.tenantId || !appointment.serviceId) return;
 
     fetch(
-      `/api/availability?date=${rescheduleDate}&tenantId=${appointment.tenantId}&duration=${duration}`
+      `/api/availability?date=${encodeURIComponent(rescheduleDate)}&tenantId=${encodeURIComponent(appointment.tenantId)}&serviceId=${encodeURIComponent(appointment.serviceId)}${appointment.locationId ? `&locationId=${encodeURIComponent(appointment.locationId)}` : ""}${appointment.staffId ? `&staffId=${encodeURIComponent(appointment.staffId)}` : ""}`
     )
       .then((res) => res.json())
       .then((data) => {

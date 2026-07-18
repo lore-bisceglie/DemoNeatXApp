@@ -10,23 +10,90 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
     const { slug } = await context.params;
     const tenant = await prisma.tenant.findUnique({
       where: { slug: slug },
-      include: {
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        category: true,
+        city: true,
+        description: true,
+        phone: true,
+        address: true,
+        instagramUrl: true,
+        facebookUrl: true,
+        tiktokUrl: true,
+        websiteUrl: true,
+        mapsLink: true,
+        bookingUrl: true,
+        logoUrl: true,
+        themeColor: true,
+        openTime: true,
+        closeTime: true,
+        breakStart: true,
+        breakEnd: true,
+        closedDays: true,
+        trialEndsAt: true,
+        trialStatus: true,
+        isDemoData: true,
+        plan: true,
         services: {
-          include: {
+          select: {
+            id: true,
+            name: true,
+            duration: true,
+            price: true,
             locations: {
-              where: { isActive: true }
-            }
-          }
+              where: { isActive: true },
+              select: { locationId: true, price: true, isActive: true },
+            },
+          },
         },
-        storeSettings: true,
+        storeSettings: {
+          select: {
+            paymentStrategy: true,
+            paymentFixedAmount: true,
+            paymentPercentage: true,
+            paymentMandatory: true,
+            stripeOnboardingComplete: true,
+          },
+        },
         staff: {
-          include: { services: true, locations: { select: { locationId: true } } }
+          select: {
+            id: true,
+            name: true,
+            locationId: true,
+            services: { select: { id: true, name: true, duration: true, price: true } },
+            locations: { select: { locationId: true } },
+          },
         },
         locations: {
           where: { isActive: true },
           orderBy: { isMain: 'desc' },
-        }
-      }
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            city: true,
+            phone: true,
+            mapsLink: true,
+            isMain: true,
+            isActive: true,
+            openTime: true,
+            closeTime: true,
+            breakStart: true,
+            breakEnd: true,
+            closedDays: true,
+            settings: {
+              select: {
+                paymentStrategy: true,
+                paymentFixedAmount: true,
+                paymentPercentage: true,
+                paymentMandatory: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!tenant) {
@@ -43,25 +110,11 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
         ? "expired"
         : tenant.trialStatus;
 
-    // Rimuovi i campi sensibili prima di restituire i dati al client pubblico
-    const {
-      adminPassword,
-      ownerPasswordHash,
-      stripeCustomerId,
-      stripeSubscriptionId,
-      referralCode,
-      referredByCode,
-      ownerEmail,
-      staffSheetUrl,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ...publicTenant
-    } = tenant;
-
     if (isTrialExpired && !isPremium) {
-      return NextResponse.json({ ...publicTenant, trialStatus: effectiveTrialStatus, trialExpired: true, isPremium });
+      return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: true, isPremium });
     }
 
-    return NextResponse.json({ ...publicTenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium }, {
+    return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium }, {
       headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
     });
   } catch (error) {
@@ -74,14 +127,14 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
     const { slug } = await context.params;
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
 
-    if (!tenant?.adminPassword) {
+    if (!tenant) {
       return NextResponse.json({ error: "Negozio non trovato" }, { status: 404 });
     }
 
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${slug}`)?.value;
 
-    if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
+    if (!isTenantAdminCookieValid(authCookie, slug)) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
@@ -101,16 +154,10 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
     }
 
     if (action === "convert") {
-      const updated = await prisma.tenant.update({
-        where: { slug },
-        data: {
-          isDemoData: false,
-          trialStatus: "converted",
-          plan: "pro",
-          convertedAt: tenant.convertedAt || new Date(),
-        },
-      });
-      return NextResponse.json({ tenant: updated });
+      return NextResponse.json(
+        { error: "Il piano può essere attivato solo tramite pagamento verificato." },
+        { status: 403 }
+      );
     }
 
     const cleanString = (value: unknown, fallback?: string | null) =>

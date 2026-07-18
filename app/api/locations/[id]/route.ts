@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import { requireTenantAdmin } from '@/lib/auth';
 
 async function getTenantId(slug?: string): Promise<{ id: string; plan: string } | null> {
   if (!slug) return null;
@@ -18,6 +19,8 @@ export async function GET(
     const slug = searchParams.get('slug') || cookieStore.get('neatx_tenant_slug')?.value;
     const tenant = await getTenantId(slug);
     if (!tenant) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
+    const authError = await requireTenantAdmin(tenant.id);
+    if (authError) return authError;
 
     const { id } = await params;
 
@@ -52,6 +55,8 @@ export async function PUT(
     const slug = searchParams.get('slug') || cookieStore.get('neatx_tenant_slug')?.value;
     const tenant = await getTenantId(slug);
     if (!tenant) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
+    const authError = await requireTenantAdmin(tenant.id);
+    if (authError) return authError;
 
     const { id } = await params;
     const body = await request.json();
@@ -142,6 +147,8 @@ export async function DELETE(
     const slug = searchParams.get('slug') || cookieStore.get('neatx_tenant_slug')?.value;
     const tenant = await getTenantId(slug);
     if (!tenant) return NextResponse.json({ error: 'Tenant non identificato' }, { status: 400 });
+    const authError = await requireTenantAdmin(tenant.id);
+    if (authError) return authError;
 
     const { id } = await params;
 

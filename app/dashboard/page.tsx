@@ -117,6 +117,7 @@ export default async function Dashboard(props: {
   ];
 
   const refDate = new Date(now);
+  refDate.setHours(12, 0, 0, 0);
 
   refDate.setDate(refDate.getDate() + weekOffset * 7);
 
@@ -126,6 +127,10 @@ export default async function Dashboard(props: {
 
   if (refDate.getDay() === 1) {
     refDate.setDate(refDate.getDate() + 1);
+  }
+
+  if (refDate.getDay() === 6) {
+    refDate.setDate(refDate.getDate() + 3);
   }
 
   const diffToTue = 2 - refDate.getDay();

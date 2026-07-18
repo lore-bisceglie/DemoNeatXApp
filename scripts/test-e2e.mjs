@@ -38,7 +38,7 @@ async function run() {
     }),
   });
   check("Registrazione", reg.status === 200 && reg.data.success);
-  const { slug, publicUrl, adminUrl, adminPassword } = reg.data;
+  const { slug, publicUrl, adminUrl } = reg.data;
 
   const ten = await jsonFetch(`${BASE}/api/tenant/${slug}`);
   check("GET tenant", ten.status === 200 && ten.data.id);
@@ -71,7 +71,7 @@ async function run() {
   const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   const dateStr = tomorrow.toISOString().split("T")[0];
 
-  console.log("  Setup completato:", { slug, tenantId, svcId, staffId, adminPassword });
+  console.log("  Setup completato:", { slug, tenantId, svcId, staffId });
 
   // ─────────────────────────────────────────────
   // API CANCELLO PRENOTAZIONE
@@ -126,7 +126,8 @@ async function run() {
   // TELEGRAM MAGIC LOGIN
   // ─────────────────────────────────────────────
   console.log("\n4️⃣  TELEGRAM MAGIC LOGIN");
-  const magic = await fetch(`${BASE}/api/telegram/magic?slug=${slug}&secret=${adminPassword}`, { redirect: "manual" });
+  const sessionToken = cookie.split("=").slice(1).join("=");
+  const magic = await fetch(`${BASE}/api/telegram/magic?slug=${slug}&secret=${encodeURIComponent(sessionToken)}`, { redirect: "manual" });
   const magicOk = magic.status >= 300 && magic.status < 400 && magic.headers.get("set-cookie")?.includes("admin_auth_");
   check("Telegram magic login", magicOk, `${magic.status} ${magic.headers.get("set-cookie")?.slice(0, 40) || ''}`);
 

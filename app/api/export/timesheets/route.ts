@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      select: { id: true, slug: true, adminPassword: true, name: true, openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true, staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
+      select: { id: true, slug: true, name: true, openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true, staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
     });
 
     if (!tenant) {
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 
     const cookieStore = await cookies();
     const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword)) {
+    if (!isTenantAdminCookieValid(authCookie, tenant.slug)) {
       return new NextResponse("Non autorizzato", { status: 401 });
     }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { syncStaffFromSheet } from '@/lib/sheets';
+import { requireTenantAdmin } from '@/lib/auth';
 
 export async function POST(
   request: Request,
@@ -18,6 +19,9 @@ export async function POST(
     if (!location) {
       return NextResponse.json({ error: "Sede non trovata" }, { status: 404 });
     }
+
+    const authError = await requireTenantAdmin(location.tenantId);
+    if (authError) return authError;
 
     await prisma.location.update({
       where: { id },

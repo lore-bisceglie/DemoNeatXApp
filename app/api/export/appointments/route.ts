@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { csvLine } from "@/lib/csv";
-import { cookies } from "next/headers";
-import { isTenantAdminCookieValid } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 
 export const dynamic = "force-dynamic";
 
@@ -15,17 +14,14 @@ export async function GET(request: Request) {
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { slug: true, adminPassword: true },
+    select: { slug: true },
   });
   if (!tenant) {
     return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
   }
 
-  const cookieStore = await cookies();
-  const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
-  if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword)) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-  }
+  const authError = await requireTenantAdminOrDemo(request, tenantId, "export-appointments", 20);
+  if (authError) return authError;
 
   const appointments = await prisma.appointment.findMany({
     where: { tenantId },

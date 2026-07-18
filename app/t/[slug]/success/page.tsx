@@ -14,25 +14,42 @@ export default async function SuccessPage(props: {
   const appId = searchParams.app_id as string;
 
   let isValid = false;
-  let appointment = null;
+  let appointment = appId
+    ? await prisma.appointment.findFirst({
+        where: { id: appId, tenant: { slug } },
+        include: {
+          service: true,
+          staff: true,
+          tenant: { include: { storeSettings: true } },
+          location: { include: { settings: true } },
+        },
+      })
+    : null;
 
-  if (sessionId && appId) {
+  if (sessionId && appointment && appointment.stripeSession === sessionId) {
     try {
       // Se è il nostro mock fallback
-      if (sessionId.startsWith("mock_")) {
-        isValid = true;
-      } else {
-        // Verifica con Stripe
-        const session = await stripe.checkout.sessions.retrieve(sessionId);
-        if (session && session.payment_status === "paid") {
-          isValid = true;
-        }
+      const stripeAccountId =
+        appointment.location?.settings?.stripeAccountId ||
+        appointment.tenant?.storeSettings?.stripeAccountId;
+      if (stripeAccountId && !stripeAccountId.startsWith("acct_demo_")) {
+        const session = await stripe.checkout.sessions.retrieve(
+          sessionId,
+          {},
+          { stripeAccount: stripeAccountId }
+        );
+        isValid = Boolean(
+          session.payment_status === "paid" &&
+          session.metadata?.type === "appointment_deposit" &&
+          session.metadata?.appointmentId === appointment.id &&
+          session.metadata?.tenantSlug === slug
+        );
       }
 
       if (isValid) {
         // Aggiorna lo stato nel DB a PAGATO
         await prisma.appointment.updateMany({
-          where: { id: appId },
+          where: { id: appointment.id, stripeSession: sessionId },
           data: { paymentStatus: "PAID", isPaid: true }
         });
       }
@@ -44,19 +61,21 @@ export default async function SuccessPage(props: {
   if (appId) {
     try {
       // Recupera i dettagli per mostrare il riepilogo (indipendentemente da stripe)
-      appointment = await prisma.appointment.findUnique({
-        where: { id: appId },
+      appointment = await prisma.appointment.findFirst({
+        where: { id: appId, tenant: { slug } },
         include: {
           service: true,
           staff: true,
-          tenant: true,
-          location: true
+          tenant: { include: { storeSettings: true } },
+          location: { include: { settings: true } },
         }
       });
     } catch (err) {
       console.error("Errore nel recupero appuntamento", err);
     }
   }
+
+  isValid = isValid || Boolean(appointment?.isPaid && appointment.paymentStatus === "PAID");
 
   // Generazione Link Google Calendar
   let googleCalLink = "";
@@ -148,7 +167,7 @@ export default async function SuccessPage(props: {
               href={`/t/${slug}/admin`}
               className="block w-full py-3 bg-transparent hover:bg-white/5 text-slate-400 text-sm font-medium rounded-xl transition"
             >
-              {sessionId?.startsWith("mock_") ? "Torna in Dashboard (Demo)" : "Vai in Dashboard"}
+              Vai in Dashboard
             </Link>
           )}
         </div>
