@@ -1,32 +1,66 @@
 {
-  "generated_at": "2026-07-18T09:48:37.661476+02:00",
+  "generated_at": "2026-07-18T11:24:10.084589+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
-    "blog_titles_count": 6,
-    "today_niche": "Centri Estetici"
+    "blog_titles_count": 7,
+    "today_niche": "Coach e Consulenti"
   },
   "ideas": [
     {
-      "format": "pain shock",
-      "niche": "Centri Estetici",
-      "hook": "Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?",
-      "angle": "Mostra quanto costa davvero non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti.",
-      "cta": "Commenta AGENDA e ti mando il link."
+      "niche": "Coach e Consulenti",
+      "hook": "Sei un coach e passi ore a mandare messaggi per fissare una consulenza? Stai perdendo clienti e tempo utile.",
+      "blog_title": "Coach e Consulenti: Come attivare la prenotazione 24 ore su 24 con NeatX",
+      "video_concept": "Un video in stile runner gameplay che mostra visivamente il contrasto tra un professionista sommerso da notifiche WhatsApp e uno che riceve notifiche di prenotazione automatica mentre è concentrato sul suo lavoro.",
+      "keywords": [
+        "agenda consulente",
+        "prenotazioni coach",
+        "booking consulenze"
+      ]
     },
     {
-      "format": "before after",
-      "niche": "Centri Estetici",
-      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
-      "angle": "Confronto diretto tra caos manuale e link NeatX.",
-      "cta": "Scrivi DEMO se vuoi provarlo."
+      "niche": "Fisioterapisti",
+      "hook": "Fisioterapisti: ogni volta che un paziente salta una seduta senza preavviso state perdendo fatturato che non recupererete più.",
+      "blog_title": "Fisioterapisti: Come eliminare i no-show e proteggere il calendario dello studio",
+      "video_concept": "Mostrare lo schermo di un terapista che riceve la disdetta dell'ultimo minuto, seguito dalla soluzione: l'invio automatico di promemoria e la richiesta di acconto che scoraggiano i ritardatari.",
+      "keywords": [
+        "gestione studio fisioterapia",
+        "no show fisioterapia",
+        "appuntamenti fisioterapista"
+      ]
     },
     {
-      "format": "calculator",
-      "niche": "Centri Estetici",
-      "hook": "Un no-show non è un fastidio, è fatturato perso.",
-      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
-      "cta": "Commenta AGENDA."
+      "niche": "Consulenti di Business",
+      "hook": "Se fai consulenza e il tuo telefono squilla continuamente mentre sei in sessione con un cliente, hai un problema di gestione.",
+      "blog_title": "Consulenti: Gestire l'agenda senza impazzire tra chiamate e messaggi",
+      "video_concept": "Un video in prima persona che mostra l'ansia di dover rispondere al telefono per non perdere un potenziale cliente durante una chiamata importante, risolta delegando tutto a una pagina di prenotazione attiva giorno e notte.",
+      "keywords": [
+        "organizzare agenda consulenza",
+        "software prenotazione consulenti",
+        "calendario online professionisti"
+      ]
+    },
+    {
+      "niche": "Tatuatori",
+      "hook": "Tatuatori: basta perdere ore ogni sera a rispondere ai messaggi privati su Instagram solo per concordare una data.",
+      "blog_title": "Tatuatori: Come automatizzare le prenotazioni e liberare i messaggi in direct",
+      "video_concept": "Inquadratura sulla casella di posta di Instagram intasata da richieste di prezzi e date, contrapposta a un link in bio che permette al cliente di scegliere il giorno, inserire l'idea del tatuaggio e pagare l'acconto in autonomia.",
+      "keywords": [
+        "prenotazioni tatuaggi",
+        "gestionale tatuatori",
+        "acconto tatuaggio online"
+      ]
+    },
+    {
+      "niche": "Coach e Formatori",
+      "hook": "Coach: quante volte vi siete ritrovati ad aspettare in una stanza Zoom vuota perché il cliente si è dimenticato della sessione?",
+      "blog_title": "Coach e Consulenti: Ridurre a zero le sessioni dimenticate con i promemoria automatici WhatsApp",
+      "video_concept": "Inquadratura dello schermo con una chiamata Zoom vuota e il tempo che scorre. Subito dopo viene mostrato come il sistema NeatX invia un promemoria automatico su WhatsApp 15 minuti prima del collegamento, azzerando le dimenticanze.",
+      "keywords": [
+        "promemoria whatsapp clienti",
+        "gestione appuntamenti coach",
+        "ridurre no-show consulenza"
+      ]
     }
   ]
 }
