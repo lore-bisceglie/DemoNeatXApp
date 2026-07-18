@@ -272,11 +272,22 @@ def genera_immagine_ai(nicchia):
             topic = nicchia.lower()
             matched_images = []
             if "parrucch" in topic or "barbier" in topic:
-                matched_images = [img for img in premium_images if "barber" in img.lower()]
+                matched_images = [
+                    img for img in premium_images
+                    if "barber" in img.lower() or "parrucch" in img.lower()
+                ]
             elif "estetic" in topic:
                 matched_images = [img for img in premium_images if "estetista" in img.lower() or "nail" in img.lower()]
             elif "fisioterap" in topic or "osteopat" in topic:
-                matched_images = [img for img in premium_images if "fisioterapista" in img.lower()]
+                matched_images = [
+                    img for img in premium_images
+                    if "fisioterapista" in img.lower() or "osteopat" in img.lower()
+                ]
+            elif "massaggi" in topic:
+                matched_images = [
+                    img for img in premium_images
+                    if "massaggi" in img.lower() or "massage" in img.lower()
+                ]
             elif "tatuat" in topic:
                 matched_images = [img for img in premium_images if "tatuatore" in img.lower()]
             elif "personal trainer" in topic or "palestr" in topic:
@@ -566,6 +577,7 @@ def seleziona_immagini_montaggio(nicchia, primary_path, count=4):
         (("parrucch", "barbier"), ("barber", "parrucch")),
         (("estetic", "nail"), ("estetista", "nail")),
         (("fisioterap", "osteopat"), ("fisioterapista", "osteopat")),
+        (("massaggi",), ("massaggiatore", "massage")),
         (("tatuat",), ("tatuatore", "tattoo")),
         (("personal trainer", "palestr"), ("personal_trainer", "gym")),
         (("psicolog",), ("psicologo",)),
