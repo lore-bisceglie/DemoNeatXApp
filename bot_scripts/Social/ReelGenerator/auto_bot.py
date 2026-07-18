@@ -287,11 +287,11 @@ Lo sfondo superiore sara un gameplay stile "{gameplay_style}", quindi il testo d
 Regole:
 - Il video dura circa 20-30 secondi.
 - Usa uno stile diretto, provocatorio ma professionale. {hook_instruction}
-- Alla fine del video (ultimi 3-5 secondi) DEVI dire chiaramente una Call to Action per il nostro prodotto digitale, del tipo: "Non sai cosa postare sui social? Scarica i nostri 50 Prompt IA per saloni. Link in Bio!" oppure "Fai fare i post social all'IA in 3 minuti. Trovi 'L'Arsenale dei Prompt' nel link in bio!". (Non dire più di commentare AGENDA).
+- Alla fine del video (ultimi 3-5 secondi) DEVI dire chiaramente una Call to Action per il nostro prodotto digitale, del tipo: "Prova gratis la nostra Agenda su neatx.store" oppure "Non perdere più appuntamenti, provala su neatx.store!". (Non dire più di commentare AGENDA).
 - Il copione deve essere breve (circa 20-30 secondi parlati), super naturale e NON sembrare un robot che legge. Usa un tono energico e informale. NIENTE EMOJI NEL COPIONE PARLATO. LE EMOJI SONO SEVERAMENTE VIETATE IN script_text.
 - L'hook del copione deve toccare un punto di dolore ESTREMO del target. Sii aggressivo, fagli capire che stanno buttando soldi e tempo.
 - La scritta a schermo (hook_text) DEVE ESSERE IDENTICA a cover_title. Saranno le 3-4 parole enormi che appaiono in faccia all'utente.
-- La caption di Instagram deve essere persuasiva, includere hashtag VIRALI come #perte #fyp #foryou #viral #imprenditore #businessitalia + hashtag di nicchia, e DEVE concludersi SEMPRE (all'ultimissima riga) con questo esatto testo: "👉 Stanco di non sapere cosa postare? Scarica L'Arsenale dei Prompt (50 template copia-incolla) dal link in Bio!"
+- La caption di Instagram deve essere persuasiva, includere hashtag VIRALI come #perte #fyp #foryou #viral #imprenditore #businessitalia + hashtag di nicchia, e DEVE concludersi SEMPRE (all'ultimissima riga) con questo esatto testo: "👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!"
 - Il "cover_title" deve essere MASSIMO 4 PAROLE, enorme e scioccante.
 - Il "image_prompt" deve essere in INGLESE e descrivere una SCENA CINEMATOGRAFICA REALISTICA che ILLUSTRA VISUALMENTE IL SENSO DEL VIDEO (il dolore/pain o la soluzione/promise descritti nel copione e nella strategia), NON solo l'ambiente generico della professione. La scena deve far capire a colpo d'occhio di cosa parla il reel, includendo il professionista {target} e un elemento visivo che rappresenti pain o promise. Mantieni riferimento a pain e promise già presenti in [STRATEGIA DEL GIORNO].
 - Scrivi sempre "24 ore su 24", mai "24/7" o "247".

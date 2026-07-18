@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -8,6 +9,8 @@ export async function GET(request: Request) {
   if (!tenantId) {
     return NextResponse.json({ error: "Tenant ID mancante" }, { status: 400 });
   }
+  const authError = await requireTenantAdmin(tenantId);
+  if (authError) return authError;
 
   try {
     const rawAppointments = await prisma.appointment.findMany({

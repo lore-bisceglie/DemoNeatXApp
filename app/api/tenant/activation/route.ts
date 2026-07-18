@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -8,6 +9,9 @@ export async function POST(request: Request) {
     if (!tenantId) {
       return NextResponse.json({ error: "Missing tenantId" }, { status: 400 });
     }
+
+    const authError = await requireTenantAdmin(tenantId);
+    if (authError) return authError;
 
     const updated = await prisma.tenant.update({
       where: { id: tenantId },

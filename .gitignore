@@ -109,3 +109,9 @@ bot_scripts/Social/Social/ReelGenerator/*.mp4
 bot_scripts/Agents/__pycache__/
 bot_scripts/Social/ReelGenerator/__pycache__/
 bot_scripts/Agents/blackboard/*.json
+# Secrets and credentials
+client_secrets.json
+token.json
+session.json
+logs/
+

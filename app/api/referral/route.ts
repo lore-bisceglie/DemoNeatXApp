@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -8,6 +9,8 @@ export async function GET(req: Request) {
   if (!tenantId) {
     return NextResponse.json({ error: 'tenantId richiesto' }, { status: 400 });
   }
+  const authError = await requireTenantAdmin(tenantId);
+  if (authError) return authError;
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },

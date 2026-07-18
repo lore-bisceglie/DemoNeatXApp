@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,12 +12,15 @@ export async function GET(request: Request) {
 
   const staff = await prisma.staff.findUnique({
     where: { id: staffId },
-    select: { baseSchedule: true, shiftExceptions: true, name: true },
+    select: { baseSchedule: true, shiftExceptions: true, name: true, tenantId: true },
   });
 
   if (!staff) {
     return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
   }
+
+  const authError = await requireTenantAdmin(staff.tenantId);
+  if (authError) return authError;
 
   return NextResponse.json({
     baseSchedule: JSON.parse(staff.baseSchedule || "{}"),
@@ -33,6 +37,11 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Mancano staffId o baseSchedule" }, { status: 400 });
   }
 
+  const existingStaff = await prisma.staff.findUnique({ where: { id: staffId }, select: { tenantId: true } });
+  if (!existingStaff) return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
+  const authError = await requireTenantAdmin(existingStaff.tenantId);
+  if (authError) return authError;
+
   const staff = await prisma.staff.update({
     where: { id: staffId },
     data: { baseSchedule: JSON.stringify(baseSchedule) },
@@ -48,6 +57,11 @@ export async function POST(request: Request) {
   if (!staffId || !Array.isArray(exceptions)) {
     return NextResponse.json({ error: "Mancano staffId o exceptions array" }, { status: 400 });
   }
+
+  const existingStaff = await prisma.staff.findUnique({ where: { id: staffId }, select: { tenantId: true } });
+  if (!existingStaff) return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
+  const authError = await requireTenantAdmin(existingStaff.tenantId);
+  if (authError) return authError;
 
   const staff = await prisma.staff.update({
     where: { id: staffId },

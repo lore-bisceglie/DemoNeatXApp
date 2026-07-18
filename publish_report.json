@@ -1,0 +1,37 @@
+{
+  "created_at": "2026-07-18T12:33:09",
+  "strict_publish": false,
+  "video_file": "reel_splitscreen_subbed.mp4",
+  "preflight": {
+    "video_file": {
+      "ok": false,
+      "message": "File video richiesto: reel_splitscreen_subbed.mp4"
+    },
+    "instagram": {
+      "ok": true,
+      "message": "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID."
+    },
+    "tiktok": {
+      "ok": false,
+      "message": "Richiede TIKTOK_MAKE_WEBHOOK_URL valido (Make.com webhook)."
+    },
+    "youtube": {
+      "ok": false,
+      "message": "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido."
+    }
+  },
+  "results": {
+    "instagram": {
+      "ok": true,
+      "message": "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID."
+    },
+    "tiktok": {
+      "ok": false,
+      "message": "Richiede TIKTOK_MAKE_WEBHOOK_URL valido (Make.com webhook)."
+    },
+    "youtube": {
+      "ok": false,
+      "message": "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido."
+    }
+  }
+}

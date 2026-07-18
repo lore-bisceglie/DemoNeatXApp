@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -16,6 +17,8 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+  const authError = await requireTenantAdmin(tenantId);
+  if (authError) return authError;
 
     const customerNote = await prisma.customerNote.upsert({
       where: {

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { tenantId, slug, plan = 'pro', interval = 'month', priceId } = await request.json();
+    const { tenantId, slug, plan = 'pro', interval = 'month' } = await request.json();
 
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },

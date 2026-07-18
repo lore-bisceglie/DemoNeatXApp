@@ -205,38 +205,38 @@ def genera_script_fallback(professione: dict) -> dict:
         "barbiere": {
             "hook": "Stai facendo un taglio. Il telefono suona. Ancora.",
             "problema": "Non puoi rispondere. Il cliente forse se ne va.",
-            "soluzione": "Con NeatX i clienti si prenotano da soli. E se non sai cosa postare sui social...",
-            "cta": "Scarica 'L'Arsenale dei Prompt' dal link in bio!",
+            "soluzione": "Con NeatX i clienti si prenotano da soli h24.",
+            "cta": "Prova l'agenda gratis su neatx.store!",
         },
         "estetista": {
             "hook": "Stai facendo un trattamento. Il telefono non smette.",
             "problema": "La cliente è sotto. I messaggi si accumulano.",
-            "soluzione": "NeatX risponde al posto tuo. E per svoltare sui social...",
-            "cta": "Scarica i 50 Prompt dal nostro link in bio!",
+            "soluzione": "NeatX risponde al posto tuo 24 ore su 24.",
+            "cta": "Provala gratis su neatx.store!",
         },
         "nail_artist": {
             "hook": "Hai le mani occupate. Le clienti non aspettano.",
             "problema": "Stai lavorando. 4 messaggi. 1 cliente persa.",
-            "soluzione": "Con NeatX scelgono ora da sole. E per i tuoi social...",
-            "cta": "Prendi 'L'Arsenale dei Prompt' nel link in bio!",
+            "soluzione": "Con NeatX le clienti si prenotano da sole.",
+            "cta": "Provala gratis su neatx.store!",
         },
         "fisioterapista": {
             "hook": "Sei con un paziente. Arrivano 5 richieste.",
             "problema": "Non puoi rispondere. Il paziente ha bisogno di te.",
-            "soluzione": "Con NeatX i pazienti si prenotano online. E per i social...",
-            "cta": "Usa 'L'Arsenale dei Prompt'. Link in bio!",
+            "soluzione": "Con NeatX i pazienti si prenotano online in autonomia.",
+            "cta": "Prova gratis l'agenda su neatx.store!",
         },
         "personal_trainer": {
             "hook": "Stai allenando. Ne stai perdendo altri tre.",
             "problema": "Vogliono prenotare. Tu non rispondi. Vanno da un altro.",
-            "soluzione": "NeatX prenota per te. E per i tuoi social...",
-            "cta": "Scarica 'L'Arsenale dei Prompt' in bio!",
+            "soluzione": "NeatX prenota le tue sessioni in automatico.",
+            "cta": "Provala gratis su neatx.store!",
         },
         "tatuatore": {
             "hook": "Non puoi fermarti a metà tattoo per rispondere.",
             "problema": "Se non rispondi, i clienti vanno altrove.",
-            "soluzione": "Con NeatX prenotano da soli. E per farli impazzire sui social...",
-            "cta": "Scarica i nostri 50 Prompt dal link in bio!",
+            "soluzione": "Con NeatX le consulenze si prenotano da sole.",
+            "cta": "Prova gratis l'agenda su neatx.store!",
         },
     }
     s = scripts.get(professione["id"], scripts["barbiere"])
@@ -448,25 +448,6 @@ def monta_reel(
     # ── CTA FINALE ───────────────────────────────────────────────
     cta_clip = crea_cta_finale(duration)
     layers.append(cta_clip)
-
-    # ── ARSENALE DEI PROMPT (Copertina PDF) ──────────────────────
-    arsenale_cover_png = ASSETS_DIR / "arsenale_cover.png"
-    arsenale_cover_jpg = ASSETS_DIR / "arsenale_cover.jpg"
-    actual_cover_path = arsenale_cover_png if arsenale_cover_png.exists() else (arsenale_cover_jpg if arsenale_cover_jpg.exists() else None)
-    
-    if actual_cover_path:
-        try:
-            t_start = max(0, duration - 4.5)
-            arsenale_clip = (ImageClip(str(actual_cover_path))
-                             .resize(width=VIDEO_W * 0.7)
-                             .set_position(("center", VIDEO_H * 0.25))
-                             .set_start(t_start)
-                             .set_end(duration)
-                             .crossfadein(0.5))
-            layers.append(arsenale_clip)
-            print(f"[🖼️] Aggiunta copertina Arsenale dei Prompt al video!")
-        except Exception as e:
-            print(f"[!] Errore aggiunta cover arsenale: {e}")
 
     # ── MONTAGGIO FINALE ─────────────────────────────────────────
     video = CompositeVideoClip(layers, size=(VIDEO_W, VIDEO_H))

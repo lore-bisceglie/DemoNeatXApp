@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 export const AUTH_COOKIE_NAME = "neatx_auth";
 export const LEGACY_AUTH_COOKIE_NAME = "neatx_mito_auth";
@@ -115,4 +117,28 @@ export function requireSuperAdmin(req: Request) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
   return null;
+}
+
+// ── Tenant Admin auth (IDOR protection) ────────────────
+export async function requireTenantAdmin(tenantId: string | null | undefined) {
+  if (!tenantId) {
+    return NextResponse.json({ error: "Tenant ID mancante" }, { status: 400 });
+  }
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { slug: true, adminPassword: true },
+  });
+  if (!tenant) {
+    return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
+  }
+
+  const cookieStore = await cookies();
+  const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
+  
+  // TO DO (Phase 2): Replace plaintext password comparison with hashed session tokens
+  if (authCookie !== tenant.adminPassword) {
+    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+  }
+
+  return null; // Authorized
 }
