@@ -4,9 +4,9 @@ import { stripe } from '@/lib/stripe';
 export const dynamic = 'force-dynamic';
 
 const PACKAGES: Record<string, { credits: number; priceInCents: number; label: string }> = {
-  sms_500:  { credits: 500,  priceInCents: 3900,  label: '500 Messaggi' },
-  sms_1000: { credits: 1000, priceInCents: 6900,  label: '1000 Messaggi' },
-  sms_2000: { credits: 2000, priceInCents: 14900, label: '2000 Messaggi' },
+  sms_500:  { credits: 500,  priceInCents: 2900,  label: '500 Messaggi' },
+  sms_1000: { credits: 1000, priceInCents: 5500,  label: '1000 Messaggi' },
+  sms_2000: { credits: 2000, priceInCents: 9900,  label: '2000 Messaggi' },
 };
 
 export async function POST(req: Request) {

@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 const PACKAGES = [
-  { id: "sms_500",  credits: 500,  price: "39€",  popular: false },
-  { id: "sms_1000", credits: 1000, price: "69€",  popular: true  },
-  { id: "sms_2000", credits: 2000, price: "149€", popular: false },
+  { id: "sms_500",  credits: 500,  price: "29€",  popular: false },
+  { id: "sms_1000", credits: 1000, price: "55€",  popular: true  },
+  { id: "sms_2000", credits: 2000, price: "99€", popular: false },
 ];
 
 export default function MessageRechargeCard({
