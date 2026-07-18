@@ -15,6 +15,32 @@ import { BookingInitialData, Service, TenantInfoType, ThemeConfig } from "@/comp
 import { activityProfiles } from "@/components/tenant/constants";
 import { parseClosedDays } from "@/lib/opening-hours";
 
+const ROME_DATE_FORMATTER = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Europe/Rome",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const ROME_TIME_FORMATTER = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Rome",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  hourCycle: "h23",
+});
+
+function getRomeDate(value: Date): string {
+  return ROME_DATE_FORMATTER.format(value);
+}
+
+function getRomeClock(value: Date): { date: string; minutes: number } {
+  const parts = ROME_TIME_FORMATTER.formatToParts(value);
+  const hours = Number(parts.find((part) => part.type === "hour")?.value || 0);
+  const minutes = Number(parts.find((part) => part.type === "minute")?.value || 0);
+  return { date: getRomeDate(value), minutes: hours * 60 + minutes };
+}
+
 function toTenantInfo(data: BookingInitialData): TenantInfoType {
   return {
     id: data.id,
@@ -46,11 +72,14 @@ function toTenantInfo(data: BookingInitialData): TenantInfoType {
 }
 
 export function BookingClient({ slug, initialData }: { slug: string; initialData: BookingInitialData }) {
-  const today = new Date().toISOString().split("T")[0];
-
-  const maxDateObj = new Date();
-  maxDateObj.setDate(maxDateObj.getDate() + 60);
-  const maxDate = maxDateObj.toISOString().split("T")[0];
+  const [calendarBounds] = useState(() => {
+    const now = new Date();
+    return {
+      today: getRomeDate(now),
+      maxDate: getRomeDate(new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)),
+    };
+  });
+  const { today, maxDate } = calendarBounds;
 
   const services = initialData.services;
   const locations = initialData.locations;
@@ -88,6 +117,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const [showCancelBanner, setShowCancelBanner] = useState(false);
   const [isHoliday, setIsHoliday] = useState(false);
   const [initialLoad, setInitialLoad] = useState(false);
+  const [romeClock, setRomeClock] = useState<{ date: string; minutes: number } | null>(null);
 
   const [logoClicked, setLogoClicked] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
@@ -312,6 +342,13 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   };
 
   useEffect(() => {
+    const refreshClock = () => setRomeClock(getRomeClock(new Date()));
+    refreshClock();
+    const timer = window.setInterval(refreshClock, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     if (
       typeof window !== "undefined" &&
       window.location.search.includes("canceled=true")
@@ -324,17 +361,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   useEffect(() => {
     if (!date || !selectedService) return;
 
-    const d = new Date(date);
-    const day = d.getDay();
-
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const dayOfMonth = String(d.getDate()).padStart(2, "0");
-    const giornoMese = `${dayOfMonth}-${month}`;
-
-    const festeNazionali = [
-      "01-01", "06-01", "25-04", "01-05", "02-06",
-      "15-08", "01-11", "08-12", "25-12", "26-12",
-    ];
+    const day = new Date(`${date}T12:00:00Z`).getUTCDay();
 
     if (date > maxDate) {
       setDateError("Puoi prenotare con un massimo di 60 giorni di anticipo.");
@@ -398,7 +425,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [date, selectedService, tenantInfo.id, effectiveClosedDays, selectedStaffId, selectedLocationId]);
+  }, [date, selectedService, tenantInfo.id, effectiveClosedDays, selectedStaffId, selectedLocationId, maxDate, today]);
 
   const handleFirstAvailable = () => {
     if (slots.length > 0) {
@@ -587,7 +614,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     (!isPlaygroundDemo && phone === "") ||
     !privacyAccepted;
 
-  const isSaturday = new Date(date).getDay() === 6;
+  const isSaturday = new Date(`${date}T12:00:00Z`).getUTCDay() === 6;
   const isScarce = slots.length > 0 && slots.length <= 5;
   const isVeryScarce = slots.length > 0 && slots.length <= 2;
   const shownSlots = slots.slice(0, 3).join(", ");
@@ -633,20 +660,11 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const closingHour = closingHourStr;
   const closingMinute = closingMinuteStr;
 
-  const nowForMessage = new Date();
-  const localTodayForMessage = new Date(
-    nowForMessage.getTime() - nowForMessage.getTimezoneOffset() * 60000
-  )
-    .toISOString()
-    .split("T")[0];
-
-  const currentTotalMinutesForMessage =
-    nowForMessage.getHours() * 60 + nowForMessage.getMinutes();
   const closingTotalMinutes = closingHour * 60 + closingMinute;
 
-  const isTodaySelected = date === localTodayForMessage;
+  const isTodaySelected = date === romeClock?.date;
   const isSalonClosedNow =
-    isTodaySelected && currentTotalMinutesForMessage >= closingTotalMinutes;
+    Boolean(romeClock && isTodaySelected && romeClock.minutes >= closingTotalMinutes);
 
   const noSlotsMessage = isSalonClosedNow
     ? {
@@ -714,6 +732,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
         <div className="mb-5 w-full max-w-md rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center text-xs font-extrabold uppercase tracking-widest text-emerald-300">
           Prova gratuita attiva fino al{" "}
           {new Date(tenantInfo.trialEndsAt).toLocaleDateString("it-IT", {
+            timeZone: "Europe/Rome",
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
