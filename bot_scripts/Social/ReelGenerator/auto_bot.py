@@ -5,19 +5,25 @@ import subprocess
 import requests
 import re
 import sys
+from pathlib import Path
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 
-load_dotenv()
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parents[2]
+
+# Shared credentials live in the project environment; bot-specific values may
+# override them in the ReelGenerator environment.
+load_dotenv(REPO_ROOT / ".env", override=False)
+load_dotenv(SCRIPT_DIR / ".env", override=True)
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from hashtag_strategy import build_hashtags, ALWAYS, NICHE_TAGS
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-sys.path.insert(0, os.path.join(REPO_ROOT, "bot_scripts", "Automation"))
+sys.path.insert(0, os.path.join(str(REPO_ROOT), "bot_scripts", "Automation"))
 from ai_provider import openai_json
 
 TARGET_AUDIENCES = [

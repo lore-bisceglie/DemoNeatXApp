@@ -53,13 +53,9 @@ export async function sendTenantMessage(
     }
 
     const phone = formatPhone(toPhone);
-    // Nota: l'URL base dipende dall'istanza, usa il dominio corretto (es: 1103.api.greenapi.com o 7103.api.greenapi.com)
-    // Se ID istanza è 710722685411, l'API è solitamente https://7103.api.greenapi.com o simile. 
-    // Lo calcoliamo in base all'ID istanza o usiamo l'endpoint generico api.greenapi.com che fa il redirect,
-    // MA l'endpoint corretto per la zona 7103 è https://7103.api.greenapi.com.
-    // Estraiamo i primi 4 caratteri dell'istanza:
-    const serverId = GREEN_API_ID_INSTANCE.substring(0, 4);
-    const url = `https://${serverId}.api.greenapi.com/waInstance${GREEN_API_ID_INSTANCE}/sendMessage/${GREEN_API_TOKEN_INSTANCE}`;
+    // Endpoint ufficiale che instrada automaticamente la richiesta verso il
+    // server corretto dell'istanza.
+    const url = `https://api.green-api.com/waInstance${GREEN_API_ID_INSTANCE}/sendMessage/${GREEN_API_TOKEN_INSTANCE}`;
     
     // In WhatsApp con Green API mandiamo il body diretto, non ci serve il template.
     const payload = {
