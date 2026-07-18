@@ -82,12 +82,18 @@ export async function POST(req: Request) {
       }
     });
 
-    const chat = model.startChat({
-      history: messages.slice(0, -1).map((m: { role: string; content: string }) => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.content }],
-      }))
-    });
+    let history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.content }],
+    }));
+
+    // L'API di Gemini richiede che la history inizi SEMPRE con un messaggio utente.
+    // Rimuoviamo eventuali messaggi proattivi iniziali del bot per evitare crash 400 Bad Request.
+    if (history.length > 0 && history[0].role === 'model') {
+      history.shift();
+    }
+
+    const chat = model.startChat({ history });
 
     const lastMessage = messages[messages.length - 1].content;
     const result = await chat.sendMessage(lastMessage);
