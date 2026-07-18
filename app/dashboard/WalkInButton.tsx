@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function WalkInButton({ date, time, tenantId, services, staff = [] }: { date: string; time: string; tenantId: string; services: any[]; staff?: any[] }) {
+export default function WalkInButton({ date, time, tenantId, services, staff = [], locationId }: { date: string; time: string; tenantId: string; services: any[]; staff?: any[]; locationId?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState(""); 
@@ -37,6 +37,7 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
           serviceId: selectedServiceId,
           duration: serviceSelected?.duration || 15,
           staffId: selectedStaffId || undefined,
+          locationId: locationId || undefined,
         }),
       });
 

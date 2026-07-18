@@ -962,6 +962,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                                     tenantId={tenantId}
                                     services={tenantServices}
                                     staff={staffList}
+                                    locationId={view.id === "all" ? undefined : view.id}
                                   />
                                 </div>
                               );
