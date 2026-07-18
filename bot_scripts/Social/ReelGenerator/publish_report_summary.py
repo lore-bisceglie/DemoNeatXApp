@@ -27,8 +27,8 @@ for k, v in r.get('results', {}).items():
         # Se c'è un errore, rendiamolo comprensibile e non troppo spaventoso
         msg = v.get("message", "")
         motivo = ""
-        if k == "tiktok" and "cookie" in msg.lower():
-            motivo = " (È necessario aggiornare i cookie dal PC locale, il server cloud è bloccato)"
+        if k == "tiktok" and ("make.com" in msg.lower() or "webhook" in msg.lower()):
+            motivo = f" (Problema con Make.com: {msg})"
         elif k == "youtube" and "token" in msg.lower():
             motivo = " (Token scaduto o mancante)"
         else:

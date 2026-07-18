@@ -12,8 +12,8 @@ from tiktok_cookies import load_tiktok_cookies
 # ==========================================
 load_dotenv()
 
-META_ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN")
-IG_ACCOUNT_ID = os.environ.get("IG_ACCOUNT_ID")
+META_ACCESS_TOKEN = os.environ.get("META_PERMANENT_TOKEN", os.environ.get("META_ACCESS_TOKEN"))
+IG_ACCOUNT_ID = os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID", os.environ.get("IG_ACCOUNT_ID"))
 TIKTOK_SESSION_ID = os.environ.get("TIKTOK_SESSION_ID")
 TIKTOK_HEADLESS = os.environ.get(
     "TIKTOK_HEADLESS",
@@ -56,8 +56,8 @@ def run_preflight():
             "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID.",
         ),
         "tiktok": platform_result(
-            bool(load_tiktok_cookies()),
-            "Richiede TIKTOK_COOKIES_JSON valido o TIKTOK_SESSION_ID valido.",
+            bool(os.environ.get("TIKTOK_MAKE_WEBHOOK_URL")),
+            "Richiede TIKTOK_MAKE_WEBHOOK_URL valido (Make.com webhook).",
         ),
         "youtube": platform_result(
             has_youtube_auth(),
@@ -112,6 +112,45 @@ def upload_video_fallback():
             print(f"    [!] Fallito: {e}")
     return None
 
+SHARED_VIDEO_URL = None
+
+def get_shared_video_url():
+    global SHARED_VIDEO_URL
+    if SHARED_VIDEO_URL:
+        return SHARED_VIDEO_URL
+
+    print(f"[*] Caricamento del video {VIDEO_FILE} su server temporaneo...")
+    max_retries = 5
+    for attempt in range(1, max_retries + 1):
+        try:
+            r_upload = requests.post(
+                "https://litterbox.catbox.moe/resources/internals/api.php",
+                data={"reqtype": "fileupload", "time": "24h"},
+                files={"fileToUpload": open(VIDEO_FILE, "rb")},
+                timeout=120
+            )
+            video_url = r_upload.text.strip()
+
+            if not video_url.startswith("http"):
+                raise Exception(f"Risposta non valida dal server temporaneo: {video_url[:200]}")
+                
+            print(f"[+] URL temporaneo generato: {video_url}")
+            SHARED_VIDEO_URL = video_url
+            return video_url
+        except Exception as e:
+            print(f"[!] Tentativo {attempt}/{max_retries} fallito: {e}")
+            if attempt < max_retries:
+                wait = min(2 ** attempt, 30)
+                print(f"    Nuovo tentativo tra {wait}s...")
+                time.sleep(wait)
+            else:
+                print(f"[!] catbox.moe fallito dopo {max_retries} tentativi, provo upload alternativo...")
+                video_url = upload_video_fallback()
+                if video_url:
+                    SHARED_VIDEO_URL = video_url
+                    return video_url
+    return None
+
 def publish_to_instagram():
     if not META_ACCESS_TOKEN or not IG_ACCOUNT_ID:
         message = "META_ACCESS_TOKEN o IG_ACCOUNT_ID mancanti."
@@ -130,38 +169,12 @@ def publish_to_instagram():
 
     caption = get_caption()
     
-    # 1. Caricamento temporaneo del video (per permettere a Meta di scaricarlo) con retry
-    print(f"[*] Caricamento del video {VIDEO_FILE} su server temporaneo per Meta...")
-    video_url = None
-    max_retries = 5
-    for attempt in range(1, max_retries + 1):
-        try:
-            r_upload = requests.post(
-                "https://litterbox.catbox.moe/resources/internals/api.php",
-                data={"reqtype": "fileupload", "time": "24h"},
-                files={"fileToUpload": open(VIDEO_FILE, "rb")},
-                timeout=120
-            )
-            video_url = r_upload.text.strip()
-
-            if not video_url.startswith("http"):
-                raise Exception(f"Risposta non valida dal server temporaneo: {video_url[:200]}")
-                
-            print(f"[+] URL temporaneo generato: {video_url}")
-            break
-        except Exception as e:
-            print(f"[!] Tentativo {attempt}/{max_retries} fallito: {e}")
-            if attempt < max_retries:
-                wait = min(2 ** attempt, 30)
-                print(f"    Nuovo tentativo tra {wait}s...")
-                time.sleep(wait)
-            else:
-                print(f"[!] catbox.moe fallito dopo {max_retries} tentativi, provo upload alternativo...")
-                video_url = upload_video_fallback()
-                if not video_url:
-                    message = f"Errore durante il caricamento temporaneo dopo {max_retries} tentativi."
-                    print("[!]", message)
-                    return platform_result(False, message)
+    # 1. Caricamento temporaneo del video (per permettere a Meta e Make di scaricarlo)
+    video_url = get_shared_video_url()
+    if not video_url:
+        message = "Errore durante il caricamento temporaneo del video."
+        print("[!]", message)
+        return platform_result(False, message)
         
     # 2. Caricamento temporaneo della copertina (con retry)
     cover_url = ""
@@ -262,9 +275,9 @@ def publish_to_instagram():
         return platform_result(False, message)
 
 def publish_to_tiktok():
-    cookies = load_tiktok_cookies()
-    if not cookies:
-        message = "TIKTOK_COOKIES_JSON/TIKTOK_SESSION_ID mancanti o non validi."
+    webhook_url = os.environ.get("TIKTOK_MAKE_WEBHOOK_URL", "").strip()
+    if not webhook_url:
+        message = "TIKTOK_MAKE_WEBHOOK_URL mancante in .env o GitHub Secrets."
         print(f"[!] Errore: {message}")
         return platform_result(False, message)
         
@@ -275,43 +288,25 @@ def publish_to_tiktok():
         
     caption = get_caption()
     
-    print("[*] Avvio pubblicazione su TikTok...")
-    try:
-        from tiktok_uploader.upload import upload_video
-    except ImportError:
-        return platform_result(False, "Modulo tiktok_uploader non trovato")
+    print("[*] Preparazione video per TikTok via Make.com...")
+    video_url = get_shared_video_url()
+    if not video_url:
+        return platform_result(False, "Impossibile caricare il video sul server temporaneo.")
 
-    max_retries = 3
-    for attempt in range(1, max_retries + 1):
-        try:
-            print(f"[*] Tentativo TikTok {attempt}/{max_retries}...")
-            success = upload_video(
-                VIDEO_FILE,
-                description=caption,
-                cookies_list=cookies,
-                browser="chromium", # Usa la versione locale invece di quella globale
-                headless=TIKTOK_HEADLESS
-            )
-            
-            # tiktok_uploader returns a boolean or a list of booleans
-            if isinstance(success, list):
-                is_success = all(success)
-            else:
-                is_success = bool(success)
-                
-            if is_success:
-                print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK!")
-                return platform_result(True, "Pubblicato su TikTok.")
-            else:
-                print(f"[!] TikTok ha rifiutato l'upload al tentativo {attempt}.")
-        except Exception as e:
-            print(f"[!] Errore durante la pubblicazione su TikTok (tentativo {attempt}): {e}")
-            
-        if attempt < max_retries:
-            print(f"    Ritento tra 10 secondi...")
-            time.sleep(10)
-            
-    return platform_result(False, "Pubblicazione fallita su TikTok dopo tutti i tentativi.")
+    print(f"[*] Invio webhook a Make.com...")
+    try:
+        r = requests.post(webhook_url, json={
+            "video_url": video_url,
+            "caption": caption
+        }, timeout=30)
+        
+        if r.ok:
+            print("[+] VIDEO INVIATO CON SUCCESSO A MAKE.COM (TikTok)!")
+            return platform_result(True, "Inviato al Webhook Make.com.")
+        else:
+            return platform_result(False, f"Make.com ha restituito errore: {r.status_code} {r.text}")
+    except Exception as e:
+        return platform_result(False, f"Errore di connessione a Make.com: {e}")
 
 def publish_to_youtube():
     if not os.path.exists(VIDEO_FILE):
@@ -415,4 +410,17 @@ def publish_instagram_puppeteer(caption):
         return platform_result(True, 'Pubblicato via Puppeteer')
     except Exception as e:
         return platform_result(False, f'Errore Puppeteer: {e}')
+
+
+
+def publish_instagram_instagrapi(caption):
+    print('[*] Tentativo di pubblicazione su Instagram via Instagrapi (fallback)...')
+    from instagrapi import Client
+    try:
+        cl = Client()
+        cl.login(os.environ.get('IG_USERNAME'), os.environ.get('IG_PASSWORD'))
+        media = cl.clip_upload(VIDEO_FILE, caption)
+        return platform_result(True, 'Pubblicato via Instagrapi', {'post_id': media.pk})
+    except Exception as e:
+        return platform_result(False, f'Errore Instagrapi: {e}')
 
