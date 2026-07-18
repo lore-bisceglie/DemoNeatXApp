@@ -379,7 +379,7 @@ export default function Chatbot() {
         </div>
       </div>
 
-      {/* ═══ GLOBAL ANIMATIONS ═══ */}
+      {/* ═══ GLOBAL ANIMATIONS & IUBENDA FIX ═══ */}
       <style jsx global>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(8px); }
@@ -393,6 +393,15 @@ export default function Chatbot() {
         .animate-slide-up { animation: slide-up 0.3s ease-out; }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0.5rem); }
         .touch-target { min-width: 44px; min-height: 44px; }
+        
+        /* Nasconde il badge fluttuante di Iubenda quando la chat è aperta per evitare sovrapposizioni su mobile */
+        ${isOpen ? `
+        #iubenda-ibadge, .iubenda-cs-badge, div#iubenda-cs-banner {
+          opacity: 0 !important;
+          pointer-events: none !important;
+          transform: scale(0) !important;
+        }
+        ` : ''}
       `}</style>
     </>
   );
