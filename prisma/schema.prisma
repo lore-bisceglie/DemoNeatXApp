@@ -38,6 +38,8 @@ model Tenant {
   trialEndsAt   DateTime?
   trialStatus   String        @default("demo")
   isDemoData    Boolean       @default(true)
+  template      String        @default("barbiere")
+  isElite       Boolean       @default(false)
   activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
