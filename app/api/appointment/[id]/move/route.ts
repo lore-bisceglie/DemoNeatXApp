@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
+import { requireTenantAdmin } from "@/lib/auth";
 
 const timeToMins = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -43,6 +44,9 @@ export async function POST(
         { status: 404 }
       );
     }
+
+    const authError = await requireTenantAdmin(appointment.tenantId);
+    if (authError) return authError;
 
     const duration = appointment.service?.duration || 15;
     const startMins = timeToMins(time);

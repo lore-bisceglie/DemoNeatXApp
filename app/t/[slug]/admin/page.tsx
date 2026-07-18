@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     return <LoginScreen slug={slug} tenantName={tenant.name} showLegacyHint />;
   }
 
-  if (authCookie !== tenant.adminPassword) {
+  if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
     return (
       <LoginScreen
         slug={slug}

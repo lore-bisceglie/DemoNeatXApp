@@ -18,9 +18,13 @@ def generate_onboarding_emails():
     report = ""
     for user in MOCK_NEW_USERS:
         prompt = f"Genera un'email di benvenuto per {user['nome']}, un {user['professione']} titolare di {user['salone']}."
-        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
-        report += f"## Email per {user['nome']} ({user['salone']})\\n"
-        report += response.text + "\\n\\n---\\n\\n"
+        try:
+            response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
+            report += f"## Email per {user['nome']} ({user['salone']})\\n"
+            report += response.text + "\\n\\n---\\n\\n"
+        except Exception as e:
+            print(f"❌ Errore durante la generazione dell'email per {user['nome']}: {e}")
+            report += f"## Email per {user['nome']} ({user['salone']})\\n[Errore di generazione AI. Riprovare più tardi.]\\n\\n---\\n\\n"
     return report
 
 if __name__ == "__main__":

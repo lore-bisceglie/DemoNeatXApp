@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 
 export async function PUT(request: Request) {
   try {
@@ -23,7 +24,7 @@ export async function PUT(request: Request) {
     // Verifica il cookie di autenticazione admin
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
-    if (authCookie !== tenant.adminPassword) {
+    if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword)) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 

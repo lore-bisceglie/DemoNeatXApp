@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 
 function getTenantSlugFromRequest(request: NextRequest): string | null {
   const fromQuery = request.nextUrl.searchParams.get("tenantSlug");
@@ -46,11 +47,11 @@ async function requireTenantAdmin(request: NextRequest) {
   const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
   if (!authCookie) {
     const headerAuth = request.headers.get("x-middleware-auth");
-    if (headerAuth) return headerAuth === tenant.adminPassword ? tenant : null;
+    if (headerAuth) return isTenantAdminCookieValid(headerAuth, tenant.slug, tenant.adminPassword) ? tenant : null;
     return null;
   }
 
-  return authCookie === tenant.adminPassword ? tenant : null;
+  return isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword) ? tenant : null;
 }
 
 export async function GET(request: NextRequest) {

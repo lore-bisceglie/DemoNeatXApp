@@ -24,8 +24,12 @@ def analyze_reviews():
     for r in RECENT_REVIEWS:
         prompt += f"- \\\"{r}\\\"\\n"
         
-    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
-    return response.text
+    try:
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt, config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT))
+        return response.text
+    except Exception as e:
+        print(f"❌ Errore durante la chiamata a Gemini in spy.py: {e}")
+        return f"Errore API: Impossibile generare il report. Dettagli: {e}"
 
 if __name__ == "__main__":
     print("🕵️ Avvio Competitor Spy Bot...")

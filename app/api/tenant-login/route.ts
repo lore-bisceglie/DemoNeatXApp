@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ROOT_DOMAIN } from "@/lib/domains";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+import { createTenantSessionToken } from "@/lib/auth";
 
 function cookieDomain(req: Request) {
   const hostname = new URL(req.url).hostname;
@@ -80,7 +81,7 @@ export async function POST(req: Request) {
     });
 
     const response = NextResponse.json({ success: true });
-    response.cookies.set(`admin_auth_${tenant.slug}`, tenant.adminPassword, {
+    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

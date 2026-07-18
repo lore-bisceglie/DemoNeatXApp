@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Negozio non trovato" }, { status: 404 });
     }
 
-    if (authCookie !== tenant.adminPassword) {
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 

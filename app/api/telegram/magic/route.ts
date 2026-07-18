@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getTenantAdminUrl } from "@/lib/domains";
 import { prisma } from "@/lib/prisma";
+import { verifyTenantSessionToken, createTenantSessionToken } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
@@ -13,17 +14,17 @@ export async function GET(req: Request) {
     }
 
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
-    if (!tenant || tenant.adminPassword !== secret) {
+    if (!tenant || !verifyTenantSessionToken(secret, slug)) {
       return NextResponse.json({ error: "Link di accesso magico scaduto o non valido." }, { status: 403 });
     }
 
     // Creiamo il redirect alla dashboard
     const adminUrl = getTenantAdminUrl(slug);
     const response = NextResponse.redirect(adminUrl);
-    
-    // Iniettiamo il cookie di autorizzazione
-    response.cookies.set(`admin_auth_${slug}`, secret, {
-      httpOnly: false,
+
+    // Iniettiamo un cookie di sessione firmato (24 ore)
+    response.cookies.set(`admin_auth_${slug}`, createTenantSessionToken(slug, 60 * 60 * 24), {
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24, // 24 ore
       path: "/",

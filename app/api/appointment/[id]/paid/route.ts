@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireTenantAdmin } from "@/lib/auth";
 
 export async function POST(
   request: Request,
@@ -20,6 +21,19 @@ export async function POST(
       typeof body.isPaid === "boolean"
         ? body.isPaid
         : true;
+
+    const existing = await prisma.appointment.findUnique({
+      where: { id },
+      select: { tenantId: true },
+    });
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Appuntamento non trovato" },
+        { status: 404 }
+      );
+    }
+    const authError = await requireTenantAdmin(existing.tenantId);
+    if (authError) return authError;
 
     const updatedAppointment = await prisma.appointment.update({
       where: {

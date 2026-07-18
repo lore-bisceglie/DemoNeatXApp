@@ -366,7 +366,7 @@ def download_pexels_video(query):
     headers = {"Authorization": PEXELS_API_KEY}
     
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=(10, 60))
         response.raise_for_status()
         data = response.json()
         
@@ -388,7 +388,7 @@ def download_pexels_video(query):
             video_link = selected_file["link"]
             print(f"[*] Scaricamento video da Pexels in corso...")
             
-            r = requests.get(video_link, stream=True)
+            r = requests.get(video_link, stream=True, timeout=(10, 300))
             if r.status_code == 200:
                 if not os.path.exists("assets"):
                     os.makedirs("assets")

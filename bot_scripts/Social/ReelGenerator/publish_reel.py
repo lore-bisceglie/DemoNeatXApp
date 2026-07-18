@@ -230,22 +230,28 @@ def publish_to_instagram():
     if cover_url:
         payload["cover_url"] = cover_url
     
-    r = requests.post(url_media, data=payload)
+    r = requests.post(url_media, data=payload, timeout=60)
     if r.status_code != 200:
         message = f"Errore creazione container: {r.text}"
         print("[!]", message)
         return platform_result(False, message)
-        
+
     container_id = r.json().get("id")
     print(f"[+] Container creato con ID: {container_id}")
-    
+
     # 4. Polling stato caricamento
     print("[*] Attesa che Meta elabori il video (ci vorrà un po')...")
     url_status = f"https://graph.facebook.com/v21.0/{container_id}?fields=status_code&access_token={META_ACCESS_TOKEN}"
-    
-    while True:
-        status_req = requests.get(url_status)
-        status = status_req.json().get("status_code", "UNKNOWN")
+
+    max_polls = 60  # max ~5 minuti (60 x 5s)
+    for _ in range(max_polls):
+        try:
+            status_req = requests.get(url_status, timeout=30)
+            status = status_req.json().get("status_code", "UNKNOWN")
+        except (requests.RequestException, ValueError) as exc:
+            print(f"    Errore temporaneo nel polling: {exc}, riprovo...")
+            time.sleep(5)
+            continue
         print(f"    Stato: {status}")
         if status == "FINISHED":
             break
@@ -254,7 +260,11 @@ def publish_to_instagram():
             print("[!]", message)
             return platform_result(False, message, {"container_id": container_id})
         time.sleep(5)
-        
+    else:
+        message = "Timeout: Meta non ha completato l'elaborazione del video entro 5 minuti."
+        print("[!]", message)
+        return platform_result(False, message, {"container_id": container_id})
+
     # 5. Pubblicazione
     print("[*] Pubblicazione sul profilo Instagram...")
     url_publish = f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}/media_publish"
@@ -262,8 +272,8 @@ def publish_to_instagram():
         "creation_id": container_id,
         "access_token": META_ACCESS_TOKEN
     }
-    
-    r_pub = requests.post(url_publish, data=pub_payload)
+
+    r_pub = requests.post(url_publish, data=pub_payload, timeout=60)
     if r_pub.status_code == 200:
         post_id = r_pub.json().get("id")
         print("[+] REEL PUBBLICATO CON SUCCESSO SU INSTAGRAM!")

@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from "next/headers";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
 
 export async function GET(req: Request, context: { params: Promise<{ slug: string }> }) {
@@ -80,7 +81,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${slug}`)?.value;
 
-    if (authCookie !== tenant.adminPassword) {
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 

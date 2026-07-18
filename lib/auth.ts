@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { createHmac, timingSafeEqual } from "crypto";
 import { prisma } from "@/lib/prisma";
 
 export const AUTH_COOKIE_NAME = "neatx_auth";
@@ -113,13 +114,72 @@ export function loginRedirectUrl(requestUrl: string, nextPath = "/dashboard") {
 export function requireSuperAdmin(req: Request) {
   const pwd = req.headers.get("x-admin-password");
   const expected = process.env.SUPERADMIN_PASSWORD;
-  if (!expected || pwd !== expected) {
+  if (!expected || !pwd || !safeEqual(pwd, expected)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
   return null;
 }
 
 // ── Tenant Admin auth (IDOR protection) ────────────────
+
+const SESSION_SECRET =
+  process.env.SESSION_SECRET || process.env.SUPERADMIN_PASSWORD || "";
+export const TENANT_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 giorni
+
+function safeEqual(a: string, b: string) {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
+
+/**
+ * Token di sessione firmato HMAC: `v1.{slug}.{expiresMs}.{firma}`.
+ * Sostituisce il vecchio cookie che conteneva la password in chiaro.
+ */
+export function createTenantSessionToken(
+  slug: string,
+  maxAgeSeconds = TENANT_SESSION_MAX_AGE
+) {
+  const expires = Date.now() + maxAgeSeconds * 1000;
+  const payload = `${slug}.${expires}`;
+  const sig = createHmac("sha256", SESSION_SECRET).update(payload).digest("hex");
+  return `v1.${payload}.${sig}`;
+}
+
+export function verifyTenantSessionToken(
+  token: string | null | undefined,
+  slug: string
+) {
+  if (!token || !SESSION_SECRET) return false;
+  const parts = token.split(".");
+  if (parts.length !== 4 || parts[0] !== "v1") return false;
+  const [, tokenSlug, expiresStr, sig] = parts;
+  if (tokenSlug !== slug) return false;
+  const expires = Number(expiresStr);
+  if (!Number.isFinite(expires) || Date.now() > expires) return false;
+  const expected = createHmac("sha256", SESSION_SECRET)
+    .update(`${tokenSlug}.${expiresStr}`)
+    .digest("hex");
+  return safeEqual(sig, expected);
+}
+
+/**
+ * Verifica il cookie admin del tenant: accetta il token firmato (nuovo)
+ * o, in fallback legacy, la password admin (vecchi cookie ancora attivi).
+ */
+export function isTenantAdminCookieValid(
+  cookieValue: string | null | undefined,
+  slug: string,
+  adminPassword: string | null | undefined
+) {
+  if (!cookieValue) return false;
+  if (verifyTenantSessionToken(cookieValue, slug)) return true;
+  // Legacy: cookie = password in chiaro (da rimuovere quando i vecchi cookie scadono)
+  if (adminPassword && safeEqual(cookieValue, adminPassword)) return true;
+  return false;
+}
+
 export async function requireTenantAdmin(tenantId: string | null | undefined) {
   if (!tenantId) {
     return NextResponse.json({ error: "Tenant ID mancante" }, { status: 400 });
@@ -134,9 +194,8 @@ export async function requireTenantAdmin(tenantId: string | null | undefined) {
 
   const cookieStore = await cookies();
   const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
-  
-  // TO DO (Phase 2): Replace plaintext password comparison with hashed session tokens
-  if (authCookie !== tenant.adminPassword) {
+
+  if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.adminPassword)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
 

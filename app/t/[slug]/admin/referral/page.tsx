@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 import { ArrowLeft, Copy, Share2, Users, Gift } from "lucide-react";
 
 export default async function ReferralPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -18,7 +19,7 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
   const cookieStore = await cookies();
   const authCookie = cookieStore.get("admin_auth_" + slug)?.value;
   
-  if (authCookie !== tenant.adminPassword) {
+  if (!isTenantAdminCookieValid(authCookie, slug, tenant.adminPassword)) {
     redirect(`/t/${slug}`);
   }
 

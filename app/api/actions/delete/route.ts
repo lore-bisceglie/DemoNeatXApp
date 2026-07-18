@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { isTenantAdminCookieValid } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   }
 
   const authCookie = cookieStore.get("admin_auth_" + appointment.tenant?.slug)?.value;
-  if (authCookie !== appointment.tenant?.adminPassword) {
+  if (!appointment.tenant || !isTenantAdminCookieValid(authCookie, appointment.tenant.slug, appointment.tenant.adminPassword)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
 

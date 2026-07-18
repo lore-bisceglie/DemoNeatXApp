@@ -5,7 +5,7 @@ import moviepy.editor as mp
 import sys
 sys.modules['moviepy'].VideoFileClip = mp.VideoFileClip
 
-SESSION_ID = "13302007152%3AUGUlIBfuHkpX0I%3A19%3AAYhRhuKb8bFCUcGht6YNakJUAvT3ZPwtLr1Gy_0bgg"
+SESSION_ID = os.environ["INSTA_SESSION_ID"]
 
 def publish_reel(video_path, caption):
     cl = Client()

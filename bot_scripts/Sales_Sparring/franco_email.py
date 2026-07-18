@@ -20,14 +20,18 @@ Rispondi in questo formato:
 """
 
 def generate_challenge():
-    response = client.models.generate_content(
-        model=MODEL,
-        contents="Genera la sfida di vendita di oggi in italiano.",
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT,
+    try:
+        response = client.models.generate_content(
+            model=MODEL,
+            contents="Genera la sfida di vendita di oggi in italiano.",
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+            )
         )
-    )
-    return response.text
+        return response.text
+    except Exception as e:
+        print(f"❌ Errore durante la chiamata a Gemini in franco_email.py: {e}")
+        return f"## Sfida di Franco del {datetime.datetime.now().strftime('%Y-%m-%d')}\\n\\n**Errore AI**: Non è stato possibile generare la sfida di oggi a causa di un errore API ({e}). Riprovare più tardi."
 
 if __name__ == "__main__":
     print("🥊 Avvio Sales Sparring (Franco)...")

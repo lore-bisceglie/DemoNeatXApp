@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sendTelegramMessage } from "@/lib/telegram";
 import { prisma } from "@/lib/prisma";
+import { createTenantSessionToken } from "@/lib/auth";
 
 // Invia una risposta al click di un bottone inline per far smettere di caricare l'orologino
 async function answerCallbackQuery(callbackQueryId: string, text?: string) {
@@ -174,7 +175,9 @@ const tenant = await prisma.tenant.findFirst({
           if (!tenant) {
             await sendTelegramMessage(`Nessun salone trovato per "<b>${query}</b>"`);
           } else {
-            const magicLink = `https://www.neatx.store/api/telegram/magic?slug=${tenant.slug}&secret=${tenant.adminPassword}`;
+            // Token firmato con scadenza 15 minuti (mai la password nell'URL)
+            const magicToken = createTenantSessionToken(tenant.slug, 60 * 15);
+            const magicLink = `https://www.neatx.store/api/telegram/magic?slug=${tenant.slug}&secret=${encodeURIComponent(magicToken)}`;
             await sendTelegramMessage(`🕵️‍♂️ <b>Login Magico per ${tenant.name}</b>\n\nClicca qui sotto per entrare nel suo gestionale scavalcando la password:\n🔗 ${magicLink}`);
           }
         }
