@@ -17,6 +17,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Accesso negato" }, { status: 401 });
     }
 
+    if (process.env.REMINDERS_ENABLED !== "true") {
+      return NextResponse.json({
+        success: true,
+        mode: "disabled",
+        message: "Invio promemoria disattivato.",
+        processed: 0,
+      });
+    }
+
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
