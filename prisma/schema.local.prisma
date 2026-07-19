@@ -52,6 +52,8 @@ model Tenant {
   referralCode  String?       @unique
   referredByCode String?
   referredAt    DateTime?
+  referralSignupBonusAt DateTime?
+  referralRewardedAt DateTime?
 
   appointments  Appointment[]
   blockedSlots  BlockedSlot[]
@@ -63,6 +65,20 @@ model Tenant {
   activityLogs  ActivityLog[]
   staff         Staff[]
   locations     Location[]
+  processedStripeEvents ProcessedStripeEvent[]
+}
+
+model ProcessedStripeEvent {
+  id        String   @id
+  type      String
+  status    String   @default("processing")
+  tenantId  String?
+  createdAt DateTime @default(now())
+  processedAt DateTime?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([createdAt])
 }
 
 model Location {

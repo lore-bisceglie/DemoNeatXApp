@@ -3,6 +3,7 @@ import { sendTelegramMessage } from "@/lib/telegram";
 import { prisma } from "@/lib/prisma";
 import { createTenantSessionToken } from "@/lib/auth";
 import { getTelegramWebhookSecret } from "@/lib/telegram-auth";
+import { awardReferrerForConversion } from "@/lib/referral";
 
 // Invia una risposta al click di un bottone inline per far smettere di caricare l'orologino
 async function answerCallbackQuery(callbackQueryId: string, text?: string) {
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
             where: { id: tenantId },
             data: { trialStatus: "suspended" }
           });
+          await awardReferrerForConversion(tenantId, "telegram");
           await answerCallbackQuery(cb.id, "🔒 Salone Sospeso!");
           await editMessageText(chatId, messageId, `<s>${cb.message.text}</s>\n\n<b>[Account Sospeso]</b>`);
         } catch (e) {

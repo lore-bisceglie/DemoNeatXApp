@@ -5,14 +5,14 @@ function esc(s: string): string {
 }
 
 function getTransporter() {
-  const user = process.env.SMTP_EMAIL;
-  const pass = process.env.SMTP_PASSWORD;
+  const user = process.env.SMTP_EMAIL || process.env.GMAIL_USER;
+  const pass = process.env.SMTP_PASSWORD || process.env.GMAIL_PASS;
   if (!user || !pass) return null;
   return nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
 }
 
 async function send(options: { to: string; subject: string; html: string }) {
-  const user = process.env.SMTP_EMAIL;
+  const user = process.env.SMTP_EMAIL || process.env.GMAIL_USER;
   const transporter = getTransporter();
   if (!transporter || !user) {
     console.warn("[Email] SMTP non configurato.");
@@ -33,7 +33,12 @@ async function send(options: { to: string; subject: string; html: string }) {
   }
 }
 
-export async function sendVerificationEmail(tenantEmail: string, ownerName: string, verifyUrl: string) {
+export async function sendVerificationEmail(
+  tenantEmail: string,
+  ownerName: string,
+  verifyUrl: string,
+  referralBonusPending = false,
+) {
   const safeName = esc(ownerName);
   return send({
     to: tenantEmail,
@@ -42,6 +47,7 @@ export async function sendVerificationEmail(tenantEmail: string, ownerName: stri
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
         <h1 style="color: #00b4ff;">Ciao ${safeName}, conferma la tua email ✅</h1>
         <p>Prima di iniziare, verifica che questo indirizzo email sia tuo. Basta un click:</p>
+        ${referralBonusPending ? "<p><strong>Dopo la verifica riceverai 50 messaggi bonus invito, per un saldo iniziale totale di 100.</strong></p>" : ""}
         <div style="text-align: center; margin: 30px 0;">
           <a href="${verifyUrl}" style="background: #00b4ff; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Conferma la mia email</a>
         </div>

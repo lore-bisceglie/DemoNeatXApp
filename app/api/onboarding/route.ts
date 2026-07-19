@@ -10,6 +10,7 @@ import {
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
+import { findEligibleReferrer, INITIAL_MESSAGE_CREDITS } from "@/lib/referral";
 import crypto from "crypto";
 
 import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
@@ -913,11 +914,8 @@ export async function POST(req: Request) {
 
     // Referral: chi ha invitato questo tenant?
     const refCode = cleanText(body.ref);
-    let referredByCode = null;
-    if (refCode) {
-      const referrer = await prisma.tenant.findUnique({ where: { referralCode: refCode } });
-      if (referrer) referredByCode = refCode;
-    }
+    const referrer = refCode ? await findEligibleReferrer(refCode, email, phone) : null;
+    const referredByCode = referrer?.code || null;
 
     const emailVerifyToken = crypto.randomUUID();
     const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
@@ -968,7 +966,8 @@ export async function POST(req: Request) {
         },
         storeSettings: {
           create: {
-            smsCredits: referredByCode ? 100 : 50, // 50 crediti in più se invitato
+            // Il bonus invito viene accreditato soltanto dopo la verifica email.
+            smsCredits: INITIAL_MESSAGE_CREDITS,
             maxConcurrentAppointments: Math.max(1, template.staff.length),
           },
         },
@@ -1018,7 +1017,7 @@ export async function POST(req: Request) {
         tenantId: tenant.id,
         settings: {
           create: {
-            smsCredits: referredByCode ? 100 : 50,
+            smsCredits: INITIAL_MESSAGE_CREDITS,
           },
         },
       },
@@ -1084,12 +1083,26 @@ export async function POST(req: Request) {
       return tenant;
     }, { isolationLevel: "Serializable", timeout: 15_000 });
 
-    await sendTelegramNotification(tenant, ownerName, template.id);
+    // La registrazione non deve lasciare un account inutilizzabile se la mail
+    // obbligatoria non può essere consegnata dal provider.
+    const verificationSent = await sendVerificationEmail(
+      email,
+      ownerName,
+      verifyUrl,
+      Boolean(referredByCode),
+    ).catch((error) => {
+      console.error("[Email] Errore invio verifica:", error);
+      return false;
+    });
+    if (!verificationSent) {
+      await prisma.tenant.delete({ where: { id: tenant.id } });
+      return NextResponse.json(
+        { error: "Non è stato possibile inviare l'email di verifica. Nessun account è stato creato: riprova più tardi." },
+        { status: 502 },
+      );
+    }
 
-    // 🚀 Invia email verifica indirizzo
-    await sendVerificationEmail(email, ownerName, verifyUrl).catch(e =>
-      console.error("[Email] Errore invio verifica:", e)
-    );
+    await sendTelegramNotification(tenant, ownerName, template.id);
 
     // 🚀 Invia Email di Benvenuto
     await sendWelcomeEmail(email, ownerName, getTenantAdminUrl(tenant.slug)).catch(e =>
@@ -1102,6 +1115,7 @@ export async function POST(req: Request) {
       publicUrl: getTenantPublicUrl(tenant.slug),
       adminUrl: getTenantAdminUrl(tenant.slug),
       needsVerification: true,
+      referralBonusPending: Boolean(referredByCode),
     });
   } catch (error) {
     console.error("Errore Onboarding:", error);

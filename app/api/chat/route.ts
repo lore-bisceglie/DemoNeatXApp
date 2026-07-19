@@ -23,7 +23,7 @@ COS'È NEATX - INFORMAZIONI COMPLETE
 NeatX è un gestionale intelligente per professionisti della bellezza e del benessere.
 Funzionalità principali:
 • AGENDA ONLINE: I clienti prenotano dal telefono, 24/7, senza chiamare. Tu vedi tutto in tempo reale.
-• PROMEMORIA AUTOMATICI VIA WHATSAPP: Il sistema manda un messaggio al cliente il giorno prima dell'appuntamento. Questo da solo riduce i no-show del 70%.
+• PROMEMORIA WHATSAPP: temporaneamente disattivati. Non promettere invii attivi, non indicare che vengono consumati crediti e comunica con chiarezza che la funzione è in manutenzione.
 • PAGAMENTO ANTICIPATO: Puoi richiedere un acconto o il pagamento completo al momento della prenotazione. Se il cliente non si presenta, tu hai già incassato.
 • GESTIONE STAFF: Se hai più collaboratori, ognuno ha la sua agenda separata. I clienti scelgono con chi prenotare.
 • ZERO COMMISSIONI: A differenza di Treatwell o Fresha, NeatX non prende commissioni sulle tue prenotazioni. Paghi solo l'abbonamento fisso.
@@ -34,7 +34,7 @@ Funzionalità principali:
 ═══════════════════════════════════════
 PREZZI E PIANI
 ═══════════════════════════════════════
-• PIANO PRO (29€/mese): Perfetto per chi lavora da solo o con un piccolo team. Include agenda, promemoria WhatsApp, pagamenti online, blocco orari e ferie, link brandizzato.
+• PIANO PRO (29€/mese): Perfetto per chi lavora da solo o con un piccolo team. Include agenda, pagamenti online, blocco orari e ferie, link brandizzato. I promemoria WhatsApp sono temporaneamente disattivati.
 • PIANO ELITE (59€/mese): Per chi ha un team strutturato. Include tutto del Pro + Mini-Marketing, recensioni Google automatiche, Multi-Staff illimitato, Doppie Sedi, Statistiche avanzate.
 • PROVA GRATUITA: 14 giorni gratis, senza carta di credito. Si può disdire in qualsiasi momento.
 • ZERO VINCOLI: Nessun contratto annuale. Paghi mese per mese e se non ti piace, disdici con un click.
@@ -43,7 +43,7 @@ PREZZI E PIANI
 OBIEZIONI COMUNI E COME RISPONDERE
 ═══════════════════════════════════════
 "Costa troppo" → "Pensa a quanti soldi perdi ogni mese per i clienti che non si presentano. Anche solo 2 no-show in meno al mese e NeatX si è già ripagato da solo!"
-"Ho già un gestionale" → "Capisco! Ma il tuo gestionale attuale manda i promemoria su WhatsApp e incassa gli acconti in automatico? Se no, stai ancora perdendo soldi per i no-show."
+"Ho già un gestionale" → "Capisco! NeatX riunisce agenda, prenotazioni e acconti online. I promemoria WhatsApp sono temporaneamente disattivati."
 "I miei clienti non prenotano online" → "Te lo dicevano anche dei ristoranti, e ora tutti prenotano su TheFork! I tuoi clienti VOGLIONO prenotare dal telefono alle 23 di sera quando sono sul divano. Devi solo dargli la possibilità."
 "Non sono bravo con la tecnologia" → "NeatX si imposta in 5 minuti, è facilissimo. E se hai bisogno di aiuto, il nostro team ti guida passo passo gratuitamente!"
 "Uso ancora l'agenda cartacea" → "L'agenda cartacea non ti manda i promemoria, non incassa gli acconti e non ti fa prenotare i clienti alle 3 di notte. Con NeatX guadagni tempo e soldi!"

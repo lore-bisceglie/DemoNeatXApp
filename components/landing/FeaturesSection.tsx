@@ -13,9 +13,9 @@ const FEATURE_CARDS = [
   },
   {
     icon: BellRing,
-    title: "Promemoria WhatsApp automatici",
+    title: "Promemoria WhatsApp in manutenzione",
     description:
-      "NeatX invia i promemoria direttamente su WhatsApp alle 18:00 del giorno prima. Se WhatsApp non funziona, scatta l'SMS di backup.",
+      "La funzione è temporaneamente disattivata: NeatX non effettua invii nascosti e non consuma crediti finché il servizio non viene riattivato.",
     accent: "text-emerald-400",
     border: "hover:border-emerald-400/50",
   },

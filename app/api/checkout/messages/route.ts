@@ -20,6 +20,13 @@ export async function POST(req: Request) {
     }
     const authError = await requireTenantAdmin(tenantId);
     if (authError) return authError;
+
+    if (process.env.REMINDERS_ENABLED !== 'true') {
+      return NextResponse.json(
+        { error: 'Ricariche non disponibili finché i promemoria WhatsApp sono disattivati.' },
+        { status: 503 }
+      );
+    }
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
       select: { slug: true },

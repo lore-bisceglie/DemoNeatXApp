@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 import { sendTelegramMessage } from '@/lib/telegram';
+import { Prisma } from '@prisma/client';
+import { awardReferrerForConversion } from '@/lib/referral';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +27,27 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error('Webhook signature verification failed.', err.message);
     return NextResponse.json({ error: 'Firma non valida' }, { status: 400 });
+  }
+
+  try {
+    await prisma.processedStripeEvent.create({
+      data: {
+        id: event.id,
+        type: event.type,
+        tenantId: typeof (event.data.object as any)?.client_reference_id === 'string'
+          ? (event.data.object as any).client_reference_id
+          : null,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      const existing = await prisma.processedStripeEvent.findUnique({ where: { id: event.id } });
+      if (existing?.status === 'processed') {
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+      return NextResponse.json({ error: 'Evento già in elaborazione' }, { status: 409 });
+    }
+    throw error;
   }
 
   try {
@@ -131,19 +154,13 @@ export async function POST(req: Request) {
             `💰 Prezzo: <b>${interval === 'year' ? (purchasedPlan === 'elite' ? '590€' : '290€') : (purchasedPlan === 'elite' ? '59€' : '29€')}</b>`
           );
 
-          if (updatedTenant.referredByCode) {
-            const referrer = await prisma.tenant.findUnique({ where: { referralCode: updatedTenant.referredByCode } });
-            if (referrer) {
-              await prisma.storeSettings.upsert({
-                where: { tenantId: referrer.id },
-                create: { tenantId: referrer.id, smsCredits: 100 },
-                update: { smsCredits: { increment: 100 } },
-              });
-              await sendTelegramMessage(
-                `🎁 <b>REFERRAL</b>\n\n<b>${referrer.name}</b> ha guadagnato 100 crediti WhatsApp per aver portato <b>${updatedTenant.name}</b> a bordo!`
-              );
-            }
+          const referralReward = await awardReferrerForConversion(tenantId, 'stripe');
+          if (referralReward.rewarded) {
+            await sendTelegramMessage(
+              `🎁 <b>PROGRAMMA INVITI</b>\n\n<b>${referralReward.referrerName}</b> ha ricevuto ${referralReward.credits} messaggi per la prima attivazione pagata di <b>${referralReward.referredTenantName}</b>.`
+            );
           }
+
         }
         break;
       }
@@ -228,8 +245,13 @@ export async function POST(req: Request) {
         console.log(`Evento non gestito: ${event.type}`);
     }
 
+    await prisma.processedStripeEvent.update({
+      where: { id: event.id },
+      data: { status: 'processed', processedAt: new Date() },
+    });
     return NextResponse.json({ received: true });
   } catch (error: any) {
+    await prisma.processedStripeEvent.delete({ where: { id: event.id } }).catch(() => undefined);
     console.error('Errore webhook Stripe:', error);
     return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
   }

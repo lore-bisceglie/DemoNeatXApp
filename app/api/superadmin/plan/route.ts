@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireSuperAdmin } from '@/lib/auth';
+import { awardReferrerForConversion } from '@/lib/referral';
 
 export async function POST(req: Request) {
   const auth = requireSuperAdmin(req);
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
           trialEndsAt: null
         }
       });
+      await awardReferrerForConversion(tenantId, 'superadmin');
     } else if (plan === 'expire') {
       // Forza scadenza trial
       await prisma.tenant.update({

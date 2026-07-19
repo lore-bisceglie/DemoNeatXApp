@@ -15,7 +15,6 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
   const [data, setData] = useState<{count: number, customers: DormantCustomer[], estimatedRevenue: number} | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [messageSent, setMessageSent] = useState(false);
 
   useEffect(() => {
     fetch(`/api/marketing/dormant?tenantId=${tenantId}`)
@@ -38,7 +37,7 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
   return (
     <PaywallOverlay 
       title="Sblocca il Marketing Automatico" 
-      description="Invia messaggi promozionali su WhatsApp ai clienti che non tornano da più di 30 giorni e falli tornare in salone in automatico." 
+      description="Analizza i clienti inattivi. Gli invii WhatsApp automatici sono temporaneamente disattivati."
       plan={plan || (isPremium ? "elite" : "basic")}
       className="mb-8"
     >
@@ -161,25 +160,15 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
                 </div>
 
                 <div className="mt-auto pt-6 pb-2">
-                  {!messageSent ? (
-                    <button 
-                      onClick={() => {
-                        setMessageSent(true);
-                        setTimeout(() => {
-                          setIsOpen(false);
-                        }, 4000);
-                      }}
-                      className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050814] font-black rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition transform hover:scale-[1.02] flex justify-center items-center gap-2"
-                    >
-                      <span>📲</span> Invia a {data.count} Clienti (Scatena la Magia)
-                    </button>
-                  ) : (
-                    <div className="w-full py-4 bg-emerald-500/20 text-emerald-400 font-black rounded-2xl border border-emerald-500/30 flex justify-center items-center gap-2 animate-pulse">
-                      <span>✅</span> Messaggi WhatsApp Inviati! Aspettati nuove prenotazioni a breve...
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-4 bg-slate-700 text-slate-300 font-black rounded-2xl border border-slate-600 cursor-not-allowed flex justify-center items-center gap-2"
+                  >
+                    Invii WhatsApp temporaneamente disattivati
+                  </button>
                   <p className="text-center text-xs text-slate-500 mt-4">
-                    Questa azione scalerà {data.count} crediti WhatsApp dal tuo piano.
+                    Nessun messaggio verrà inviato e nessun credito verrà consumato.
                   </p>
                 </div>
               </div>

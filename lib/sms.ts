@@ -21,16 +21,19 @@ function formatPhone(raw: string): string {
   return p;
 }
 
-async function deductCredit(tenantId: string) {
-  await prisma.storeSettings.update({
-    where: { tenantId },
+async function reserveCredit(tenantId: string) {
+  const reserved = await prisma.storeSettings.updateMany({
+    where: { tenantId, smsCredits: { gt: 0 } },
     data: { smsCredits: { decrement: 1 } },
   });
+  return reserved.count === 1;
 }
 
-async function checkCredits(tenantId: string): Promise<boolean> {
-  const store = await prisma.storeSettings.findUnique({ where: { tenantId } });
-  return !!store && store.smsCredits > 0;
+async function refundCredit(tenantId: string) {
+  await prisma.storeSettings.update({
+    where: { tenantId },
+    data: { smsCredits: { increment: 1 } },
+  });
 }
 
 export async function sendTenantMessage(
@@ -40,14 +43,17 @@ export async function sendTenantMessage(
   whatsappVars?: WhatsAppTemplateVars,
   locationId?: string
 ) {
+  if (process.env.REMINDERS_ENABLED !== "true") {
+    return { success: false, disabled: true, error: "Promemoria disattivati" };
+  }
   if (!GREEN_API_ID_INSTANCE || !GREEN_API_TOKEN_INSTANCE) {
     console.error("[whatsapp] Credenziali Green API mancanti");
     return { success: false, error: "Green API non configurato" };
   }
 
   try {
-    const hasCredits = await checkCredits(tenantId);
-    if (!hasCredits) {
+    const creditReserved = await reserveCredit(tenantId);
+    if (!creditReserved) {
       console.warn(`[whatsapp] Salone ${tenantId} crediti esauriti`);
       return { success: false, error: "Crediti esauriti" };
     }
@@ -72,14 +78,15 @@ export async function sendTenantMessage(
     const data = await response.json();
 
     if (response.ok && data.idMessage) {
-      await deductCredit(tenantId);
       console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.idMessage})`);
       return { success: true, messageId: data.idMessage, channel: "whatsapp" as const };
     } else {
+      await refundCredit(tenantId);
       console.error(`[whatsapp] Fallito:`, data);
       return { success: false, error: "Errore invio WhatsApp" };
     }
   } catch (err: any) {
+    await refundCredit(tenantId).catch(() => undefined);
     console.error("[whatsapp] Errore critico:", err);
     return { success: false, error: err.message || "Errore interno" };
   }

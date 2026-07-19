@@ -38,7 +38,7 @@ const FAQS = [
   },
   {
     q: "Come funziona il periodo di prova e i piani a pagamento?",
-    a: "Hai 14 giorni di prova gratuiti con tutte le funzionalità sbloccate, inclusi SMS e pagamenti. Al termine della prova potrai scegliere il piano che preferisci: Pro (29€/mese) o Elite (59€/mese) che include recensioni automatiche e marketing.",
+    a: "Hai 14 giorni di prova gratuiti per configurare e provare agenda, prenotazioni e pagamenti. I promemoria WhatsApp sono temporaneamente disattivati e non consumano crediti. Al termine puoi scegliere Pro (29€/mese o 290€/anno) oppure Elite (59€/mese o 590€/anno).",
   },
 ];
 

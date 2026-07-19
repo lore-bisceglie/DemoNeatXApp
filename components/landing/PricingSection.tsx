@@ -32,7 +32,7 @@ export default function PricingSection() {
             <div className="text-emerald-400 font-bold text-sm mb-6">290€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 58€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-200 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti Illimitati</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-white">Promemoria WhatsApp Automatici*</strong></li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-slate-500" /> <strong className="text-slate-400">Promemoria WhatsApp: temporaneamente disattivati*</strong></li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione turni, orari e ferie</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Export presenze per commercialista</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Link brandizzato prenotazione</li>
@@ -77,12 +77,11 @@ export default function PricingSection() {
             <ShieldCheck size={26} />
           </div>
           <div className="text-left flex-1">
-            <h4 className="text-white font-bold text-lg mb-1">* Trasparenza 100% sui costi di WhatsApp</h4>
+            <h4 className="text-white font-bold text-lg mb-1">* Stato promemoria WhatsApp</h4>
             <p className="text-slate-400 text-sm leading-relaxed mb-3">
-              Noi non inviamo email inutili o vecchi SMS. Usiamo solo la via più diretta: <strong>WhatsApp</strong>. 
-              Per azzerare i no-show inviamo messaggi veri sul telefono del cliente. Il servizio si paga <em>esclusivamente a consumo</em> tramite pacchetti ricaricabili. Non applichiamo margini nascosti.
+              Gli invii automatici sono temporaneamente disattivati. Finché la funzione resta disattivata non parte alcun messaggio e non viene consumato alcun credito. I pacchetti torneranno acquistabili solo dopo la riattivazione verificata del servizio.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="hidden flex-wrap gap-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
                 <span className="text-emerald-400">500</span> messaggi = 29€
               </span>
