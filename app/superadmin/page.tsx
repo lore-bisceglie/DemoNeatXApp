@@ -54,6 +54,7 @@ export default function SuperAdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const now = new Date();
   const todayStart = new Date();
@@ -491,17 +492,28 @@ export default function SuperAdminPage() {
                           </div>
                           <div className="flex gap-1 w-full mt-1">
                             <button onClick={() => handleAddSms(tenant.id)} className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 + SMS</button>
-                            <div className="relative flex-1 group/menu z-10">
-                              <button className="w-full text-xs font-bold py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition">⚙️ Gestisci</button>
-                              <div className="absolute bottom-full right-0 pb-1 hidden group-hover/menu:block w-40 z-20">
-                                <div className="flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 gap-1 overflow-hidden">
-                                  <button onClick={() => handleMakePlan(tenant.id, "pro")} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "pro" ? "bg-blue-500/20 text-blue-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>📘 Imposta PRO</button>
-                                  <button onClick={() => handleMakePlan(tenant.id, "elite")} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "elite" ? "bg-fuchsia-500/20 text-fuchsia-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>🌟 Imposta ELITE</button>
-                                  <div className="h-px bg-slate-800 my-1 w-full"></div>
-                                  <button onClick={() => handleMakePlan(tenant.id, "basic")} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
-                                  <button onClick={() => handleMakePlan(tenant.id, "expire")} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>
-                                </div>
-                              </div>
+                            <div className="relative flex-1 z-10">
+                              <button
+                                onClick={() => setOpenMenuId(openMenuId === tenant.id ? null : tenant.id)}
+                                className="w-full text-xs font-bold py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition"
+                              >
+                                ⚙️ Gestisci
+                              </button>
+                              {openMenuId === tenant.id && (
+                                <>
+                                  {/* Overlay trasparente per chiudere il menu al tap fuori */}
+                                  <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
+                                  <div className="absolute bottom-full right-0 pb-1 w-40 z-20">
+                                    <div className="flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 gap-1 overflow-hidden">
+                                      <button onClick={() => { handleMakePlan(tenant.id, "pro"); setOpenMenuId(null); }} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "pro" ? "bg-blue-500/20 text-blue-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>📘 Imposta PRO</button>
+                                      <button onClick={() => { handleMakePlan(tenant.id, "elite"); setOpenMenuId(null); }} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "elite" ? "bg-fuchsia-500/20 text-fuchsia-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>🌟 Imposta ELITE</button>
+                                      <div className="h-px bg-slate-800 my-1 w-full" />
+                                      <button onClick={() => { handleMakePlan(tenant.id, "basic"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
+                                      <button onClick={() => { handleMakePlan(tenant.id, "expire"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </div>
                         </div>
