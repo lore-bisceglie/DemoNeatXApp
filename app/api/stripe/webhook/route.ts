@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { sendTelegramMessage } from '@/lib/telegram';
 import { Prisma } from '@prisma/client';
 import { awardReferrerForConversion } from '@/lib/referral';
+import { sendPaymentFailedEmail, sendSubscriptionActivatedEmail, sendSubscriptionCanceledEmail } from '@/lib/email';
+import { getTenantAdminUrl } from '@/lib/domains';
 
 export const dynamic = 'force-dynamic';
 
@@ -147,6 +149,16 @@ export async function POST(req: Request) {
           if (activated.count === 0) break;
           const updatedTenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
           if (!updatedTenant) break;
+          if (updatedTenant.ownerEmail) {
+            await sendSubscriptionActivatedEmail(
+              updatedTenant.ownerEmail,
+              updatedTenant.name,
+              updatedTenant.ownerName || "titolare",
+              purchasedPlan,
+              interval,
+              getTenantAdminUrl(updatedTenant.slug),
+            );
+          }
           await sendTelegramMessage(
             `🟢 <b>NUOVO ABBONAMENTO</b>\n\n` +
             `🏪 <b>${updatedTenant.name}</b>\n` +
@@ -173,6 +185,14 @@ export async function POST(req: Request) {
           const subscriptionId = invoice.subscription;
           console.warn(`[Stripe] Pagamento fallito per tenant ${tenantId}, subscription ${subscriptionId}`);
           const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } });
+          if (tenant?.ownerEmail) {
+            await sendPaymentFailedEmail(
+              tenant.ownerEmail,
+              tenant.name,
+              tenant.ownerName || "titolare",
+              getTenantAdminUrl(tenant.slug),
+            );
+          }
           await sendTelegramMessage(
             `❌ <b>PAGAMENTO FALLITO</b>\n\n` +
             `🏪 <b>${tenant?.name || tenantId}</b>\n` +
@@ -229,6 +249,14 @@ export async function POST(req: Request) {
             data: { trialStatus: 'expired', plan: 'basic', trialEndsAt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
           });
           const tenant = await prisma.tenant.findUnique({ where: { id: subTenantId } });
+          if (tenant?.ownerEmail) {
+            await sendSubscriptionCanceledEmail(
+              tenant.ownerEmail,
+              tenant.name,
+              tenant.ownerName || "titolare",
+              new URL(`/paywall/${tenant.slug}`, getTenantAdminUrl(tenant.slug)).toString(),
+            );
+          }
           await sendTelegramMessage(
             `🚫 <b>ABBONAMENTO CANCELLATO</b>\n\n` +
             `🏪 <b>${tenant?.name || subTenantId}</b>\n` +

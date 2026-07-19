@@ -11,6 +11,29 @@ function getTransporter() {
   return nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
 }
 
+function supportEmail() {
+  return process.env.SUPPORT_EMAIL || process.env.SMTP_EMAIL || process.env.GMAIL_USER || "assistenza.neatx@gmail.com";
+}
+
+function emailShell(title: string, content: string) {
+  const support = supportEmail();
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; color: #1f2937; line-height: 1.55;">
+      <div style="padding: 24px 0; text-align: center;">
+        <div style="font-size: 24px; font-weight: 800; color: #0ea5e9;">NeatX</div>
+        <div style="font-size: 12px; color: #64748b;">Agenda online per professionisti</div>
+      </div>
+      <div style="border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; background: #ffffff;">
+        <h1 style="margin: 0 0 18px; color: #0f172a; font-size: 24px;">${title}</h1>
+        ${content}
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-top: 18px; text-align: center;">
+        Serve aiuto? Rispondi a questa email oppure scrivi a
+        <a href="mailto:${support}" style="color: #0284c7;">${support}</a>.
+      </p>
+    </div>`;
+}
+
 async function send(options: { to: string; subject: string; html: string }) {
   const user = process.env.SMTP_EMAIL || process.env.GMAIL_USER;
   const transporter = getTransporter();
@@ -150,5 +173,90 @@ export async function sendTrialExpiredOffer(tenantEmail: string, tenantName: str
         </div>
         <p style="color: #666; font-size: 13px;">Se hai bisogno di aiuto, rispondi a questa email.</p>
       </div>`,
+  });
+}
+
+export async function sendSubscriptionActivatedEmail(
+  tenantEmail: string,
+  tenantName: string,
+  ownerName: string,
+  plan: "pro" | "elite",
+  interval: "month" | "year",
+  adminUrl: string,
+) {
+  const safeOwner = esc(ownerName || "titolare");
+  const safeTenant = esc(tenantName);
+  const safeAdminUrl = esc(adminUrl);
+  const planLabel = plan === "elite" ? "Elite" : "Pro";
+  const intervalLabel = interval === "year" ? "annuale" : "mensile";
+  return send({
+    to: tenantEmail,
+    subject: `NeatX ${planLabel} attivo per ${tenantName}`,
+    html: emailShell(
+      `Abbonamento ${planLabel} attivo`,
+      `
+        <p>Ciao ${safeOwner},</p>
+        <p>il piano <strong>${planLabel} ${intervalLabel}</strong> per <strong>${safeTenant}</strong> e attivo.</p>
+        <p>Puoi continuare a usare dashboard, pagina clienti, servizi, orari e gestione appuntamenti senza interruzioni.</p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${safeAdminUrl}" style="background: #0ea5e9; color: white; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: 700;">Vai alla dashboard</a>
+        </div>
+        <p><strong>Nota operativa:</strong> i promemoria WhatsApp sono temporaneamente disattivati. NeatX non mostra falsi invii riusciti e non consuma crediti per questa funzione finche resta disattivata.</p>
+      `,
+    ),
+  });
+}
+
+export async function sendPaymentFailedEmail(
+  tenantEmail: string,
+  tenantName: string,
+  ownerName: string,
+  portalUrl: string,
+) {
+  const safeOwner = esc(ownerName || "titolare");
+  const safeTenant = esc(tenantName);
+  const safePortalUrl = esc(portalUrl);
+  return send({
+    to: tenantEmail,
+    subject: `Pagamento NeatX non riuscito per ${tenantName}`,
+    html: emailShell(
+      `Pagamento non riuscito`,
+      `
+        <p>Ciao ${safeOwner},</p>
+        <p>Stripe ci ha segnalato che il pagamento dell'abbonamento di <strong>${safeTenant}</strong> non e andato a buon fine.</p>
+        <p>Di solito succede per carta scaduta, fondi insufficienti o autenticazione bancaria non completata.</p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${safePortalUrl}" style="background: #ef4444; color: white; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: 700;">Apri dashboard pagamenti</a>
+        </div>
+        <p>Stripe riprovera automaticamente. Se il pagamento non viene risolto, l'accesso al piano a pagamento potra essere sospeso.</p>
+      `,
+    ),
+  });
+}
+
+export async function sendSubscriptionCanceledEmail(
+  tenantEmail: string,
+  tenantName: string,
+  ownerName: string,
+  paywallUrl: string,
+) {
+  const safeOwner = esc(ownerName || "titolare");
+  const safeTenant = esc(tenantName);
+  const safePaywallUrl = esc(paywallUrl);
+  return send({
+    to: tenantEmail,
+    subject: `Abbonamento NeatX annullato per ${tenantName}`,
+    html: emailShell(
+      `Abbonamento annullato`,
+      `
+        <p>Ciao ${safeOwner},</p>
+        <p>l'abbonamento NeatX di <strong>${safeTenant}</strong> e stato annullato.</p>
+        <p>Il negozio e tornato al piano base. Alcune funzioni a pagamento possono essere bloccate e la dashboard puo mostrare la pagina di scelta piano.</p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${safePaywallUrl}" style="background: #0ea5e9; color: white; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: 700;">Riattiva NeatX</a>
+        </div>
+        <p>Se l'annullamento e stato un errore o vuoi una mano, rispondi a questa email.</p>
+      `,
+    ),
   });
 }
