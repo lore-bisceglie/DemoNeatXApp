@@ -109,9 +109,7 @@ export default function TeamDrawer({
     if (!newStaffName.trim()) return;
 
     if (!isPremium && staffList.length >= 1) {
-      alert(plan === "pro" 
-        ? "Il piano Pro include un solo collaboratore. Passa all'Elite (59€) per sbloccare i membri illimitati!"
-        : "Il piano Basic include un solo collaboratore. Passa all'Elite (59€) per sbloccare i membri illimitati!");
+      alert("Il tuo piano attuale include un solo collaboratore. Passa all’Elite (59€/mese) per sbloccare i membri illimitati!");
       return;
     }
 
@@ -316,9 +314,7 @@ export default function TeamDrawer({
           <div className="bg-amber-500/10 border-b border-amber-500/20 p-4">
             <p className="text-amber-200 text-sm font-medium flex items-center gap-2">
               <span>🔒</span>
-              {plan === "pro"
-                ? <>Sei in Piano Pro. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite (59€)</a> per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.</>
-                : <>Piano Basic. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all'Elite (59€)</a> per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.</>}
+              <>Il tuo piano include un solo collaboratore. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all&apos;Elite (59€/mese)</a> per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.</>
             </p>
           </div>
         )}

@@ -321,7 +321,7 @@ export async function POST(req: Request) {
           trialEnds.setDate(trialEnds.getDate() + 14);
           await prisma.tenant.update({
             where: { id: tenant.id },
-            data: { plan: "basic", trialStatus: "active", trialEndsAt: trialEnds },
+            data: { plan: "basic", trialStatus: "trial_active", trialEndsAt: trialEnds },
           });
           await sendTelegramMessage(
             `🔒 <b>${escapeHtml(tenant.name)}</b> riportato al piano <b>Basic/trial</b>.\n` +
