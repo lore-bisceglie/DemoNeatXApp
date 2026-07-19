@@ -158,9 +158,20 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Nome servizio mancante" }, { status: 400 });
     }
 
-    const updated = await prisma.service.update({
-      where: { id },
-      data: service,
+    const updated = await prisma.$transaction(async (tx) => {
+      const updatedService = await tx.service.update({
+        where: { id },
+        data: service,
+      });
+
+      // Le righe sede che seguivano il vecchio prezzo del servizio continuano
+      // a seguirlo; eventuali prezzi realmente personalizzati restano invariati.
+      await tx.serviceLocation.updateMany({
+        where: { serviceId: id, price: existing.price },
+        data: { price: service.price },
+      });
+
+      return updatedService;
     });
 
     return NextResponse.json({ service: updated });
@@ -202,6 +213,9 @@ export async function DELETE(request: NextRequest) {
 function cleanService(input: any) {
   const name = typeof input?.name === "string" ? input.name.trim() : "";
   const duration = Math.max(5, Math.min(480, Number(input?.duration) || 30));
-  const price = Math.max(0, Number(input?.price) || 0);
+  const rawPrice = input?.price;
+  const price = rawPrice === "" || rawPrice === null || rawPrice === undefined
+    ? null
+    : Math.max(0, Number(rawPrice) || 0);
   return { name, duration, price };
 }

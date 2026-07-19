@@ -23,7 +23,7 @@ type ServiceDraft = {
   id: string;
   name: string;
   duration: number;
-  price: number;
+  price: number | "";
 };
 
 type Props = {
@@ -115,7 +115,7 @@ export default function TrialLaunchPanel({
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [serviceDrafts, setServiceDrafts] = useState<ServiceDraft[]>(
-    initialServices.map((service) => ({ ...service, price: Number(service.price || 0) }))
+    initialServices.map((service) => ({ ...service, price: service.price ?? "" }))
   );
   const [shopDraft, setShopDraft] = useState({
     name: tenantName,
@@ -215,7 +215,7 @@ export default function TrialLaunchPanel({
         tenantId,
         name: "Nuovo servizio",
         duration: 30,
-        price: 0,
+        price: null,
       }),
     });
     const data = await res.json();
@@ -226,7 +226,10 @@ export default function TrialLaunchPanel({
       return;
     }
 
-    setServiceDrafts((current) => [...current, data.service]);
+    setServiceDrafts((current) => [
+      ...current,
+      { ...data.service, price: data.service.price ?? "" },
+    ]);
     setMessage("Servizio aggiunto.");
     router.refresh();
   };
@@ -561,9 +564,13 @@ export default function TrialLaunchPanel({
                       type="number"
                       min={0}
                       value={service.price}
-                      onChange={(event) => updateServiceDraft(service.id, "price", Number(event.target.value))}
+                      onChange={(event) => updateServiceDraft(
+                        service.id,
+                        "price",
+                        event.target.value === "" ? "" : Number(event.target.value)
+                      )}
                       className="w-full rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400 lg:text-center"
-                      placeholder="€"
+                      placeholder="Nessun prezzo"
                     />
                   </div>
                   <div className="flex gap-2">

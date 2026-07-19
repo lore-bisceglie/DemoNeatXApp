@@ -54,10 +54,11 @@ export function ServiceList({
               ? srv.locations?.find((l) => l.locationId === selectedLocation.id)
                   ?.price
               : null;
+            const displayPrice = slPrice ?? srv.price;
             return (
               <option key={srv.id} value={srv.id}>
-                {srv.name} ({srv.duration} min) -{" "}
-                {slPrice ?? srv.price ? `${slPrice ?? srv.price}€` : "Gratis"}
+                {srv.name} ({srv.duration} min)
+                {displayPrice != null && displayPrice > 0 ? ` - ${displayPrice}€` : ""}
               </option>
             );
           })}

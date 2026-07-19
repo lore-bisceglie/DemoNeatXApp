@@ -1229,7 +1229,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 id: service.id,
                 name: service.name,
                 duration: service.duration,
-                price: Number(service.price || 0),
+                price: service.price ?? "",
               }))}
               staffCount={staffList.length}
               appointmentCount={rawAppointments.filter((app) => !app.customerName.includes("PAUSA") && !app.customerName.includes("FERIE")).length}

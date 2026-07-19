@@ -10,7 +10,7 @@ type Service = {
   id: string;
   name: string;
   duration: number;
-  price: number;
+  price: number | null;
 };
 
 const activityProfiles = [
@@ -110,7 +110,7 @@ export default function Home() {
     customerName: "",
     customerPhone: "",
     cancelPath: "",
-    price: 0,
+    price: null as number | null,
   });
   const [showCancelBanner, setShowCancelBanner] = useState(false);
   const [honey, setHoney] = useState("");
@@ -469,7 +469,7 @@ export default function Home() {
           customerName: name,
           customerPhone: tenantInfo.isDemo && !phone ? "3330000000" : phone,
           cancelPath: `/cancel/${cancelToken}`,
-          price: selectedService.price || 0,
+          price: selectedService.price,
         });
         setName("");
         setPhone("");
@@ -497,6 +497,9 @@ export default function Home() {
           : window.location.origin;
 
       const cancelUrl = `${baseUrl}/cancel/${cancelToken}`;
+      const priceText = selectedService.price != null && selectedService.price > 0
+        ? ` (${selectedService.price}€)`
+        : "";
 
       const text = encodeURIComponent(
         `✨ *Nuova Prenotazione!*\n\n` +
@@ -504,7 +507,7 @@ export default function Home() {
           `📞 *Telefono:* ${cleanPhone}\n` +
           `📅 *Data:* ${italianDate}\n` +
           `⏰ *Ora:* ${selectedSlot}\n` +
-          `💆‍♀️ *Servizio:* ${selectedService.name} (${selectedService.price}€)\n\n` +
+          `💆‍♀️ *Servizio:* ${selectedService.name}${priceText}\n\n` +
           `❌ *Per annullare in autonomia:*\n` +
           `Puoi usare questo link fino a 2 ore prima:\n${cancelUrl}\n\n` +
           `_Prenotazione gestita tramite Demo NeatX._ 🚀`
@@ -686,7 +689,9 @@ export default function Home() {
               </p>
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 {demoModal.paymentLabel.includes("online")
-                  ? `Nella dashboard lo vedrai già come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+                  ? demoModal.price != null && demoModal.price > 0
+                    ? `Nella dashboard lo vedrai già come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+                    : "Nella dashboard lo vedrai già come pagato, senza addebiti reali."
                   : "Nella dashboard il titolare potrà segnarlo pagato con un tocco."}
               </p>
             </div>
@@ -708,7 +713,7 @@ export default function Home() {
                     customerName: "",
                     customerPhone: "",
                     cancelPath: "",
-                    price: 0,
+                    price: null,
                   })
                 }
                 className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
@@ -979,7 +984,8 @@ export default function Home() {
             >
               {visibleServices.map((srv) => (
                 <option key={srv.id} value={srv.id}>
-                  {srv.name} ({srv.duration} min) - {srv.price ? `${srv.price}€` : "Gratis"}
+                  {srv.name} ({srv.duration} min)
+                  {srv.price != null && srv.price > 0 ? ` - ${srv.price}€` : ""}
                 </option>
               ))}
             </select>

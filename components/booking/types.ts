@@ -2,7 +2,7 @@ export type Service = {
   id: string;
   name: string;
   duration: number;
-  price: number;
+  price: number | null;
 };
 
 export type StaffMember = {
@@ -37,7 +37,7 @@ export type BookingResult = {
   customerName: string;
   customerPhone: string;
   paymentLabel: string;
-  price: number;
+  price: number | null;
 };
 
 export type StepId = "service" | "staff" | "datetime" | "details" | "confirm";

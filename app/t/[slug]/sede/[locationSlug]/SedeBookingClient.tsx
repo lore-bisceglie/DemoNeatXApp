@@ -249,6 +249,7 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
     var cards = [];
     for (let i = 0; i < services.length; i++) {
       const svc = services[i];
+      const displayPrice = svc.priceInLocation ?? svc.price;
       const isSelected = selectedService === svc.id;
       const cardClass = isSelected
         ? "w-full relative p-5 rounded-2xl border-2 border-cyan-500 bg-cyan-500/5"
@@ -269,7 +270,8 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-white text-lg">{svc.name}</h3>
               <p className="text-slate-400 text-sm mt-1">
-                {svc.duration} min &bull; {(svc.priceInLocation ?? svc.price) ? "€" + (svc.priceInLocation ?? svc.price) : "Prezzo da concordare"}
+                {svc.duration} min
+                {displayPrice != null && displayPrice > 0 ? ` • €${displayPrice}` : ""}
               </p>
             </div>
             {isSelected && (
@@ -404,6 +406,9 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
   function renderConfirmStep() {
     var dateParts = selectedDate.split("-").reverse();
     var dateStr = dateParts.join(SLASH);
+    var displayPrice = selectedServiceData
+      ? selectedServiceData.priceInLocation ?? selectedServiceData.price
+      : null;
     return (
       <div className="space-y-6">
         <div className="bg-[#131c31] rounded-2xl p-6 border border-[#1a2642]">
@@ -417,8 +422,12 @@ export default function SedeBookingClient({ tenant, location, services, staff }:
               <dd className="font-medium text-white">{selectedServiceData ? selectedServiceData.name : ""}</dd>
               <dt className="text-slate-500">Durata</dt>
               <dd className="font-medium text-white">{selectedServiceData ? selectedServiceData.duration + " min" : ""}</dd>
-              <dt className="text-slate-500">Prezzo</dt>
-              <dd className="font-medium text-white">{selectedServiceData && (selectedServiceData.priceInLocation ?? selectedServiceData.price) ? "€" + (selectedServiceData.priceInLocation ?? selectedServiceData.price) : "Da concordare"}</dd>
+              {displayPrice != null && displayPrice > 0 && (
+                <>
+                  <dt className="text-slate-500">Prezzo</dt>
+                  <dd className="font-medium text-white">€{displayPrice}</dd>
+                </>
+              )}
               <dt className="text-slate-500">Sede</dt>
               <dd className="font-medium text-white">{location.name}</dd>
               <dt className="text-slate-500">Data</dt>

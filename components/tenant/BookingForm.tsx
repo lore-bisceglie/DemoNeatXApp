@@ -34,6 +34,7 @@ interface BookingFormProps {
   isScarce: boolean;
   tenantInfo: TenantInfoType;
   selectedService: Service | null;
+  canUseOnlinePayment: boolean;
   isPlaygroundDemo: boolean;
   th: ThemeConfig;
   noSlotsMessage: { icon: string; badge: string; badgeClass: string; title: string; text: string };
@@ -76,6 +77,7 @@ export function BookingForm({
   isScarce,
   tenantInfo,
   selectedService,
+  canUseOnlinePayment,
   isPlaygroundDemo,
   th,
   noSlotsMessage,
@@ -87,9 +89,11 @@ export function BookingForm({
   handleBook,
 }: BookingFormProps) {
   const canPayOnline = Boolean(
-    tenantInfo.storeSettings?.stripeOnboardingComplete ||
-    tenantInfo.storeSettings?.stripeConnected ||
-    isPlaygroundDemo
+    canUseOnlinePayment && (
+      tenantInfo.storeSettings?.stripeOnboardingComplete ||
+      tenantInfo.storeSettings?.stripeConnected ||
+      isPlaygroundDemo
+    )
   );
 
   return (
@@ -291,7 +295,7 @@ export function BookingForm({
             </div>
           </div>
 
-          {((isPlaygroundDemo || (!tenantInfo.storeSettings?.paymentMandatory && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && tenantInfo.storeSettings?.paymentStrategy !== null))) && (
+          {(canUseOnlinePayment && (isPlaygroundDemo || (!tenantInfo.storeSettings?.paymentMandatory && tenantInfo.storeSettings?.paymentStrategy !== "OFF" && tenantInfo.storeSettings?.paymentStrategy !== null))) && (
             <div className="mb-6">
               <label className="block text-sm font-bold mb-3 text-slate-300 text-center">
                 Come preferisci pagare?
