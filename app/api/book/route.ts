@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 import { isTenantAdminCookieValid } from "@/lib/auth";
 import { appointmentConflictsWithSlot } from "@/lib/booking-conflict";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
-import { parseClosedDays } from "@/lib/opening-hours";
+import { parseClosedDays, parseDaySchedule } from "@/lib/opening-hours";
 
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
@@ -272,21 +272,29 @@ export async function POST(request: Request) {
       select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true },
     }) : bookingTenant;
     if (location) {
-      const openMins = location.openTime ? timeToMins(location.openTime) : 9 * 60;
-      const closeMins = location.closeTime ? timeToMins(location.closeTime) : 19 * 60;
+      const dayOfWeek = new Date(date + 'T12:00:00Z').getUTCDay();
+      const daySchedule = parseDaySchedule(
+        location.closedDays,
+        dayOfWeek,
+        location.openTime,
+        location.closeTime,
+        location.breakStart,
+        location.breakEnd,
+      );
+      if (daySchedule.isClosed) {
+        return NextResponse.json({ error: "Sede chiusa in questo giorno" }, { status: 400 });
+      }
+      const openMins = timeToMins(daySchedule.open);
+      const closeMins = timeToMins(daySchedule.close);
       if (startMins < openMins || endMins > closeMins) {
         return NextResponse.json({ error: "Orario fuori dagli orari di apertura della sede" }, { status: 400 });
       }
-      if (location.breakStart && location.breakEnd) {
-        const breakStartMins = timeToMins(location.breakStart);
-        const breakEndMins = timeToMins(location.breakEnd);
+      if (daySchedule.breakStart && daySchedule.breakEnd) {
+        const breakStartMins = timeToMins(daySchedule.breakStart);
+        const breakEndMins = timeToMins(daySchedule.breakEnd);
         if (startMins < breakEndMins && endMins > breakStartMins) {
-          return NextResponse.json({ error: "Orario in pausa pranzo della sede" }, { status: 400 });
+          return NextResponse.json({ error: "Orario in pausa della sede" }, { status: 400 });
         }
-      }
-      const dayOfWeek = new Date(date + 'T12:00:00Z').getUTCDay();
-      if (parseClosedDays(location.closedDays).includes(dayOfWeek)) {
-        return NextResponse.json({ error: "Sede chiusa in questo giorno" }, { status: 400 });
       }
     }
 

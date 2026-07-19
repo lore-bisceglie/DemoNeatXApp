@@ -11,7 +11,7 @@ import {
   parseBaseSchedule,
   parseShiftExceptions,
 } from "@/lib/schedule";
-import { parseClosedDays } from "@/lib/opening-hours";
+import { parseClosedDays, parseDaySchedule } from "@/lib/opening-hours";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -114,25 +114,30 @@ export async function POST(
     }
     const endTime = minutesToTime(endMinutes);
     const scheduleOwner = appointment.location || appointment.tenant;
-    const openMinutes = scheduleOwner.openTime
-      ? bookingTimeToMinutes(scheduleOwner.openTime)
-      : 9 * 60;
-    const closeMinutes = scheduleOwner.closeTime
-      ? bookingTimeToMinutes(scheduleOwner.closeTime)
-      : 19 * 60;
+    const dayOfWeek = requestedDate.getDay();
+    const daySchedule = parseDaySchedule(
+      scheduleOwner.closedDays,
+      dayOfWeek,
+      scheduleOwner.openTime,
+      scheduleOwner.closeTime,
+      scheduleOwner.breakStart,
+      scheduleOwner.breakEnd,
+    );
+    if (daySchedule.isClosed) {
+      return NextResponse.json({ error: "La sede è chiusa in questo giorno" }, { status: 400 });
+    }
+    const openMinutes = bookingTimeToMinutes(daySchedule.open);
+    const closeMinutes = bookingTimeToMinutes(daySchedule.close);
 
     if (startMinutes < openMinutes || endMinutes > closeMinutes) {
       return NextResponse.json({ error: "Orario fuori dall'apertura della sede" }, { status: 400 });
     }
-    if (scheduleOwner.breakStart && scheduleOwner.breakEnd) {
-      const breakStart = bookingTimeToMinutes(scheduleOwner.breakStart);
-      const breakEnd = bookingTimeToMinutes(scheduleOwner.breakEnd);
+    if (daySchedule.breakStart && daySchedule.breakEnd) {
+      const breakStart = bookingTimeToMinutes(daySchedule.breakStart);
+      const breakEnd = bookingTimeToMinutes(daySchedule.breakEnd);
       if (Math.max(startMinutes, breakStart) < Math.min(endMinutes, breakEnd)) {
         return NextResponse.json({ error: "Orario durante la pausa della sede" }, { status: 400 });
       }
-    }
-    if (parseClosedDays(scheduleOwner.closedDays).includes(requestedDate.getDay())) {
-      return NextResponse.json({ error: "La sede e chiusa in questo giorno" }, { status: 400 });
     }
 
     if (appointment.staff) {

@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { requireTenantAdmin } from '@/lib/auth';
-import { serializeClosedDays } from '@/lib/opening-hours';
+import { serializeClosedDays, serializeWeekSchedule } from '@/lib/opening-hours';
+import type { WeekSchedule } from '@/lib/opening-hours';
 
 export async function GET(request: Request) {
   try {
@@ -126,7 +127,32 @@ export async function POST(request: Request) {
       breakEnd,
       closedDays,
       staffSheetUrl,
+      weekSchedule,
     } = body;
+
+    // Calcola orari flat da weekSchedule (per retrocompatibilità con componenti che leggono openTime/closeTime)
+    let resolvedOpenTime = openTime ?? null;
+    let resolvedCloseTime = closeTime ?? null;
+    let resolvedBreakStart = breakStart ?? null;
+    let resolvedBreakEnd = breakEnd ?? null;
+    let resolvedClosedDays: string | null = serializeClosedDays(closedDays);
+
+    if (weekSchedule && typeof weekSchedule === 'object' && 'closed' in weekSchedule && 'hours' in weekSchedule) {
+      const ws = weekSchedule as WeekSchedule;
+      // Serializza il WeekSchedule completo in closedDays
+      resolvedClosedDays = serializeWeekSchedule(ws);
+      // Deriva i flat orari dal primo giorno aperto (lunedì o primo disponibile)
+      const firstOpenDay = [1, 2, 3, 4, 5, 6, 0].find((d) => !ws.closed.includes(d));
+      if (firstOpenDay !== undefined) {
+        const dayConfig = ws.hours[String(firstOpenDay)];
+        if (dayConfig) {
+          resolvedOpenTime = dayConfig.open ?? resolvedOpenTime;
+          resolvedCloseTime = dayConfig.close ?? resolvedCloseTime;
+          resolvedBreakStart = dayConfig.breakStart ?? null;
+          resolvedBreakEnd = dayConfig.breakEnd ?? null;
+        }
+      }
+    }
 
     if (!name || !locationSlug) {
       return NextResponse.json({ error: 'Nome e slug sono obbligatori' }, { status: 400 });
@@ -165,11 +191,11 @@ export async function POST(request: Request) {
         mapsLink,
         isMain: shouldBeMain,
         isActive: isActive ?? true,
-        openTime,
-        closeTime,
-        breakStart,
-        breakEnd,
-        closedDays: serializeClosedDays(closedDays),
+        openTime: resolvedOpenTime,
+        closeTime: resolvedCloseTime,
+        breakStart: resolvedBreakStart,
+        breakEnd: resolvedBreakEnd,
+        closedDays: resolvedClosedDays,
         staffSheetUrl,
         tenantId: tenant.id,
       },

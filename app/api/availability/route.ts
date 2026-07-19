@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { fetchStaffSchedule } from "@/lib/sheets";
 import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, minsToTime } from "@/lib/schedule";
-import { parseClosedDays } from "@/lib/opening-hours";
+import { parseDaySchedule } from "@/lib/opening-hours";
 
 export type StaffDaySchedule = {
   isOff: boolean;
@@ -97,13 +97,21 @@ export async function GET(request: Request) {
     location = { ...tenant, isActive: true } as any;
   }
 
-  const openTime = location.openTime ? timeToMins(location.openTime) : 9 * 60;
-  const closeTime = location.closeTime ? timeToMins(location.closeTime) : 19 * 60;
-
-  // Check chiusura settimanale
-  if (parseClosedDays(location.closedDays).includes(requestedDate.getUTCDay())) {
+  // Orari specifici per il giorno della settimana (retrocompatibile)
+  const dayOfWeek = requestedDate.getUTCDay();
+  const daySchedule = parseDaySchedule(
+    location.closedDays,
+    dayOfWeek,
+    location.openTime,
+    location.closeTime,
+    location.breakStart,
+    location.breakEnd,
+  );
+  if (daySchedule.isClosed) {
     return NextResponse.json({ slots: [], isHoliday: false, isClosedDay: true });
   }
+  const openTime = timeToMins(daySchedule.open);
+  const closeTime = timeToMins(daySchedule.close);
 
   try {
     // Controlliamo TUTTI gli appuntamenti del tenant, senza filtrare per locationId.
@@ -239,9 +247,9 @@ export async function GET(request: Request) {
       }
     }
 
-    // Pausa pranzo sede
-    const breakStartMins = location.breakStart ? timeToMins(location.breakStart) : null;
-    const breakEndMins = location.breakEnd ? timeToMins(location.breakEnd) : null;
+    // Pausa pranzo (usa quella specifica del giorno se disponibile)
+    const breakStartMins = daySchedule.breakStart ? timeToMins(daySchedule.breakStart) : null;
+    const breakEndMins = daySchedule.breakEnd ? timeToMins(daySchedule.breakEnd) : null;
 
     // Motore di collisione
     let availableSlots: string[] = [];

@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { requireTenantAdmin } from '@/lib/auth';
-import { serializeClosedDays } from '@/lib/opening-hours';
+import { serializeClosedDays, serializeWeekSchedule } from '@/lib/opening-hours';
+import type { WeekSchedule } from '@/lib/opening-hours';
 
 async function getTenantId(slug?: string): Promise<{ id: string; plan: string } | null> {
   if (!slug) return null;
@@ -76,7 +77,30 @@ export async function PUT(
       breakEnd,
       closedDays,
       staffSheetUrl,
+      weekSchedule,
     } = body;
+
+    // Risolvi orari da weekSchedule (retrocompatibile)
+    let resolvedOpenTime = openTime;
+    let resolvedCloseTime = closeTime;
+    let resolvedBreakStart = breakStart;
+    let resolvedBreakEnd = breakEnd;
+    let resolvedClosedDays = closedDays;
+
+    if (weekSchedule && typeof weekSchedule === 'object' && 'closed' in weekSchedule && 'hours' in weekSchedule) {
+      const ws = weekSchedule as WeekSchedule;
+      resolvedClosedDays = ws; // pass object, serialized below
+      const firstOpenDay = [1, 2, 3, 4, 5, 6, 0].find((d) => !ws.closed.includes(d));
+      if (firstOpenDay !== undefined) {
+        const dayConfig = ws.hours[String(firstOpenDay)];
+        if (dayConfig) {
+          resolvedOpenTime = dayConfig.open ?? resolvedOpenTime;
+          resolvedCloseTime = dayConfig.close ?? resolvedCloseTime;
+          resolvedBreakStart = dayConfig.breakStart ?? null;
+          resolvedBreakEnd = dayConfig.breakEnd ?? null;
+        }
+      }
+    }
 
     const location = await prisma.location.findFirst({ where: { id, tenantId: tenant.id } });
     if (!location) return NextResponse.json({ error: 'Sede non trovata' }, { status: 404 });
@@ -121,11 +145,15 @@ export async function PUT(
         mapsLink: mapsLink ?? location.mapsLink,
         isMain: isMain ?? location.isMain,
         isActive: isActive ?? location.isActive,
-        openTime: openTime ?? location.openTime,
-        closeTime: closeTime ?? location.closeTime,
-        breakStart: breakStart ?? location.breakStart,
-        breakEnd: breakEnd ?? location.breakEnd,
-        closedDays: closedDays !== undefined ? serializeClosedDays(closedDays) : location.closedDays,
+        openTime: resolvedOpenTime ?? location.openTime,
+        closeTime: resolvedCloseTime ?? location.closeTime,
+        breakStart: resolvedBreakStart !== undefined ? resolvedBreakStart : location.breakStart,
+        breakEnd: resolvedBreakEnd !== undefined ? resolvedBreakEnd : location.breakEnd,
+        closedDays: resolvedClosedDays !== undefined
+          ? (weekSchedule && typeof weekSchedule === 'object' && 'closed' in weekSchedule
+              ? serializeWeekSchedule(weekSchedule as WeekSchedule)
+              : serializeClosedDays(resolvedClosedDays))
+          : location.closedDays,
         staffSheetUrl: staffSheetUrl ?? location.staffSheetUrl,
       },
       include: { settings: true },
