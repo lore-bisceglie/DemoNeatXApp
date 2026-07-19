@@ -58,7 +58,7 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
     `Negozio: <b>${escapeTelegramHtml(tenant.name)}</b>\n` +
     `Città/categoria: ${escapeTelegramHtml(tenant.city)} | ${escapeTelegramHtml(category)}\n` +
     `Telefono: ${escapeTelegramHtml(tenant.phone || "-")}\n` +
-    "Piano iniziale: Basic con prova gratuita\n\n" +
+    "Piano iniziale: Elite (prova gratuita 14 giorni)\n\n" +
     (phoneDigits ? `<a href="https://wa.me/${phoneDigits}">Apri chat WhatsApp del titolare</a>` : "Numero WhatsApp non disponibile");
 
   try {
