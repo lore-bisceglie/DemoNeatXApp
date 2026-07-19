@@ -136,6 +136,7 @@ export async function POST(req: Request) {
             plan: purchasedPlan,
             trialStatus: 'converted',
             trialEndsAt: null,
+            convertedAt: new Date(),
           };
           if (stripeCustomerId) updateData.stripeCustomerId = stripeCustomerId;
           if (stripeSubscriptionId) updateData.stripeSubscriptionId = stripeSubscriptionId;
@@ -181,7 +182,8 @@ export async function POST(req: Request) {
         break;
       }
 
-      case 'invoice.paid': {
+      case 'invoice.paid':
+      case 'invoice.payment_succeeded': {
         const paidInvoice = event.data.object as any;
         const paidTenantId = paidInvoice.subscription_details?.metadata?.tenant_id || paidInvoice.metadata?.tenant_id;
         if (paidTenantId) {
@@ -192,6 +194,28 @@ export async function POST(req: Request) {
             `🏪 <b>${tenant?.name || paidTenantId}</b>\n` +
             `✅ Rinnovo abbonamento confermato e pagato con successo.`
           );
+        }
+        break;
+      }
+
+      case 'customer.subscription.created': {
+        const subCreate = event.data.object as any;
+        const subCreateTenantId = subCreate.metadata?.tenant_id;
+        if (subCreateTenantId) {
+          const plan = ['pro', 'elite'].includes(subCreate.metadata?.plan)
+            ? subCreate.metadata.plan
+            : undefined;
+          const updateData: any = {
+            stripeSubscriptionId: subCreate.id,
+          };
+          if (subCreate.customer) updateData.stripeCustomerId = subCreate.customer;
+          if (plan && ['active', 'trialing'].includes(subCreate.status)) {
+            updateData.plan = plan;
+            updateData.trialStatus = 'converted';
+            updateData.trialEndsAt = null;
+            updateData.convertedAt = new Date();
+          }
+          await prisma.tenant.update({ where: { id: subCreateTenantId }, data: updateData });
         }
         break;
       }
