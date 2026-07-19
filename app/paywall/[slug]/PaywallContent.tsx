@@ -1,26 +1,47 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import StripeCheckoutButton from './StripeCheckoutButton';
 
-export default function PaywallContent({ tenantId, slug, publicUrl, currentPlan, isTrial }: { tenantId: string; slug: string; publicUrl: string; currentPlan?: string; isTrial?: boolean }) {
+interface PaywallContentProps {
+  tenantId: string;
+  slug: string;
+  publicUrl: string;
+  currentPlan?: string;
+  isTrial?: boolean;
+}
+
+export default function PaywallContent({ tenantId, slug, publicUrl, currentPlan, isTrial }: PaywallContentProps) {
   const [annual, setAnnual] = useState(false);
 
   return (
     <main className="min-h-screen bg-[#050814] flex flex-col items-center justify-center p-6 text-white selection:bg-cyan-500/30">
+
+      {/* Bottone torna alla dashboard */}
+      <div className="w-full max-w-4xl mb-6">
+        <Link
+          href={`/t/${slug}/admin`}
+          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-cyan-400 transition-colors font-medium group"
+        >
+          <span className="group-hover:-translate-x-0.5 transition-transform">←</span>
+          Torna alla Dashboard
+        </Link>
+      </div>
+
       <div className="mb-10 text-center">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10 text-3xl shadow-[0_0_20px_rgba(245,158,11,0.2)]">
           🔒
         </div>
         <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-amber-300">
-          {currentPlan === "pro"
-            ? "Passa al piano Elite per sbloccare tutte le funzionalità"
+          {currentPlan === 'pro'
+            ? 'Passa al piano Elite per sbloccare tutte le funzionalità'
             : isTrial
-              ? "Il tuo periodo di prova sta per scadere"
-              : "Il tuo periodo di prova è terminato"}
+              ? 'Il tuo periodo di prova sta per scadere'
+              : 'Il tuo periodo di prova è terminato'}
         </p>
         <h1 className="text-3xl font-extrabold sm:text-5xl mb-4 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-          {currentPlan === "pro" ? "Potenzia il tuo piano" : "Scegli il piano per il tuo Salone"}
+          {currentPlan === 'pro' ? 'Potenzia il tuo piano' : 'Scegli il piano per il tuo Salone'}
         </h1>
         <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
       </div>

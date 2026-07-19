@@ -965,7 +965,7 @@ export async function POST(req: Request) {
         trialEndsAt,
         trialStatus: "trial_active",
         isDemoData: true,
-          plan: "basic",
+          plan: "elite", // Durante il trial 14gg l'utente ha accesso elite completo
         referredByCode,
         referredAt: referredByCode ? now : null,
         services: {
