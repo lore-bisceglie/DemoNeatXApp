@@ -1,18 +1,18 @@
 {
   "date": "2026-07-19",
-  "niche": "Tatuatori",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "RECENSIONI CHE CONTEGGIANO",
-  "hook_hint": "Se sei tra i tatuatori e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: Recensioni Automatiche con NeatX",
+  "niche": "Fisioterapisti",
+  "feature": "booking",
+  "feature_label": "Prenotazione 24 ore su 24",
+  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+  "promise": "clienti che prenotano da soli anche mentre dormi",
+  "cover_title": "STOP TELEFONATE INCESSANTI",
+  "hook_hint": "Se sei tra i fisioterapisti e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+  "blog_topic": "Fisioterapisti: Prenotazione 24 ore su 24 con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }
