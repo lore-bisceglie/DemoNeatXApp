@@ -70,7 +70,7 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
           <div className="md:col-span-2 bg-gradient-to-br from-[#0b1221] to-[#0f192b] border border-white/5 rounded-3xl p-8 shadow-2xl">
             <h2 className="text-xl font-bold text-white mb-2">Il tuo link esclusivo</h2>
             <p className="text-sm text-slate-400 mb-6">
-              Invia questo link ad altri barbieri o parrucchieri. Quando si iscriveranno e diventeranno clienti paganti, tu riceverai <strong>100 Crediti SMS gratuiti</strong> e loro avranno 1 mese gratis!
+              Invia questo link ad altri professionisti. Quando si iscriveranno e attiveranno il primo abbonamento pagato, tu riceverai <strong>100 crediti messaggio</strong>. L&apos;invitato parte con 50 crediti e riceve altri 50 crediti dopo la verifica email.
             </p>
 
             <div className="bg-[#050814] border border-[#1a2642] rounded-xl p-4 flex items-center justify-between gap-4">
@@ -81,7 +81,7 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
             
             <div className="mt-6 flex flex-wrap gap-4">
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(`Ehi! Sto usando questo nuovo gestionale zero commissioni per il mio salone e mi trovo benissimo. Provalo gratis da questo link e avrai 1 mese extra: ${referralUrl}`)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`Ehi! Sto usando questo nuovo gestionale zero commissioni per il mio salone. Provalo gratis da questo link: parti con 50 crediti e ne ricevi altri 50 dopo la verifica email. ${referralUrl}`)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg"

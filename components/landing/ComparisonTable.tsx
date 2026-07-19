@@ -5,7 +5,7 @@ import { Check, X } from "lucide-react";
 const ROWS = [
   { label: "Commissioni sugli incassi", neatx: "0%", booksy: "20-30%", treatwell: "~25%" },
   { label: "Link prenotazione brandizzato", neatx: <Check size={18} className="text-emerald-400" />, booksy: <X size={18} className="text-red-400" />, treatwell: <X size={18} className="text-red-400" /> },
-  { label: "Promemoria automatici", neatx: <><span className="text-emerald-400">WhatsApp</span></>, booksy: <span className="text-slate-400">Solo in-app</span>, treatwell: <span className="text-slate-400">Solo in-app</span> },
+  { label: "Promemoria automatici", neatx: <span className="text-amber-300">In manutenzione</span>, booksy: <span className="text-slate-400">Solo in-app</span>, treatwell: <span className="text-slate-400">Solo in-app</span> },
   { label: "Acconti / Caparre online", neatx: <Check size={18} className="text-emerald-400" />, booksy: <Check size={18} className="text-emerald-400" />, treatwell: <X size={18} className="text-red-400" /> },
   { label: "Prova gratuita", neatx: <span className="text-emerald-400">14 giorni</span>, booksy: <X size={18} className="text-red-400" />, treatwell: <X size={18} className="text-red-400" /> },
   { label: "Prezzo mensile fisso", neatx: <span className="text-emerald-400 font-bold">29€</span>, booksy: <span className="text-red-400">Variabile</span>, treatwell: <span className="text-red-400">Variabile</span> },

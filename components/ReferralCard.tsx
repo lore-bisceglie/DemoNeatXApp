@@ -36,7 +36,7 @@ export default function ReferralCard({ tenantId }: Props) {
         </div>
         <div>
           <h3 className="font-extrabold text-white text-sm group-hover:text-emerald-400 transition-colors">Invita un collega</h3>
-          <p className="text-xs text-slate-500">Guadagna crediti WhatsApp gratis</p>
+          <p className="text-xs text-slate-500">Guadagna crediti messaggio gratis</p>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export default function ReferralCard({ tenantId }: Props) {
           </div>
 
           <p className="text-[10px] text-slate-500 leading-relaxed z-10 relative">
-            Ogni amico che si registra col tuo link e attiva un abbonamento ti regala <strong className="text-emerald-400 font-bold">100 crediti WhatsApp</strong>.
+            Ogni amico che si registra col tuo link e attiva un abbonamento ti regala <strong className="text-emerald-400 font-bold">100 crediti messaggio</strong>.
             Nessun limite. Più inviti, più messaggi gratis.
           </p>
         </>
