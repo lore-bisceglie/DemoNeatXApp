@@ -657,6 +657,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             >
               <Gift size={16} /><span className="hidden sm:inline">Invita</span>
             </Link>
+            <Link
+              href={`/paywall/${slug}`}
+              className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
+            >
+              <CreditCard size={16} /><span className="hidden sm:inline">Piano</span> Pagamenti
+            </Link>
             {tenant.stripeCustomerId && <PortalButton slug={slug} />}
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
