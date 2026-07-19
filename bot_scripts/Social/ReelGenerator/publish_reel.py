@@ -34,6 +34,28 @@ def platform_result(ok, message="", extra=None):
         result.update(extra)
     return result
 
+def is_confirmed_tiktok_response(response):
+    """Return a TikTok confirmation only when Make reports a real platform publish."""
+    try:
+        data = response.json()
+    except ValueError:
+        data = {}
+
+    if not isinstance(data, dict):
+        return None
+
+    status = str(data.get("status") or data.get("state") or "").lower()
+    post_id = data.get("tiktok_post_id") or data.get("post_id") or data.get("video_id")
+    url = data.get("tiktok_url") or data.get("url") or data.get("share_url")
+
+    if status in ("published", "posted", "success", "ok") and (post_id or url):
+        return {
+            "status": status,
+            "post_id": post_id,
+            "url": url,
+        }
+    return None
+
 def write_report(results, preflight=None):
     report = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
@@ -46,8 +68,24 @@ def write_report(results, preflight=None):
         json.dump(report, f, ensure_ascii=False, indent=2)
     print(f"[*] Report pubblicazione salvato in {REPORT_FILE}")
 
-def has_youtube_auth():
-    return bool(os.environ.get("YOUTUBE_TOKEN_JSON")) or os.path.exists("token.json")
+def youtube_auth_check():
+    token_json = os.environ.get("YOUTUBE_TOKEN_JSON", "").strip()
+    if token_json:
+        try:
+            data = json.loads(token_json)
+        except ValueError:
+            return platform_result(False, "YOUTUBE_TOKEN_JSON presente, ma non è un JSON valido.")
+
+        required = ("token", "refresh_token", "client_id", "client_secret")
+        missing = [key for key in required if not data.get(key)]
+        if missing:
+            return platform_result(False, f"YOUTUBE_TOKEN_JSON incompleto: mancano {', '.join(missing)}.")
+        return platform_result(True, "YOUTUBE_TOKEN_JSON presente e leggibile.")
+
+    if os.path.exists("token.json"):
+        return platform_result(True, "token.json locale presente.")
+
+    return platform_result(False, "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido.")
 
 def run_preflight():
     checks = {
@@ -60,10 +98,7 @@ def run_preflight():
             bool(os.environ.get("TIKTOK_MAKE_WEBHOOK_URL")),
             "Richiede TIKTOK_MAKE_WEBHOOK_URL valido (Make.com webhook).",
         ),
-        "youtube": platform_result(
-            has_youtube_auth(),
-            "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido.",
-        ),
+        "youtube": youtube_auth_check(),
     }
 
     failed = [name for name, result in checks.items() if not result["ok"]]
@@ -261,7 +296,7 @@ def publish_to_instagram():
     print("[*] Attesa che Meta elabori il video (ci vorrà un po')...")
     url_status = f"https://graph.facebook.com/v21.0/{container_id}?fields=status_code&access_token={META_ACCESS_TOKEN}"
 
-    max_polls = 60  # max ~5 minuti (60 x 5s)
+    max_polls = 180  # max ~15 minuti (180 x 5s)
     for _ in range(max_polls):
         try:
             status_req = requests.get(url_status, timeout=30)
@@ -279,7 +314,7 @@ def publish_to_instagram():
             return platform_result(False, message, {"container_id": container_id})
         time.sleep(5)
     else:
-        message = "Timeout: Meta non ha completato l'elaborazione del video entro 5 minuti."
+        message = "Timeout: Meta non ha completato l'elaborazione del video entro 15 minuti."
         print("[!]", message)
         return platform_result(False, message, {"container_id": container_id})
 
@@ -329,8 +364,17 @@ def publish_to_tiktok():
         }, timeout=30)
         
         if r.ok:
-            print("[+] VIDEO INVIATO CON SUCCESSO A MAKE.COM (TikTok)!")
-            return platform_result(True, "Inviato al Webhook Make.com.")
+            confirmation = is_confirmed_tiktok_response(r)
+            if confirmation:
+                print("[+] PUBBLICAZIONE TIKTOK CONFERMATA!")
+                return platform_result(True, "Pubblicato su TikTok.", confirmation)
+
+            print("[!] Make.com ha ricevuto il video, ma non ha confermato la pubblicazione su TikTok.")
+            return platform_result(
+                False,
+                "Video consegnato a Make.com, ma pubblicazione TikTok non confermata.",
+                {"pending_confirmation": True, "make_status": r.status_code}
+            )
         else:
             return platform_result(False, f"Make.com ha restituito errore: {r.status_code} {r.text}")
     except Exception as e:

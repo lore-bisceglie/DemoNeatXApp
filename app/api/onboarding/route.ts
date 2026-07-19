@@ -22,6 +22,14 @@ function cleanText(value: unknown, fallback = "") {
   return value.trim();
 }
 
+function escapeTelegramHtml(value: unknown) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 async function uniqueSlug(base: string) {
   const root = sanitizeSlug(base);
 
@@ -43,12 +51,15 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return;
 
-  const text = `🚨 <b>NUOVO NEGOZIO</b> 🚨\n\n` +
-    `👤 <b>${ownerName}</b>\n` +
-    `🏪 <b>${tenant.name}</b>\n` +
-    `📍 ${tenant.city} | ${category}\n` +
-    `📞 ${tenant.phone}\n\n` +
-    `<a href="https://wa.me/${tenant.phone.replace(/[^0-9]/g, '')}">📱 Scrivi su WhatsApp</a>`;
+  const phoneDigits = String(tenant.phone || "").replace(/[^0-9]/g, "");
+  const text =
+    "🚨 <b>Nuovo negozio registrato</b>\n\n" +
+    `Titolare: <b>${escapeTelegramHtml(ownerName)}</b>\n` +
+    `Negozio: <b>${escapeTelegramHtml(tenant.name)}</b>\n` +
+    `Città/categoria: ${escapeTelegramHtml(tenant.city)} | ${escapeTelegramHtml(category)}\n` +
+    `Telefono: ${escapeTelegramHtml(tenant.phone || "-")}\n` +
+    "Piano iniziale: Basic con prova gratuita\n\n" +
+    (phoneDigits ? `<a href="https://wa.me/${phoneDigits}">Apri chat WhatsApp del titolare</a>` : "Numero WhatsApp non disponibile");
 
   try {
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -62,8 +73,8 @@ async function sendTelegramNotification(tenant: any, ownerName: string, category
         reply_markup: {
           inline_keyboard: [
             [
-              { text: "✅ Attiva Manualmente", callback_data: `approve_${tenant.id}` },
-              { text: "🔴 Elimina (Spam)", callback_data: `delete_${tenant.id}` }
+              { text: "Attiva Elite manuale", callback_data: `approve_${tenant.id}` },
+              { text: "Elimina spam", callback_data: `delete_${tenant.id}` }
             ]
           ]
         }

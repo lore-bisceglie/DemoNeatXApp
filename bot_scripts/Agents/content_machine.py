@@ -201,7 +201,7 @@ class ContentMachineAgent(BaseAgent):
             {"id": "booking", "label": "Prenotazione 24 ore su 24"},
             {"id": "timesheet", "label": "Timesheet Commercialista"},
             {"id": "recensioni", "label": "Recensioni Automatiche"},
-            {"id": "promemoria", "label": "Promemoria WhatsApp"},
+            {"id": "conferme", "label": "Conferme appuntamento"},
             {"id": "analytics", "label": "Statistiche e Dati"},
             {"id": "multi_staff", "label": "Gestione Staff"},
         ]

@@ -6,6 +6,9 @@ import requests
 from dotenv import load_dotenv
 
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 load_dotenv()
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
@@ -45,16 +48,15 @@ def send(title, message, emoji="", parse_mode=""):
 def workflow_result(workflow_name, results: dict):
     ok_count = sum(1 for result in results.values() if result.get("ok"))
     total = len(results)
-    status = "✅" if ok_count == total else "⚠️" if ok_count else "❌"
+    status = "OK" if ok_count == total else "ATTENZIONE" if ok_count else "ERRORE"
     lines = [
-        f"{'✅' if result.get('ok') else '⚠️'} {name}: "
-        f"{'completato' if result.get('ok') else 'richiede attenzione'}"
+        f"- {name}: {'completato' if result.get('ok') else 'richiede attenzione'}"
         for name, result in results.items()
     ]
     return send(
         workflow_name,
-        f"{status} {ok_count} su {total} operazioni completate\n\n" + "\n".join(lines),
-        status,
+        f"{status}: {ok_count} su {total} operazioni completate\n\n" + "\n".join(lines),
+        f"[{status}]",
     )
 
 
@@ -62,6 +64,6 @@ if __name__ == "__main__":
     send(
         sys.argv[1] if len(sys.argv) > 1 else "Notifica NeatX",
         sys.argv[2] if len(sys.argv) > 2 else "Nessun dettaglio disponibile.",
-        sys.argv[3] if len(sys.argv) > 3 else "🤖",
+        sys.argv[3] if len(sys.argv) > 3 else "[NeatX]",
         sys.argv[4] if len(sys.argv) > 4 else "",
     )

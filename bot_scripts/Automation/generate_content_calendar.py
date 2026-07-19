@@ -25,7 +25,7 @@ FEATURES = [
     {"id": "booking", "label": "Prenotazione 24 ore su 24", "pain": "telefono che squilla tutto il giorno e messaggi senza fine", "promise": "clienti che prenotano da soli anche mentre dormi"},
     {"id": "timesheet", "label": "Timesheet Commercialista", "pain": "ore dei dipendenti segnate a mano su fogli Excel persi", "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista"},
     {"id": "recensioni", "label": "Recensioni Automatiche", "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche", "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta"},
-    {"id": "promemoria", "label": "Promemoria WhatsApp", "pain": "clienti che dimenticano l'appuntamento e non rispondono al telefono", "promise": "promemoria automatici che riducono i no-show del 90%"},
+    {"id": "conferme", "label": "Conferme appuntamento", "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano", "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici"},
     {"id": "analytics", "label": "Statistiche e Dati", "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti", "promise": "dashboard con incassi, trend e performance in tempo reale"},
     {"id": "multi_staff", "label": "Gestione Staff", "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato", "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto"},
 ]
@@ -76,7 +76,7 @@ FEATURE_SCENES_EN = {
     "booking": "a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen",
     "timesheet": "a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets",
     "recensioni": "a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client",
-    "promemoria": "a WhatsApp reminder notification on a smartphone about an upcoming appointment, a client who will not forget",
+    "conferme": "a clean appointment confirmation screen on a smartphone, a client who will not forget",
     "analytics": "a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers",
     "multi_staff": "separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team",
 }

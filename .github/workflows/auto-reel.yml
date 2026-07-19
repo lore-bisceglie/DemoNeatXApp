@@ -4,7 +4,7 @@ on:
     # 14:00 e 20:00 Europe/Rome, gestendo ora legale/solare con il gate sotto.
     # I cron sono in UTC: 12/18 in estate, 13/19 in inverno.
     - cron: '0 12,13,18,19 * * *'
-  workflow_dispatch: # Permette l'avvio manuale dal sito di GitHub
+  workflow_dispatch:
 concurrency:
   group: neatx-auto-reel
   cancel-in-progress: false
@@ -95,7 +95,7 @@ jobs:
         run: |
           cd bot_scripts
           SUMMARY="$(python Social/ReelGenerator/publish_report_summary.py)"
-          python notify_telegram.py "Auto-Reel" "$SUMMARY" "🎬"
+          python notify_telegram.py "Auto-Reel" "$SUMMARY" "[REEL]"
       - name: Upload generated reel artifact
         if: steps.gate.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4

@@ -65,7 +65,7 @@ def load_today_brief():
 
 FEATURE_LIST = [
     "timesheet", "recensioni", "analytics", "multi_staff",
-    "booking", "promemoria", "no_show", "messaggi", "referral",
+    "booking", "no_show", "referral",
 ]
 
 FEATURE_LABELS = {
@@ -74,9 +74,9 @@ FEATURE_LABELS = {
     "analytics": "Statistiche e Analisi",
     "multi_staff": "Gestione Staff e Turni",
     "booking": "Prenotazioni 24/7",
-    "promemoria": "Promemoria WhatsApp",
+    "promemoria": "Conferme appuntamento",
     "no_show": "Zero No-Show",
-    "messaggi": "Pacchetti Messaggi",
+    "messaggi": "Crediti messaggio",
     "referral": "Invita Clienti",
 }
 
@@ -88,7 +88,7 @@ FEATURE_PAINS = {
     "booking": "ancora bloccato al telefono per dare appuntamenti",
     "promemoria": "i clienti dimenticano e non si presentano",
     "no_show": "perdi tempo e soldi con appuntamenti saltati",
-    "messaggi": "devi comprare costosi piani SMS che non usi mai",
+    "messaggi": "devi controllare troppe conversazioni e richieste manuali",
     "referral": "i tuoi clienti non ti portano nuovi clienti",
 }
 
@@ -98,9 +98,9 @@ FEATURE_PROMISES = {
     "analytics": "statistiche in tempo reale su guadagni e performance",
     "multi_staff": "ogni collaboratore con la propria agenda e i propri servizi",
     "booking": "prenotazioni 24/7 senza dover rispondere al telefono",
-    "promemoria": "promemoria WhatsApp che riducono i no-show del 90%",
+    "promemoria": "conferme appuntamento e gestione no-show più ordinata",
     "no_show": "acconti automatici che filtrano i clienti seri",
-    "messaggi": "crediti SMS/WhatsApp ricaricabili senza vincoli",
+    "messaggi": "crediti messaggio contabilizzati in modo chiaro",
     "referral": "link referral brandizzato per far pubblicizzare i tuoi clienti",
 }
 
@@ -112,7 +112,7 @@ FEATURE_COVERS = {
     "booking": "APPUNTAMENTI 24/7",
     "promemoria": "ADDIO NO-SHOW",
     "no_show": "BASTA NO-SHOW",
-    "messaggi": "MESSAGGI ILLIMITATI",
+    "messaggi": "MESSAGGI SOTTO CONTROLLO",
     "referral": "CLIENTI CHE PORTANO CLIENTI",
 }
 
@@ -121,7 +121,7 @@ FEATURE_SCENES_EN = {
     "booking": "a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen",
     "timesheet": "a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets",
     "recensioni": "a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client",
-    "promemoria": "a WhatsApp reminder notification on a smartphone about an upcoming appointment, a client who will not forget",
+    "promemoria": "a clean appointment confirmation screen on a smartphone, a client who will not forget",
     "analytics": "a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers",
     "multi_staff": "separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team",
 }
@@ -271,10 +271,10 @@ Argomento blog collegato: {strategy.get("blog_topic", "")}
         "booking": "Fai capire che stanno perdendo tempo a rispondere su WhatsApp o al telefono. Parla di prenotazioni automatiche 24/7.",
         "timesheet": "Fai capire che perdono ore a gestire turni su Excel. Parla di CSV pronto per il commercialista, ferie e permessi automatici.",
         "recensioni": "Fai capire che perdono recensioni Google preziose. Parla del sistema automatico che raccoglie 5 stelle da ogni cliente soddisfatto.",
-        "promemoria": "Fai capire che i clienti dimenticano gli appuntamenti. Parla di promemoria WhatsApp automatici che riducono i no-show del 90%.",
+        "promemoria": "Fai capire che i clienti dimenticano gli appuntamenti. Parla di conferme e gestione no-show, senza promettere invii WhatsApp automatici.",
         "analytics": "Fai capire che non sanno quanto guadagnano davvero. Parla di statistiche in tempo reale su incassi, performance e trend.",
         "multi_staff": "Fai capire che gestire piu collaboratori e un caos. Parla di agenda separata per ogni staff, turni e ferie automatici.",
-        "messaggi": "Fai capire che comprano piani SMS costosi che non usano mai. Parla di crediti WhatsApp ricaricabili da 39€ per 500 messaggi.",
+        "messaggi": "Fai capire che gestire messaggi e richieste manuali crea caos. Non promettere invii WhatsApp automatici finché la funzione resta disattivata.",
         "referral": "Fai capire che ogni cliente soddisfatto potrebbe portarne altri. Parla del link referral brandizzato che trasforma i clienti in venditori.",
     }
     hook_instruction = hook_instructions_map.get(feature, "Fai capire che stanno perdendo tempo e soldi con sistemi manuali. Parla di automazione con NeatX.")
@@ -437,8 +437,27 @@ def run_pipeline():
     # 4. Pubblica
     print("\n[*] Esecuzione publish_reel.py...")
     subprocess.run(["python", "publish_reel.py"], check=True)
-    
-    print("\n[+] CICLO COMPLETATO! IL REEL E' ONLINE!")
+
+    report_path = SCRIPT_DIR / "publish_report.json"
+    if report_path.exists():
+        with open(report_path, "r", encoding="utf-8") as report_file:
+            report = json.load(report_file)
+        results = report.get("results", {})
+        confirmed = [name for name, result in results.items() if result.get("ok")]
+        pending = [name for name, result in results.items() if result.get("pending_confirmation")]
+        failed = [name for name, result in results.items() if not result.get("ok") and not result.get("pending_confirmation")]
+
+        if failed or pending:
+            print(
+                "\n[!] CICLO COMPLETATO CON ATTENZIONE: "
+                f"online={confirmed or 'nessuna'}, "
+                f"in_attesa={pending or 'nessuna'}, "
+                f"fallite={failed or 'nessuna'}."
+            )
+        else:
+            print("\n[+] CICLO COMPLETATO: tutte le piattaforme hanno confermato il video online.")
+    else:
+        print("\n[!] CICLO COMPLETATO, ma manca publish_report.json: stato pubblicazione non verificabile.")
 
 if __name__ == "__main__":
     run_pipeline()

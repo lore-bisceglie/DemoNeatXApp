@@ -114,41 +114,40 @@ class GuardianAgent(BaseAgent):
             return
 
         checks = report.get("checks", {})
-        status_icon = "🟢" if report.get("status") == "healthy" else "🟡"
+        status_label = "verificato e funzionante" if report.get("status") == "healthy" else "verificato e non funzionante"
         lines = [
-            f"<b>{status_icon} NeatX Guardian — Report Giornaliero</b>",
-            f"📅 {report.get('date')}",
-            f"{'─'*30}",
+            f"<b>NeatX Guardian - Report giornaliero</b>",
+            f"Data: {report.get('date')}",
+            f"Stato generale: <b>{status_label}</b>",
             "",
         ]
+
         today = report.get("today", {})
         if today:
-            lines.append(f"🎯 <b>Oggi:</b> {today.get('niche')} — {today.get('feature')}")
-            lines.append(f"📺 Cover: <code>{today.get('cover')}</code>")
+            lines.append(f"Contenuto previsto oggi: {today.get('niche', '-')} - {today.get('feature', '-')}")
+            lines.append(f"Cover: <code>{today.get('cover', '-')}</code>")
             lines.append("")
 
         labels = {
             "content_calendar": "Contenuti pianificati",
             "today_brief": "Brief giornaliero",
             "market_intelligence": "Intelligence mercato",
-            "reel_data": "Reel presente",
+            "reel_data": "Dati ultimo reel",
             "content_advisor": "Raccomandazioni",
             "leads_pipeline": "Pipeline lead",
         }
 
         for key, check in checks.items():
-            icon = "✅" if check.get("ok") else "⚠️"
             label = labels.get(key, key.replace("_", " ").title())
-            lines.append(f"{icon} <b>{label}:</b> <code>{check.get('detail')}</code>")
+            item_status = "verificato e funzionante" if check.get("ok") else "verificato e non funzionante"
+            lines.append(f"- <b>{label}</b>: {item_status}. Dettaglio: <code>{check.get('detail')}</code>")
 
-        recap = None
         ideas_msgs = self.bus.read("content_ideas")
         if ideas_msgs:
-            payload = ideas_msgs[-1]["payload"]
-            recap = payload.get("trend", "")
-        if recap:
-            lines.append("")
-            lines.append(f"📈 <b>Trend del giorno:</b> {recap}")
+            recap = ideas_msgs[-1].get("payload", {}).get("trend", "")
+            if recap:
+                lines.append("")
+                lines.append(f"Trend del giorno: {recap}")
 
         text = "\n".join(lines)
         try:
