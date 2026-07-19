@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-19T11:51:14.318185+02:00",
+  "generated_at": "2026-07-19T16:51:42.581327+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
@@ -8,54 +8,25 @@
   },
   "ideas": [
     {
-      "title": "Fisioterapisti: Basta ore dei collaboratori perse su fogli Excel",
-      "hook": "Fisioterapista, se stai ancora segnando le ore dei tuoi collaboratori a mano su Excel che poi spariscono, stai perdendo ore di lavoro e soldi.",
-      "description": "Video che mostra il caos di fine mese quando si devono ricostruire i turni dei fisioterapisti dello studio. Presenta la soluzione di NeatX con turni, ferie e permessi tracciati in automatico ed esportabili in un click per il commercialista.",
-      "keywords": [
-        "gestionale fisioterapisti",
-        "agenda fisioterapista"
-      ],
-      "blog_title": "Fisioterapisti: Timesheet Commercialista con NeatX"
+      "format": "pain shock",
+      "niche": "Fisioterapisti",
+      "hook": "Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?",
+      "angle": "Mostra quanto costa davvero non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti.",
+      "cta": "Commenta AGENDA e ti mando il link."
     },
     {
-      "title": "Studio di fisioterapia: Come inviare le ore al commercialista in 5 secondi",
-      "hook": "Questo è l incubo di fine mese per ogni studio di fisioterapia: rincorrere i collaboratori per avere i fogli ore corretti prima di mandarli al commercialista.",
-      "description": "Un video che evidenzia lo stress della scadenza mensile e l ansia da errore nei calcoli. Mostra come la funzionalità timesheet di NeatX genera un file CSV perfetto e pronto da inviare.",
-      "keywords": [
-        "gestionale fisioterapisti",
-        "prenotazioni fisioterapia"
-      ],
-      "blog_title": "Come semplificare la gestione dei turni e delle ore nel tuo studio di fisioterapia"
+      "format": "before after",
+      "niche": "Fisioterapisti",
+      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
+      "angle": "Confronto diretto tra caos manuale e link NeatX.",
+      "cta": "Scrivi DEMO se vuoi provarlo."
     },
     {
-      "title": "Fisioterapisti: L errore nei fogli presenza che ti costa centinaia di euro",
-      "hook": "Quanti soldi perdi ogni mese nel tuo studio di fisioterapia a causa di straordinari e turni calcolati male sui fogli di carta?",
-      "description": "Spiega come le ore segnate a mente o su foglietti volanti portino a errori di pagamento dei collaboratori dello studio. NeatX digitalizza tutto eliminando i fogli persi.",
-      "keywords": [
-        "agenda fisioterapista",
-        "gestionale fisioterapisti"
-      ],
-      "blog_title": "Gestione collaboratori per fisioterapisti: stop agli errori nei cedolini e fogli ore"
-    },
-    {
-      "title": "Studio Fisioterapico: Gestire ferie e permessi senza impazzire",
-      "hook": "Se gestisci uno studio con più fisioterapisti, sai che coordinare ferie, turni e permessi dei dipendenti via WhatsApp è un suicidio organizzativo.",
-      "description": "Mostra come le richieste di assenza non tracciate blocchino le prenotazioni dei pazienti. Con NeatX i collaboratori inseriscono tutto in piattaforma e l agenda si aggiorna da sola calcolando le ore esatte per il commercialista.",
-      "keywords": [
-        "prenotazioni fisioterapia",
-        "agenda fisioterapista"
-      ],
-      "blog_title": "Ferie e permessi dello staff dello studio: guida pratica all automazione per fisioterapisti"
-    },
-    {
-      "title": "Gestione ore collaboratori: Fogli Excel vs NeatX per Fisioterapisti",
-      "hook": "Smetti di usare i fogli Excel per calcolare i turni dei tuoi fisioterapisti se non vuoi rischiare sanzioni e conteggi sballati.",
-      "description": "Un confronto pratico tra la vecchia gestione manuale fallimentare e il sistema automatico NeatX che esporta il file CSV per il commercialista pronto per l elaborazione delle buste paga.",
-      "keywords": [
-        "gestionale fisioterapisti",
-        "agenda fisioterapista"
-      ],
-      "blog_title": "Perché i fogli Excel stanno distruggendo la produttività del tuo studio di fisioterapia"
+      "format": "calculator",
+      "niche": "Fisioterapisti",
+      "hook": "Un no-show non è un fastidio, è fatturato perso.",
+      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
+      "cta": "Commenta AGENDA."
     }
   ]
 }
