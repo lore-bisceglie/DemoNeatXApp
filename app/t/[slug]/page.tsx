@@ -172,13 +172,13 @@ export default async function TenantPage({
     themeColor: tenant.themeColor,
     services: tenant.services.map((service) => ({
       ...service,
-      price: service.price ?? 0,
+      price: service.price,
     })),
     staff: tenant.staff.map((member) => ({
       ...member,
       services: member.services.map((service) => ({
         ...service,
-        price: service.price ?? 0,
+        price: service.price,
       })),
     })),
     locations: tenant.locations.map(({ settings, ...location }) => ({

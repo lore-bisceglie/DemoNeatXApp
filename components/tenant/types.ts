@@ -2,7 +2,7 @@ export type Service = {
   id: string;
   name: string;
   duration: number;
-  price: number;
+  price: number | null;
   locations?: { locationId: string; price?: number | null }[];
 };
 

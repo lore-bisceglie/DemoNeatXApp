@@ -87,7 +87,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     customerName: "",
     customerPhone: "",
     cancelPath: "",
-    price: 0,
+    price: null,
   });
   const [showCancelBanner, setShowCancelBanner] = useState(false);
   const [isHoliday, setIsHoliday] = useState(false);
@@ -214,10 +214,22 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   );
 
   const effectiveServicePrice = useMemo(() => {
-    if (!selectedLocation || !selectedService) return selectedService?.price ?? 0;
+    if (!selectedLocation || !selectedService) return selectedService?.price ?? null;
     const sl = selectedService.locations?.find(l => l.locationId === selectedLocation.id);
-    return sl?.price ?? selectedService.price;
+    return sl?.price ?? selectedService.price ?? null;
   }, [selectedLocation, selectedService]);
+
+  const selectedServiceSupportsOnlinePayment = useMemo(() => {
+    const strategy = bookingTenantInfo.storeSettings?.paymentStrategy?.toUpperCase();
+    return strategy !== "PERCENTAGE" ||
+      (effectiveServicePrice != null && effectiveServicePrice > 0);
+  }, [bookingTenantInfo.storeSettings?.paymentStrategy, effectiveServicePrice]);
+
+  useEffect(() => {
+    if (!selectedServiceSupportsOnlinePayment && paymentMethod === "online") {
+      setPaymentMethod("salon");
+    }
+  }, [paymentMethod, selectedServiceSupportsOnlinePayment]);
 
   const shopInitials = tenantInfo.name
     .split(" ")
@@ -482,6 +494,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
 
         const shouldCheckout = Boolean(
           !isPlaygroundDemo &&
+          selectedServiceSupportsOnlinePayment &&
           bookingTenantInfo.storeSettings?.paymentStrategy !== "OFF" &&
           (bookingTenantInfo.storeSettings?.paymentMandatory || paymentMethod === "online")
         );
@@ -881,6 +894,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
             isScarce={isScarce}
             tenantInfo={bookingTenantInfo}
             selectedService={selectedService}
+            canUseOnlinePayment={selectedServiceSupportsOnlinePayment}
             isPlaygroundDemo={isPlaygroundDemo}
             th={th}
             noSlotsMessage={noSlotsMessage}

@@ -632,10 +632,12 @@ export default function SuperAdminPage() {
                 <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">🛠️ Servizi ({detailTenant.services.length})</h3>
                   <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                    {detailTenant.services.map((s: { id: string; name: string; duration: number; price: number }) => (
+                    {detailTenant.services.map((s: { id: string; name: string; duration: number; price: number | null }) => (
                       <div key={s.id} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-lg hover:bg-slate-900/50">
                         <span className="text-slate-300">{s.name}</span>
-                        <span className="text-slate-500 font-mono text-xs">{s.duration}min · €{s.price}</span>
+                        <span className="text-slate-500 font-mono text-xs">
+                          {s.duration}min{s.price != null && s.price > 0 ? ` · €${s.price}` : ""}
+                        </span>
                       </div>
                     ))}
                   </div>

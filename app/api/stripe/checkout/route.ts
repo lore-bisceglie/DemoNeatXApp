@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Account Stripe non configurato" }, { status: 400 });
     }
 
-    let servicePrice = appointment.service.price || 0;
+    let servicePrice = appointment.service.price;
     if (appointment.locationId) {
       const locationPrice = await prisma.serviceLocation.findUnique({
         where: {
@@ -77,6 +77,12 @@ export async function POST(request: Request) {
     if (strategy === "FIXED") {
       amountEur = settings.paymentFixedAmount || 0;
     } else if (strategy === "PERCENTAGE") {
+      if (servicePrice == null || servicePrice <= 0) {
+        return NextResponse.json(
+          { error: "Prezzo servizio non disponibile per l'acconto percentuale" },
+          { status: 400 }
+        );
+      }
       amountEur = servicePrice * ((settings.paymentPercentage || 0) / 100);
     } else {
       return NextResponse.json({ error: "Strategia pagamento non valida" }, { status: 400 });

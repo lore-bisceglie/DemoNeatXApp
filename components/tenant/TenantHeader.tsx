@@ -8,7 +8,7 @@ interface TenantHeaderProps {
   logoClicked: boolean;
   handleLogoClick: () => void;
   isPlaygroundDemo: boolean;
-  effectiveServicePrice: number;
+  effectiveServicePrice: number | null;
   hasSelectedService: boolean;
 }
 
@@ -145,7 +145,7 @@ export function TenantHeader({
 
       <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
         <span className="text-slate-100">{tenantInfo.name}</span>
-        {hasSelectedService && effectiveServicePrice > 0 && (
+        {hasSelectedService && effectiveServicePrice != null && effectiveServicePrice > 0 && (
           <span className={`px-3 py-1 rounded-full border text-sm align-middle animate-in zoom-in duration-300 ${th.badgeBg} ${th.textMain} ${th.borderMain}`}>
             {effectiveServicePrice}€
           </span>

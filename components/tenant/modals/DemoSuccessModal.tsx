@@ -11,7 +11,7 @@ export interface DemoModalState {
   customerName: string;
   customerPhone: string;
   cancelPath: string;
-  price: number;
+  price: number | null;
 }
 
 interface DemoSuccessModalProps {
@@ -73,7 +73,9 @@ export function DemoSuccessModal({
           </p>
           <p className="text-[11px] text-slate-400 leading-relaxed">
             {demoModal.paymentLabel.includes("online")
-              ? `Nella dashboard lo vedrai già come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+              ? demoModal.price != null && demoModal.price > 0
+                ? `Nella dashboard lo vedrai già come pagato: ${demoModal.price} EUR simulati, senza addebiti reali.`
+                : "Nella dashboard lo vedrai già come pagato, senza addebiti reali."
               : isPlaygroundDemo
               ? "Nella dashboard il titolare potrà segnarlo pagato con un tocco."
               : "La prenotazione test ora appare nella dashboard del negozio."}
@@ -97,7 +99,7 @@ export function DemoSuccessModal({
                 customerName: "",
                 customerPhone: "",
                 cancelPath: "",
-                price: 0,
+                price: null,
               })
             }
             className="w-full bg-[#131c31] hover:bg-[#1a2642] text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 font-bold py-3 rounded-xl transition shadow-lg"
