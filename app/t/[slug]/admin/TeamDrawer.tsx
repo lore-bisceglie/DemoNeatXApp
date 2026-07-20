@@ -24,7 +24,7 @@ type StaffMember = {
 export default function TeamDrawer({
   tenantId,
   isPremium,
-  _plan,
+  plan: _plan,
   allServices,
   initialStaffSheetUrl,
   locations: initialLocations,

@@ -77,13 +77,13 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
       <main className="max-w-3xl mx-auto py-16 px-6 text-slate-300 text-lg leading-relaxed font-medium">
         <ReactMarkdown
           components={{
-            h2: ({_node, ...props}) => <h2 className="text-3xl font-extrabold text-white mt-12 mb-6" {...props} />,
-            h3: ({_node, ...props}) => <h3 className="text-2xl font-bold text-slate-100 mt-8 mb-4" {...props} />,
-            p: ({_node, ...props}) => <p className="mb-6" {...props} />,
-            ul: ({_node, ...props}) => <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-400" {...props} />,
-            li: ({_node, ...props}) => <li className="" {...props} />,
-            strong: ({_node, ...props}) => <strong className="font-bold text-white" {...props} />,
-            blockquote: ({_node, ...props}) => <blockquote className="border-l-4 border-[#00b4ff] pl-4 italic text-slate-400 my-6 bg-[#0b1221] py-3 pr-4 rounded-r-lg" {...props} />,
+            h2: ({node: _node, ...props}) => <h2 className="text-3xl font-extrabold text-white mt-12 mb-6" {...props} />,
+            h3: ({node: _node, ...props}) => <h3 className="text-2xl font-bold text-slate-100 mt-8 mb-4" {...props} />,
+            p: ({node: _node, ...props}) => <p className="mb-6" {...props} />,
+            ul: ({node: _node, ...props}) => <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-400" {...props} />,
+            li: ({node: _node, ...props}) => <li className="" {...props} />,
+            strong: ({node: _node, ...props}) => <strong className="font-bold text-white" {...props} />,
+            blockquote: ({node: _node, ...props}) => <blockquote className="border-l-4 border-[#00b4ff] pl-4 italic text-slate-400 my-6 bg-[#0b1221] py-3 pr-4 rounded-r-lg" {...props} />,
           }}
         >
           {contentWithoutH1}
