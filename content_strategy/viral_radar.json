@@ -1,46 +1,32 @@
 {
-  "generated_at": "2026-07-20T12:51:15.200505+02:00",
+  "generated_at": "2026-07-20T17:47:53.554875+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 9,
-    "today_niche": "Tatuatori"
+    "today_niche": "Fisioterapisti"
   },
   "ideas": [
     {
-      "hook": "Sei un tatuatore e non sai quanto hai incassato netti questo mese? Stai perdendo soldi ogni giorno.",
-      "video_concept": "Mostra un video stile neon_racer spiegando che molti tatuatori si concentrano solo sul costo del singolo tatuaggio senza calcolare le ore di disegno e i materiali. Presenta la dashboard NeatX che calcola i margini reali in tempo reale.",
-      "blog_title": "Tatuatori: Statistiche e Dati con NeatX",
-      "target_pain": "Mancanza di controllo sui margini reali e sui servizi più redditizi",
-      "gameplay_style": "neon_racer"
+      "format": "pain shock",
+      "niche": "Fisioterapisti",
+      "hook": "Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?",
+      "angle": "Mostra quanto costa davvero turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato.",
+      "cta": "Commenta AGENDA e ti mando il link."
     },
     {
-      "hook": "Tatuatori, quali sono i giorni e gli orari in cui il vostro studio rimane vuoto senza che ve ne accorgiate?",
-      "video_concept": "Analizza il problema delle ore morte nello studio. Spiega come l'analisi dei dati storici di NeatX permette di individuare i trend negativi per lanciare promozioni flash o walk-in day mirati nei giorni meno frequentati.",
-      "blog_title": "Come riempire i buchi in agenda: l'uso dei dati per studi di tatuaggi",
-      "target_pain": "Orari e giorni morti che riducono i guadagni mensili dello studio",
-      "gameplay_style": "neon_racer"
+      "format": "before after",
+      "niche": "Fisioterapisti",
+      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
+      "angle": "Confronto diretto tra caos manuale e link NeatX.",
+      "cta": "Scrivi DEMO se vuoi provarlo."
     },
     {
-      "hook": "Chiedi la caparra per il tatuaggio ma non hai idea di quanti soldi perdi davvero ogni mese con i no-show?",
-      "video_concept": "Spiega come unire la gestione della caparra obbligatoria alle statistiche finanziarie di NeatX. Mostra la differenza tra i mesi con alto tasso di cancellazione e quelli ottimizzati grazie ai promemoria automatici.",
-      "blog_title": "Gestione caparre e statistiche: la guida definitiva per tatuatori",
-      "target_pain": "Perdite finanziarie invisibili causate da disattenzioni e no-show dei clienti",
-      "gameplay_style": "neon_racer"
-    },
-    {
-      "hook": "Fai fineline, traditional e cover-up, ma sai quale di questi stili ti fa guadagnare di più all'ora?",
-      "video_concept": "Confronta il tempo impiegato per diversi stili di tatuaggio rispetto al guadagno effettivo. Spiega come la categorizzazione delle prestazioni su NeatX svela quali servizi ottimizzano la redditività oraria dello studio.",
-      "blog_title": "Quali stili di tatuaggio rendono di più? Scoprilo con i dati di NeatX",
-      "target_pain": "Mancanza di dati sui servizi che offrono la maggiore redditività rispetto al tempo impiegato",
-      "gameplay_style": "neon_racer"
-    },
-    {
-      "hook": "Arrivi a fine mese senza sapere quanto devi mettere da parte per le tasse del tuo studio di tatuaggi?",
-      "video_concept": "Affronta il panico della gestione fiscale per i tatuatori in partita IVA. Mostra come una dashboard con incassi e trend in tempo reale semplifichi la vita e renda immediato il passaggio dei dati al commercialista.",
-      "blog_title": "Tatuatori: come monitorare le performance finanziarie senza fogli Excel",
-      "target_pain": "Gestione finanziaria caotica e ansia da pianificazione fiscale",
-      "gameplay_style": "neon_racer"
+      "format": "calculator",
+      "niche": "Fisioterapisti",
+      "hook": "Un no-show non è un fastidio, è fatturato perso.",
+      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
+      "cta": "Commenta AGENDA."
     }
   ]
 }
