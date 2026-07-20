@@ -1,24 +1,43 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-19T16:51:42.581327+02:00
+Generato: 2026-07-20T10:57:20.830620+02:00
 
-## Idea 1: Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Fisioterapisti
-- hook: Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Sei un barbiere e i clienti felici non ti lasciano mai una recensione, mentre quelli arrabbiati corrono subito su Google? Stai perdendo decine di clienti ogni mese.
+- hook: Sei un barbiere e i clienti felici non ti lasciano mai una recensione, mentre quelli arrabbiati corrono subito su Google? Stai perdendo decine di clienti ogni mese.
+- video_concept: Mostra un barbiere che lavora benissimo ma ha una valutazione bassa su Google perché solo chi si lamenta lascia recensioni. Spiega come il sistema automatico di NeatX invia un messaggio post-taglio: se il cliente è felice viene indirizzato su Google, se ha una lamentela il feedback rimane privato e arriva solo al titolare.
+- blog_title: Barbieri: Recensioni Automatiche con NeatX
+- gameplay_style: neon_racer
+- target_keywords: ['gestionale barbiere', 'recensioni google barbiere', 'marketing barber shop']
+- image_prompt: photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Fisioterapisti
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Quante ore di lavoro e quanti soldi perdi ogni settimana nel tuo barber shop per colpa di clienti che prenotano il taglio e poi non si presentano?
+- hook: Quante ore di lavoro e quanti soldi perdi ogni settimana nel tuo barber shop per colpa di clienti che prenotano il taglio e poi non si presentano?
+- video_concept: Inquadra la sedia del barbiere vuota e l'orologio che scorre. Spiega che con i promemoria automatici su WhatsApp di NeatX e la richiesta di acconto in fase di prenotazione, i no-show nel salone scendono a zero.
+- blog_title: Barbieri: Zero No-Show con NeatX
+- gameplay_style: neon_racer
+- target_keywords: ['no show barber shop', 'prenotazioni barbiere', 'gestionale barbiere']
+- image_prompt: photorealistic cinematic scene inside a modern barber shop, an empty professional barber chair under a spotlight, a clock on the wall showing elapsed time, premium realistic lighting
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Fisioterapisti
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Smetti di posare le forbici ogni cinque minuti per rispondere al telefono: ecco come riempire l'agenda del tuo barber shop mentre stai tagliando i capelli.
+- hook: Smetti di posare le forbici ogni cinque minuti per rispondere al telefono: ecco come riempire l'agenda del tuo barber shop mentre stai tagliando i capelli.
+- video_concept: Mostra il contrasto tra un barbiere stressato che interrompe continuamente il taglio per rispondere alle chiamate e un barbiere rilassato che riceve notifiche di prenotazione automatica sul telefono senza toccarlo.
+- blog_title: Barbieri: Come Automatizzare le Prenotazioni e Dire Addio al Telefono
+- gameplay_style: neon_racer
+- target_keywords: ['prenotazioni barbiere', 'agenda barbiere online', 'gestione salone']
+- image_prompt: photorealistic cinematic scene inside a busy barber shop, a smartphone on a shelf showing automatic appointment confirmations coming in, scissors and comb in the background, premium realistic lighting
+
+## Idea 4: Il segreto dei migliori barber shop per intercettare i clienti insoddisfatti prima che rovinino la tua reputazione pubblica con una stella su Google.
+- hook: Il segreto dei migliori barber shop per intercettare i clienti insoddisfatti prima che rovinino la tua reputazione pubblica con una stella su Google.
+- video_concept: Spiega il funzionamento del filtro feedback: il sistema NeatX invia un sondaggio rapido dopo il servizio. Se il voto è basso, si apre un modulo di contatto privato per risolvere il problema direttamente con il cliente, evitando la recensione pubblica negativa.
+- blog_title: Come proteggere la reputazione del tuo barber shop con il feedback privato
+- gameplay_style: neon_racer
+- target_keywords: ['reputazione barber shop', 'recensioni google barbiere', 'gestionale barbiere']
+- image_prompt: photorealistic cinematic scene, close up of a hand holding a smartphone showing a private feedback form for a barber shop, modern interface, premium realistic lighting
+
+## Idea 5: Un cliente che esce dal tuo salone senza aver prenotato il prossimo appuntamento è un cliente che rischi di regalare alla concorrenza.
+- hook: Un cliente che esce dal tuo salone senza aver prenotato il prossimo appuntamento è un cliente che rischi di regalare alla concorrenza.
+- video_concept: Mostra un cliente che cammina fuori dal negozio. Spiega come NeatX invia un messaggio automatico di follow-up pochi giorni dopo il taglio, proponendo un link rapido per prenotare la sessione successiva prima che si dimentichi.
+- blog_title: Fidelizzazione Barbieri: Come far tornare i clienti in automatico dopo il taglio
+- gameplay_style: neon_racer
+- target_keywords: ['fidelizzare clienti barbiere', 'prenotazioni barbiere', 'gestionale barbiere']
+- image_prompt: photorealistic cinematic scene, a stylish man walking out of a barber shop looking at his phone with a notification to book his next haircut, premium realistic lighting
