@@ -17,6 +17,7 @@ import Footer from "@/components/landing/Footer";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
+import SocialAITeaser from "@/components/landing/SocialAITeaser";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
@@ -67,6 +68,7 @@ export default function Home() {
       <TestimonialsSection />
       <FeaturesSection />
       <OperatingSteps />
+      <SocialAITeaser />
       <PricingSection />
       <ComparisonTable />
       <IntegrationsSection />
