@@ -26,6 +26,7 @@ import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 import MessageRechargeCard from "./MessageRechargeCard";
 import StripeConnectButton from "./StripeConnectButton";
 import ReferralCard from "@/components/ReferralCard";
+import ReviewNeatxWidget from "./ReviewNeatxWidget";
 import AgendaLocationTabbedArea from "@/components/admin/AgendaLocationTabbedArea";
 import LocationTabs from "@/components/admin/LocationTabs";
 
@@ -89,6 +90,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       data: { tenantId, smsCredits: 50 },
     });
   }
+
+  const platformReview = await prisma.platformReview.findUnique({ where: { tenantId } });
 
   // Logica PAYWALL (viene eseguita dopo aver già caricato staff e locations in parallelo)
   const todayDate = new Date();
@@ -1241,6 +1244,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             />
             
             <MarketingWidget tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} slug={slug} />
+
+            <div className="mt-6">
+              <ReviewNeatxWidget slug={slug} initialReview={platformReview} />
+            </div>
 
             <div className="mt-6">
               <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} plan={tenant.plan} />

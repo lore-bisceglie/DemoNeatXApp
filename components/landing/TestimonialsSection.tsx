@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Star, MessageSquareQuote } from "lucide-react";
 
-const REVIEWS = [
+const FALLBACK_REVIEWS = [
   {
     name: "Marco D.",
     role: "Titolare Barber Shop",
@@ -27,6 +28,34 @@ const REVIEWS = [
 ];
 
 export default function TestimonialsSection() {
+  const [reviews, setReviews] = useState<any[]>(FALLBACK_REVIEWS);
+
+  useEffect(() => {
+    fetch("/api/platform-reviews")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          // Format DB reviews to match UI structure
+          const formatted = data.map(r => ({
+            name: r.tenant?.ownerName || "Titolare",
+            role: r.tenant?.name || "Professionista",
+            content: r.text,
+            stars: r.rating,
+            highlight: "Partner Verificato",
+            logoUrl: r.tenant?.logoUrl
+          }));
+          
+          // Pad with fallbacks if less than 3
+          if (formatted.length < 3) {
+            setReviews([...formatted, ...FALLBACK_REVIEWS.slice(0, 3 - formatted.length)]);
+          } else {
+            setReviews(formatted.slice(0, 6)); // Show max 6
+          }
+        }
+      })
+      .catch(() => console.error("Failed to load reviews"));
+  }, []);
+
   return (
     <section id="testimonials" className="relative z-10 overflow-hidden bg-[#07111f] py-24">
       {/* Linee di separazione */}
@@ -55,7 +84,7 @@ export default function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {REVIEWS.map((review, i) => (
+          {reviews.map((review, i) => (
             <div 
               key={i} 
               className="glow-card flex flex-col justify-between rounded-3xl border border-emerald-500/30 bg-[#050814] p-8 shadow-[0_0_20px_rgba(16,185,129,0.05)] transition-all duration-300 hover:border-emerald-500/60 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
@@ -63,13 +92,22 @@ export default function TestimonialsSection() {
               <div>
                 {/* Header card */}
                 <div className="mb-4 flex items-start justify-between">
-                  <div>
-                    <h3 className="font-extrabold text-white">{review.name}</h3>
-                    <p className="text-xs font-medium text-slate-500">{review.role}</p>
+                  <div className="flex items-center gap-3">
+                    {review.logoUrl ? (
+                      <img src={review.logoUrl} alt={review.name} className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/30">
+                        {review.name.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-extrabold text-white">{review.name}</h3>
+                      <p className="text-xs font-medium text-slate-500">{review.role}</p>
+                    </div>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 ml-2">
                     {[...Array(review.stars)].map((_, idx) => (
-                      <Star key={idx} size={14} className="fill-emerald-400 text-emerald-400" />
+                      <Star key={idx} size={12} className="fill-emerald-400 text-emerald-400" />
                     ))}
                   </div>
                 </div>

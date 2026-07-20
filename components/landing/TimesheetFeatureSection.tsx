@@ -102,24 +102,30 @@ export default function TimesheetFeatureSection() {
   const [csvLine, setCsvLine] = useState(0);
   const [highlightCol, setHighlightCol] = useState<number | null>(null);
   const [highlightRow, setHighlightRow] = useState<number | null>(null);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   // Ciclo animazione automatica
   useEffect(() => {
+    if (!isAutoPlaying) return;
+
     const sequence: { phase: Phase; delay: number }[] = [
-      { phase: "sheet", delay: 2200 },
-      { phase: "agenda", delay: 2200 },
-      { phase: "csv", delay: 3200 },
+      { phase: "sheet", delay: 3500 },
+      { phase: "agenda", delay: 3500 },
+      { phase: "csv", delay: 4000 },
     ];
     let i = 0;
+    let t: NodeJS.Timeout;
+    
     const next = () => {
       i = (i + 1) % sequence.length;
       setPhase(sequence[i].phase);
       setCsvLine(0);
       t = setTimeout(next, sequence[i].delay);
     };
-    let t = setTimeout(next, sequence[0].delay);
+    t = setTimeout(next, sequence[0].delay);
+    
     return () => clearTimeout(t);
-  }, []);
+  }, [isAutoPlaying]);
 
   // Animazione righe CSV
   useEffect(() => {
@@ -187,7 +193,11 @@ export default function TimesheetFeatureSection() {
               {(["sheet", "agenda", "csv"] as Phase[]).map((p) => (
                 <button
                   key={p}
-                  onClick={() => setPhase(p)}
+                  onClick={() => {
+                    setPhase(p);
+                    setIsAutoPlaying(false);
+                    setCsvLine(0);
+                  }}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold uppercase tracking-widest transition-all ${
                     phase === p
                       ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
@@ -200,12 +210,21 @@ export default function TimesheetFeatureSection() {
                   {p === "sheet" ? "Foglio" : p === "agenda" ? "Agenda" : "Export"}
                 </button>
               ))}
-              <div className="ml-auto flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-300">
-                  Live
-                </span>
-              </div>
+              {isAutoPlaying ? (
+                <div className="ml-auto flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-300">
+                    Live
+                  </span>
+                </div>
+              ) : (
+                <div className="ml-auto flex items-center gap-1.5 rounded-full border border-[#1a2642] bg-white/[0.02] px-3 py-1 opacity-50">
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    In Pausa
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* FASE: Google Sheet */}

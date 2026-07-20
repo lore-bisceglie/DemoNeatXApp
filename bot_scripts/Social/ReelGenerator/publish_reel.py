@@ -87,6 +87,17 @@ def youtube_auth_check():
 
     return platform_result(False, "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido.")
 
+def tiktok_preflight_check():
+    if os.environ.get("TIKTOK_MAKE_WEBHOOK_URL"):
+        return platform_result(True, "Webhook Make.com configurato.")
+    
+    # Controllo fallback locale
+    from tiktok_cookies import load_tiktok_cookies
+    if load_tiktok_cookies():
+        return platform_result(True, "TIKTOK_COOKIES_JSON locale presente (fallback Playwright).")
+    
+    return platform_result(False, "Nessun Webhook Make.com e TIKTOK_COOKIES_JSON locale non valido.")
+
 def run_preflight():
     checks = {
         "video_file": platform_result(os.path.exists(VIDEO_FILE), f"File video richiesto: {VIDEO_FILE}"),
@@ -94,10 +105,7 @@ def run_preflight():
             bool(META_ACCESS_TOKEN and IG_ACCOUNT_ID and not META_ACCESS_TOKEN.startswith("EAxxxx")),
             "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID.",
         ),
-        "tiktok": platform_result(
-            bool(os.environ.get("TIKTOK_MAKE_WEBHOOK_URL")),
-            "Richiede TIKTOK_MAKE_WEBHOOK_URL valido (Make.com webhook).",
-        ),
+        "tiktok": tiktok_preflight_check(),
         "youtube": youtube_auth_check(),
     }
 
@@ -337,20 +345,62 @@ def publish_to_instagram():
         print("[!]", message)
         return platform_result(False, message)
 
-def publish_to_tiktok():
-    webhook_url = os.environ.get("TIKTOK_MAKE_WEBHOOK_URL", "").strip()
-    if not webhook_url:
-        message = "TIKTOK_MAKE_WEBHOOK_URL mancante in .env o GitHub Secrets."
+def publish_tiktok_local(caption):
+    print("[*] Avvio pubblicazione su TikTok (Modalità Locale Playwright)...")
+    from tiktok_cookies import load_tiktok_cookies
+    cookies = load_tiktok_cookies()
+    if not cookies:
+        message = "TIKTOK_COOKIES_JSON mancante o non valido in .env."
         print(f"[!] Errore: {message}")
         return platform_result(False, message)
+
+    try:
+        from tiktok_uploader.upload import upload_video
+    except ImportError:
+        return platform_result(False, "Modulo tiktok_uploader non trovato. Esegui pip install tiktok-uploader")
+
+    # Recupera l'impostazione headless dal file bat o usa True di default
+    headless = os.environ.get("TIKTOK_HEADLESS", "true").lower() == "true"
+
+    max_retries = 3
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"[*] Tentativo TikTok Locale {attempt}/{max_retries}...")
+            success = upload_video(
+                VIDEO_FILE,
+                description=caption,
+                cookies_list=cookies,
+                browser="chromium",
+                headless=headless
+            )
+            
+            if isinstance(success, list):
+                is_success = all(success)
+            else:
+                is_success = bool(success)
+                
+            if is_success:
+                print("[+] VIDEO PUBBLICATO CON SUCCESSO SU TIKTOK (Locale)!")
+                return platform_result(True, "Pubblicato su TikTok (Locale Playwright).")
+            print(f"    [!] Tentativo {attempt} non andato a buon fine.")
+        except Exception as e:
+            print(f"    [!] Eccezione al tentativo {attempt}: {e}")
+            
+    return platform_result(False, f"TikTok upload locale fallito dopo {max_retries} tentativi.")
+
+def publish_to_tiktok():
+    webhook_url = os.environ.get("TIKTOK_MAKE_WEBHOOK_URL", "").strip()
+    caption = get_caption()
+
+    if not webhook_url:
+        print("[*] TIKTOK_MAKE_WEBHOOK_URL assente. Ripiego su TikTok Uploader Locale...")
+        return publish_tiktok_local(caption)
         
     if not os.path.exists(VIDEO_FILE):
         message = f"Il video {VIDEO_FILE} non esiste."
         print(f"[!] Errore: {message}")
         return platform_result(False, message)
         
-    caption = get_caption()
-    
     print("[*] Preparazione video per TikTok via Make.com...")
     video_url = get_shared_video_url()
     if not video_url:

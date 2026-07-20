@@ -74,6 +74,7 @@ model Tenant {
   staff         Staff[]
   locations     Location[]
   processedStripeEvents ProcessedStripeEvent[]
+  platformReview PlatformReview?
 }
 
 model ProcessedStripeEvent {
@@ -291,3 +292,14 @@ model StaffLocation {
   @@index([staffId])
   @@index([locationId])
 }
+
+model PlatformReview {
+  id          String   @id @default(cuid())
+  rating      Int      @default(5)
+  text        String
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  tenantId    String   @unique
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
