@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
     const { object } = await generateObject({
-      model: google('models/gemini-1.5-flash'),
+      model: google('gemini-2.5-flash'),
       schema: z.object({
         captions: z.array(z.string()).length(3).describe("3 diverse Instagram captions. Use emojis, hashtags, and a clear call to action to book an appointment via the link in bio."),
       }),
