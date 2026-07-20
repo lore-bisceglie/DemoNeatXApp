@@ -29,7 +29,8 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
     const baseCode = (tenant.name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 12) || tenant.slug.toUpperCase().slice(0, 12));
     // Prova prima con il codice base, poi con suffisso random se esiste già
     for (let attempt = 0; attempt < 3; attempt++) {
-      const candidateCode = attempt === 0 ? baseCode : `${baseCode.slice(0, 8)}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+      const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, 4).toUpperCase();
+      const candidateCode = attempt === 0 ? baseCode : `${baseCode.slice(0, 8)}${suffix}`;
       try {
         await prisma.tenant.update({
           where: { id: tenant.id },
@@ -41,9 +42,10 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
         // Vincolo unique violato, riprova con suffisso diverso
       }
     }
-    // Fallback: se tutti i tentativi falliscono, usa slug + timestamp
+    // Fallback: se tutti i tentativi falliscono, usa slug + uuid
     if (!referralCode) {
-      referralCode = `${tenant.slug.toUpperCase().slice(0, 6)}${Date.now().toString(36).toUpperCase().slice(-6)}`;
+      const fallbackSuffix = crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
+      referralCode = `${tenant.slug.toUpperCase().slice(0, 6)}${fallbackSuffix}`;
       try {
         await prisma.tenant.update({
           where: { id: tenant.id },
