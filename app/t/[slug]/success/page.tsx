@@ -77,8 +77,9 @@ export default async function SuccessPage(props: {
 
   isValid = isValid || Boolean(appointment?.isPaid && appointment.paymentStatus === "PAID");
 
-  // Generazione Link Google Calendar
+  // Generazione Link Google Calendar + file .ics universale
   let googleCalLink = "";
+  let icsDataUri = "";
   let dateFormatted = "";
   if (appointment && appointment.service) {
     const start = new Date(`${appointment.date}T${appointment.time}:00`);
@@ -92,6 +93,31 @@ export default async function SuccessPage(props: {
     const details = `Prenotazione confermata presso ${appointment.tenant?.name || "il salone"}.`;
     
     googleCalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(text)}&dates=${formatCalDate(start)}/${formatCalDate(end)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(locationStr)}`;
+
+    // File .ics universale (Apple Calendar, Outlook, Samsung Calendar, ecc.)
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//NeatX//Prenotazioni//IT",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `DTSTART:${formatCalDate(start)}`,
+      `DTEND:${formatCalDate(end)}`,
+      `SUMMARY:${text}`,
+      `DESCRIPTION:${details.replace(/,/g, "\\,")}`,
+      `LOCATION:${locationStr.replace(/,/g, "\\,")}`,
+      `STATUS:CONFIRMED`,
+      `BEGIN:VALARM`,
+      `TRIGGER:-PT1H`,
+      `ACTION:DISPLAY`,
+      `DESCRIPTION:Promemoria appuntamento tra 1 ora`,
+      `END:VALARM`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+
+    icsDataUri = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
     
     dateFormatted = start.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
   }
@@ -143,15 +169,25 @@ export default async function SuccessPage(props: {
 
         <div className="space-y-3">
           {appointment && appointment.service && (
-            <a 
-              href={googleCalLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-4 bg-[#131c31] hover:bg-[#1a2642] border border-cyan-500/30 text-cyan-400 font-bold rounded-2xl transition"
-            >
-              <CalendarPlus size={20} />
-              Aggiungi a Google Calendar
-            </a>
+            <>
+              <a 
+                href={icsDataUri}
+                download={`appuntamento-${appointment.date}.ics`}
+                className="flex items-center justify-center gap-2 w-full py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-2xl transition shadow-[0_0_20px_rgba(0,180,255,0.15)]"
+              >
+                <CalendarPlus size={20} />
+                Aggiungi al Calendario
+              </a>
+              <a 
+                href={googleCalLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] text-slate-400 hover:text-slate-300 text-sm font-medium rounded-2xl transition"
+              >
+                <CalendarPlus size={16} />
+                oppure apri in Google Calendar
+              </a>
+            </>
           )}
 
           <Link 
