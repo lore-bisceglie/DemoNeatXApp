@@ -28,13 +28,13 @@ export async function POST(request: Request) {
     const { object } = await generateObject({
       model: google('gemini-2.5-flash'),
       schema: z.object({
-        captions: z.array(z.string()).length(3).describe("3 diverse Instagram captions. Use emojis, hashtags, and a clear call to action to book an appointment via the link in bio."),
+        captions: z.array(z.string()).length(3).describe("3 caption diverse per Instagram. Usa emoji, hashtag in italiano e una chiara call to action per far prenotare tramite il link in bio."),
       }),
       messages: [
         {
           role: "user",
           content: [
-            { type: "text", text: "You are an expert Social Media Manager for a hair salon / barber shop. Look at this photo and write 3 highly engaging Instagram captions for it. Keep them professional but trendy. Always include a Call To Action to book an appointment." },
+            { type: "text", text: "Sei un Social Media Manager esperto per un salone di barbieri / parrucchieri in Italia. Guarda questa foto e scrivi 3 caption per Instagram molto coinvolgenti. Usa un tono professionale ma trendy. Includi sempre una Call To Action per prenotare un appuntamento tramite il link in bio. Scrivi ESCLUSIVAMENTE in lingua Italiana." },
             { type: "image", image: base64Data },
           ],
         },
