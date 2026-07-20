@@ -26,7 +26,7 @@ export default async function AnalyticsPage(props: { params: Promise<{ slug: str
   const day = parts.find((p) => p.type === "day")?.value;
   const month = parts.find((p) => p.type === "month")?.value;
   const year = parts.find((p) => p.type === "year")?.value;
-  const todayItaly = `${year}-${month}-${day}`;
+  const _todayItaly = `${year}-${month}-${day}`;
 
   // 📊 Query: appuntamenti degli ultimi 3 mesi
   const threeMonthsAgo = new Date(now);

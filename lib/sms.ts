@@ -40,14 +40,13 @@ export async function sendTenantMessage(
   tenantId: string,
   toPhone: string,
   smsBody: string,
-  whatsappVars?: WhatsAppTemplateVars,
-  locationId?: string
+  _whatsappVars?: WhatsAppTemplateVars,
+  _locationId?: string
 ) {
   if (process.env.REMINDERS_ENABLED !== "true") {
     return { success: false, disabled: true, error: "Promemoria disattivati" };
   }
   if (!GREEN_API_ID_INSTANCE || !GREEN_API_TOKEN_INSTANCE) {
-    console.error("[whatsapp] Credenziali Green API mancanti");
     return { success: false, error: "Green API non configurato" };
   }
 

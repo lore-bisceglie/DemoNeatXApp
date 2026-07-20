@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
-import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins, dayIndexToName } from "@/lib/schedule";
+import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins } from "@/lib/schedule";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     let closedDaysArr: string[] = [];
     if (tenant.closedDays) {
       if (typeof tenant.closedDays === "string") {
-        try { closedDaysArr = JSON.parse(tenant.closedDays); } catch(e) {}
+        try { closedDaysArr = JSON.parse(tenant.closedDays); } catch(_e) {}
       } else {
         closedDaysArr = tenant.closedDays as string[];
       }

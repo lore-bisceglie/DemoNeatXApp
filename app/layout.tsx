@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { Mail } from "lucide-react";
 import SocialFloatingGroup from "@/components/landing/SocialFloatingGroup";
 import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";

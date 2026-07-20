@@ -456,6 +456,7 @@ export default function Onboarding() {
               <div className="flex items-center gap-3">
                 <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-[#1e2b4a] bg-[#050814]">
                   {logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={logoUrl} alt="Logo" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-slate-600">

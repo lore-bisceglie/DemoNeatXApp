@@ -38,7 +38,7 @@ function slugify(value: string): string {
     .slice(0, 40);
 }
 
-export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess, initialData }: LocationFormProps) {
+export default function LocationForm({ tenantId: _tenantId, tenantSlug, onClose, onSuccess, initialData }: LocationFormProps) {
   const isEditing = !!initialData;
   const [name, setName] = useState(initialData?.name || "");
   const [slug, setSlug] = useState(initialData?.slug || slugify(initialData?.name || ""));
@@ -85,7 +85,7 @@ export default function LocationForm({ tenantId, tenantSlug, onClose, onSuccess,
         const err = await res.json();
         setError(err.error || "Errore salvataggio");
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Errore di rete");
     } finally {
       setSaving(false);

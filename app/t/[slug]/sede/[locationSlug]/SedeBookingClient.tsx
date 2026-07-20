@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Calendar, Clock, MapPin, Phone, Users, CheckCircle, ChevronRight, ChevronLeft, X, AlertCircle, Loader2, Navigation } from "lucide-react";
+import { Calendar, MapPin, Users, CheckCircle, ChevronRight, ChevronLeft, AlertCircle, Loader2 } from "lucide-react";
 import { getRomeDate } from "@/lib/rome-time";
 
 interface Props {
@@ -48,7 +48,7 @@ interface Props {
 
 const SLASH = "/";
 
-export default function SedeBookingClient({ tenant, location, services, staff }: Props) {
+export default function SedeBookingClient({ tenant, location, services, staff: _staff }: Props) {
   const [calendarBounds] = useState(function () {
     var now = new Date();
     return {

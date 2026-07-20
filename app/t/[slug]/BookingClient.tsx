@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getTenantAdminUrl } from "@/lib/domains";
@@ -103,7 +103,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     locations.length === 1 ? locations[0].id : ""
   );
 
-  const router = useRouter();
+  const _router = useRouter();
 
   const themeMap: Record<string, ThemeConfig> = {
     cyan: {
@@ -205,9 +205,9 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   }, [tenantInfo.staff, selectedLocationId]);
 
   const effectiveCloseTime = selectedLocation?.closeTime || tenantInfo.closeTime;
-  const effectiveOpenTime = selectedLocation?.openTime || tenantInfo.openTime;
-  const effectiveBreakStart = selectedLocation?.breakStart ?? tenantInfo.breakStart;
-  const effectiveBreakEnd = selectedLocation?.breakEnd ?? tenantInfo.breakEnd;
+  const _effectiveOpenTime = selectedLocation?.openTime || tenantInfo.openTime;
+  const _effectiveBreakStart = selectedLocation?.breakStart ?? tenantInfo.breakStart;
+  const _effectiveBreakEnd = selectedLocation?.breakEnd ?? tenantInfo.breakEnd;
   const effectiveClosedDays = useMemo(
     () => selectedLocation ? parseClosedDays(selectedLocation.closedDays) : tenantInfo.closedDays,
     [selectedLocation, tenantInfo.closedDays],
@@ -231,7 +231,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     }
   }, [paymentMethod, selectedServiceSupportsOnlinePayment]);
 
-  const shopInitials = tenantInfo.name
+  const _shopInitials = tenantInfo.name
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
@@ -239,7 +239,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     .join("")
     .toUpperCase() || "NX";
 
-  const trustBadges = isPlaygroundDemo
+  const _trustBadges = isPlaygroundDemo
     ? ["Slot automatici", "Lista d'attesa", "Pagamento demo", "Dashboard titolare"]
     : ["Prenotazione online", "Lista d'attesa", "Promemoria automatici", "Agenda aggiornata"];
 
@@ -583,7 +583,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
         try {
           const errorData = await res.json();
           setFormError(errorData.error || "Si è verificato un errore di connessione, riprova!");
-        } catch (e) {
+        } catch (_e) {
           setFormError(`Errore server: ${res.statusText}`);
         }
         setIsBooking(false);

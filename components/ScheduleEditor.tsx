@@ -31,6 +31,7 @@ export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
 
   useEffect(() => {
     loadSchedule();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staffId]);
 
   const loadSchedule = async () => {

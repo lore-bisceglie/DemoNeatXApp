@@ -8,7 +8,6 @@ export default function CancelPage() {
   const params = useParams();
   const token = params.token as string;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [appointment, setAppointment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);

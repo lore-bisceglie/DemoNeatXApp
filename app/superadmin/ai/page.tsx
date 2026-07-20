@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { Send, Target, Dumbbell, Shield, Bot, User, Trash2 } from "lucide-react";
@@ -119,7 +119,7 @@ export default function SuperadminAISuite() {
         ...prev,
         [activeBot.id]: [...newHistory, { role: "model" as const, content: data.reply }]
       }));
-    } catch (err) {
+    } catch (_err) {
       setConversations(prev => ({
         ...prev,
         [activeBot.id]: [...newHistory, { role: "model" as const, content: "Errore di connessione col server AI." }]

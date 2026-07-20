@@ -21,7 +21,6 @@ import MarketingWidget from "./MarketingWidget";
 import PortalButton from "./PortalButton";
 import WaitlistDashboard from "../../../dashboard/WaitlistDashboard";
 import TabbedArea from "./TabbedArea";
-import ResetDemoButton from "../../../dashboard/ResetDemoButton";
 import DayNavigator from "../../../dashboard/DayNavigator";
 import AnalyticsChart from "../../../dashboard/AnalyticsChart";
 import MessageRechargeCard from "./MessageRechargeCard";
@@ -211,7 +210,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   }
 
   const isAgendaTab = activeTab === 'agenda';
-  const isServiziTab = activeTab === 'servizi';
+  const _isServiziTab = activeTab === 'servizi';
 
   // C1 — Secondo gruppo di query parallele: tutte dipendono da weekDatesArray e currentMonthPrefix
   // che sono ora disponibili. Le lanciamo insieme per dimezzare il tempo di attesa DB.
@@ -269,8 +268,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   ]);
 
   // Alias per compatibilità con il codice che usa waitlistData
-  const waitlistData = waitlistItems;
-  const radarAppointments = radarAppointmentsRaw;
+  const _waitlistData = waitlistItems;
+  const _radarAppointments = radarAppointmentsRaw;
 
   const buildAgendaData = (locId: string | null) => {
     const filteredStaff = !locId ? staffList : staffList.filter(s => 
@@ -865,7 +864,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     Ora
                   </div>
 
-                  {weekDays.map((d, dIndex) => {
+                  {weekDays.map((d, _dIndex) => {
                     const isToday = d.date === todayItaly;
                     
                     return (

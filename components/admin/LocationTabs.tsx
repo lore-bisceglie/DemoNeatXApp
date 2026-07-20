@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit, MapPin, Phone, Calendar, Settings, ToggleLeft, ToggleRight, ExternalLink, MapPin as MapPinIcon, Phone as PhoneIcon, Globe, Wrench, Activity, Trash2 as Trash2Icon } from "lucide-react";
+import { Plus, Edit, Settings, ToggleRight, MapPin as MapPinIcon, Phone as PhoneIcon, Activity, Trash2 as Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import LocationForm from "./LocationForm";
 import LocationSettingsForm from "./LocationSettingsForm";
@@ -25,7 +25,7 @@ const TOGGLE_BASE = "p-2 rounded-lg transition-colors ";
 const TOGGLE_ACTIVE = "text-emerald-400 hover:bg-emerald-500/10";
 const TOGGLE_INACTIVE = "text-slate-500 hover:bg-slate-500/10";
 
-function LocationCard({ location, tenantSlug, tenantName, onEdit, onSettings, onToggle, onDelete, isInactive }: any) {
+function LocationCard({ location, tenantSlug: _tenantSlug, tenantName: _tenantName, onEdit, onSettings, onToggle, onDelete, isInactive }: any) {
   var cardClass = CARD_BASE + (isInactive ? CARD_INACTIVE : CARD_ACTIVE);
   var badgeClass = BADGE_BASE + (location.isActive ? BADGE_ACTIVE : BADGE_INACTIVE);
   var toggleClass = TOGGLE_BASE + (location.isActive ? TOGGLE_ACTIVE : TOGGLE_INACTIVE);
@@ -110,10 +110,11 @@ export default function LocationTabs({ tenantId, tenantSlug, tenantName, plan }:
   const [editingLocation, setEditingLocation] = useState<any | null>(null);
   const [settingsLocationId, setSettingsLocationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const _router = useRouter();
 
   useEffect(function () {
     fetchLocations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchLocations() {
@@ -145,7 +146,7 @@ export default function LocationTabs({ tenantId, tenantSlug, tenantName, plan }:
         var err = await res.json();
         alert(err.error || "Errore eliminazione");
       }
-    } catch (e) {
+    } catch (_e) {
       alert("Errore eliminazione");
     }
   }
@@ -168,7 +169,7 @@ export default function LocationTabs({ tenantId, tenantSlug, tenantName, plan }:
           });
         });
       }
-    } catch (e) {
+    } catch (_e) {
       alert("Errore aggiornamento");
     }
   }

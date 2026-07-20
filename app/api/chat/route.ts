@@ -133,7 +133,7 @@ export async function POST(req: Request) {
         const data = await res.json();
         const modelNames = data.models?.map((m: any) => m.name).join(", ") || "Nessun modello trovato";
         return Response.json({ reply: `ERRORE MODELLO. Modelli disponibili per questa tua chiave: ${modelNames}` }, { status: 200 });
-      } catch (listError) {
+      } catch (_listError) {
         // ignore
       }
     }

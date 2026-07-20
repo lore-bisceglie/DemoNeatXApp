@@ -1,6 +1,6 @@
 "use client";
 
-import { CreditCard, LineChart } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 type NoShowSimulatorProps = {
   onOpenStripe: () => void;

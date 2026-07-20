@@ -830,6 +830,7 @@ export default function Home() {
               />
 
               <span className="relative w-24 h-24 rounded-full p-1 bg-[#0b1221] shadow-[0_20px_42px_rgba(0,180,255,.26)] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/apple-icon.png"
                   alt="Logo Demo NeatX"

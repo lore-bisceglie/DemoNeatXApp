@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MessageSquare, Star, X } from "lucide-react";
 import IPhone17Pro from "./IPhone17Pro";
 

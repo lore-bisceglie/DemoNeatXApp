@@ -86,6 +86,7 @@ export function TenantHeader({
           />
           <span className={`relative w-24 h-24 rounded-full p-1 bg-[#0b1221] overflow-hidden ${th.avatarShadow}`}>
             {tenantInfo.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={tenantInfo.logoUrl}
                 alt={tenantInfo.name}
@@ -94,12 +95,14 @@ export function TenantHeader({
                 style={{ zIndex: 52 }}
               />
             ) : isPlaygroundDemo ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src="/apple-icon.png"
                 alt="Logo Demo NeatX"
                 className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
               />
             ) : (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(tenantInfo.name)}&background=0b1221&color=${th.mainHex}&size=150&bold=true`}
                 alt={tenantInfo.name}

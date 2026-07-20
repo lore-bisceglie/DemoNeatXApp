@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Calculator, AlertTriangle, TrendingDown, DollarSign } from "lucide-react";
 
 export default function CalcolatorePage() {

@@ -28,6 +28,7 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
     if (isOpen && customers.length === 0) {
       fetchCustomers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, customers.length, tenantId]);
 
   const fetchCustomers = async () => {

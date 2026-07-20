@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Bot, Loader2, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -95,6 +95,7 @@ export default function Chatbot() {
       }
     }, 15000);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proactiveSent, messages.length]);
 
   // Auto-scroll

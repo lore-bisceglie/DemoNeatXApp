@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
-import { ArrowLeft, Copy, Share2, Users, Gift } from "lucide-react";
+import { ArrowLeft, Share2, Users, Gift } from "lucide-react";
 
 export default async function ReferralPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

@@ -76,7 +76,7 @@ export async function GET(req: Request) {
       public_webhook: publicWebhookData,
       public_menu: publicMenuData
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Impossibile impostare il webhook" }, { status: 500 });
   }
 }

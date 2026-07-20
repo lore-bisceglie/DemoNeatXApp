@@ -33,7 +33,7 @@ export async function GET(req: Request) {
     });
 
     return response;
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Errore interno" }, { status: 500 });
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function SupportWidget({ tenantId, colorTheme }: { tenantId: string; colorTheme: string }) {
+export default function SupportWidget({ tenantId }: { tenantId: string; colorTheme: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
@@ -28,7 +28,7 @@ export default function SupportWidget({ tenantId, colorTheme }: { tenantId: stri
         setSuccess(false);
         setMessage("");
       }, 3000);
-    } catch (error) {
+    } catch (_error) {
       alert("Errore di connessione. Riprova più tardi.");
     } finally {
       setSending(false);

@@ -227,7 +227,7 @@ export async function POST(request: Request) {
             isActive: true,
           })),
         });
-      } catch (e) {
+      } catch (_e) {
         // Ignore duplicates
       }
     }

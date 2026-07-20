@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 import { prisma } from "@/lib/prisma";
 import {
-  addMinutes,
-  dateFromOffset,
   getDemoShopTemplate,
   sanitizeSlug,
 } from "@/lib/demoShopTemplates";

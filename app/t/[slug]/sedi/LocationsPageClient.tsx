@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Clock, Users, Calendar, Phone, ChevronRight, Navigation, MapPin as MapPinIcon, Users as UsersIcon, Calendar as CalendarIcon, Phone as PhoneIcon } from "lucide-react";
+import { ChevronRight, Navigation, MapPin as MapPinIcon, Users, Users as UsersIcon, Clock, Calendar as CalendarIcon, Phone as PhoneIcon } from "lucide-react";
 
 interface LocationData {
   id: string;
@@ -68,11 +68,14 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="relative z-10 max-w-4xl mx-auto text-center py-20">
           {tenant.logoUrl && (
-            <img
-              src={tenant.logoUrl}
-              alt={tenant.name}
-              className="w-24 h-24 mx-auto rounded-2xl shadow-2xl mb-6"
-            />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={tenant.logoUrl}
+                alt={tenant.name}
+                className="w-24 h-24 mx-auto rounded-2xl shadow-2xl mb-6"
+              />
+            </>
           )}
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
             Le nostre {" "}

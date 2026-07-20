@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-export default function AutoRefreshMonitor({ appointmentCount }: { appointmentCount: number }) {
+export default function AutoRefreshMonitor({ appointmentCount: _appointmentCount }: { appointmentCount: number }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

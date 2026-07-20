@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowRight,
   CalendarDays,
   CheckCircle2,
   Copy,
@@ -17,8 +16,6 @@ import {
   Settings2,
 } from "lucide-react";
 import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
-
-import { getSalesWhatsappUrl } from "@/lib/contact";
 type ServiceDraft = {
   id: string;
   name: string;
@@ -108,9 +105,9 @@ export default function TrialLaunchPanel({
   activationRequested: initialActivationRequested,
 }: Props) {
   const router = useRouter();
-  const [hasRequested, setHasRequested] = useState(initialActivationRequested);
+  const [_hasRequested, _setHasRequested] = useState(initialActivationRequested);
   const publicUrl = getTenantPublicUrl(slug);
-  const adminUrl = getTenantAdminUrl(slug);
+  const _adminUrl = getTenantAdminUrl(slug);
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -140,7 +137,7 @@ export default function TrialLaunchPanel({
     return Math.max(0, diff);
   }, [trialEndsAt]);
 
-  const checklist = [
+  const _checklist = [
     {
       label: isDemoData ? "Servizi provvisori" : "Servizi pronti",
       detail: `${serviceDrafts.length} servizi con durata e prezzo`,

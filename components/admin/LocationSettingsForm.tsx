@@ -19,6 +19,7 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
 
   useEffect(function () {
     fetchSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchSettings() {
@@ -31,7 +32,7 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
         setPaymentPercentage(data.paymentPercentage ?? 20);
         setPaymentMandatory(data.paymentMandatory ?? false);
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Errore caricamento impostazioni");
     } finally {
       setLoading(false);
@@ -61,7 +62,7 @@ export default function LocationSettingsForm({ locationId, tenantSlug, onClose }
         const err = await res.json();
         setError(err.error || "Errore salvataggio");
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Errore di rete");
     } finally {
       setSaving(false);

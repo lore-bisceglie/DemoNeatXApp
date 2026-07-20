@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
-export function getTenantFromRequest(req?: Request): Promise<{ tenant: any; slug: string } | null> {
+export function getTenantFromRequest(_req?: Request): Promise<{ tenant: any; slug: string } | null> {
   return (async () => {
     // 1. Try from query param (explicit)
     const url = new URL((await headers()).get("x-request-url") || "");

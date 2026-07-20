@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ services: servicesWithLocation });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Errore di connessione" }, { status: 500 });
   }
 }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     let body: any;
     try {
       body = await request.json();
-    } catch (e) {
+    } catch (_e) {
       return NextResponse.json({ error: "JSON malformato" }, { status: 400 });
     }
     const service = cleanService(body);

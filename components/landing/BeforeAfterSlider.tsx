@@ -39,6 +39,7 @@ export default function BeforeAfterSlider() {
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", () => setIsDragging(false));
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDragging]);
 
   return (

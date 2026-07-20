@@ -117,7 +117,7 @@ export async function GET(req: Request, context: { params: Promise<{ slug: strin
     return NextResponse.json({ ...tenant, trialStatus: effectiveTrialStatus, trialExpired: false, isPremium }, {
       headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Errore interno' }, { status: 500 });
   }
 }

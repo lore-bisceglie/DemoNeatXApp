@@ -11,7 +11,7 @@ import {
   parseBaseSchedule,
   parseShiftExceptions,
 } from "@/lib/schedule";
-import { parseClosedDays, parseDaySchedule } from "@/lib/opening-hours";
+import { parseDaySchedule } from "@/lib/opening-hours";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");

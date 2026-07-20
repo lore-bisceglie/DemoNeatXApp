@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Gift, Copy, Check, Share2 } from "lucide-react";
+import { Gift, Copy, Check } from "lucide-react";
 
 type Props = { tenantId: string };
 
 export default function ReferralCard({ tenantId }: Props) {
   const [data, setData] = useState<any>(null);
   const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`/api/referral?tenantId=${tenantId}`)

@@ -24,7 +24,7 @@ type StaffMember = {
 export default function TeamDrawer({
   tenantId,
   isPremium,
-  plan,
+  _plan,
   allServices,
   initialStaffSheetUrl,
   locations: initialLocations,
@@ -70,6 +70,7 @@ export default function TeamDrawer({
       fetchStaff();
       if (!initialLocations) fetchLocations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, tenantId]);
 
   const fetchLocations = async () => {

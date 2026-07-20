@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import { sendTenantSms } from "@/lib/sms";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
@@ -8,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { isTenantAdminCookieValid } from "@/lib/auth";
 import { appointmentConflictsWithSlot } from "@/lib/booking-conflict";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
-import { parseClosedDays, parseDaySchedule } from "@/lib/opening-hours";
+import { parseDaySchedule } from "@/lib/opening-hours";
 
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
