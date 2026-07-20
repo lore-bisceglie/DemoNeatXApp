@@ -5,14 +5,40 @@ import { z } from "zod";
 
 export const maxDuration = 60; // Max execution time 60 seconds
 
-const STOCK_IMAGES = [
-  "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop", // Barbershop chair
-  "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1200&auto=format&fit=crop", // Barber cutting hair
-  "https://images.unsplash.com/photo-1512496015851-a1c848529cb6?q=80&w=1200&auto=format&fit=crop", // Razor / Tools
-  "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1200&auto=format&fit=crop", // Salon setup
-  "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1200&auto=format&fit=crop", // Barber at work
-  "https://images.unsplash.com/photo-1534062828696-6d63493b8d03?q=80&w=1200&auto=format&fit=crop", // Barber tools
-  "https://images.unsplash.com/photo-1622286345638-ebcb319d30da?q=80&w=1200&auto=format&fit=crop"  // Shop window
+const CATEGORIES = [
+  {
+    name: "Barbieri e Parrucchieri Uomo",
+    hashtags: "#NeatX #AgendaBarbiere #BarbiereItalia #ParrucchiereItalia #GestioneSalone",
+    images: [
+      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop", // Barbershop chair
+      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1200&auto=format&fit=crop", // Barber cutting hair
+    ]
+  },
+  {
+    name: "Estetica e Centri Benessere",
+    hashtags: "#NeatX #CentroEstetico #EstetistaItalia #AgendaEstetica #GestioneCentroEstetico",
+    images: [
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1200&auto=format&fit=crop", // Spa / Estetica
+      "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=1200&auto=format&fit=crop", // Massage
+      "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=1200&auto=format&fit=crop"  // Nails
+    ]
+  },
+  {
+    name: "Parrucchieri Donna e Saloni di Bellezza",
+    hashtags: "#NeatX #ParrucchieraItalia #SaloneDiBellezza #AgendaParrucchiere #HairStylistItalia",
+    images: [
+      "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop", // Hair salon woman
+      "https://images.unsplash.com/photo-1521590832167-7bfc17484d20?q=80&w=1200&auto=format&fit=crop"  // Hair washing
+    ]
+  },
+  {
+    name: "Tatuatori e Studi di Tattoo",
+    hashtags: "#NeatX #TattooItalia #TatuatoreItaliano #AgendaTattoo #TattooStudioItalia",
+    images: [
+      "https://images.unsplash.com/photo-1598371839696-5e5bb00b059f?q=80&w=1200&auto=format&fit=crop", // Tattoo artist
+      "https://images.unsplash.com/photo-1568347355280-eecc6c3b6526?q=80&w=1200&auto=format&fit=crop"  // Tattoo gun
+    ]
+  }
 ];
 
 export async function GET(req: Request) {
@@ -31,8 +57,11 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 
-    // 1. Scegliamo un'immagine a caso e applichiamo il watermark tramite OG Image
-    const randomImage = STOCK_IMAGES[Math.floor(Math.random() * STOCK_IMAGES.length)];
+    // 0. Scegliamo una categoria a caso (es. oggi barbieri, domani estetiste)
+    const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+
+    // 1. Scegliamo un'immagine a caso per quella specifica categoria e applichiamo il watermark
+    const randomImage = category.images[Math.floor(Math.random() * category.images.length)];
     const watermarkedImage = `https://demo-neatx-app.vercel.app/api/og/marketing?bg=${encodeURIComponent(randomImage)}`;
 
     // 2. Generiamo il copy per NeatX
@@ -44,7 +73,11 @@ export async function GET(req: Request) {
       messages: [
         {
           role: "user",
-          content: "Sei il Social Media Manager di 'NeatX', una startup italiana che vende un software gestionale (Agenda, Appuntamenti, Prenotazioni Online) per barbieri e parrucchieri. Scrivi un post coinvolgente per Instagram. Scegli un problema (es. tempo perso al telefono, clienti che non si presentano, gestione disordinata cartacea) e offri NeatX come soluzione per automatizzare il salone. Usa un tono dinamico, professionale ma giovane. DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: #NeatX #AgendaBarbiere #BarbiereItalia #ParrucchiereItalia #GestioneSalone. Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.",
+          content: `Sei il Social Media Manager di 'NeatX', una startup italiana che vende un software gestionale (Agenda, Appuntamenti, Prenotazioni Online) per il settore beauty e wellness.
+          
+OGGI DEVI RIVOLGERTI ESCLUSIVAMENTE A: ${category.name}.
+
+Scrivi un post coinvolgente per Instagram per convincere i professionisti di questo settore ad abbonarsi. Scegli un problema specifico del loro lavoro (es. appuntamenti sovrapposti, chiamate mentre stanno lavorando con le mani occupate, clienti che non si presentano all'appuntamento) e offri NeatX come la soluzione definitiva. Usa un tono dinamico, professionale ma giovane. DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: ${category.hashtags}. Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.`,
         },
       ],
     });
