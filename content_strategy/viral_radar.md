@@ -1,43 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-20T10:57:20.830620+02:00
+Generato: 2026-07-20T12:51:15.200505+02:00
 
-## Idea 1: Sei un barbiere e i clienti felici non ti lasciano mai una recensione, mentre quelli arrabbiati corrono subito su Google? Stai perdendo decine di clienti ogni mese.
-- hook: Sei un barbiere e i clienti felici non ti lasciano mai una recensione, mentre quelli arrabbiati corrono subito su Google? Stai perdendo decine di clienti ogni mese.
-- video_concept: Mostra un barbiere che lavora benissimo ma ha una valutazione bassa su Google perché solo chi si lamenta lascia recensioni. Spiega come il sistema automatico di NeatX invia un messaggio post-taglio: se il cliente è felice viene indirizzato su Google, se ha una lamentela il feedback rimane privato e arriva solo al titolare.
-- blog_title: Barbieri: Recensioni Automatiche con NeatX
+## Idea 1: Sei un tatuatore e non sai quanto hai incassato netti questo mese? Stai perdendo soldi ogni giorno.
+- hook: Sei un tatuatore e non sai quanto hai incassato netti questo mese? Stai perdendo soldi ogni giorno.
+- video_concept: Mostra un video stile neon_racer spiegando che molti tatuatori si concentrano solo sul costo del singolo tatuaggio senza calcolare le ore di disegno e i materiali. Presenta la dashboard NeatX che calcola i margini reali in tempo reale.
+- blog_title: Tatuatori: Statistiche e Dati con NeatX
+- target_pain: Mancanza di controllo sui margini reali e sui servizi più redditizi
 - gameplay_style: neon_racer
-- target_keywords: ['gestionale barbiere', 'recensioni google barbiere', 'marketing barber shop']
-- image_prompt: photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting
 
-## Idea 2: Quante ore di lavoro e quanti soldi perdi ogni settimana nel tuo barber shop per colpa di clienti che prenotano il taglio e poi non si presentano?
-- hook: Quante ore di lavoro e quanti soldi perdi ogni settimana nel tuo barber shop per colpa di clienti che prenotano il taglio e poi non si presentano?
-- video_concept: Inquadra la sedia del barbiere vuota e l'orologio che scorre. Spiega che con i promemoria automatici su WhatsApp di NeatX e la richiesta di acconto in fase di prenotazione, i no-show nel salone scendono a zero.
-- blog_title: Barbieri: Zero No-Show con NeatX
+## Idea 2: Tatuatori, quali sono i giorni e gli orari in cui il vostro studio rimane vuoto senza che ve ne accorgiate?
+- hook: Tatuatori, quali sono i giorni e gli orari in cui il vostro studio rimane vuoto senza che ve ne accorgiate?
+- video_concept: Analizza il problema delle ore morte nello studio. Spiega come l'analisi dei dati storici di NeatX permette di individuare i trend negativi per lanciare promozioni flash o walk-in day mirati nei giorni meno frequentati.
+- blog_title: Come riempire i buchi in agenda: l'uso dei dati per studi di tatuaggi
+- target_pain: Orari e giorni morti che riducono i guadagni mensili dello studio
 - gameplay_style: neon_racer
-- target_keywords: ['no show barber shop', 'prenotazioni barbiere', 'gestionale barbiere']
-- image_prompt: photorealistic cinematic scene inside a modern barber shop, an empty professional barber chair under a spotlight, a clock on the wall showing elapsed time, premium realistic lighting
 
-## Idea 3: Smetti di posare le forbici ogni cinque minuti per rispondere al telefono: ecco come riempire l'agenda del tuo barber shop mentre stai tagliando i capelli.
-- hook: Smetti di posare le forbici ogni cinque minuti per rispondere al telefono: ecco come riempire l'agenda del tuo barber shop mentre stai tagliando i capelli.
-- video_concept: Mostra il contrasto tra un barbiere stressato che interrompe continuamente il taglio per rispondere alle chiamate e un barbiere rilassato che riceve notifiche di prenotazione automatica sul telefono senza toccarlo.
-- blog_title: Barbieri: Come Automatizzare le Prenotazioni e Dire Addio al Telefono
+## Idea 3: Chiedi la caparra per il tatuaggio ma non hai idea di quanti soldi perdi davvero ogni mese con i no-show?
+- hook: Chiedi la caparra per il tatuaggio ma non hai idea di quanti soldi perdi davvero ogni mese con i no-show?
+- video_concept: Spiega come unire la gestione della caparra obbligatoria alle statistiche finanziarie di NeatX. Mostra la differenza tra i mesi con alto tasso di cancellazione e quelli ottimizzati grazie ai promemoria automatici.
+- blog_title: Gestione caparre e statistiche: la guida definitiva per tatuatori
+- target_pain: Perdite finanziarie invisibili causate da disattenzioni e no-show dei clienti
 - gameplay_style: neon_racer
-- target_keywords: ['prenotazioni barbiere', 'agenda barbiere online', 'gestione salone']
-- image_prompt: photorealistic cinematic scene inside a busy barber shop, a smartphone on a shelf showing automatic appointment confirmations coming in, scissors and comb in the background, premium realistic lighting
 
-## Idea 4: Il segreto dei migliori barber shop per intercettare i clienti insoddisfatti prima che rovinino la tua reputazione pubblica con una stella su Google.
-- hook: Il segreto dei migliori barber shop per intercettare i clienti insoddisfatti prima che rovinino la tua reputazione pubblica con una stella su Google.
-- video_concept: Spiega il funzionamento del filtro feedback: il sistema NeatX invia un sondaggio rapido dopo il servizio. Se il voto è basso, si apre un modulo di contatto privato per risolvere il problema direttamente con il cliente, evitando la recensione pubblica negativa.
-- blog_title: Come proteggere la reputazione del tuo barber shop con il feedback privato
+## Idea 4: Fai fineline, traditional e cover-up, ma sai quale di questi stili ti fa guadagnare di più all'ora?
+- hook: Fai fineline, traditional e cover-up, ma sai quale di questi stili ti fa guadagnare di più all'ora?
+- video_concept: Confronta il tempo impiegato per diversi stili di tatuaggio rispetto al guadagno effettivo. Spiega come la categorizzazione delle prestazioni su NeatX svela quali servizi ottimizzano la redditività oraria dello studio.
+- blog_title: Quali stili di tatuaggio rendono di più? Scoprilo con i dati di NeatX
+- target_pain: Mancanza di dati sui servizi che offrono la maggiore redditività rispetto al tempo impiegato
 - gameplay_style: neon_racer
-- target_keywords: ['reputazione barber shop', 'recensioni google barbiere', 'gestionale barbiere']
-- image_prompt: photorealistic cinematic scene, close up of a hand holding a smartphone showing a private feedback form for a barber shop, modern interface, premium realistic lighting
 
-## Idea 5: Un cliente che esce dal tuo salone senza aver prenotato il prossimo appuntamento è un cliente che rischi di regalare alla concorrenza.
-- hook: Un cliente che esce dal tuo salone senza aver prenotato il prossimo appuntamento è un cliente che rischi di regalare alla concorrenza.
-- video_concept: Mostra un cliente che cammina fuori dal negozio. Spiega come NeatX invia un messaggio automatico di follow-up pochi giorni dopo il taglio, proponendo un link rapido per prenotare la sessione successiva prima che si dimentichi.
-- blog_title: Fidelizzazione Barbieri: Come far tornare i clienti in automatico dopo il taglio
+## Idea 5: Arrivi a fine mese senza sapere quanto devi mettere da parte per le tasse del tuo studio di tatuaggi?
+- hook: Arrivi a fine mese senza sapere quanto devi mettere da parte per le tasse del tuo studio di tatuaggi?
+- video_concept: Affronta il panico della gestione fiscale per i tatuatori in partita IVA. Mostra come una dashboard con incassi e trend in tempo reale semplifichi la vita e renda immediato il passaggio dei dati al commercialista.
+- blog_title: Tatuatori: come monitorare le performance finanziarie senza fogli Excel
+- target_pain: Gestione finanziaria caotica e ansia da pianificazione fiscale
 - gameplay_style: neon_racer
-- target_keywords: ['fidelizzare clienti barbiere', 'prenotazioni barbiere', 'gestionale barbiere']
-- image_prompt: photorealistic cinematic scene, a stylish man walking out of a barber shop looking at his phone with a notification to book his next haircut, premium realistic lighting

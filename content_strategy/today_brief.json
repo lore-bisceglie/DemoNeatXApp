@@ -1,18 +1,18 @@
 {
   "date": "2026-07-20",
-  "niche": "Personal Trainer",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "ADDIO ACCONTI",
-  "hook_hint": "Se sei tra i personal trainer e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Zero No-Show con NeatX",
+  "niche": "Tatuatori",
+  "feature": "analytics",
+  "feature_label": "Statistiche e Dati",
+  "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti",
+  "promise": "dashboard con incassi, trend e performance in tempo reale",
+  "cover_title": "GUADAGNI SVELATI",
+  "hook_hint": "Se sei tra i tatuatori e non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Statistiche e Dati con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
