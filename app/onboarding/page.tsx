@@ -113,6 +113,7 @@ export default function Onboarding() {
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
   const [legalAccepted, setLegalAccepted] = useState(false);
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [successData, setSuccessData] = useState<{
@@ -158,9 +159,10 @@ export default function Onboarding() {
   const handleCreate = async () => {
     if (isGenerating) return;
     setError("");
+    setAttemptedSubmit(true);
 
     if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !password.trim() || !phone.trim() || !email.trim()) {
-      setError("Compila nome attività, categoria, città, email, nome, password e WhatsApp prenotazioni.");
+      setError("Compila tutti i campi obbligatori evidenziati in rosso.");
       return;
     }
 
@@ -330,9 +332,14 @@ export default function Onboarding() {
               <input
                 value={businessName}
                 onChange={(event) => setBusinessName(event.target.value)}
-                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                  attemptedSubmit && !businessName.trim() ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                }`}
                 placeholder="Es. Barber Lab Milano"
               />
+              {attemptedSubmit && !businessName.trim() && (
+                <p className="mt-1 text-xs font-bold text-red-400">Questo campo è richiesto.</p>
+              )}
             </label>
 
             <label className="block">
@@ -362,9 +369,14 @@ export default function Onboarding() {
                 <input
                   value={city}
                   onChange={(event) => setCity(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                    attemptedSubmit && !city.trim() ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
                   placeholder="Milano"
                 />
+                {attemptedSubmit && !city.trim() && (
+                  <p className="mt-1 text-xs font-bold text-red-400">Questo campo è richiesto.</p>
+                )}
               </label>
 
               <label className="block">
@@ -375,9 +387,14 @@ export default function Onboarding() {
                 <input
                   value={ownerName}
                   onChange={(event) => setOwnerName(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                    attemptedSubmit && !ownerName.trim() ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
                   placeholder="Lorenzo"
                 />
+                {attemptedSubmit && !ownerName.trim() && (
+                  <p className="mt-1 text-xs font-bold text-red-400">Questo campo è richiesto.</p>
+                )}
               </label>
             </div>
 
@@ -390,9 +407,14 @@ export default function Onboarding() {
                 <input
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                    attemptedSubmit && !phone.trim() ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
                   placeholder="Es. 3331234567"
                 />
+                {attemptedSubmit && !phone.trim() && (
+                  <p className="mt-1 text-xs font-bold text-red-400">Questo campo è richiesto.</p>
+                )}
               </label>
 
               <label className="block">
@@ -404,9 +426,14 @@ export default function Onboarding() {
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                    attemptedSubmit && !email.trim() ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
                   placeholder="Es. mario@email.com"
                 />
+                {attemptedSubmit && !email.trim() && (
+                  <p className="mt-1 text-xs font-bold text-red-400">Questo campo è richiesto.</p>
+                )}
               </label>
             </div>
             <label className="block">
@@ -504,9 +531,16 @@ export default function Onboarding() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
+                className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                  attemptedSubmit && password.length < 8 ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                }`}
                 placeholder="Almeno 8 caratteri"
               />
+              {attemptedSubmit && password.length < 8 && (
+                <p className="mt-1 text-xs font-bold text-red-400">
+                  {password.length === 0 ? "Questo campo è richiesto." : "La password deve avere almeno 8 caratteri."}
+                </p>
+              )}
             </label>
           </div>
 
