@@ -94,7 +94,6 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const [initialLoad, setInitialLoad] = useState(false);
   const [romeClock, setRomeClock] = useState<{ date: string; minutes: number } | null>(null);
 
-  const [logoClicked, setLogoClicked] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"salon" | "online">("salon");
   const [selectedActivityId, setSelectedActivityId] = useState("all");
@@ -315,17 +314,6 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     setName(randomCustomer.name);
     setPhone(randomCustomer.phone);
     setFormError("");
-  };
-
-  const handleLogoClick = () => {
-    if (logoClicked) return;
-    setLogoClicked(true);
-
-    if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) {
-      window.navigator.vibrate(50);
-    }
-
-    setTimeout(() => setLogoClicked(false), 2000);
   };
 
   useEffect(() => {
@@ -778,8 +766,6 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
           tenantInfo={tenantInfo}
           selectedLocation={selectedLocation}
           th={th}
-          logoClicked={logoClicked}
-          handleLogoClick={handleLogoClick}
           isPlaygroundDemo={isPlaygroundDemo}
           effectiveServicePrice={effectiveServicePrice}
           hasSelectedService={Boolean(selectedService)}

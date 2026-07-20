@@ -16,134 +16,38 @@ export function TenantHeader({
   tenantInfo,
   selectedLocation,
   th,
-  logoClicked,
-  handleLogoClick,
-  isPlaygroundDemo,
   effectiveServicePrice,
   hasSelectedService,
 }: TenantHeaderProps) {
   return (
     <div className="text-center mb-8">
       <div className="flex flex-col items-center justify-center mb-10 relative">
-        <style>{`
-          @keyframes demoHaloSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          @keyframes demoSoftPulse {
-            0%, 100% { opacity: .35; transform: scale(.96); }
-            50% { opacity: .72; transform: scale(1.06); }
-          }
-          @keyframes demoSweep {
-            0% { transform: translateX(-140%) rotate(22deg); opacity: 0; }
-            35% { opacity: .85; }
-            100% { transform: translateX(140%) rotate(22deg); opacity: 0; }
-          }
-          @keyframes demoSpark {
-            0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.4); }
-            22% { opacity: 1; }
-            100% { opacity: 0; transform: translate3d(var(--spark-x), var(--spark-y), 0) scale(1.15); }
-          }
-        `}</style>
-
-        <button
-          type="button"
-          onClick={handleLogoClick}
-          aria-label={isPlaygroundDemo ? "Attiva effetto logo demo NeatX" : `Attiva effetto logo ${tenantInfo.name}`}
-          className="group relative w-32 h-32 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
-          style={{
-            transition: "transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
-            transform: logoClicked ? "rotate(360deg) scale(1.06)" : "rotate(0deg) scale(1)",
-            zIndex: 51,
-          }}
-        >
-          <span
-            className="absolute inset-0 rounded-full blur-xl"
-            style={{
-              background: `radial-gradient(circle, #${th.mainHex}80, transparent 72%)`,
-              animation: logoClicked
-                ? "demoSoftPulse .7s ease-in-out infinite"
-                : "demoSoftPulse 3.2s ease-in-out infinite",
-            }}
-          />
-          <span
-            className="absolute inset-3 rounded-full"
-            style={{
-              background: `conic-gradient(from 90deg, transparent, #${th.mainHex}, #ffffff, #${th.mainHex}80, transparent)`,
-              filter: `drop-shadow(0 0 12px #${th.mainHex}99)`,
-              animation: logoClicked
-                ? "demoHaloSpin .75s linear infinite"
-                : "demoHaloSpin 7s linear infinite",
-            }}
-          />
-          <span className="absolute inset-[18px] rounded-full bg-[#050814]" />
-          <span
-            className="absolute inset-[14px] rounded-full opacity-60"
-            style={{
-              background: "linear-gradient(135deg, rgba(0,180,255,.45), transparent 38%, rgba(236,72,153,.35) 70%, rgba(255,255,255,.28))",
-              filter: "blur(5px)",
-            }}
-          />
-          <span className={`relative w-24 h-24 rounded-full p-1 bg-[#0b1221] overflow-hidden ${th.avatarShadow}`}>
-            {tenantInfo.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={tenantInfo.logoUrl}
-                alt={tenantInfo.name}
-                draggable={false}
-                className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative"
-                style={{ zIndex: 52 }}
-              />
-            ) : isPlaygroundDemo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src="/apple-icon.png"
-                alt="Logo Demo NeatX"
-                className="w-full h-full object-cover rounded-full border-4 border-[#0b1221]"
-              />
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(tenantInfo.name)}&background=0b1221&color=${th.mainHex}&size=150&bold=true`}
-                alt={tenantInfo.name}
-                draggable={false}
-                className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative"
-                style={{ zIndex: 52 }}
-              />
-            )}
-            <span
-              className={`absolute inset-y-[-20%] left-0 w-10 bg-white/35 blur-sm ${logoClicked ? "block" : "hidden"}`}
-              style={{ animation: "demoSweep .9s ease-out both" }}
+        <div className={`relative w-32 h-32 rounded-full p-1.5 bg-[#0b1221] overflow-hidden ${th.avatarShadow} border border-[#1a2642]`}>
+          {tenantInfo.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={tenantInfo.logoUrl}
+              alt={tenantInfo.name}
+              draggable={false}
+              className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative z-10"
             />
-          </span>
-
-          {logoClicked && (
-            <>
-              {[
-                ["left-5 top-8", "-22px", "-18px", "bg-cyan-200"],
-                ["right-6 top-9", "24px", "-16px", "bg-pink-200"],
-                ["bottom-7 left-8", "-18px", "22px", "bg-white"],
-                ["bottom-8 right-7", "20px", "18px", "bg-cyan-100"],
-              ].map(([position, x, y, color], index) => (
-                <span
-                  key={`${position}-${x}`}
-                  className={`absolute ${position} h-1.5 w-1.5 rounded-full ${color} shadow-[0_0_12px_rgba(255,255,255,.9)]`}
-                  style={{
-                    "--spark-x": x,
-                    "--spark-y": y,
-                    animation: `demoSpark .9s ${index * 0.06}s ease-out both`,
-                  } as CSSProperties}
-                />
-              ))}
-            </>
+          ) : isPlaygroundDemo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/apple-icon.png"
+              alt="Logo Demo NeatX"
+              className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative z-10"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(tenantInfo.name)}&background=0b1221&color=${th.mainHex}&size=150&bold=true`}
+              alt={tenantInfo.name}
+              draggable={false}
+              className="w-full h-full object-cover rounded-full border-4 border-[#0b1221] relative z-10"
+            />
           )}
-        </button>
-
-        {logoClicked && (
-          <div className="absolute -bottom-8 text-sm font-bold text-[#00b4ff] animate-in fade-in slide-in-from-top-2 zoom-in duration-200 z-10 whitespace-nowrap">
-            {isPlaygroundDemo ? "Demo pronta da provare" : `${tenantInfo.name} online`}
-          </div>
-        )}
+        </div>
       </div>
 
       <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2 flex justify-center items-center gap-3 flex-wrap">
