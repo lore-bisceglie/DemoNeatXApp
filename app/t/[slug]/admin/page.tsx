@@ -27,6 +27,7 @@ import MessageRechargeCard from "./MessageRechargeCard";
 import StripeConnectButton from "./StripeConnectButton";
 import ReferralCard from "@/components/ReferralCard";
 import ReviewNeatxWidget from "./ReviewNeatxWidget";
+import SocialAIWidget from "./SocialAIWidget";
 import AgendaLocationTabbedArea from "@/components/admin/AgendaLocationTabbedArea";
 import LocationTabs from "@/components/admin/LocationTabs";
 
@@ -628,6 +629,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     { id: "agenda", label: "📅 Agenda" },
     { id: "gestione", label: "⚙️ Gestione" },
     { id: "business", label: "📈 Business" },
+    { id: "social", label: "✨ Social & AI" },
   ];
 
   return (
@@ -1458,6 +1460,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 )}
               </div>
             </div>
+          </div>
+
+          <div data-tab="social">
+            <SocialAIWidget slug={slug} />
           </div>
         </TabbedArea>
         

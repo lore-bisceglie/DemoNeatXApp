@@ -75,6 +75,7 @@ model Tenant {
   locations     Location[]
   processedStripeEvents ProcessedStripeEvent[]
   platformReview PlatformReview?
+  socialPosts    SocialPost[]
 }
 
 model ProcessedStripeEvent {
@@ -303,3 +304,14 @@ model PlatformReview {
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
+model SocialPost {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  imageUrl    String?  // Removed @db.Text, Prisma uses String for large text in Postgres depending on usage, but let's just use String
+  caption     String
+  status      String   @default("SCHEDULED")
+  platform    String   @default("INSTAGRAM")
+  scheduledFor DateTime?
+  createdAt   DateTime @default(now())
+}
