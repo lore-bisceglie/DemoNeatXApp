@@ -14,7 +14,7 @@ export default function SocialAITeaser() {
           <div className="flex-1 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-bold uppercase tracking-wider">
               <Sparkles size={14} className="animate-pulse" />
-              Prossimamente nel piano Elite
+              Incluso in tutti i piani
             </div>
             
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
@@ -25,20 +25,21 @@ export default function SocialAITeaser() {
               Dimentica lo stress di dover pensare a cosa scrivere su Instagram. Scatta una foto al tuo lavoro e lascia che NeatX scriva la caption perfetta, metta gli hashtag giusti e pubblichi per te in automatico.
             </p>
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-4">
-              <div className="flex items-center gap-3 text-sm text-slate-300 font-medium">
-                <div className="bg-purple-500/20 p-2 rounded-lg text-purple-400">
-                  <Camera size={20} />
-                </div>
-                Caption Auto-Generate
-              </div>
-              <div className="flex items-center gap-3 text-sm text-slate-300 font-medium">
-                <div className="bg-pink-500/20 p-2 rounded-lg text-pink-400">
-                  <Calendar size={20} />
-                </div>
-                Calendario Pubblicazioni
-              </div>
+            <div className="flex justify-center mt-12 relative z-10">
+              <button 
+                onClick={() => {
+                  document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-purple-500/30 flex items-center gap-2 transition-all hover:scale-105"
+              >
+                Inizia la prova gratuita
+                <ArrowRight size={18} />
+              </button>
             </div>
+            
+            <p className="text-slate-500 text-sm text-center mt-4 relative z-10">
+              Incluso in tutti i piani durante i 14 giorni di prova.
+            </p>
           </div>
 
           <div className="w-full md:w-2/5 relative">
@@ -65,13 +66,7 @@ export default function SocialAITeaser() {
                   </span>
                 </div>
 
-                {/* Lock Overlay */}
-                <div className="absolute inset-0 bg-[#0b1221]/60 backdrop-blur-sm flex flex-col items-center justify-center z-10">
-                  <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-md border border-white/20 text-white shadow-2xl shadow-purple-500/20">
-                    <Lock size={32} className="mx-auto mb-2 text-purple-400" />
-                    <p className="text-xs font-bold text-center uppercase tracking-widest">In Arrivo</p>
-                  </div>
-                </div>
+                {/* Lock Overlay Removed */}
               </div>
             </div>
             
