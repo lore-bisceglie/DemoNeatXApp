@@ -4,6 +4,7 @@ import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { isTenantAdminCookieValid } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 export const maxDuration = 60; // 60 seconds max
 
@@ -25,6 +26,10 @@ export async function POST(request: Request) {
     // Convert base64 data URL to raw base64 string
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
+    const tenant = await prisma.tenant.findUnique({ where: { slug } });
+    const salonName = tenant?.name || "il nostro salone";
+    const customHashtag = `#${salonName.replace(/\s+/g, '')}`;
+
     const { object } = await generateObject({
       model: google('gemini-2.5-flash'),
       schema: z.object({
@@ -34,7 +39,7 @@ export async function POST(request: Request) {
         {
           role: "user",
           content: [
-            { type: "text", text: "Sei un Social Media Manager esperto per un salone di barbieri / parrucchieri in Italia. Guarda questa foto e scrivi 3 caption per Instagram molto coinvolgenti. Usa un tono professionale ma trendy. Includi sempre una Call To Action per prenotare un appuntamento tramite il link in bio. Scrivi ESCLUSIVAMENTE in lingua Italiana." },
+            { type: "text", text: `Sei un Social Media Manager esperto per un salone di barbieri / parrucchieri in Italia chiamato "${salonName}". Guarda questa foto e scrivi 3 caption per Instagram molto coinvolgenti. Usa un tono professionale ma trendy. Includi sempre una Call To Action per prenotare un appuntamento tramite il link in bio. Scrivi ESCLUSIVAMENTE in lingua Italiana. IMPORTANTISSIMO: Includi SEMPRE l'hashtag personalizzato del salone ${customHashtag} alla fine del post, insieme ad altri hashtag rilevanti per attirare clienti locali.` },
             { type: "image", image: base64Data },
           ],
         },
