@@ -39,10 +39,9 @@ export function TenantHeader({
             35% { opacity: .85; }
             100% { transform: translateX(140%) rotate(22deg); opacity: 0; }
           }
-          @keyframes demoSpark {
-            0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.4); }
-            22% { opacity: 1; }
-            100% { opacity: 0; transform: translate3d(var(--spark-x), var(--spark-y), 0) scale(1.15); }
+          @keyframes demoRipple {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.5); opacity: 0; }
           }
         `}</style>
 
@@ -119,22 +118,20 @@ export function TenantHeader({
 
           {logoClicked && (
             <>
-              {[
-                ["left-5 top-8", "-22px", "-18px", "bg-cyan-200"],
-                ["right-6 top-9", "24px", "-16px", "bg-pink-200"],
-                ["bottom-7 left-8", "-18px", "22px", "bg-white"],
-                ["bottom-8 right-7", "20px", "18px", "bg-cyan-100"],
-              ].map(([position, x, y, color], index) => (
-                <span
-                  key={`${position}-${x}`}
-                  className={`absolute ${position} h-1.5 w-1.5 rounded-full ${color} shadow-[0_0_12px_rgba(255,255,255,.9)]`}
-                  style={{
-                    "--spark-x": x,
-                    "--spark-y": y,
-                    animation: `demoSpark .9s ${index * 0.06}s ease-out both`,
-                  } as CSSProperties}
-                />
-              ))}
+              <span
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: `2px solid #${th.mainHex}`,
+                  animation: `demoRipple 1.2s cubic-bezier(0.16, 1, 0.3, 1) both`,
+                }}
+              />
+              <span
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: `1px solid #${th.mainHex}`,
+                  animation: `demoRipple 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both`,
+                }}
+              />
             </>
           )}
         </button>
