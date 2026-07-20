@@ -31,8 +31,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 
-    // 1. Scegliamo un'immagine a caso
+    // 1. Scegliamo un'immagine a caso e applichiamo il watermark tramite OG Image
     const randomImage = STOCK_IMAGES[Math.floor(Math.random() * STOCK_IMAGES.length)];
+    const watermarkedImage = `https://demo-neatx-app.vercel.app/api/og/marketing?bg=${encodeURIComponent(randomImage)}`;
 
     // 2. Generiamo il copy per NeatX
     const { object } = await generateObject({
@@ -43,7 +44,7 @@ export async function GET(req: Request) {
       messages: [
         {
           role: "user",
-          content: "Sei il Social Media Manager di 'NeatX', una startup italiana che vende un software gestionale (Agenda, Appuntamenti, Prenotazioni Online) per barbieri e parrucchieri. Scrivi un post coinvolgente per Instagram. Scegli un problema (es. tempo perso al telefono, clienti che non si presentano, gestione disordinata cartacea) e offri NeatX come soluzione per automatizzare il salone. Usa un tono dinamico, professionale ma giovane. Aggiungi emoji e hashtag rilevanti per il mercato italiano (es. #barbiereitalia #gestionesalone). Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.",
+          content: "Sei il Social Media Manager di 'NeatX', una startup italiana che vende un software gestionale (Agenda, Appuntamenti, Prenotazioni Online) per barbieri e parrucchieri. Scrivi un post coinvolgente per Instagram. Scegli un problema (es. tempo perso al telefono, clienti che non si presentano, gestione disordinata cartacea) e offri NeatX come soluzione per automatizzare il salone. Usa un tono dinamico, professionale ma giovane. DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: #NeatX #AgendaBarbiere #BarbiereItalia #ParrucchiereItalia #GestioneSalone. Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.",
         },
       ],
     });
@@ -59,7 +60,7 @@ export async function GET(req: Request) {
     }
 
     // Step A: Crea il Media Container
-    const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(randomImage)}&caption=${encodeURIComponent(captionText)}&access_token=${token}`, {
+    const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(watermarkedImage)}&caption=${encodeURIComponent(captionText)}&access_token=${token}`, {
       method: "POST"
     });
     
