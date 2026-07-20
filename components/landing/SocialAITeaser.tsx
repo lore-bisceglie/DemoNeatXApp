@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Instagram, Calendar, ArrowRight, Lock } from "lucide-react";
+import { Sparkles, Camera, Calendar, ArrowRight, Lock } from "lucide-react";
 
 export default function SocialAITeaser() {
   return (
@@ -28,7 +28,7 @@ export default function SocialAITeaser() {
             <div className="pt-4 flex flex-col sm:flex-row gap-4">
               <div className="flex items-center gap-3 text-sm text-slate-300 font-medium">
                 <div className="bg-purple-500/20 p-2 rounded-lg text-purple-400">
-                  <Instagram size={20} />
+                  <Camera size={20} />
                 </div>
                 Caption Auto-Generate
               </div>
