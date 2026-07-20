@@ -105,8 +105,12 @@ export default function HeroSection() {
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Incassi Mese</div>
                 <div className="text-4xl font-extrabold text-white">€ 4.250,00 <span className="text-[#00b4ff] text-xl">↑ 24%</span></div>
               </div>
-              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></div> Live
+              <div className="bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                <div className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </div>
+                Live
               </div>
             </div>
             
@@ -117,7 +121,7 @@ export default function HeroSection() {
                 <div className="border-b border-white w-full h-0"></div>
               </div>
               {[40, 60, 45, 80, 55, 90, 70].map((h, i) => (
-                <div key={i} className="flex-1 bg-gradient-to-t from-[#00b4ff]/20 to-[#00b4ff]/80 rounded-t-md border-t border-[#00b4ff] relative group-hover:bg-[#00b4ff] transition-all duration-500 ease-in-out" style={{ height: `${h}%`, transitionDelay: `${i * 50}ms` }}>
+                <div key={i} className="flex-1 bg-gradient-to-t from-[#00b4ff]/0 via-[#00b4ff]/40 to-[#00b4ff]/90 rounded-t-xl border-t-2 border-x border-[#00b4ff]/80 relative hover:from-[#00b4ff]/20 hover:to-cyan-400 hover:border-cyan-300 transition-all duration-500 ease-in-out group-hover:shadow-[0_-10px_20px_rgba(0,180,255,0.2)]" style={{ height: `${h}%`, transitionDelay: `${i * 50}ms` }}>
                 </div>
               ))}
             </div>

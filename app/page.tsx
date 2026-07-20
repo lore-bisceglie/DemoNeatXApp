@@ -14,6 +14,7 @@ import IntegrationsSection from "@/components/landing/IntegrationsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 
@@ -61,9 +62,10 @@ export default function Home() {
       <Navbar onOpenRoi={() => setShowRoiModal(true)} />
       <HeroSection />
       <TrustMarquee />
-      <BeforeAfterSlider />
-      <FeaturesSection />
       <TimesheetFeatureSection />
+      <BeforeAfterSlider />
+      <TestimonialsSection />
+      <FeaturesSection />
       <OperatingSteps />
       <PricingSection />
       <ComparisonTable />
