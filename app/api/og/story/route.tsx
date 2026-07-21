@@ -162,6 +162,9 @@ export async function GET(req: NextRequest) {
       {
         width: 1080,
         height: 1920, // Instagram Story format (9:16)
+        headers: {
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
       }
     );
   } catch (e: any) {

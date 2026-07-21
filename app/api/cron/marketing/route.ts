@@ -92,6 +92,12 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       throw new Error("Credenziali Instagram mancanti in .env");
     }
 
+    // --- PRE-WARM CACHE VERCEL OG ---
+    // Questo previene che Facebook vada in timeout (Facebook aspetta max 5s)
+    // Forziamo Vercel a generare l'immagine e a salvarla in cache CDN (max-age=31536000)
+    console.log("Pre-warming OG image for Post...");
+    await fetch(watermarkedImage).catch(() => {});
+
     // Step A: Crea il Media Container per il Post Feed
     const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(watermarkedImage)}&caption=${encodeURIComponent(captionText)}&access_token=${token}`, {
       method: "POST"
@@ -121,6 +127,9 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
     let storyId = null;
 
     try {
+      console.log("Pre-warming OG image for Story...");
+      await fetch(storyImage).catch(() => {});
+
       // Step C: Crea Media Container per la Storia
       const storyMediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(storyImage)}&media_type=STORIES&access_token=${token}`, {
         method: "POST"

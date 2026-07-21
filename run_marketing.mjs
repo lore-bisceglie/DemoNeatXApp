@@ -74,6 +74,9 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       throw new Error("Credenziali Instagram mancanti in .env");
     }
 
+    // --- POST FEED COMMENTATO ---
+    /*
+    console.log("Creazione Media su IG...");
     const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(watermarkedImage)}&caption=${encodeURIComponent(captionText)}&access_token=${token}`, {
       method: "POST"
     });
@@ -95,7 +98,33 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       throw new Error("Errore pubblicazione su IG: " + publishData.error.message);
     }
 
-    console.log("Post pubblicato con successo!", publishData);
+    console.log("Post feed pubblicato con successo!", publishData);
+    */
+
+    // --- PUBBLICAZIONE STORIA ---
+    console.log("Generazione Media Storia su IG...");
+    const storyImage = `https://demo-neatx-app.vercel.app/api/og/story?bg=${encodeURIComponent(randomImage)}`;
+    
+    const storyMediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(storyImage)}&media_type=STORIES&access_token=${token}`, {
+      method: "POST"
+    });
+    const storyMediaData = await storyMediaRes.json();
+    
+    if (storyMediaData.error) {
+      throw new Error("Errore creazione media Storia su IG: " + storyMediaData.error.message);
+    }
+
+    console.log("Pubblicazione Media Storia su IG...");
+    const storyPublishRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media_publish?creation_id=${storyMediaData.id}&access_token=${token}`, {
+      method: "POST"
+    });
+    const storyPublishData = await storyPublishRes.json();
+
+    if (storyPublishData.error) {
+      throw new Error("Errore pubblicazione Storia su IG: " + storyPublishData.error.message);
+    }
+
+    console.log("Storia pubblicata con successo!", storyPublishData);
 
   } catch (err) {
     console.error("Errore:", err);
