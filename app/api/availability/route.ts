@@ -325,9 +325,11 @@ export async function GET(request: Request) {
       availableSlots = availableSlots.filter((slot) => timeToMins(slot) > currentTotalMinutes);
     }
 
+    const areAllCapableStaffOnHoliday = capableStaffIds.length > 0 && capableStaffIds.every(sId => staffOnHoliday.has(sId));
+
     return NextResponse.json({
       slots: availableSlots,
-      isHoliday: false,
+      isHoliday: areAllCapableStaffOnHoliday,
       locationId: effectiveLocationId,
     });
 
