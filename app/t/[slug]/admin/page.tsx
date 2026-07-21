@@ -204,12 +204,35 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   const weekDatesArray = Array.from(new Set([...weekDays.map(w => w.date), ...past14Days]));
 
-  const allSlots: string[] = [];
-  for (let h = 9; h <= 19; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      if (h === 19 && m > 0) break;
-      allSlots.push(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`);
+  let minOpenMins = 9 * 60;
+  let maxCloseMins = 19 * 60;
+  
+  if (tenant.openTime) {
+    const [h, m] = tenant.openTime.split(":").map(Number);
+    minOpenMins = h * 60 + m;
+  }
+  if (tenant.closeTime) {
+    const [h, m] = tenant.closeTime.split(":").map(Number);
+    maxCloseMins = h * 60 + m;
+  }
+
+  locations.forEach((loc: any) => {
+    if (loc.openTime) {
+      const [h, m] = loc.openTime.split(":").map(Number);
+      minOpenMins = Math.min(minOpenMins, h * 60 + m);
     }
+    if (loc.closeTime) {
+      const [h, m] = loc.closeTime.split(":").map(Number);
+      maxCloseMins = Math.max(maxCloseMins, h * 60 + m);
+    }
+  });
+
+  const allSlots: string[] = [];
+  for (let m = minOpenMins; m <= maxCloseMins; m += 15) {
+    if (m === maxCloseMins && (m % 60) !== 0) continue;
+    const hStr = Math.floor(m / 60).toString().padStart(2, "0");
+    const mStr = (m % 60).toString().padStart(2, "0");
+    allSlots.push(`${hStr}:${mStr}`);
   }
 
   const isAgendaTab = activeTab === 'agenda';
@@ -289,7 +312,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         }
       });
 
-      const filteredAppointments = !locId ? radarAppointmentsRaw : radarAppointmentsRaw.filter(a => a.locationId === locId);
+      const filteredAppointments = !locId 
+        ? radarAppointmentsRaw 
+        : radarAppointmentsRaw.filter(a => a.locationId === locId || a.customerName.includes("FERIE") || a.customerName.includes("PAUSA"));
 
       filteredAppointments.forEach((app) => {
         let durationMins = 15;
@@ -380,7 +405,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     return { columns: cols, radarMap: map, freeGapReports: gaps };
   };
 
-  const agendaViews = [{ id: "all", name: "Tutte le sedi", ...buildAgendaData(null) }];
+  const agendaViews = locations.length > 1 ? [{ id: "all", name: "Tutte le sedi", ...buildAgendaData(null) }] : [];
   locations.forEach((loc: any) => {
     agendaViews.push({ id: loc.id, name: loc.name, ...buildAgendaData(loc.id) });
   });

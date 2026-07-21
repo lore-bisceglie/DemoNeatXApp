@@ -663,6 +663,14 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
         title: "Abbiamo terminato la giornata lavorativa.",
         text: "Seleziona una nuova data sul calendario per trovare il momento perfetto per il tuo relax.",
       }
+    : isHoliday
+    ? {
+        icon: "🌴",
+        badge: "IN FERIE",
+        badgeClass: "bg-orange-500/10 text-orange-300 border border-orange-500/20",
+        title: "Oggi siamo chiusi per ferie.",
+        text: "Ci stiamo godendo un po' di riposo! Scegli un'altra data sul calendario per prenotare.",
+      }
     : isSaturday
     ? {
         icon: "📅",

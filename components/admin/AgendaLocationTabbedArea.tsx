@@ -39,9 +39,10 @@ export default function AgendaLocationTabbedArea({
 
   return (
     <>
-      <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
-        <button
-          onClick={() => handleTabClick("all")}
+      {locations.length > 1 && (
+        <div className="mb-4 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2 snap-x">
+          <button
+            onClick={() => handleTabClick("all")}
           className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-150 snap-center active:scale-90 ${
             activeLocation === "all"
               ? "bg-[#00b4ff] text-[#050814] border-[#00b4ff] shadow-[0_0_8px_rgba(0,180,255,0.3)]"
@@ -63,8 +64,9 @@ export default function AgendaLocationTabbedArea({
             {loc.name}
           </button>
         ))}
-      </div>
-      {activeChild}
+        </div>
+      )}
+      {locations.length > 1 ? activeChild : children}
     </>
   );
 }
