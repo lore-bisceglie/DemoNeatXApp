@@ -96,8 +96,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   // Logica PAYWALL (viene eseguita dopo aver già caricato staff e locations in parallelo)
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
-  const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
-  if (isTrialExpired && tenant.plan !== "pro" && tenant.plan !== "elite" && tenant.trialStatus !== "converted" && !searchParams?.payment) {
+  const isTrialActive = trialEndsAt && todayDate <= trialEndsAt;
+  const isPaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+  
+  if (!isPaidPlan && !isTrialActive && tenant.trialStatus !== "converted" && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
 
@@ -154,7 +156,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     return `${hours}:${minutes}`;
   };
 
-  const isPremium = tenant.plan === "elite" || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
+  const isPremium = isPaidPlan || Boolean(isTrialActive);
   const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
 
 
