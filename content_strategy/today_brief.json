@@ -1,18 +1,18 @@
 {
-  "date": "2026-07-21",
-  "niche": "Parrucchieri",
-  "feature": "timesheet",
-  "feature_label": "Timesheet Commercialista",
-  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-  "cover_title": "PARRUCCHIERI: TURNI E FERIE",
-  "hook_hint": "Se sei tra i parrucchieri e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
-  "blog_topic": "Parrucchieri: Timesheet Commercialista con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
+  "date": "2026-07-22",
+  "niche": "Personal Trainer",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "ZERO NO-SHOW ORA",
+  "hook_hint": "Se sei tra i personal trainer e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: Zero No-Show con NeatX",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
