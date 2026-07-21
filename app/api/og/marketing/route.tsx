@@ -48,42 +48,72 @@ export async function GET(req: NextRequest) {
             }}
           />
 
-          {/* NeatX Logo / Badge in bottom right */}
+          {/* Glassmorphism Bar at the bottom */}
           <div
             style={{
               position: 'absolute',
-              bottom: 40,
-              right: 40,
+              bottom: 0,
+              left: 0,
+              right: 0,
               display: 'flex',
               alignItems: 'center',
-              background: 'rgba(255, 255, 255, 0.1)',
-              padding: '12px 24px',
-              borderRadius: '20px',
-              border: '2px solid rgba(255, 255, 255, 0.2)',
+              justifyContent: 'space-between',
+              background: 'rgba(0, 0, 0, 0.75)',
+              padding: '40px 60px',
+              borderTop: '2px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <span
-              style={{
-                fontSize: 60,
-                fontWeight: 900,
-                color: 'white',
-                fontFamily: 'sans-serif',
-                letterSpacing: '-2px',
-              }}
-            >
-              NeatX
-            </span>
-            <span
-              style={{
-                fontSize: 30,
-                color: '#d8b4fe', // purple-300
-                marginLeft: 12,
-                fontWeight: 600,
-                fontFamily: 'sans-serif',
-              }}
-            >
-              Agenda
-            </span>
+            {/* Logo */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span
+                style={{
+                  fontSize: 70,
+                  fontWeight: 900,
+                  color: 'white',
+                  fontFamily: 'sans-serif',
+                  letterSpacing: '-3px',
+                }}
+              >
+                Neat
+              </span>
+              <span
+                style={{
+                  fontSize: 70,
+                  fontWeight: 900,
+                  color: '#3b82f6', // The blue X
+                  fontFamily: 'sans-serif',
+                  letterSpacing: '-3px',
+                }}
+              >
+                X
+              </span>
+            </div>
+
+            {/* Slogan and Link */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <span
+                style={{
+                  fontSize: 32,
+                  color: 'white',
+                  fontWeight: 600,
+                  fontFamily: 'sans-serif',
+                  marginBottom: 10,
+                  letterSpacing: '-1px',
+                }}
+              >
+                Il gestionale per il tuo Salone
+              </span>
+              <span
+                style={{
+                  fontSize: 26,
+                  color: '#60a5fa', // Lighter blue for the link
+                  fontWeight: 500,
+                  fontFamily: 'sans-serif',
+                }}
+              >
+                Prova gratis su neatx.it
+              </span>
+            </div>
           </div>
         </div>
       ),
