@@ -134,6 +134,8 @@ export async function POST(req: Request) {
               trialStatus: "converted",
               trialEndsAt: null,
               convertedAt: new Date(),
+              emailVerified: true,
+              emailVerifyToken: null,
             },
           });
           await awardReferrerForConversion(tenantId, "telegram");
@@ -299,6 +301,8 @@ export async function POST(req: Request) {
               trialStatus: "converted",
               trialEndsAt: null,
               convertedAt: new Date(),
+              emailVerified: true,
+              emailVerifyToken: null,
             },
           });
           const reward = await awardReferrerForConversion(tenant.id, "telegram");

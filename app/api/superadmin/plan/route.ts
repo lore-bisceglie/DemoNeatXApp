@@ -28,7 +28,9 @@ export async function POST(req: Request) {
         data: {
           plan: plan,
           trialStatus: 'converted',
-          trialEndsAt: null
+          trialEndsAt: null,
+          emailVerified: true,
+          emailVerifyToken: null
         }
       });
       await awardReferrerForConversion(tenantId, 'superadmin');
