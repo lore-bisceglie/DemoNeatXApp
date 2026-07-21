@@ -74,7 +74,6 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       throw new Error("Credenziali Instagram mancanti in .env");
     }
 
-    console.log("Creazione Media su IG...");
     const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(watermarkedImage)}&caption=${encodeURIComponent(captionText)}&access_token=${token}`, {
       method: "POST"
     });

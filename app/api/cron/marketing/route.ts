@@ -84,7 +84,7 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
 
     const captionText = object.caption;
 
-    // 3. Pubblichiamo su Instagram
+    // 3. Pubblichiamo su Instagram (Feed Post)
     const igAccountId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
     const token = process.env.META_PERMANENT_TOKEN;
 
@@ -92,7 +92,7 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       throw new Error("Credenziali Instagram mancanti in .env");
     }
 
-    // Step A: Crea il Media Container
+    // Step A: Crea il Media Container per il Post Feed
     const mediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(watermarkedImage)}&caption=${encodeURIComponent(captionText)}&access_token=${token}`, {
       method: "POST"
     });
@@ -105,7 +105,7 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
     
     const creationId = mediaData.id;
 
-    // Step B: Pubblica il Container
+    // Step B: Pubblica il Container Feed
     const publishRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media_publish?creation_id=${creationId}&access_token=${token}`, {
       method: "POST"
     });
@@ -116,10 +116,41 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       throw new Error("Errore pubblicazione su IG: " + publishData.error.message);
     }
 
+    // --- PUBBLICAZIONE STORIA ---
+    const storyImage = `https://demo-neatx-app.vercel.app/api/og/story?bg=${encodeURIComponent(randomImage)}`;
+    let storyId = null;
+
+    try {
+      // Step C: Crea Media Container per la Storia
+      const storyMediaRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media?image_url=${encodeURIComponent(storyImage)}&media_type=STORIES&access_token=${token}`, {
+        method: "POST"
+      });
+      const storyMediaData = await storyMediaRes.json();
+      
+      if (storyMediaData.error) {
+        console.error("IG Story Create Error:", storyMediaData.error);
+      } else {
+        // Step D: Pubblica la Storia
+        const storyPublishRes = await fetch(`https://graph.facebook.com/v19.0/${igAccountId}/media_publish?creation_id=${storyMediaData.id}&access_token=${token}`, {
+          method: "POST"
+        });
+        const storyPublishData = await storyPublishRes.json();
+        if (storyPublishData.id) {
+          storyId = storyPublishData.id;
+        } else {
+          console.error("IG Story Publish Error:", storyPublishData.error);
+        }
+      }
+    } catch (storyErr) {
+      console.error("Errore generico durante pubblicazione storia:", storyErr);
+      // Non facciamo fallire l'intero cron job se fallisce solo la storia
+    }
+
     return NextResponse.json({ 
       success: true, 
-      message: "Post di marketing pubblicato con successo!",
+      message: "Marketing pubblicato con successo!",
       ig_post_id: publishData.id,
+      ig_story_id: storyId,
       image_used: randomImage,
       caption: captionText
     });
