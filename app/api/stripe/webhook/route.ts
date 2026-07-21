@@ -274,7 +274,8 @@ export async function POST(req: Request) {
           if (subUpdate.id) updateData.stripeSubscriptionId = subUpdate.id;
           if (subUpdate.customer) updateData.stripeCustomerId = subUpdate.customer;
 
-          // Sync piano: mappa l'importo dell'item al nome del piano Stripe
+
+          // Sync piano: prima per price amount (Stripe item), poi fallback metadata
           const priceAmount = subUpdate.items?.data?.[0]?.price?.unit_amount;
           const planMap: Record<number, string> = {
             2900: 'pro', 5900: 'elite',
@@ -282,6 +283,13 @@ export async function POST(req: Request) {
           };
           if (priceAmount && planMap[priceAmount]) {
             updateData.plan = planMap[priceAmount];
+          } else {
+            const plan = ['pro', 'elite'].includes(subUpdate.metadata?.plan)
+              ? subUpdate.metadata.plan
+              : undefined;
+            if (plan && ['active', 'trialing'].includes(subUpdate.status)) {
+              updateData.plan = plan;
+            }
           }
 
           if (Object.keys(updateData).length > 0) {
