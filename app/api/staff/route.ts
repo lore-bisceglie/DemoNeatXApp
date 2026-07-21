@@ -58,6 +58,23 @@ export async function POST(req: Request) {
     const authError = await requireTenantAdmin(tenantId);
     if (authError) return authError;
 
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      include: { staff: true }
+    });
+
+    if (!tenant) {
+      return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
+    }
+
+    const isTrialActive = tenant.trialEndsAt && new Date() <= tenant.trialEndsAt;
+    const isPaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+    const isPremium = isPaidPlan || isTrialActive;
+
+    if (!isPremium && tenant.staff.length >= 1) {
+      return NextResponse.json({ error: "Limite staff raggiunto per il piano attuale" }, { status: 403 });
+    }
+
     const selectedLocations = Array.isArray(locationIds)
       ? locationIds
       : locationId

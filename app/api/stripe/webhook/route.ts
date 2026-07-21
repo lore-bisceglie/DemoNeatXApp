@@ -273,6 +273,15 @@ export async function POST(req: Request) {
           const updateData: any = {};
           if (subUpdate.id) updateData.stripeSubscriptionId = subUpdate.id;
           if (subUpdate.customer) updateData.stripeCustomerId = subUpdate.customer;
+          
+          const plan = ['pro', 'elite'].includes(subUpdate.metadata?.plan)
+            ? subUpdate.metadata.plan
+            : undefined;
+            
+          if (plan && ['active', 'trialing'].includes(subUpdate.status)) {
+            updateData.plan = plan;
+          }
+
           if (Object.keys(updateData).length > 0) {
             await prisma.tenant.update({ where: { id: subUpdateTenantId }, data: updateData });
           }
