@@ -447,63 +447,12 @@ export default function TrialLaunchPanel({
               placeholder="Descrizione pubblica (Es. Il tuo stile impeccabile, a portata di click)"
             />
 
-            <div className="grid grid-cols-2 gap-3">
-              <label className="text-xs font-bold text-slate-400">
-                Apertura
-                <input
-                  type="time"
-                  value={shopDraft.openTime}
-                  onChange={(event) => setShopDraft((current) => ({ ...current, openTime: event.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                />
-              </label>
-              <label className="text-xs font-bold text-slate-400">
-                Chiusura
-                <input
-                  type="time"
-                  value={shopDraft.closeTime}
-                  onChange={(event) => setShopDraft((current) => ({ ...current, closeTime: event.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                />
-              </label>
-              <label className="text-xs font-bold text-slate-400">
-                Pausa da
-                <input
-                  type="time"
-                  value={shopDraft.breakStart}
-                  onChange={(event) => setShopDraft((current) => ({ ...current, breakStart: event.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                />
-              </label>
-              <label className="text-xs font-bold text-slate-400">
-                Pausa a
-                <input
-                  type="time"
-                  value={shopDraft.breakEnd}
-                  onChange={(event) => setShopDraft((current) => ({ ...current, breakEnd: event.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                />
-              </label>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs font-bold text-slate-400">Giorni chiusi</p>
-              <div className="flex flex-wrap gap-2">
-                {weekDays.map((day) => (
-                  <button
-                    key={day.value}
-                    type="button"
-                    onClick={() => toggleClosedDay(day.value)}
-                    className={`rounded-xl border px-3 py-2 text-xs font-extrabold transition ${
-                      shopDraft.closedDays.includes(day.value)
-                        ? "border-red-500/30 bg-red-500/10 text-red-300"
-                        : "border-[#1e2b4a] bg-[#050814] text-slate-400 hover:border-slate-500"
-                    }`}
-                  >
-                    {day.label}
-                  </button>
-                ))}
-              </div>
+            <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-4 mt-2">
+              <p className="text-sm font-bold text-cyan-300">🕐 Orari di apertura</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Gli orari e i giorni di chiusura si gestiscono in modo indipendente per ogni sede. 
+                Usa la sezione <strong>Gestione Sedi</strong> in fondo alla pagina per modificarli.
+              </p>
             </div>
           </div>
         </div>
