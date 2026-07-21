@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { csvLine } from "@/lib/csv";
 import { requireTenantAdminOrDemo } from "@/lib/demo-access";
+import { DEMO_TENANT_ID } from "@/lib/demoService";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,19 @@ export async function GET(request: Request) {
 
   const authError = await requireTenantAdminOrDemo(request, tenantId, "export-appointments", 20);
   if (authError) return authError;
+
+  // Piano check: solo tenant con piano attivo o in trial possono esportare
+  if (tenantId !== DEMO_TENANT_ID) {
+    const exportTenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { plan: true, trialEndsAt: true, trialStatus: true },
+    });
+    const hasActivePaidPlan = exportTenant?.plan === "pro" || exportTenant?.plan === "elite";
+    const hasActiveTrial = exportTenant?.trialEndsAt && new Date() <= exportTenant.trialEndsAt;
+    if (!hasActivePaidPlan && !hasActiveTrial && exportTenant?.trialStatus !== "converted") {
+      return NextResponse.json({ error: "Esportazione disponibile solo con abbonamento Pro o Elite attivo." }, { status: 403 });
+    }
+  }
 
   const appointments = await prisma.appointment.findMany({
     where: { tenantId },

@@ -132,6 +132,10 @@ export function requireSuperAdmin(req: Request) {
 const SESSION_SECRET = (() => {
   if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
 
+  if (process.env.NODE_ENV === "production") {
+    console.error("[NeatX] ATTENZIONE: SESSION_SECRET non configurato. Imposta una variabile d'ambiente SESSION_SECRET dedicata per la sicurezza delle sessioni.");
+  }
+
   const existingSecretMaterial = [
     process.env.SUPERADMIN_PASSWORD,
     process.env.CRON_SECRET,
@@ -139,14 +143,18 @@ const SESSION_SECRET = (() => {
   ].filter((value): value is string => Boolean(value));
 
   if (existingSecretMaterial.length > 0) {
+    console.warn("[NeatX] SESSION_SECRET derivato da altri secret. Imposta SESSION_SECRET come variabile d'ambiente dedicata per maggiore sicurezza.");
     return createHash("sha256")
       .update(`neatx-session-v1\0${existingSecretMaterial.join("\0")}`)
       .digest("hex");
   }
 
-  return process.env.NODE_ENV !== "production"
-    ? "neatx-local-development-only"
-    : "";
+  if (process.env.NODE_ENV !== "production") {
+    console.warn("[NeatX] SESSION_SECRET non configurato, uso secret di sviluppo locale INSICURO. Imposta SESSION_SECRET in sviluppo.");
+    return "neatx-local-development-only";
+  }
+
+  throw new Error("[NeatX] SESSION_SECRET non configurato. Imposta la variabile d'ambiente SESSION_SECRET in produzione.");
 })();
 export const TENANT_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 giorni
 

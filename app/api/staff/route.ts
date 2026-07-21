@@ -58,6 +58,25 @@ export async function POST(req: Request) {
     const authError = await requireTenantAdmin(tenantId);
     if (authError) return authError;
 
+    // Piano check: verifica subito il piano del tenant
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { plan: true, trialEndsAt: true, trialStatus: true },
+    });
+    if (!tenant) {
+      return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
+    }
+    const todayDate = new Date();
+    const hasActivePaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+    const hasActiveTrial = tenant.trialEndsAt && todayDate <= tenant.trialEndsAt;
+    const isLocked = !hasActivePaidPlan && !hasActiveTrial && tenant.trialStatus !== "converted";
+    if (isLocked) {
+      return NextResponse.json(
+        { error: "Il tuo abbonamento non è attivo. Ripassa al piano Pro o Elite per aggiungere collaboratori." },
+        { status: 403 },
+      );
+    }
+
     const selectedLocations = Array.isArray(locationIds)
       ? locationIds
       : locationId

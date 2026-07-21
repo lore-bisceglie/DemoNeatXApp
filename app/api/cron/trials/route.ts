@@ -24,7 +24,6 @@ export async function GET(req: Request) {
   const day3Tenants = await prisma.tenant.findMany({
     where: {
       ownerEmail: { not: null },
-      plan: { notIn: ["pro", "elite"] },
       trialStatus: { in: ["trial_active", "demo", "published"] },
       trialEndsAt: { gte: new Date(now.getTime() - 86400000), lte: new Date(in3Days.getTime() + 86400000) },
     },
@@ -46,7 +45,6 @@ export async function GET(req: Request) {
   const day1Tenants = await prisma.tenant.findMany({
     where: {
       ownerEmail: { not: null },
-      plan: { notIn: ["pro", "elite"] },
       trialStatus: { in: ["trial_active", "demo", "published"] },
       trialEndsAt: { gte: new Date(now.getTime() - 86400000), lte: new Date(in1Day.getTime() + 86400000) },
     },
@@ -68,7 +66,6 @@ export async function GET(req: Request) {
   const expiredTenants = await prisma.tenant.findMany({
     where: {
       ownerEmail: { not: null },
-      plan: { notIn: ["pro", "elite"] },
       trialStatus: { in: ["trial_active", "demo", "published"] },
       trialEndsAt: { gte: expiredSince, lt: now },
     },
@@ -86,11 +83,10 @@ export async function GET(req: Request) {
   expiredCutoff.setDate(expiredCutoff.getDate() - 3);
   const expiredResult = await prisma.tenant.updateMany({
     where: {
-      plan: { notIn: ["pro", "elite"] },
       trialStatus: { in: ["demo", "trial_active", "published"] },
       trialEndsAt: { lt: expiredCutoff },
     },
-    data: { trialStatus: "expired" },
+    data: { trialStatus: "expired", plan: "basic" },
   });
   results.expired = expiredResult.count;
 

@@ -96,8 +96,10 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   // Logica PAYWALL (viene eseguita dopo aver già caricato staff e locations in parallelo)
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
-  const isTrialExpired = trialEndsAt && todayDate > trialEndsAt;
-  if (isTrialExpired && tenant.plan !== "pro" && tenant.plan !== "elite" && tenant.trialStatus !== "converted" && !searchParams?.payment) {
+  const hasActivePaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+  const hasActiveTrial = trialEndsAt && todayDate <= trialEndsAt;
+  const hasNoActivePlanNorTrial = !hasActivePaidPlan && !hasActiveTrial && tenant.trialStatus !== "converted";
+  if (hasNoActivePlanNorTrial && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
 
@@ -154,7 +156,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     return `${hours}:${minutes}`;
   };
 
-  const isPremium = tenant.plan === "elite" || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
+  const isPremium = (tenant.plan === "pro" || tenant.plan === "elite") || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
   const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
 
 
@@ -493,63 +495,77 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       if (endMins > startMins) {
         try {
           const storeSettings = await prisma.storeSettings.findUnique({ where: { tenantId } });
+          const maxConcurrent = storeSettings?.maxConcurrentAppointments || 1;
 
-          const existingApps = await prisma.appointment.findMany({
-            where: {
-              date,
-              tenantId,
-              ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
-              NOT: [
-                { customerName: { contains: "PAUSA" } },
-                { customerName: { contains: "FERIE" } },
-                { time: "ALL_DAY" },
-              ],
-            },
+          // Determina staff + location UNA volta fuori dalla transazione
+          const staffWithLocs = await prisma.staff.findMany({
+            where: { tenantId, ...(staffIdParam && staffIdParam !== "all" ? { id: staffIdParam } : {}) },
+            include: { locations: { select: { locationId: true } } },
           });
+          const activeLocIds = (await prisma.location.findMany({
+            where: { tenantId, isActive: true },
+            select: { id: true },
+          })).map(l => l.id);
 
-          let overlapCount = 0;
-          existingApps.forEach((app) => {
-            const aStart =
-              parseInt(app.time.split(":")[0]) * 60 +
-              parseInt(app.time.split(":")[1]);
+          // Per ogni staff risolvi le location; staff senza location -> [null]
+          type LocBlock = { staffId: string | null; locationIds: (string | null)[] };
+          const staffLocBlocks: LocBlock[] =
+            staffWithLocs.length > 0
+              ? staffWithLocs.map(s => ({
+                  staffId: s.id,
+                  locationIds: s.locations.length > 0
+                    ? [...new Set(s.locations.map(l => l.locationId))]
+                    : [null],
+                }))
+              : [{ staffId: null, locationIds: activeLocIds.length > 0 ? activeLocIds : [null] }];
 
-            const aEnd = app.endTime
-              ? parseInt(app.endTime.split(":")[0]) * 60 +
-                parseInt(app.endTime.split(":")[1])
-              : aStart + 15;
+          const label = blockType === "PERMESSO" ? "📋 PERMESSO" : "☕ PAUSA";
 
-            if (Math.max(startMins, aStart) < Math.min(endMins, aEnd)) {
-              overlapCount++;
-            }
-          });
-          const hasOverlap = overlapCount >= (storeSettings?.maxConcurrentAppointments || 1);
+          // Transazione atomica: READ + WRITE in Serializable
+          const created = await prisma.$transaction(async (tx) => {
+            const existing = await tx.appointment.findMany({
+              where: {
+                date,
+                tenantId,
+                ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
+                NOT: [
+                  { customerName: { contains: "PAUSA" } },
+                  { customerName: { contains: "FERIE" } },
+                  { time: "ALL_DAY" },
+                ],
+              },
+            });
 
-          if (hasOverlap) {
-            redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
-          } else {
-            let staffIds: (string | null)[] = [null];
-            
-            if (staffIdParam && staffIdParam !== "all") {
-              staffIds = [staffIdParam];
-            } else {
-              const staffMembers = await prisma.staff.findMany({ where: { tenantId } });
-              if (staffMembers.length > 0) {
-                staffIds = staffMembers.map((s) => s.id);
-              }
-            }
-            
-            const label = blockType === "PERMESSO" ? "📋 PERMESSO" : "☕ PAUSA";
-            const newApps = staffIds.map(sId => ({
+            let overlapCount = 0;
+            existing.forEach((app) => {
+              const aStart = parseInt(app.time.split(":")[0]) * 60 + parseInt(app.time.split(":")[1]);
+              const aEnd = app.endTime
+                ? parseInt(app.endTime.split(":")[0]) * 60 + parseInt(app.endTime.split(":")[1])
+                : aStart + 15;
+              if (Math.max(startMins, aStart) < Math.min(endMins, aEnd)) overlapCount++;
+            });
+
+            if (overlapCount >= maxConcurrent) return null;
+
+            // Un blocco per ogni staff x location (i filtri sede trovano sempre il blocco)
+            const data = staffLocBlocks.flatMap(b =>
+              b.locationIds.map(locId => ({
                 customerName: label,
                 customerPhone: "0000000000",
                 date,
                 time: startTime,
                 endTime,
                 tenantId,
-                staffId: sId,
+                staffId: b.staffId,
+                locationId: locId,
                 cancelToken: crypto.randomUUID(),
-            }));
-            await prisma.appointment.createMany({ data: newApps });
+              }))
+            );
+            return tx.appointment.createMany({ data });
+          }, { isolationLevel: "Serializable" });
+
+          if (!created) {
+            redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
           }
         } catch (error) {
           console.error(error);
@@ -574,20 +590,42 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      const datesToBlock = [];
+      const datesToBlock: string[] = [];
       const checkLoop = new Date(start);
 
       while (checkLoop <= end) {
-        datesToBlock.push(checkLoop.toISOString().split("T")[0]);
+        const y = checkLoop.getFullYear();
+        const m = String(checkLoop.getMonth() + 1).padStart(2, '0');
+        const day = String(checkLoop.getDate()).padStart(2, '0');
+        datesToBlock.push(`${y}-${m}-${day}`);
         checkLoop.setDate(checkLoop.getDate() + 1);
       }
+
+      // Determina staff + location UNA volta
+      const staffWithLocs = await prisma.staff.findMany({
+        where: { tenantId, ...(staffIdParam && staffIdParam !== "all" ? { id: staffIdParam } : {}) },
+        include: { locations: { select: { locationId: true } } },
+      });
+      const activeLocIds = (await prisma.location.findMany({
+        where: { tenantId, isActive: true },
+        select: { id: true },
+      })).map(l => l.id);
+
+      type LocBlock = { staffId: string | null; locationIds: (string | null)[] };
+      const holidayStaffBlocks: LocBlock[] =
+        staffWithLocs.length > 0
+          ? staffWithLocs.map(s => ({
+              staffId: s.id,
+              locationIds: s.locations.length > 0
+                ? [...new Set(s.locations.map(l => l.locationId))]
+                : [null],
+            }))
+          : [{ staffId: null, locationIds: activeLocIds.length > 0 ? activeLocIds : [null] }];
 
       try {
         const existingAppointments = await prisma.appointment.findMany({
           where: {
-            date: {
-              in: datesToBlock,
-            },
+            date: { in: datesToBlock },
             tenantId,
             ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
             NOT: [
@@ -601,44 +639,31 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         if (existingAppointments.length > 0) {
           redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
         } else {
-          const insertLoop = new Date(start);
-
-          while (insertLoop <= end) {
-            const d = insertLoop.toISOString().split("T")[0];
-
-            let staffIds: (string | null)[] = [null];
-            
-            if (staffIdParam && staffIdParam !== "all") {
-              staffIds = [staffIdParam];
-            } else {
-              const staffMembers = await prisma.staff.findMany({ where: { tenantId } });
-              if (staffMembers.length > 0) {
-                staffIds = staffMembers.map((s) => s.id);
+          // Transazione atomica: crea le ferie per ogni staff x location
+          await prisma.$transaction(async (tx) => {
+            for (const d of datesToBlock) {
+              for (const sb of holidayStaffBlocks) {
+                for (const locId of sb.locationIds) {
+                  const existing = await tx.appointment.findFirst({
+                    where: { date: d, time: "ALL_DAY", tenantId, staffId: sb.staffId, locationId: locId },
+                  });
+                  if (!existing) {
+                    await tx.appointment.create({
+                      data: {
+                        customerName: "🌴 FERIE",
+                        customerPhone: "0000000000",
+                        date: d,
+                        time: "ALL_DAY",
+                        tenantId,
+                        staffId: sb.staffId,
+                        locationId: locId,
+                      },
+                    });
+                  }
+                }
               }
             }
-            
-            for (const sId of staffIds) {
-              const existingFerie = await prisma.appointment.findFirst({
-                where: { date: d, time: "ALL_DAY", tenantId, staffId: sId },
-              });
-
-              if (!existingFerie) {
-                await prisma.appointment.create({
-                  data: {
-                    customerName: "🌴 FERIE",
-                    customerPhone: "0000000000",
-                    date: d,
-                    time: "ALL_DAY",
-                    tenantId,
-                    staffId: sId,
-                    cancelToken: crypto.randomUUID(),
-                  },
-                });
-              }
-            }
-
-            insertLoop.setDate(insertLoop.getDate() + 1);
-          }
+          }, { isolationLevel: "Serializable" });
         }
       } catch (error) {
         console.error(error);

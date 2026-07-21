@@ -273,6 +273,17 @@ export async function POST(req: Request) {
           const updateData: any = {};
           if (subUpdate.id) updateData.stripeSubscriptionId = subUpdate.id;
           if (subUpdate.customer) updateData.stripeCustomerId = subUpdate.customer;
+
+          // Sync piano: mappa l'importo dell'item al nome del piano Stripe
+          const priceAmount = subUpdate.items?.data?.[0]?.price?.unit_amount;
+          const planMap: Record<number, string> = {
+            2900: 'pro', 5900: 'elite',
+            29000: 'pro', 59000: 'elite',
+          };
+          if (priceAmount && planMap[priceAmount]) {
+            updateData.plan = planMap[priceAmount];
+          }
+
           if (Object.keys(updateData).length > 0) {
             await prisma.tenant.update({ where: { id: subUpdateTenantId }, data: updateData });
           }

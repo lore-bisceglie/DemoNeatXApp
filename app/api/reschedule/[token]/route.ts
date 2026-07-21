@@ -10,6 +10,7 @@ import {
   parseShiftExceptions,
 } from "@/lib/schedule";
 import { parseClosedDays } from "@/lib/opening-hours";
+import { getRomeDayOfWeek } from "@/lib/rome-time";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -117,7 +118,7 @@ export async function POST(
         return NextResponse.json({ error: "Orario durante la pausa della sede" }, { status: 400 });
       }
     }
-    if (parseClosedDays(scheduleOwner?.closedDays).includes(requestedDate.getDay())) {
+    if (parseClosedDays(scheduleOwner?.closedDays).includes(getRomeDayOfWeek(requestedDate))) {
       return NextResponse.json({ error: "La sede è chiusa in questo giorno" }, { status: 400 });
     }
 

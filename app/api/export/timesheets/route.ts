@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      select: { id: true, slug: true, name: true, openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true, staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
+      select: { id: true, slug: true, name: true, plan: true, trialEndsAt: true, trialStatus: true, openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true, staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
     });
 
     if (!tenant) {
@@ -28,6 +28,13 @@ export async function GET(request: Request) {
     const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
     if (!isTenantAdminCookieValid(authCookie, tenant.slug)) {
       return new NextResponse("Non autorizzato", { status: 401 });
+    }
+
+    // Piano check: solo tenant con piano attivo o in trial possono esportare
+    const hasActivePaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+    const hasActiveTrial = tenant.trialEndsAt && new Date() <= tenant.trialEndsAt;
+    if (!hasActivePaidPlan && !hasActiveTrial && tenant.trialStatus !== "converted") {
+      return new NextResponse("Esportazione disponibile solo con abbonamento Pro o Elite attivo.", { status: 403 });
     }
 
     if (!tenant) {
@@ -77,8 +84,10 @@ export async function GET(request: Request) {
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const firstDayStr = firstDay.toISOString().split("T")[0];
-    const lastDayStr = lastDay.toISOString().split("T")[0];
+    // Costruiamo le stringhe data locali senza passare da UTC (evita bug DST month boundary)
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const firstDayStr = `${year}-${pad(month + 1)}-01`;
+    const lastDayStr = `${year}-${pad(month + 1)}-${pad(lastDay.getDate())}`;
 
     // Vecchie assenze da Appuntamenti (FERIE/PAUSA/PERMESSO — backward compat)
     const legacyAbsences = await prisma.appointment.findMany({
@@ -94,7 +103,7 @@ export async function GET(request: Request) {
     });
 
     let csv = "Data;Giorno;Dipendente;Stato Negozio;Ore Teoriche;Ore Ferie;Ore Pausa;Ore Permesso;Note Assenze;Ore Effettive Lavorate\n";
-    const monthName = firstDay.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
+    const monthName = firstDay.toLocaleString('it-IT', { timeZone: 'Europe/Rome', month: 'long', year: 'numeric' });
 
     for (const s of tenant.staff) {
       const weeklySchedule = parseBaseSchedule(s.baseSchedule);
@@ -109,31 +118,33 @@ export async function GET(request: Request) {
       let totalWorked = 0;
 
       for (let d = 1; d <= lastDay.getDate(); d++) {
-        const dateLoop = new Date(year, month, d, 12, 0, 0);
-        const dayIndex = dateLoop.getDay();
+        const dateStr = `${year}-${pad(month + 1)}-${pad(d)}`;
+        const dayIndex = new Date(dateStr + "T12:00:00Z").getUTCDay();
         const dayName = dayNameMapping[dayIndex];
-        const dateStr = dateLoop.toISOString().split("T")[0];
         const dataIta = `${d.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
 
-        let expectedHours = 0;
-        let isClosed = closedDaysArr.includes(dayIndex.toString()) || closedDaysArr.includes(dayName);
+        const isClosed = closedDaysArr.includes(dayIndex.toString()) || closedDaysArr.includes(dayName);
 
+        // 1. BASE expected hours (senza eccezioni — per calcolare ferie/pausa/permesso)
+        let baseExpectedHours = 0;
         if (Object.keys(weeklySchedule).length > 0) {
-          // DB schedule (nuovo sistema)
-          const daySchedule = getDayScheduleForDate(weeklySchedule, shiftExceptions, dateStr);
-          if (daySchedule.active) {
+          const baseDay = getDayScheduleForDate(weeklySchedule, [], dateStr);
+          if (baseDay.active) {
             let mins = 0;
-            for (const b of daySchedule.blocks) {
+            for (const b of baseDay.blocks) {
               mins += Math.max(0, timeToMins(b.end) - timeToMins(b.start));
             }
-            expectedHours = mins / 60;
-            isClosed = false;
-          } else {
-            expectedHours = 0;
+            baseExpectedHours = mins / 60;
           }
         } else {
-          // Fallback orari tenant (nessun DB schedule)
-          expectedHours = isClosed ? 0 : dailyWorkHours;
+          baseExpectedHours = isClosed ? 0 : dailyWorkHours;
+        }
+
+        // 2. Ore teoriche effettive (con eccezioni applicate)
+        let expectedHours = baseExpectedHours;
+        if (Object.keys(weeklySchedule).length > 0) {
+          const daySchedule = getDayScheduleForDate(weeklySchedule, shiftExceptions, dateStr);
+          if (!daySchedule.active) expectedHours = 0;
         }
 
         let ferieH = 0;
@@ -141,48 +152,49 @@ export async function GET(request: Request) {
         let permessoH = 0;
         let notesArr: string[] = [];
 
-        // Eccezioni dal DB (nuovo sistema)
+        // 3. Eccezioni dal DB (nuovo sistema)
         const dayExceptions = shiftExceptions.filter(e => e.date === dateStr);
         for (const ex of dayExceptions) {
           if (ex.type === "ferie") {
-            ferieH = Math.max(ferieH, expectedHours);
+            ferieH = Math.max(ferieH, baseExpectedHours);
             notesArr.push("Ferie");
           } else if (ex.type === "permesso" && ex.start && ex.end) {
             const p = Math.max(0, timeToMins(ex.end) - timeToMins(ex.start)) / 60;
-            permessoH += p;
+            permessoH = Math.max(permessoH, p);
             notesArr.push(`Permesso ${ex.start}-${ex.end}`);
           } else if (ex.type === "pausa" && ex.start && ex.end) {
             const p = Math.max(0, timeToMins(ex.end) - timeToMins(ex.start)) / 60;
-            pausaH += p;
+            pausaH = Math.max(pausaH, p);
             notesArr.push(`Pausa ${ex.start}-${ex.end}`);
           }
         }
 
-        // Legacy absences da appuntamenti (vecchio sistema)
+        // 4. Legacy absences da appuntamenti (vecchio sistema) — deduplicato con MAX()
         const dayAbsences = staffAbsences.filter(a => a.date === dateStr);
         for (const abs of dayAbsences) {
           if (abs.customerName.includes("FERIE")) {
-            ferieH = expectedHours;
+            ferieH = Math.max(ferieH, baseExpectedHours);
             if (!notesArr.includes("Ferie")) notesArr.push("Ferie (app.)");
           } else if (abs.customerName.includes("PERMESSO")) {
             if (abs.time && abs.endTime) {
               const p = Math.max(0, timeToMins(abs.endTime) - timeToMins(abs.time)) / 60;
-              permessoH += p;
-              notesArr.push(`Permesso ${abs.time}-${abs.endTime} (app.)`);
+              permessoH = Math.max(permessoH, p);
+              if (!notesArr.find(n => n.includes("Permesso"))) notesArr.push(`Permesso ${abs.time}-${abs.endTime} (app.)`);
             }
           } else if (abs.customerName.includes("PAUSA")) {
             if (abs.time && abs.endTime) {
               const p = Math.max(0, timeToMins(abs.endTime) - timeToMins(abs.time)) / 60;
-              pausaH += p;
-              notesArr.push(`Pausa ${abs.time}-${abs.endTime} (app.)`);
+              pausaH = Math.max(pausaH, p);
+              if (!notesArr.find(n => n.includes("Pausa"))) notesArr.push(`Pausa ${abs.time}-${abs.endTime} (app.)`);
             }
           }
         }
 
-        let workedHours = expectedHours - ferieH - pausaH - permessoH;
+        // 5. Calcolo ore lavorate: baseExpected - assenze (deduplicate)
+        let workedHours = baseExpectedHours - ferieH - pausaH - permessoH;
         if (workedHours < 0) workedHours = 0;
 
-        totalExpected += expectedHours;
+        totalExpected += baseExpectedHours;
         totalFerie += ferieH;
         totalPausa += pausaH;
         totalPermesso += permessoH;
@@ -191,7 +203,7 @@ export async function GET(request: Request) {
         const statoNegozio = isClosed ? "CHIUSO" : "Aperto";
         const notes = notesArr.length > 0 ? notesArr.join(", ") : "";
 
-        csv += `"${dataIta}";"${dayName}";"${s.name}";"${statoNegozio}";${expectedHours.toFixed(2)};${ferieH.toFixed(2)};${pausaH.toFixed(2)};${permessoH.toFixed(2)};"${notes}";${workedHours.toFixed(2)}\n`;
+        csv += `"${dataIta}";"${dayName}";"${s.name}";"${statoNegozio}";${baseExpectedHours.toFixed(2)};${ferieH.toFixed(2)};${pausaH.toFixed(2)};${permessoH.toFixed(2)};"${notes}";${workedHours.toFixed(2)}\n`;
       }
 
       csv += `\n"TOTALE ${monthName.toUpperCase()}";;"${s.name}";;${totalExpected.toFixed(2)};${totalFerie.toFixed(2)};${totalPausa.toFixed(2)};${totalPermesso.toFixed(2)};;${totalWorked.toFixed(2)}\n\n`;

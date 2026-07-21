@@ -221,6 +221,8 @@ model Waitlist {
   createdAt DateTime @default(now())
   tenantId  String?
   tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, phone, date])
 }
 
 model CustomerNote {

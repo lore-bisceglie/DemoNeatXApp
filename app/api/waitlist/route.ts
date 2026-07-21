@@ -29,18 +29,18 @@ export async function POST(req: Request) {
     }
 
     const item = await prisma.waitlist.create({
-      data: {
-        name,
-        phone,
-        date,
-        tenantId: tenantId || null,
-      },
+      data: { name, phone, date, tenantId: tenantId || null },
+    }).catch(async (err: any) => {
+      // P2002 = unique constraint violato (già iscritto)
+      if (err?.code === "P2002") return null;
+      throw err;
     });
 
-    return NextResponse.json({
-      success: true,
-      item,
-    });
+    if (!item) {
+      return NextResponse.json({ success: true, alreadyJoined: true });
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Errore waitlist POST:", error);
 
