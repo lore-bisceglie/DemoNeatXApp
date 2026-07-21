@@ -231,7 +231,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
     }
   }, [paymentMethod, selectedServiceSupportsOnlinePayment]);
 
-  const _shopInitials = tenantInfo.name
+  const shopInitials = tenantInfo.name
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
