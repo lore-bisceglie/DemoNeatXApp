@@ -180,7 +180,9 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
         instagramUrl: typeof body.instagramUrl === "string" ? normalizeInstagramUrl(body.instagramUrl) : tenant.instagramUrl,
         tiktokUrl: typeof body.tiktokUrl === "string" ? normalizeTikTokUrl(body.tiktokUrl) : tenant.tiktokUrl,
         websiteUrl: cleanUrl(body.websiteUrl, tenant.websiteUrl),
-        mapsLink: cleanUrl(body.mapsLink, tenant.mapsLink) || buildMapsLink(nextAddress),
+        mapsLink: typeof body.mapsLink === "string" && body.mapsLink.trim() !== "" && !/^https?:\/\//i.test(body.mapsLink.trim())
+          ? buildMapsLink(body.mapsLink)
+          : cleanUrl(body.mapsLink, tenant.mapsLink) || buildMapsLink(nextAddress),
         bookingUrl: cleanUrl(body.bookingUrl, tenant.bookingUrl),
         openTime: cleanString(body.openTime, tenant.openTime) || "09:00",
         closeTime: cleanString(body.closeTime, tenant.closeTime) || "19:00",

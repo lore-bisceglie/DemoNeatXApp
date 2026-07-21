@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   CalendarDays,
@@ -129,6 +129,32 @@ export default function TrialLaunchPanel({
     breakEnd: breakEnd || "",
     closedDays: parseClosedDays(closedDays),
   });
+
+  useEffect(() => {
+    setShopDraft(current => {
+      // Only sync if the user is not actively typing (saving === null)
+      if (saving !== null) return current;
+      return {
+        name: tenantName,
+        city: city || "",
+        description: description || "",
+        phone: phone || "",
+        address: address || "",
+        openTime: openTime || "09:00",
+        instagramUrl: socialHandleValue(instagramUrl, "instagram.com"),
+        tiktokUrl: socialHandleValue(tiktokUrl, "tiktok.com"),
+        mapsLink: mapsLink || "",
+        closeTime: closeTime || "19:00",
+        breakStart: breakStart || "",
+        breakEnd: breakEnd || "",
+        closedDays: parseClosedDays(closedDays),
+      };
+    });
+  }, [
+    tenantName, city, description, phone, address, openTime,
+    instagramUrl, tiktokUrl, mapsLink, closeTime, breakStart,
+    breakEnd, closedDays, saving
+  ]);
 
   const trialDaysLeft = useMemo(() => {
     if (!trialEndsAt) return null;
