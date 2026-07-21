@@ -159,7 +159,7 @@
         "title": "CLIENTI IN AUTOMATICO",
         "hook": "CLIENTI IN AUTOMATICO",
         "date": "2026-07-13",
-        "views": 7,
+        "views": 9,
         "likes": 0
     },
     {
@@ -175,7 +175,7 @@
         "title": "PRENOTAZIONE 24 ORA",
         "hook": "PRENOTAZIONE 24 ORA",
         "date": "2026-07-14",
-        "views": 35,
+        "views": 31,
         "likes": 1
     },
     {
@@ -198,7 +198,14 @@
         "title": "RICORDI INEVITABILI",
         "hook": "RICORDI INEVITABILI",
         "date": "2026-07-18",
-        "views": 3,
+        "views": 7,
         "likes": 0
+    },
+    {
+        "youtube_id": "3CDsG1zRD38",
+        "title": "PARRUCCHIERI: TURNI E FERIE",
+        "hook": "PARRUCCHIERI: TURNI E FERIE",
+        "date": "2026-07-21",
+        "views": 0
     }
 ]

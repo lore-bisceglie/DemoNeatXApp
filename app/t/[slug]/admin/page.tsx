@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
+import { parseClosedDays } from "@/lib/opening-hours";
 
 export const dynamic = "force-dynamic";
 
@@ -104,15 +105,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   }
 
   
-  // Parse chiusura days
-  let activeClosedDays: number[] = [];
-  if (tenant.closedDays) {
-    try { activeClosedDays = JSON.parse(tenant.closedDays); } catch {}
-  }
+  // Parse chiusura days (supporta sia array [0,6] che WeekSchedule)
+  let activeClosedDays: number[] = parseClosedDays(tenant.closedDays);
   if (filterLocationId) {
     const loc = locations.find(l => l.id === filterLocationId);
     if (loc?.closedDays) {
-      try { activeClosedDays = JSON.parse(loc.closedDays); } catch {}
+      activeClosedDays = parseClosedDays(loc.closedDays);
     }
   }
 
