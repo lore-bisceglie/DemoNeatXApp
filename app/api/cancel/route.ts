@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { logActivity } from "@/lib/activity";
 import { sendTenantSms } from "@/lib/sms";
+import { appointmentManagementSelect } from "@/lib/appointment-management";
 
 // Recupera i dati dell'appuntamento dal token segreto
 export async function GET(request: Request) {
@@ -13,11 +13,7 @@ export async function GET(request: Request) {
 
     const appointment = await prisma.appointment.findUnique({
       where: { cancelToken: token },
-      select: {
-        id: true, date: true, time: true, customerName: true,
-        tenantId: true, locationId: true, cancelToken: true,
-        service: { select: { name: true } },
-      },
+      select: appointmentManagementSelect,
     });
 
     let tenantPhone: string | null = null;

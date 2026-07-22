@@ -21,6 +21,7 @@ import {
   storedEmailVerificationToken,
 } from "../lib/email-verification";
 import { createTenantSessionToken, verifyTenantSessionToken } from "../lib/auth";
+import { appointmentManagementSelect } from "../lib/appointment-management";
 import {
   buildPaymentFailedEmail,
   buildSubscriptionActivatedEmail,
@@ -143,12 +144,14 @@ async function run() {
   assert.equal(buildSubscriptionActivatedEmail("Negozio", "Lorenzo", "pro", "month", "https://neatx.store/admin").html.includes("temporaneamente disattivati"), true);
   assert.equal(buildPaymentFailedEmail("Negozio", "Lorenzo", "https://neatx.store/admin").html.includes("non è andato a buon fine"), true);
   assert.equal(buildSubscriptionCanceledEmail("Negozio", "Lorenzo", "https://neatx.store/paywall").html.includes("I dati non sono stati cancellati"), true);
+  assert.equal(appointmentManagementSelect.serviceId, true);
+  assert.equal(appointmentManagementSelect.staffId, true);
 
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);
 
-  console.log("release-unit-tests: 53 verifiche superate");
+  console.log("release-unit-tests: 55 verifiche superate");
 }
 
 run().catch((error) => {
