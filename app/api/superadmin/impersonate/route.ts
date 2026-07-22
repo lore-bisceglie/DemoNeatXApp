@@ -14,13 +14,13 @@ export async function POST(request: Request) {
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug },
-    select: { slug: true },
+    select: { slug: true, sessionVersion: true },
   });
   if (!tenant) {
     return NextResponse.json({ error: "Negozio non trovato" }, { status: 404 });
   }
 
-  const token = createTenantSessionToken(tenant.slug, 60);
+  const token = createTenantSessionToken(tenant.slug, 60, tenant.sessionVersion);
   const magicUrl = `/api/telegram/magic?slug=${encodeURIComponent(tenant.slug)}&secret=${encodeURIComponent(token)}`;
   return NextResponse.json({ magicUrl });
 }

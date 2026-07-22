@@ -1,4 +1,6 @@
 import { verifyTenantAndGrantReferralBonus } from "@/lib/referral";
+import { getTenantAdminUrl } from "@/lib/domains";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
@@ -20,6 +22,16 @@ export async function GET(request: Request) {
         `<html><body style="font-family:sans-serif;background:#050814;color:white;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center"><div><h1 style="color:#ef4444">Link non valido o scaduto</h1><p>Il link di verifica non è più valido. Contatta il supporto.</p></div></body></html>`,
         { status: 400, headers: { "content-type": "text/html; charset=utf-8" } }
       );
+    }
+
+    if (verification.shouldSendWelcomeEmail && verification.ownerEmail) {
+      await sendWelcomeEmail(
+        verification.ownerEmail,
+        verification.ownerName || "",
+        getTenantAdminUrl(verification.slug),
+      ).catch((error) => {
+        console.error("[Email] Errore invio benvenuto dopo verifica:", error);
+      });
     }
 
     const bonusMessage = verification.bonusCredits > 0

@@ -110,7 +110,7 @@ export async function POST(req: Request) {
     });
 
     const response = NextResponse.json({ success: true });
-    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug), {
+    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug, undefined, tenant.sessionVersion), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

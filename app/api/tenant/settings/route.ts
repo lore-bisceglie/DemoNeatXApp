@@ -14,7 +14,7 @@ export async function PUT(request: Request) {
     // Recupera il tenant per verificare l'autenticazione
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      select: { id: true, slug: true },
+      select: { id: true, slug: true, sessionVersion: true },
     });
 
     if (!tenant) {
@@ -24,7 +24,7 @@ export async function PUT(request: Request) {
     // Verifica il cookie di autenticazione admin
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
-    if (!isTenantAdminCookieValid(authCookie, tenant.slug)) {
+    if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.sessionVersion)) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 

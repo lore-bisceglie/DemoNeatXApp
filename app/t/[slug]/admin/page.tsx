@@ -59,7 +59,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   if (!tenant) return <div className="p-10 text-white">Attività non trovata.</div>;
 
-  if (!isTenantAdminCookieValid(authCookie, slug)) {
+  if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
     return (
       <LoginScreen
         slug={slug}

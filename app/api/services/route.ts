@@ -47,11 +47,11 @@ async function requireTenantAdmin(request: NextRequest) {
   const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
   if (!authCookie) {
     const headerAuth = request.headers.get("x-middleware-auth");
-    if (headerAuth) return isTenantAdminCookieValid(headerAuth, tenant.slug) ? tenant : null;
+    if (headerAuth) return isTenantAdminCookieValid(headerAuth, tenant.slug, tenant.sessionVersion) ? tenant : null;
     return null;
   }
 
-  return isTenantAdminCookieValid(authCookie, tenant.slug) ? tenant : null;
+  return isTenantAdminCookieValid(authCookie, tenant.slug, tenant.sessionVersion) ? tenant : null;
 }
 
 export async function GET(request: NextRequest) {

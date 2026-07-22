@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const email = cleanText(body.email).toLowerCase();
-    const password = cleanText(body.password);
+    const password = typeof body.password === "string" ? body.password : "";
 
     if (!email || !password) {
       return NextResponse.json({ error: "Inserisci email e password." }, { status: 400 });
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     }
 
     if (!tenant.emailVerified) {
-      return NextResponse.json({ error: "Email non verificata. Controlla la tua casella di posta e clicca sul link di conferma.", needsVerification: true }, { status: 403 });
+      return NextResponse.json({ error: "Email non verificata. Controlla la tua casella di posta e clicca sul link di conferma.", needsVerification: true, slug: tenant.slug }, { status: 403 });
     }
 
     // Login riuscito: resetta i contatori
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       adminUrl: getTenantAdminUrl(tenant.slug),
     });
 
-    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug), {
+    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug, undefined, tenant.sessionVersion), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

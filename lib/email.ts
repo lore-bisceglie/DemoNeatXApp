@@ -74,7 +74,7 @@ export async function sendVerificationEmail(
         <div style="text-align: center; margin: 30px 0;">
           <a href="${verifyUrl}" style="background: #00b4ff; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">Conferma la mia email</a>
         </div>
-        <p style="color: #666; font-size: 13px;">Se non hai creato un account su NeatX, ignora questa email.</p>
+        <p style="color: #666; font-size: 13px;">Il link è personale, utilizzabile una sola volta e scade dopo 24 ore. Se non hai creato un account su NeatX, ignora questa email.</p>
         <hr style="border: none; border-top: 1px solid #e2e4e8; margin: 20px 0;"/>
         <p style="font-size: 12px; color: #999;">NeatX Software · Agenda online per professionisti</p>
       </div>`,
@@ -173,6 +173,52 @@ export async function sendTrialExpiredOffer(tenantEmail: string, tenantName: str
         </div>
         <p style="color: #666; font-size: 13px;">Se hai bisogno di aiuto, rispondi a questa email.</p>
       </div>`,
+  });
+}
+
+export async function sendPasswordResetEmail(
+  tenantEmail: string,
+  ownerName: string,
+  resetUrl: string,
+) {
+  const safeName = esc(ownerName || "titolare");
+  const safeUrl = esc(resetUrl);
+  return send({
+    to: tenantEmail,
+    subject: "Reimposta la password del tuo account NeatX",
+    html: emailShell(
+      "Reimposta la password",
+      `<p>Ciao ${safeName},</p>
+       <p>Abbiamo ricevuto una richiesta per cambiare la password del tuo account NeatX.</p>
+       <div style="text-align:center;margin:30px 0">
+         <a href="${safeUrl}" style="background:#0ea5e9;color:#fff;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;display:inline-block">Scegli una nuova password</a>
+       </div>
+       <p style="font-size:13px;color:#64748b">Il link è personale, utilizzabile una sola volta e scade dopo 30 minuti.</p>
+       <p style="font-size:13px;color:#64748b">Se non hai richiesto tu il cambio, ignora questa email: la password attuale resterà valida.</p>`,
+    ),
+  });
+}
+
+export async function sendPasswordChangedEmail(
+  tenantEmail: string,
+  ownerName: string,
+  adminUrl: string,
+) {
+  const safeName = esc(ownerName || "titolare");
+  const safeUrl = esc(adminUrl);
+  return send({
+    to: tenantEmail,
+    subject: "Password NeatX modificata correttamente",
+    html: emailShell(
+      "Password modificata",
+      `<p>Ciao ${safeName},</p>
+       <p>La password del tuo account NeatX è stata modificata correttamente.</p>
+       <p>Per proteggerti, tutte le sessioni aperte in precedenza sono state chiuse.</p>
+       <div style="text-align:center;margin:30px 0">
+         <a href="${safeUrl}" style="background:#0ea5e9;color:#fff;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;display:inline-block">Accedi di nuovo</a>
+       </div>
+       <p style="font-size:13px;color:#64748b">Se non hai effettuato tu questa modifica, contatta subito l'assistenza rispondendo a questa email.</p>`,
+    ),
   });
 }
 

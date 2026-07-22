@@ -33,7 +33,7 @@ async function run() {
     method: "POST",
     body: JSON.stringify({
       businessName: "Test " + SUFFIX, category: "barber", city: "Roma",
-      ownerName: "Mario Test", email, password: "TestPass123!",
+      ownerName: "Mario Test", email, password: "TestPass123!", confirmPassword: "TestPass123!",
       phone: "393312345678", address: "Via Test 1, Roma",
     }),
   });

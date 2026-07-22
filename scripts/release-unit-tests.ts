@@ -9,6 +9,18 @@ import {
 } from "../lib/referral-utils";
 import { sendTenantMessage } from "../lib/sms";
 import { validateTenantLogo } from "../lib/tenant-logo";
+import {
+  getMarketingRotationLength,
+  selectDailyMarketingAsset,
+} from "../lib/marketing-rotation";
+import {
+  createEmailVerificationToken,
+  createPasswordResetToken,
+  hashAccountToken,
+  shouldSendWelcomeAfterVerification,
+  storedEmailVerificationToken,
+} from "../lib/email-verification";
+import { createTenantSessionToken, verifyTenantSessionToken } from "../lib/auth";
 
 async function run() {
   assert.equal(normalizeReferralCode(" neat-x_2026! "), "NEATX2026");
@@ -77,11 +89,41 @@ async function run() {
   assert.equal(validateTenantLogo("data:image/svg+xml;base64,PHN2Zz4=").ok, false);
   assert.equal(validateTenantLogo("data:image/webp;base64,UklGRg==").ok, true);
 
+  const rotationLength = getMarketingRotationLength();
+  const rotatedImages = Array.from({ length: rotationLength }, (_, offset) =>
+    selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20 + offset, 12))).image,
+  );
+  assert.equal(rotationLength, 16);
+  assert.equal(new Set(rotatedImages).size, rotationLength);
+  assert.notEqual(rotatedImages[0], rotatedImages[1]);
+  assert.equal(
+    selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20, 8))).image,
+    selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20, 20))).image,
+  );
+  const tokenBaseTime = new Date("2026-07-22T10:00:00.000Z");
+  const verificationToken = createEmailVerificationToken(tokenBaseTime);
+  assert.equal(shouldSendWelcomeAfterVerification(verificationToken.rawToken), true);
+  assert.equal(storedEmailVerificationToken(verificationToken.rawToken), verificationToken.storedToken);
+  assert.equal(verificationToken.storedToken, hashAccountToken(verificationToken.rawToken));
+  assert.equal(verificationToken.expiresAt.toISOString(), "2026-07-23T10:00:00.000Z");
+  assert.equal(shouldSendWelcomeAfterVerification("v2-legacy-compatible"), true);
+  assert.equal(shouldSendWelcomeAfterVerification("legacy-token"), false);
+  assert.equal(storedEmailVerificationToken("legacy-token"), "legacy-token");
+  const resetToken = createPasswordResetToken(tokenBaseTime);
+  assert.equal(resetToken.storedToken, hashAccountToken(resetToken.rawToken));
+  assert.equal(resetToken.expiresAt.toISOString(), "2026-07-22T10:30:00.000Z");
+  const firstSession = createTenantSessionToken("negozio-test", 60, 0);
+  assert.equal(verifyTenantSessionToken(firstSession, "negozio-test", 0), true);
+  assert.equal(verifyTenantSessionToken(firstSession, "negozio-test", 1), false);
+  const resetSession = createTenantSessionToken("negozio-test", 60, 1);
+  assert.equal(verifyTenantSessionToken(resetSession, "negozio-test", 1), true);
+  assert.equal(verifyTenantSessionToken(resetSession, "altro-negozio", 1), false);
+
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);
 
-  console.log("release-unit-tests: 24 verifiche superate");
+  console.log("release-unit-tests: 42 verifiche superate");
 }
 
 run().catch((error) => {

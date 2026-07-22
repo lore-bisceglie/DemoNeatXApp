@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     }
 
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
-    if (!tenant || !verifyTenantSessionToken(secret, slug)) {
+    if (!tenant || !verifyTenantSessionToken(secret, slug, tenant.sessionVersion)) {
       return NextResponse.json({ error: "Link di accesso magico scaduto o non valido." }, { status: 403 });
     }
 
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const response = NextResponse.redirect(adminUrl);
 
     // Iniettiamo un cookie di sessione firmato (24 ore)
-    response.cookies.set(`admin_auth_${slug}`, createTenantSessionToken(slug, 60 * 60 * 24), {
+    response.cookies.set(`admin_auth_${slug}`, createTenantSessionToken(slug, 60 * 60 * 24, tenant.sessionVersion), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

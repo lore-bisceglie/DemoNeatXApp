@@ -136,6 +136,7 @@ export async function POST(req: Request) {
               convertedAt: new Date(),
               emailVerified: true,
               emailVerifyToken: null,
+              emailVerifyExpiresAt: null,
             },
           });
           await awardReferrerForConversion(tenantId, "telegram");
@@ -262,7 +263,7 @@ export async function POST(req: Request) {
           if (!tenant) {
             await sendTelegramMessage(`Nessun salone trovato per "<b>${escapeHtml(query)}</b>".`);
           } else {
-            const magicToken = createTenantSessionToken(tenant.slug, 60 * 15);
+            const magicToken = createTenantSessionToken(tenant.slug, 60 * 15, tenant.sessionVersion);
             const magicLink = `https://${ROOT_DOMAIN}/api/telegram/magic?slug=${encodeURIComponent(tenant.slug)}&secret=${encodeURIComponent(magicToken)}`;
             await sendTelegramMessage(
               `🔐 <b>Link assistenza temporaneo</b>\n\n` +
@@ -303,6 +304,7 @@ export async function POST(req: Request) {
               convertedAt: new Date(),
               emailVerified: true,
               emailVerifyToken: null,
+              emailVerifyExpiresAt: null,
             },
           });
           const reward = await awardReferrerForConversion(tenant.id, "telegram");

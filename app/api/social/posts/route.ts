@@ -10,14 +10,13 @@ export async function GET(request: Request) {
 
     if (!slug) return NextResponse.json({ error: "Slug required" }, { status: 400 });
 
-    const cookieStore = await cookies();
-    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
     if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const posts = await prisma.socialPost.findMany({
       where: { tenantId: tenant.id },
@@ -40,14 +39,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const cookieStore = await cookies();
-    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
     if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const post = await prisma.socialPost.create({
       data: {
@@ -75,14 +73,13 @@ export async function DELETE(request: Request) {
 
     if (!slug || !postId) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
 
-    const cookieStore = await cookies();
-    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
     if (!tenant) return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     await prisma.socialPost.deleteMany({
       where: {

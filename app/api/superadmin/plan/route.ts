@@ -30,7 +30,8 @@ export async function POST(req: Request) {
           trialStatus: 'converted',
           trialEndsAt: null,
           emailVerified: true,
-          emailVerifyToken: null
+          emailVerifyToken: null,
+          emailVerifyExpiresAt: null,
         }
       });
       await awardReferrerForConversion(tenantId, 'superadmin');

@@ -135,7 +135,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${slug}`)?.value;
 
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 

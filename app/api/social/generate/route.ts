@@ -17,17 +17,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const tenant = await prisma.tenant.findUnique({ where: { slug } });
+    if (!tenant) {
+      return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    }
     const cookieStore = await cookies();
     const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Convert base64 data URL to raw base64 string
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
-    const tenant = await prisma.tenant.findUnique({ where: { slug } });
-    const salonName = tenant?.name || "il nostro salone";
+    const salonName = tenant.name || "il nostro salone";
     const customHashtag = `#${salonName.replace(/\s+/g, '')}`;
 
     const { object } = await generateObject({

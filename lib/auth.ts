@@ -186,35 +186,49 @@ export function verifySuperAdminSessionToken(token: string | null | undefined) {
 }
 
 /**
- * Token di sessione firmato HMAC: `v1.{slug}.{expiresMs}.{firma}`.
+ * Token di sessione firmato HMAC: `v2.{slug}.{sessionVersion}.{expiresMs}.{firma}`.
  * Sostituisce il vecchio cookie che conteneva la password in chiaro.
  */
 export function createTenantSessionToken(
   slug: string,
-  maxAgeSeconds = TENANT_SESSION_MAX_AGE
+  maxAgeSeconds = TENANT_SESSION_MAX_AGE,
+  sessionVersion = 0,
 ) {
   if (!SESSION_SECRET) {
     throw new Error("SESSION_SECRET non configurato");
   }
   const expires = Date.now() + maxAgeSeconds * 1000;
-  const payload = `${slug}.${expires}`;
+  const payload = `${slug}.${sessionVersion}.${expires}`;
   const sig = createHmac("sha256", SESSION_SECRET).update(payload).digest("hex");
-  return `v1.${payload}.${sig}`;
+  return `v2.${payload}.${sig}`;
 }
 
 export function verifyTenantSessionToken(
   token: string | null | undefined,
-  slug: string
+  slug: string,
+  expectedSessionVersion = 0,
 ) {
   if (!token || !SESSION_SECRET) return false;
   const parts = token.split(".");
-  if (parts.length !== 4 || parts[0] !== "v1") return false;
-  const [, tokenSlug, expiresStr, sig] = parts;
-  if (tokenSlug !== slug) return false;
+  if (parts[0] === "v1" && parts.length === 4) {
+    if (expectedSessionVersion !== 0) return false;
+    const [, tokenSlug, expiresStr, sig] = parts;
+    if (tokenSlug !== slug) return false;
+    const expires = Number(expiresStr);
+    if (!Number.isFinite(expires) || Date.now() > expires) return false;
+    const expected = createHmac("sha256", SESSION_SECRET)
+      .update(`${tokenSlug}.${expiresStr}`)
+      .digest("hex");
+    return safeEqual(sig, expected);
+  }
+  if (parts[0] !== "v2" || parts.length !== 5) return false;
+  const [, tokenSlug, versionStr, expiresStr, sig] = parts;
+  const tokenVersion = Number(versionStr);
+  if (tokenSlug !== slug || tokenVersion !== expectedSessionVersion) return false;
   const expires = Number(expiresStr);
   if (!Number.isFinite(expires) || Date.now() > expires) return false;
   const expected = createHmac("sha256", SESSION_SECRET)
-    .update(`${tokenSlug}.${expiresStr}`)
+    .update(`${tokenSlug}.${versionStr}.${expiresStr}`)
     .digest("hex");
   return safeEqual(sig, expected);
 }
@@ -224,10 +238,11 @@ export function verifyTenantSessionToken(
  */
 export function isTenantAdminCookieValid(
   cookieValue: string | null | undefined,
-  slug: string
+  slug: string,
+  sessionVersion = 0,
 ) {
   if (!cookieValue) return false;
-  return verifyTenantSessionToken(cookieValue, slug);
+  return verifyTenantSessionToken(cookieValue, slug, sessionVersion);
 }
 
 export async function requireTenantAdmin(tenantId: string | null | undefined) {
@@ -236,7 +251,7 @@ export async function requireTenantAdmin(tenantId: string | null | undefined) {
   }
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { slug: true },
+    select: { slug: true, sessionVersion: true },
   });
   if (!tenant) {
     return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
@@ -245,7 +260,7 @@ export async function requireTenantAdmin(tenantId: string | null | undefined) {
   const cookieStore = await cookies();
   const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
 
-  if (!isTenantAdminCookieValid(authCookie, tenant.slug)) {
+  if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.sessionVersion)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
 
@@ -257,9 +272,17 @@ export async function requireTenantAdminBySlug(slug: string | null | undefined) 
     return NextResponse.json({ error: "Tenant non identificato" }, { status: 400 });
   }
 
+  const tenant = await prisma.tenant.findUnique({
+    where: { slug },
+    select: { sessionVersion: true },
+  });
+  if (!tenant) {
+    return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
+  }
+
   const cookieStore = await cookies();
   const authCookie = cookieStore.get(`admin_auth_${slug}`)?.value;
-  if (!isTenantAdminCookieValid(authCookie, slug)) {
+  if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
   }
 
