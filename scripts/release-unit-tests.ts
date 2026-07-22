@@ -21,7 +21,7 @@ import {
   storedEmailVerificationToken,
 } from "../lib/email-verification";
 import { createTenantSessionToken, verifyTenantSessionToken } from "../lib/auth";
-import { appointmentManagementSelect } from "../lib/appointment-management";
+import { appointmentManagementSelect, canManageAppointment } from "../lib/appointment-management";
 import {
   buildPaymentFailedEmail,
   buildSubscriptionActivatedEmail,
@@ -146,12 +146,17 @@ async function run() {
   assert.equal(buildSubscriptionCanceledEmail("Negozio", "Lorenzo", "https://neatx.store/paywall").html.includes("I dati non sono stati cancellati"), true);
   assert.equal(appointmentManagementSelect.serviceId, true);
   assert.equal(appointmentManagementSelect.staffId, true);
+  const managedAppointment = { date: "2026-07-25", time: "10:30", endTime: "11:00", service: { duration: 30 } };
+  assert.equal(canManageAppointment(managedAppointment, new Date("2026-07-25T08:59:00.000Z")), true);
+  assert.equal(canManageAppointment(managedAppointment, new Date("2026-07-25T09:00:00.000Z")), false);
+  assert.equal(canManageAppointment({ ...managedAppointment, date: "2026-07-26" }, new Date("2026-07-25T12:00:00.000Z")), true);
+  assert.equal(canManageAppointment({ ...managedAppointment, date: "2026-07-24" }, new Date("2026-07-25T12:00:00.000Z")), false);
 
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);
 
-  console.log("release-unit-tests: 55 verifiche superate");
+  console.log("release-unit-tests: 59 verifiche superate");
 }
 
 run().catch((error) => {

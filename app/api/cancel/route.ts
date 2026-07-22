@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendTenantSms } from "@/lib/sms";
-import { appointmentManagementSelect } from "@/lib/appointment-management";
+import { appointmentManagementSelect, canManageAppointment } from "@/lib/appointment-management";
 
 // Recupera i dati dell'appuntamento dal token segreto
 export async function GET(request: Request) {
@@ -25,7 +25,11 @@ export async function GET(request: Request) {
       tenantPhone = tenant?.phone ?? null;
     }
 
-    return NextResponse.json({ appointment, tenantPhone });
+    return NextResponse.json({
+      appointment,
+      tenantPhone,
+      canManage: appointment ? canManageAppointment(appointment) : false,
+    });
   } catch (error) {
     console.error("Errore recupero appuntamento:", error);
     return NextResponse.json({ appointment: null });
@@ -44,9 +48,20 @@ export async function POST(request: Request) {
     const result = await prisma.$transaction(async (tx) => {
       const appointment = await tx.appointment.findUnique({
         where: { cancelToken: token },
-        select: { id: true, tenantId: true, customerPhone: true, customerName: true, date: true, time: true, locationId: true },
+        select: {
+          id: true,
+          tenantId: true,
+          customerPhone: true,
+          customerName: true,
+          date: true,
+          time: true,
+          endTime: true,
+          locationId: true,
+          service: { select: { duration: true } },
+        },
       });
       if (!appointment) return null;
+      if (!canManageAppointment(appointment)) return { expired: true as const };
 
       await tx.appointment.delete({ where: { id: appointment.id } });
 
@@ -91,6 +106,12 @@ export async function POST(request: Request) {
 
     if (!result) {
       return NextResponse.json({ success: true, alreadyCancelled: true });
+    }
+    if ("expired" in result) {
+      return NextResponse.json(
+        { success: false, error: "L'appuntamento è già concluso e non può più essere annullato" },
+        { status: 410 },
+      );
     }
 
     // Side effects FUORI transazione (SMS)
