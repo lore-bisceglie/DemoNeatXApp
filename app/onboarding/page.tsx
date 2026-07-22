@@ -19,6 +19,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { demoCategoryOptions } from "@/lib/demoShopTemplates";
+import { validateInstagramProfile } from "@/lib/contact";
 
 const categoryHints: Record<string, { services: string; staff: string; bookings: string }> = {
   hair_women: {
@@ -134,6 +135,7 @@ export default function Onboarding() {
     [category]
   );
   const hint = categoryHints[category] || categoryHints.barber;
+  const instagramProfile = useMemo(() => validateInstagramProfile(instagramUrl), [instagramUrl]);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -175,6 +177,11 @@ export default function Onboarding() {
 
     if (password.length < 8) {
       setError("La password deve avere almeno 8 caratteri.");
+      return;
+    }
+
+    if (!instagramProfile.valid) {
+      setError("Instagram non valido. Incolla il link del tuo profilo, non il link di un post o Reel.");
       return;
     }
     if (password !== confirmPassword) {
@@ -475,9 +482,17 @@ export default function Onboarding() {
                 <input
                   value={instagramUrl}
                   onChange={(event) => setInstagramUrl(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                  placeholder="Es. @neatx_agenda"
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                    attemptedSubmit && !instagramProfile.valid ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
+                  placeholder="https://www.instagram.com/nomeprofilo/"
                 />
+                <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+                  Apri il tuo profilo Instagram, scegli <strong>Condividi profilo → Copia link</strong> e incollalo qui. Va bene anche @nomeutente. Non inserire il link di un post o Reel.
+                </p>
+                {attemptedSubmit && !instagramProfile.valid && (
+                  <p className="mt-1 text-xs font-bold text-red-400">Inserisci il link del profilo Instagram corretto.</p>
+                )}
               </label>
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">

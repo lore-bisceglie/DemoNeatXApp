@@ -10,7 +10,7 @@ import { hashPassword } from "@/lib/password";
 import { sendVerificationEmail } from "@/lib/email";
 import { createEmailVerificationToken } from "@/lib/email-verification";
 import { findEligibleReferrer, INITIAL_MESSAGE_CREDITS } from "@/lib/referral";
-import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
+import { buildMapsLink, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone, validateInstagramProfile } from "@/lib/contact";
 
 const TRIAL_DAYS = 14;
 
@@ -109,7 +109,8 @@ export async function POST(req: Request) {
     const address = cleanText(body.address, city) || city;
     const description = cleanText(body.description);
     const trialDays = TRIAL_DAYS;
-    const instagramUrl = normalizeInstagramUrl(body.instagramUrl);
+    const instagramProfile = validateInstagramProfile(body.instagramUrl);
+    const instagramUrl = instagramProfile.url;
     const tiktokUrl = normalizeTikTokUrl(body.tiktokUrl);
     const websiteUrl = null;
     const bookingUrl = null;
@@ -120,6 +121,13 @@ export async function POST(req: Request) {
         ? rawLogo
         : null;
     const themeColor = cleanText(body.themeColor) || "cyan";
+
+    if (!instagramProfile.valid) {
+      return NextResponse.json(
+        { error: "Instagram non valido. Incolla il link del tuo profilo, non il link di un post o Reel." },
+        { status: 400 },
+      );
+    }
 
     if (!businessName || !category || !city || !ownerName || !password || !phone || !email) {
       return NextResponse.json(

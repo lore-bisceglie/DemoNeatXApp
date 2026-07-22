@@ -9,6 +9,7 @@ import {
 } from "../lib/referral-utils";
 import { sendTenantMessage } from "../lib/sms";
 import { validateTenantLogo } from "../lib/tenant-logo";
+import { validateInstagramProfile } from "../lib/contact";
 import {
   getMarketingRotationLength,
   selectDailyMarketingAsset,
@@ -151,12 +152,19 @@ async function run() {
   assert.equal(canManageAppointment(managedAppointment, new Date("2026-07-25T09:00:00.000Z")), false);
   assert.equal(canManageAppointment({ ...managedAppointment, date: "2026-07-26" }, new Date("2026-07-25T12:00:00.000Z")), true);
   assert.equal(canManageAppointment({ ...managedAppointment, date: "2026-07-24" }, new Date("2026-07-25T12:00:00.000Z")), false);
+  assert.deepEqual(validateInstagramProfile(""), { valid: true, url: null });
+  assert.deepEqual(validateInstagramProfile("@neatx_agenda"), { valid: true, url: "https://www.instagram.com/neatx_agenda/" });
+  assert.deepEqual(validateInstagramProfile("https://www.instagram.com/neatx.agenda/?igsh=test"), { valid: true, url: "https://www.instagram.com/neatx.agenda/" });
+  assert.equal(validateInstagramProfile("https://facebook.com/neatx_agenda").valid, false);
+  assert.equal(validateInstagramProfile("https://www.instagram.com/reel/ABC123/").valid, false);
+  assert.equal(validateInstagramProfile("nomeutente.").valid, false);
+  assert.equal(validateInstagramProfile("nome..utente").valid, false);
 
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);
 
-  console.log("release-unit-tests: 59 verifiche superate");
+  console.log("release-unit-tests: 66 verifiche superate");
 }
 
 run().catch((error) => {
