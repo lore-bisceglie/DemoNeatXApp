@@ -3,7 +3,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
-import { parseClosedDays } from "@/lib/opening-hours";
+import {
+  getDayScheduleSlotStatus,
+  parseClosedDays,
+  parseDaySchedule,
+} from "@/lib/opening-hours";
 
 export const dynamic = "force-dynamic";
 
@@ -303,6 +307,33 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     );
     const cols = filteredStaff.length > 0 ? filteredStaff.map(s => s.id) : ["unassigned"];
     const map: Record<string, Record<string, Record<string, any>>> = {};
+    const scheduleSource = (
+      locId
+        ? locations.find((location) => location.id === locId)
+        : locations.length === 1
+          ? locations[0]
+          : tenant
+    ) ?? tenant;
+    const daySchedules = Object.fromEntries(
+      weekDays.map((dayInfo) => {
+        const dayOfWeek = new Date(`${dayInfo.date}T12:00:00Z`).getUTCDay();
+        return [
+          dayInfo.date,
+          parseDaySchedule(
+            scheduleSource.closedDays,
+            dayOfWeek,
+            scheduleSource.openTime,
+            scheduleSource.closeTime,
+            scheduleSource.breakStart,
+            scheduleSource.breakEnd,
+          ),
+        ];
+      }),
+    );
+    const viewWeekDays = weekDays.map((dayInfo) => ({
+      ...dayInfo,
+      isClosed: daySchedules[dayInfo.date].isClosed,
+    }));
 
     if (isAgendaTab) {
       weekDatesArray.forEach((d) => {
@@ -350,7 +381,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       });
     }
 
-    const gaps = weekDays.flatMap((dayInfo) => {
+    const gaps = viewWeekDays.flatMap((dayInfo) => {
       const g: { date: string; label: string; start: string; end: string; duration: number }[] = [];
       let gapStart: string | null = null;
       let gapDuration = 0;
@@ -364,7 +395,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             break;
           }
         }
-        const isFree = !isPastToday && isSlotCompletelyFree;
+        const isOpen = getDayScheduleSlotStatus(daySchedules[dayInfo.date], slot) === "open";
+        const isFree = !isPastToday && isOpen && isSlotCompletelyFree;
 
         if (isFree) {
           if (!gapStart) gapStart = slot;
@@ -402,7 +434,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     })
     .slice(0, 6);
 
-    return { columns: cols, radarMap: map, freeGapReports: gaps };
+    return {
+      columns: cols,
+      radarMap: map,
+      freeGapReports: gaps,
+      daySchedules,
+      weekDays: viewWeekDays,
+    };
   };
 
   const agendaViews = locations.length > 1 ? [{ id: "all", name: "Tutte le sedi", ...buildAgendaData(null) }] : [];
@@ -822,6 +860,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               const columns = view.columns;
               const radarMap = view.radarMap;
               const freeGapReports = view.freeGapReports;
+              const daySchedules = view.daySchedules;
+              const viewWeekDays = view.weekDays;
               const maxConcurrent = columns.length;
               return (
                 <div key={view.id} data-location={view.id} className="w-full">
@@ -908,14 +948,14 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               <div
                 className="min-w-[650px] md:min-w-[900px] grid gap-x-2 gap-y-0"
                 style={{
-                  gridTemplateColumns: `minmax(60px, 80px) repeat(${weekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
+                  gridTemplateColumns: `minmax(60px, 80px) repeat(${viewWeekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
                 }}
               >
                   <div style={{ gridColumn: 1 }} className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none border-b border-transparent">
                     Ora
                   </div>
 
-                  {weekDays.map((d, _dIndex) => {
+                  {viewWeekDays.map((d, _dIndex) => {
                     const isToday = d.date === todayItaly;
                     
                     return (
@@ -962,7 +1002,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                           </span>
                         </div>
 
-                        {weekDays.map((d, dIndex) => {
+                        {viewWeekDays.map((d, dIndex) => {
                           const cols: any[] = [];
                           columns.forEach((colId, cIndex) => {
                             const appt = radarMap[d.date]?.[colId]?.[slot];
@@ -994,10 +1034,23 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                               return;
                             }
 
-                            if (d.isClosed) {
+                            const slotStatus = getDayScheduleSlotStatus(daySchedules[d.date], slot);
+                            if (slotStatus !== "open") {
                               cols.push(
-                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px] flex items-center justify-center">
-                                  <span className="text-[10px] text-red-400/40 font-mono font-bold tracking-wider">CHIUSO</span>
+                                <div
+                                  key={cellKey}
+                                  style={{ gridColumn: targetColumn }}
+                                  className={`h-full min-h-[40px] py-[4px] flex items-center justify-center rounded-lg border ${
+                                    slotStatus === "break"
+                                      ? "bg-amber-950/20 border-amber-800/20"
+                                      : "bg-red-950/20 border-red-900/20"
+                                  }`}
+                                >
+                                  <span className={`text-[10px] font-mono font-bold tracking-wider ${
+                                    slotStatus === "break" ? "text-amber-400/60" : "text-red-400/50"
+                                  }`}>
+                                    {slotStatus === "break" ? "PAUSA" : "CHIUSO"}
+                                  </span>
                                 </div>
                               );
                             } else {
