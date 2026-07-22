@@ -1,61 +1,61 @@
 {
-  "generated_at": "2026-07-22T10:28:31.287187+02:00",
+  "generated_at": "2026-07-22T12:24:46.175707+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Parrucchieri"
+    "today_niche": "Tatuatori"
   },
   "ideas": [
     {
-      "title": "PARRUCCHIERI: ADDIO FOGLI EXCEL PER I TURNI",
-      "hook": "Se gestisci un salone di parrucchieri e segni ancora le ore dello staff su fogli Excel che poi perdi, stai buttando via ore di lavoro.",
-      "niche": "Parrucchieri",
-      "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-      "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-      "blog_topic": "Parrucchieri: Timesheet Commercialista con NeatX",
-      "gameplay_style": "block_miner",
-      "cover_title": "TEMPO PER LAVORARE"
+      "hook": "Se nel tuo studio di tatuaggi i clienti finiscono sempre in agenda al collaboratore sbagliato, stai perdendo tempo e soldi.",
+      "video_concept": "Video con gameplay in stile block_miner in sottofondo. La voce fuori campo descrive la frustrazione di un gestore di uno studio di tatuaggi che deve riassegnare manualmente gli appuntamenti perché i clienti scelgono il tatuatore errato online. Viene presentata la soluzione di NeatX con agende separate e pre-assegnazione intelligente per ogni membro dello staff.",
+      "blog_title": "Tatuatori: Gestione Staff con NeatX",
+      "keywords": [
+        "prenotazioni tatuatore",
+        "agenda tatuatori",
+        "gestione staff tatuaggi"
+      ]
     },
     {
-      "title": "IL TUO COMMERCIALISTA TI RINGRAZIERÀ",
-      "hook": "Quante ore perdi ogni fine mese a calcolare i turni dei tuoi parrucchieri per mandarli al commercialista?",
-      "niche": "Parrucchieri",
-      "pain": "calcolo manuale a fine mese delle ore lavorate e dei permessi da inviare allo studio commerciale",
-      "promise": "un file CSV generato in automatico e pronto da inviare via mail in un secondo",
-      "blog_topic": "Come semplificare l'invio dei dati dei dipendenti al commercialista per il tuo salone",
-      "gameplay_style": "block_miner",
-      "cover_title": "ZERO ERRORI"
+      "hook": "Gestire le ferie e i turni di tre o quattro tatuatori diversi su un unico calendario è la ricetta perfetta per un disastro in studio.",
+      "video_concept": "Voiceover dinamico su clip di gioco block_miner che illustra il caos tipico di quando si devono coordinare i turni estivi o i permessi dei collaboratori resident. Viene mostrato come NeatX centralizzi la gestione dei turni automatici per ogni singolo artista in modo indipendente.",
+      "blog_title": "Come organizzare i turni e le ferie nel tuo studio di tatuaggi senza impazzire",
+      "keywords": [
+        "agenda tatuatori",
+        "turni studio tatuaggi",
+        "collaboratori tatuaggi"
+      ]
     },
     {
-      "title": "GESTIONE TURNI SENZA IMPAZZIRE",
-      "hook": "Se i tuoi parrucchieri si confondono ancora tra turni, ferie e permessi scritti sulla lavagna del salone, ti serve questo sistema.",
-      "niche": "Parrucchieri",
-      "pain": "sovrapposizioni di orari dei collaboratori e turni confusi segnati su carta",
-      "promise": "calendario digitale dello staff sempre aggiornato e visibile a tutti in tempo reale",
-      "blog_topic": "Gestione turni dei dipendenti nel salone: come evitare sovrapposizioni e dimenticanze",
-      "gameplay_style": "block_miner",
-      "cover_title": "TURNI SOTTO CONTROLLO"
+      "hook": "Il tuo collaboratore specializzato in fineline si ritrova a dover fare un blackwork solo perché avete confuso le prenotazioni in agenda.",
+      "video_concept": "Narrativa focalizzata sul problema dell'assegnazione errata degli stili di tatuaggio ai rispettivi esperti dello studio. Il video spiega come impostare servizi specifici prenotabili solo per determinati membri dello staff grazie alle opzioni avanzate di NeatX.",
+      "blog_title": "Assegnazione clienti e stili: come NeatX ottimizza il lavoro dei collaboratori nel tuo studio",
+      "keywords": [
+        "prenotazioni tatuatore",
+        "agenda tatuatori",
+        "servizi tatuaggi"
+      ]
     },
     {
-      "title": "QUANTO TI COSTA FARE I CONTI A MANO?",
-      "hook": "Fare i calcoli delle ore dei tuoi dipendenti a mano ti costa ore di gestione che dovresti dedicare ai clienti in salone.",
-      "niche": "Parrucchieri",
-      "pain": "tempo prezioso sottratto al lavoro sui clienti per fare inserimento dati amministrativi",
-      "promise": "digitalizzazione completa delle ore di presenza per rimettere al centro il lavoro in salone",
-      "blog_topic": "Ottimizzazione del tempo in salone: smetti di fare l'amministrativo e torna a fare il parrucchiere",
-      "gameplay_style": "block_miner",
-      "cover_title": "RECUPERA IL TUO TEMPO"
+      "hook": "Se passi più tempo a coordinare le ore dei resident e dei guest artist che a tatuare, la tua gestione interna ha un problema.",
+      "video_concept": "Il video mette a confronto la gestione manuale dei calendari dei guest artist con l'automazione di NeatX. Si evidenzia come sia possibile attivare o disattivare agende temporanee senza alterare i turni dello staff fisso dello studio.",
+      "blog_title": "Gestione Guest Artist e Resident: la guida definitiva per studi di tatuaggi",
+      "keywords": [
+        "agenda tatuatori",
+        "gestione collaboratori",
+        "software gestionali tatuaggi"
+      ]
     },
     {
-      "title": "BARBIERI: STOP ALLE ORE SUL QUADERNO",
-      "hook": "Se nel tuo salone da barbiere i collaboratori segnano ancora le ore di straordinario sul quaderno di carta, rischi di sbagliare i conti.",
-      "niche": "Barbieri",
-      "pain": "orari di entrata, uscita e straordinari dei barbieri non tracciati in modo sicuro e preciso",
-      "promise": "un foglio presenze digitale integrato nell'agenda che fa i calcoli esatti per te",
-      "blog_topic": "Barbieri: Gestione del personale e calcolo ore semplificato con NeatX",
-      "gameplay_style": "block_miner",
-      "cover_title": "CONTI PERFETTI"
+      "hook": "Quando un cliente blocca mezza giornata a un tuo tatuatore e poi non si presenta, non perdi solo una sessione ma blocchi il lavoro di tutto il team.",
+      "video_concept": "Focus sulla combinazione tra gestione dello staff e caparra confirmatoria. La voce narrante spiega come NeatX eviti i tempi morti richiedendo una caparra obbligatoria al momento della prenotazione sulla specifica agenda del tatuatore selezionato.",
+      "blog_title": "Caparra tatuaggio e gestione staff: come azzerare i tempi morti in studio",
+      "keywords": [
+        "caparra tatuaggio",
+        "prenotazioni tatuatore",
+        "agenda tatuatori"
+      ]
     }
   ]
 }
