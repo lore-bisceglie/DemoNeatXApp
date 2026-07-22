@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
@@ -34,11 +35,33 @@ function emailShell(title: string, content: string) {
     </div>`;
 }
 
-async function send(options: { to: string; subject: string; html: string }) {
+export async function sendEmail(options: { to: string; subject: string; html: string; replyTo?: string }) {
+  const replyTo = options.replyTo || supportEmail();
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (resendApiKey) {
+    try {
+      const { error } = await new Resend(resendApiKey).emails.send({
+        from: process.env.EMAIL_FROM || "NeatX <assistenza@neatx.store>",
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        replyTo,
+      });
+      if (!error) {
+        console.log(`[Email] Inviata tramite Resend a ${options.to}: ${options.subject}`);
+        return true;
+      }
+      console.error("[Email] Resend ha rifiutato l'invio:", error.name, error.message);
+    } catch (error) {
+      console.error("[Email] Resend non disponibile, provo SMTP:", error instanceof Error ? error.message : "errore sconosciuto");
+    }
+  }
+
   const user = process.env.SMTP_EMAIL || process.env.GMAIL_USER;
   const transporter = getTransporter();
   if (!transporter || !user) {
-    console.warn("[Email] SMTP non configurato.");
+    console.warn("[Email] Nessun provider email disponibile (Resend/SMTP).");
     return false;
   }
   try {
@@ -47,6 +70,7 @@ async function send(options: { to: string; subject: string; html: string }) {
       to: options.to,
       subject: options.subject,
       html: options.html,
+      replyTo,
     });
     console.log(`[Email] Inviata a ${options.to}: ${options.subject}`);
     return true;
@@ -63,7 +87,7 @@ export async function sendVerificationEmail(
   referralBonusPending = false,
 ) {
   const safeName = esc(ownerName);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `Conferma la tua email per attivare NeatX`,
     html: `
@@ -83,7 +107,7 @@ export async function sendVerificationEmail(
 
 export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, tenantUrl: string) {
   const safeName = esc(ownerName);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `Benvenuto in NeatX, ${ownerName}! Il tuo gestionale è pronto 🎉`,
     html: `
@@ -100,7 +124,6 @@ export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, t
         <hr style="border: none; border-top: 1px solid #e2e4e8; margin: 20px 0;"/>
         <p style="font-size: 12px; color: #999;">
           NeatX Software · Agenda online per professionisti<br/>
-          Se non vuoi più ricevere email, clicca <a href="%unsubscribe_url%" style="color: #999;">qui</a>.
         </p>
       </div>`,
   });
@@ -109,7 +132,7 @@ export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, t
 export async function sendTrialReminder3Days(tenantEmail: string, tenantName: string, ownerName: string, adminUrl: string) {
   const safeOwner = esc(ownerName);
   const safeTenant = esc(tenantName);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `NeatX: la prova di ${tenantName} scade tra 3 giorni`,
     html: `
@@ -129,7 +152,7 @@ export async function sendTrialReminder3Days(tenantEmail: string, tenantName: st
 export async function sendTrialReminder1Day(tenantEmail: string, tenantName: string, ownerName: string, adminUrl: string) {
   const safeOwner = esc(ownerName);
   const safeTenant = esc(tenantName);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `ULTIMO GIORNO - La prova NeatX di ${tenantName} scade domani`,
     html: `
@@ -154,7 +177,7 @@ export async function sendTrialReminder1Day(tenantEmail: string, tenantName: str
 export async function sendTrialExpiredOffer(tenantEmail: string, tenantName: string, ownerName: string, paywallUrl: string) {
   const safeOwner = esc(ownerName);
   const safeTenant = esc(tenantName);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `NeatX: ${tenantName} è ancora in tempo per riattivare`,
     html: `
@@ -183,7 +206,7 @@ export async function sendPasswordResetEmail(
 ) {
   const safeName = esc(ownerName || "titolare");
   const safeUrl = esc(resetUrl);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: "Reimposta la password del tuo account NeatX",
     html: emailShell(
@@ -206,7 +229,7 @@ export async function sendPasswordChangedEmail(
 ) {
   const safeName = esc(ownerName || "titolare");
   const safeUrl = esc(adminUrl);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: "Password NeatX modificata correttamente",
     html: emailShell(
@@ -235,7 +258,7 @@ export async function sendSubscriptionActivatedEmail(
   const safeAdminUrl = esc(adminUrl);
   const planLabel = plan === "elite" ? "Elite" : "Pro";
   const intervalLabel = interval === "year" ? "annuale" : "mensile";
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `NeatX ${planLabel} attivo per ${tenantName}`,
     html: emailShell(
@@ -262,7 +285,7 @@ export async function sendPaymentFailedEmail(
   const safeOwner = esc(ownerName || "titolare");
   const safeTenant = esc(tenantName);
   const safePortalUrl = esc(portalUrl);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `Pagamento NeatX non riuscito per ${tenantName}`,
     html: emailShell(
@@ -289,7 +312,7 @@ export async function sendSubscriptionCanceledEmail(
   const safeOwner = esc(ownerName || "titolare");
   const safeTenant = esc(tenantName);
   const safePaywallUrl = esc(paywallUrl);
-  return send({
+  return sendEmail({
     to: tenantEmail,
     subject: `Abbonamento NeatX annullato per ${tenantName}`,
     html: emailShell(
