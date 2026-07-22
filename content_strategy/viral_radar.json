@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-21T12:25:34.538313+02:00",
+  "generated_at": "2026-07-22T10:28:31.287187+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
@@ -8,25 +8,54 @@
   },
   "ideas": [
     {
-      "format": "pain shock",
+      "title": "PARRUCCHIERI: ADDIO FOGLI EXCEL PER I TURNI",
+      "hook": "Se gestisci un salone di parrucchieri e segni ancora le ore dello staff su fogli Excel che poi perdi, stai buttando via ore di lavoro.",
       "niche": "Parrucchieri",
-      "hook": "Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?",
-      "angle": "Mostra quanto costa davvero ore dei dipendenti segnate a mano su fogli Excel persi.",
-      "cta": "Commenta AGENDA e ti mando il link."
+      "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+      "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+      "blog_topic": "Parrucchieri: Timesheet Commercialista con NeatX",
+      "gameplay_style": "block_miner",
+      "cover_title": "TEMPO PER LAVORARE"
     },
     {
-      "format": "before after",
+      "title": "IL TUO COMMERCIALISTA TI RINGRAZIERÀ",
+      "hook": "Quante ore perdi ogni fine mese a calcolare i turni dei tuoi parrucchieri per mandarli al commercialista?",
       "niche": "Parrucchieri",
-      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
-      "angle": "Confronto diretto tra caos manuale e link NeatX.",
-      "cta": "Scrivi DEMO se vuoi provarlo."
+      "pain": "calcolo manuale a fine mese delle ore lavorate e dei permessi da inviare allo studio commerciale",
+      "promise": "un file CSV generato in automatico e pronto da inviare via mail in un secondo",
+      "blog_topic": "Come semplificare l'invio dei dati dei dipendenti al commercialista per il tuo salone",
+      "gameplay_style": "block_miner",
+      "cover_title": "ZERO ERRORI"
     },
     {
-      "format": "calculator",
+      "title": "GESTIONE TURNI SENZA IMPAZZIRE",
+      "hook": "Se i tuoi parrucchieri si confondono ancora tra turni, ferie e permessi scritti sulla lavagna del salone, ti serve questo sistema.",
       "niche": "Parrucchieri",
-      "hook": "Un no-show non è un fastidio, è fatturato perso.",
-      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
-      "cta": "Commenta AGENDA."
+      "pain": "sovrapposizioni di orari dei collaboratori e turni confusi segnati su carta",
+      "promise": "calendario digitale dello staff sempre aggiornato e visibile a tutti in tempo reale",
+      "blog_topic": "Gestione turni dei dipendenti nel salone: come evitare sovrapposizioni e dimenticanze",
+      "gameplay_style": "block_miner",
+      "cover_title": "TURNI SOTTO CONTROLLO"
+    },
+    {
+      "title": "QUANTO TI COSTA FARE I CONTI A MANO?",
+      "hook": "Fare i calcoli delle ore dei tuoi dipendenti a mano ti costa ore di gestione che dovresti dedicare ai clienti in salone.",
+      "niche": "Parrucchieri",
+      "pain": "tempo prezioso sottratto al lavoro sui clienti per fare inserimento dati amministrativi",
+      "promise": "digitalizzazione completa delle ore di presenza per rimettere al centro il lavoro in salone",
+      "blog_topic": "Ottimizzazione del tempo in salone: smetti di fare l'amministrativo e torna a fare il parrucchiere",
+      "gameplay_style": "block_miner",
+      "cover_title": "RECUPERA IL TUO TEMPO"
+    },
+    {
+      "title": "BARBIERI: STOP ALLE ORE SUL QUADERNO",
+      "hook": "Se nel tuo salone da barbiere i collaboratori segnano ancora le ore di straordinario sul quaderno di carta, rischi di sbagliare i conti.",
+      "niche": "Barbieri",
+      "pain": "orari di entrata, uscita e straordinari dei barbieri non tracciati in modo sicuro e preciso",
+      "promise": "un foglio presenze digitale integrato nell'agenda che fa i calcoli esatti per te",
+      "blog_topic": "Barbieri: Gestione del personale e calcolo ore semplificato con NeatX",
+      "gameplay_style": "block_miner",
+      "cover_title": "CONTI PERFETTI"
     }
   ]
 }
