@@ -61,9 +61,13 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="group w-full h-full py-2 text-slate-500 hover:text-slate-300 font-bold text-xs bg-transparent hover:bg-[#131c31] rounded-xl border border-dashed border-[#1e2b4a] hover:border-slate-500 transition-all flex items-center justify-center min-h-[35px]"
+        aria-label={`Aggiungi un appuntamento alle ${time}`}
+        className="group w-[calc(100%_-_2px)] mx-px h-[calc(100%_-_2px)] my-px text-slate-500 hover:text-cyan-200 font-bold text-xs bg-white/[0.012] hover:bg-cyan-400/[0.05] rounded-lg border border-white/[0.055] hover:border-cyan-400/20 transition-colors flex items-center justify-center min-h-[30px] sm:min-h-[36px]"
       >
-        <span className="text-[10px] font-medium tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Libero</span>
+        <span className="inline-flex items-center gap-1 text-[10px] font-medium tracking-wider opacity-30 group-hover:opacity-100 transition-opacity">
+          <span className="text-cyan-400/80 text-sm leading-none">+</span>
+          <span className="hidden sm:inline">Libero</span>
+        </span>
       </button>
 
       {isOpen && (

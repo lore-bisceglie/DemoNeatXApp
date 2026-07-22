@@ -5,11 +5,13 @@ import { Plus, Edit, Settings, ToggleRight, MapPin as MapPinIcon, Phone as Phone
 import { useRouter } from "next/navigation";
 import LocationForm from "./LocationForm";
 import LocationSettingsForm from "./LocationSettingsForm";
+import StorePhotoCard from "./StorePhotoCard";
 
 interface LocationTabsProps {
   tenantId: string;
   tenantSlug: string;
   tenantName: string;
+  tenantLogoUrl?: string | null;
   plan?: string;
 }
 
@@ -104,7 +106,7 @@ function LocationCard({ location, tenantSlug: _tenantSlug, tenantName: _tenantNa
   );
 }
 
-export default function LocationTabs({ tenantId, tenantSlug, tenantName, plan }: LocationTabsProps) {
+export default function LocationTabs({ tenantId, tenantSlug, tenantName, tenantLogoUrl, plan }: LocationTabsProps) {
   const [locations, setLocations] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"list" | "create" | "edit" | "settings">("list");
   const [editingLocation, setEditingLocation] = useState<any | null>(null);
@@ -206,6 +208,12 @@ export default function LocationTabs({ tenantId, tenantSlug, tenantName, plan }:
           </button>
         )}
       </div>
+
+      <StorePhotoCard
+        tenantSlug={tenantSlug}
+        tenantName={tenantName}
+        initialLogoUrl={tenantLogoUrl || null}
+      />
 
       <div className="bg-[#0b1221] rounded-2xl border border-[#1a2642] overflow-hidden">
         {!hasLocations && (

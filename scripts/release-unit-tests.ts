@@ -8,6 +8,7 @@ import {
   normalizeReferralPhone,
 } from "../lib/referral-utils";
 import { sendTenantMessage } from "../lib/sms";
+import { validateTenantLogo } from "../lib/tenant-logo";
 
 async function run() {
   assert.equal(normalizeReferralCode(" neat-x_2026! "), "NEATX2026");
@@ -66,11 +67,21 @@ async function run() {
   assert.equal(getDayScheduleSlotStatus(saturdaySchedule, "11:45", 30), "closed");
   assert.equal(getDayScheduleSlotStatus(sundaySchedule, "10:00"), "closed");
 
+  assert.deepEqual(validateTenantLogo("https://cdn.example.com/negozio.jpg"), {
+    ok: true,
+    value: "https://cdn.example.com/negozio.jpg",
+  });
+  assert.deepEqual(validateTenantLogo(""), { ok: true, value: null });
+  assert.equal(validateTenantLogo("javascript:alert(1)").ok, false);
+  assert.equal(validateTenantLogo("file:///C:/foto-negozio.jpg").ok, false);
+  assert.equal(validateTenantLogo("data:image/svg+xml;base64,PHN2Zz4=").ok, false);
+  assert.equal(validateTenantLogo("data:image/webp;base64,UklGRg==").ok, true);
+
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);
 
-  console.log("release-unit-tests: 18 verifiche superate");
+  console.log("release-unit-tests: 24 verifiche superate");
 }
 
 run().catch((error) => {

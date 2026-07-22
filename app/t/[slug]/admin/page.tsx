@@ -863,6 +863,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               const daySchedules = view.daySchedules;
               const viewWeekDays = view.weekDays;
               const maxConcurrent = columns.length;
+              const lastAgendaSlot = allSlots[allSlots.length - 1];
+              const lastSlotHasAppointment = Boolean(lastAgendaSlot) && viewWeekDays.some((day) =>
+                columns.some((columnId) => Boolean(radarMap[day.date]?.[columnId]?.[lastAgendaSlot]))
+              );
+              const lastSlotIsOpen = Boolean(lastAgendaSlot) && viewWeekDays.some((day) =>
+                getDayScheduleSlotStatus(daySchedules[day.date], lastAgendaSlot) === "open"
+              );
+              const agendaDisplaySlots = lastAgendaSlot && !lastSlotHasAppointment && !lastSlotIsOpen
+                ? allSlots.slice(0, -1)
+                : allSlots;
               return (
                 <div key={view.id} data-location={view.id} className="w-full">
                   {/* AGENDA SETTIMANALE TETRIS */}
@@ -901,12 +911,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           )}
 
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
+          <div className="bg-gradient-to-b from-[#0d1628] to-[#09101d] p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 border border-white/[0.07] mb-6 overflow-hidden flex flex-col">
             <SwipeableAgenda>
               <DayNavigator currentDate={adjustedTargetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
-                <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3 border-b border-white/[0.07] pb-4">
+                <h2 className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2 tracking-tight">
                   📒 Agenda Dinamica ({tenantName})
                 </h2>
 
@@ -944,14 +954,33 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </div>
               </div>
 
-            <div className="overflow-x-auto pb-4 custom-scrollbar">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3 px-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-cyan-400/70 shadow-[0_0_8px_rgba(34,211,238,0.35)]" />
+                  Disponibile
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-amber-400/70" />
+                  Pausa
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-rose-400/60" />
+                  Chiuso
+                </span>
+                <span className="ml-auto normal-case tracking-normal font-medium text-slate-600">
+                  <span className="sm:hidden">Settimana completa</span>
+                  <span className="hidden sm:inline">Scorri lateralmente per vedere tutta la settimana</span>
+                </span>
+              </div>
+
+            <div className="overflow-x-auto pb-3 custom-scrollbar rounded-2xl border border-white/[0.06] bg-[#070d18]/70">
               <div
-                className="min-w-[650px] md:min-w-[900px] grid gap-x-2 gap-y-0"
+                className="min-w-full md:min-w-[900px] grid gap-x-px sm:gap-x-1 gap-y-0 p-1 sm:p-3"
                 style={{
-                  gridTemplateColumns: `minmax(60px, 80px) repeat(${viewWeekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
+                  gridTemplateColumns: `minmax(52px, 70px) repeat(${viewWeekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
                 }}
               >
-                  <div style={{ gridColumn: 1 }} className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none border-b border-transparent">
+                  <div style={{ gridColumn: 1 }} className="text-slate-500 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center sticky left-0 top-0 bg-[#09101d]/95 backdrop-blur-md z-40 pb-2 shadow-[8px_0_0_rgba(9,16,29,0.95)] md:shadow-none border-b border-transparent">
                     Ora
                   </div>
 
@@ -959,22 +988,22 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     const isToday = d.date === todayItaly;
                     
                     return (
-                      <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-2 mb-2">
-                        <div className={`text-center py-2 rounded-xl border capitalize transition-colors ${
+                      <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-1.5 mb-2 sticky top-0 z-30 bg-[#09101d]/95 backdrop-blur-md pb-1">
+                        <div className={`text-center py-1.5 sm:py-2 rounded-lg border capitalize transition-colors text-[9px] sm:text-sm leading-tight ${
                           d.isClosed
-                            ? "bg-red-900/20 text-red-400 border-red-800/30"
+                            ? "bg-rose-500/[0.08] text-rose-300/80 border-rose-500/20"
                             : isToday 
-                              ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
-                              : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
+                              ? "bg-cyan-400/[0.12] text-cyan-300 font-extrabold border-cyan-400/40 shadow-[0_0_18px_rgba(34,211,238,0.10)]"
+                              : "bg-white/[0.035] text-slate-100 font-bold border-white/[0.08]"
                         }`}>
-                          {d.label} {d.isClosed && <span className="text-[10px] ml-1 font-mono">CHIUSO</span>}
+                          {d.label} {d.isClosed && <span className="hidden sm:inline text-[10px] ml-1 font-mono">CHIUSO</span>}
                         </div>
                         {columns.length > 0 && (
                           <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
                             {columns.map(colId => {
                               const s = staffList.find(staff => staff.id === colId) || { id: colId, name: colId };
                               return (
-                                <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
+                                <div key={s.id} className="text-center text-[7px] sm:text-[10px] uppercase font-bold text-slate-400 bg-white/[0.025] py-1 rounded-md border border-white/[0.07] truncate px-0.5 sm:px-1">
                                   {s.name.split(' ')[0]}
                                 </div>
                               );
@@ -985,17 +1014,19 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     );
                   })}
 
-                  {allSlots.map((slot) => {
+                  {agendaDisplaySlots.map((slot, slotIndex) => {
                     const isQuarter = slot.endsWith("15") || slot.endsWith("45");
+                    const previousSlot = agendaDisplaySlots[slotIndex - 1];
+                    const nextSlot = agendaDisplaySlots[slotIndex + 1];
 
                     return (
                       <div className="contents" key={slot}>
-                        <div style={{ gridColumn: 1 }} className="w-full h-full text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-20 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
+                        <div style={{ gridColumn: 1 }} className="w-full h-full min-h-[32px] sm:min-h-[38px] text-slate-400 font-medium flex items-center justify-center text-[10px] sm:text-sm bg-[#09101d]/95 backdrop-blur-md sticky left-0 z-20 border-r border-white/[0.04] shadow-[8px_0_0_rgba(9,16,29,0.95)] md:shadow-none">
                           <span
-                            className={`px-2 py-1 rounded-xl transition-all ${
+                            className={`px-1 sm:px-2 py-1 rounded-xl transition-all ${
                               isQuarter
                                 ? "text-[10px] text-slate-600"
-                                : "bg-[#131c31] border border-[#1e2b4a]"
+                                : "bg-white/[0.035] border border-white/[0.08] text-slate-300"
                             }`}
                           >
                             {slot}
@@ -1022,7 +1053,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                                     gridRow: `span ${appt._rowSpan} / span ${appt._rowSpan}`,
                                     gridColumn: targetColumn
                                   }}
-                                  className="h-full min-h-[40px] py-[4px] relative z-10"
+                                  className="h-full min-h-[32px] sm:min-h-[38px] py-px relative z-10"
                                 >
                                   <AppointmentBlock
                                     appt={appt}
@@ -1036,26 +1067,49 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
                             const slotStatus = getDayScheduleSlotStatus(daySchedules[d.date], slot);
                             if (slotStatus !== "open") {
+                              const previousAppointment = previousSlot
+                                ? radarMap[d.date]?.[colId]?.[previousSlot]
+                                : null;
+                              const nextAppointment = nextSlot
+                                ? radarMap[d.date]?.[colId]?.[nextSlot]
+                                : null;
+                              const previousStatus = previousSlot
+                                ? getDayScheduleSlotStatus(daySchedules[d.date], previousSlot)
+                                : null;
+                              const nextStatus = nextSlot
+                                ? getDayScheduleSlotStatus(daySchedules[d.date], nextSlot)
+                                : null;
+                              const isStatusStart = !previousSlot || previousStatus !== slotStatus || Boolean(previousAppointment);
+                              const isStatusEnd = !nextSlot || nextStatus !== slotStatus || Boolean(nextAppointment);
+
                               cols.push(
                                 <div
                                   key={cellKey}
                                   style={{ gridColumn: targetColumn }}
-                                  className={`h-full min-h-[40px] py-[4px] flex items-center justify-center rounded-lg border ${
+                                  aria-label={`${slotStatus === "break" ? "Pausa" : "Chiuso"} alle ${slot}`}
+                                  title={`${slotStatus === "break" ? "Pausa" : "Chiuso"} alle ${slot}`}
+                                  className={`mx-px h-full min-h-[32px] sm:min-h-[38px] flex items-center justify-center border-x ${
                                     slotStatus === "break"
-                                      ? "bg-amber-950/20 border-amber-800/20"
-                                      : "bg-red-950/20 border-red-900/20"
+                                      ? "bg-amber-400/[0.07] border-amber-400/[0.12]"
+                                      : "bg-rose-400/[0.065] border-rose-400/[0.11]"
+                                  } ${
+                                    isStatusStart ? "rounded-t-xl border-t" : "border-t-0"
+                                  } ${
+                                    isStatusEnd ? "rounded-b-xl border-b" : "border-b-0"
                                   }`}
                                 >
-                                  <span className={`text-[10px] font-mono font-bold tracking-wider ${
-                                    slotStatus === "break" ? "text-amber-400/60" : "text-red-400/50"
-                                  }`}>
-                                    {slotStatus === "break" ? "PAUSA" : "CHIUSO"}
-                                  </span>
+                                  {isStatusStart && (
+                                    <span className={`hidden sm:inline text-[10px] font-mono font-bold tracking-wider ${
+                                      slotStatus === "break" ? "text-amber-300/70" : "text-rose-300/55"
+                                    }`}>
+                                      {slotStatus === "break" ? "PAUSA" : "CHIUSO"}
+                                    </span>
+                                  )}
                                 </div>
                               );
                             } else {
                               cols.push(
-                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
+                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[32px] sm:min-h-[38px]">
                                   <WalkInButton
                                     date={d.date}
                                     time={slot}
@@ -1351,7 +1405,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
 
             <div className="mt-6">
-              <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} plan={tenant.plan} />
+              <LocationTabs
+                tenantId={tenantId}
+                tenantSlug={slug}
+                tenantName={tenantName}
+                tenantLogoUrl={tenant.logoUrl}
+                plan={tenant.plan}
+              />
             </div>
           </div>
 
