@@ -21,6 +21,16 @@ import {
   storedEmailVerificationToken,
 } from "../lib/email-verification";
 import { createTenantSessionToken, verifyTenantSessionToken } from "../lib/auth";
+import {
+  buildPaymentFailedEmail,
+  buildSubscriptionActivatedEmail,
+  buildSubscriptionCanceledEmail,
+  buildTrialExpiredOfferEmail,
+  buildTrialReminder1DayEmail,
+  buildTrialReminder3DaysEmail,
+  buildVerificationEmail,
+  buildWelcomeEmail,
+} from "../lib/email";
 
 async function run() {
   assert.equal(normalizeReferralCode(" neat-x_2026! "), "NEATX2026");
@@ -119,11 +129,26 @@ async function run() {
   assert.equal(verifyTenantSessionToken(resetSession, "negozio-test", 1), true);
   assert.equal(verifyTenantSessionToken(resetSession, "altro-negozio", 1), false);
 
+  const verificationEmail = buildVerificationEmail("Lorenzo", "https://neatx.store/verify?token=test", true);
+  assert.equal(verificationEmail.subject, "Conferma la tua email per attivare NeatX");
+  assert.equal(verificationEmail.html.includes("50 messaggi bonus invito"), true);
+  const welcomeEmail = buildWelcomeEmail("<script>alert(1)</script>", "https://negozio.neatx.store/?a=1&b=2");
+  assert.equal(welcomeEmail.html.includes("<script>alert(1)</script>"), false);
+  assert.equal(welcomeEmail.html.includes("&lt;script&gt;alert(1)&lt;/script&gt;"), true);
+  assert.equal(buildTrialReminder3DaysEmail("Negozio", "Lorenzo", "https://neatx.store/admin").html.includes("590 € all'anno"), true);
+  const lastDayEmail = buildTrialReminder1DayEmail("Negozio", "Lorenzo", "https://neatx.store/admin");
+  assert.equal(lastDayEmail.html.includes("promemoria automatici"), false);
+  assert.equal(lastDayEmail.html.includes("I dati non vengono cancellati"), true);
+  assert.equal(buildTrialExpiredOfferEmail("Negozio", "Lorenzo", "https://neatx.store/paywall").html.includes("pronto per tornare online"), true);
+  assert.equal(buildSubscriptionActivatedEmail("Negozio", "Lorenzo", "pro", "month", "https://neatx.store/admin").html.includes("temporaneamente disattivati"), true);
+  assert.equal(buildPaymentFailedEmail("Negozio", "Lorenzo", "https://neatx.store/admin").html.includes("non è andato a buon fine"), true);
+  assert.equal(buildSubscriptionCanceledEmail("Negozio", "Lorenzo", "https://neatx.store/paywall").html.includes("I dati non sono stati cancellati"), true);
+
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);
 
-  console.log("release-unit-tests: 42 verifiche superate");
+  console.log("release-unit-tests: 53 verifiche superate");
 }
 
 run().catch((error) => {
