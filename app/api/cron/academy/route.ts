@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
-import prisma from "@/lib/prisma"; // Assuming standard prisma import
+import { prisma } from "@/lib/prisma"; // Assuming standard prisma import
 
 export const maxDuration = 60; // Max execution time 60 seconds
 

@@ -2,7 +2,7 @@ import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 

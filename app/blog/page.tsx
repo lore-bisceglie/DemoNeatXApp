@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 
 // Opt out of static rendering so the blog updates dynamically when the Cron runs
 export const dynamic = 'force-dynamic'
