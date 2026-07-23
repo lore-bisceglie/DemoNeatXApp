@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const tenant = slug
       ? await prisma.tenant.findUnique({ where: { slug } })
       : await prisma.tenant.findFirst({
-          where: { ownerEmail: { equals: email, mode: "insensitive" } },
+          where: { ownerEmail: email },
           orderBy: { createdAt: "desc" },
         });
     if (!tenant || tenant.ownerEmail?.toLowerCase() !== email) {
