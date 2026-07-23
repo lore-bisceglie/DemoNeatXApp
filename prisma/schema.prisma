@@ -1,11 +1,17 @@
-// Local development schema with SQLite
+// Database schema
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  basic
+  pro
+  elite
 }
 
 model Tenant {
@@ -37,16 +43,26 @@ model Tenant {
   trialEndsAt   DateTime?
   trialStatus   String        @default("demo")
   isDemoData    Boolean       @default(true)
+  template      String        @default("barbiere")
+  isElite       Boolean       @default(false)
   activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
-  plan          String        @default("basic")
+  plan          Plan          @default(basic)
   stripeCustomerId String?
   stripeSubscriptionId String?
   createdAt     DateTime      @default(now())
   staffSheetUrl String?
   emailVerified Boolean       @default(false)
   emailVerifyToken String?   @unique
+  emailVerifyExpiresAt DateTime?
+  emailVerifyRequestCount Int @default(0)
+  emailVerifyRequestWindowAt DateTime?
+  passwordResetTokenHash String? @unique
+  passwordResetExpiresAt DateTime?
+  passwordResetRequestCount Int @default(0)
+  passwordResetRequestWindowAt DateTime?
+  sessionVersion Int          @default(0)
   failedLoginAttempts Int     @default(0)
   lockoutUntil  DateTime?
   referralCode  String?       @unique
@@ -66,6 +82,8 @@ model Tenant {
   staff         Staff[]
   locations     Location[]
   processedStripeEvents ProcessedStripeEvent[]
+  platformReview PlatformReview?
+  socialPosts    SocialPost[]
 }
 
 model ProcessedStripeEvent {
@@ -211,6 +229,8 @@ model Waitlist {
   createdAt DateTime @default(now())
   tenantId  String?
   tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, phone, date])
 }
 
 model CustomerNote {
@@ -282,6 +302,28 @@ model StaffLocation {
   @@unique([staffId, locationId])
   @@index([staffId])
   @@index([locationId])
+}
+
+model PlatformReview {
+  id          String   @id @default(cuid())
+  rating      Int      @default(5)
+  text        String
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  tenantId    String   @unique
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model SocialPost {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  imageUrl    String?  // Removed @db.Text, Prisma uses String for large text in Postgres depending on usage, but let's just use String
+  caption     String
+  status      String   @default("SCHEDULED")
+  platform    String   @default("INSTAGRAM")
+  scheduledFor DateTime?
+  createdAt   DateTime @default(now())
 }
 
 model AcademyArticle {
