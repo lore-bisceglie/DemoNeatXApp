@@ -108,7 +108,7 @@ export async function GET(request: Request) {
         `Falliti: ${failedCount}\n` +
         `Saltati (crediti esauriti): ${skippedCredits}\n` +
         `Totale appuntamenti: ${total}`;
-      await sendTelegramMessage(msg).catch(() => {});
+      await sendTelegramMessage(msg).catch((e) => console.error("[Cron Reminders] Errore Telegram:", e));
     }
 
     return NextResponse.json({

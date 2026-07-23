@@ -548,6 +548,12 @@ export default async function Dashboard(props: {
               Export agenda
             </a>
             <a
+              href={`/api/export/timesheet?tenantId=${tenantId}`}
+              className="flex-shrink-0 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
+            >
+              Export commercialista
+            </a>
+            <a
               href={`/api/export/customers?tenantId=${tenantId}`}
               className="flex-shrink-0 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap snap-center"
             >

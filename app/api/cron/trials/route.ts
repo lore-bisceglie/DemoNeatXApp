@@ -123,7 +123,7 @@ export async function GET(req: Request) {
   if (results.hotLeads.length > 0) {
     const msg = "🔥 <b>SALES PIPELINE NEATX</b>\n\n" +
       results.hotLeads.map(l => `• ${l}`).join("\n");
-    await sendTelegramMessage(msg).catch(() => {});
+    await sendTelegramMessage(msg).catch((e) => console.error("[Cron Trials] Errore Telegram:", e));
   }
 
   return NextResponse.json({ success: true, ...results });

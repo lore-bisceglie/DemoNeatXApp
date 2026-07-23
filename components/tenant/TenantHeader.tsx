@@ -40,8 +40,8 @@ export function TenantHeader({
             100% { transform: translateX(140%) rotate(22deg); opacity: 0; }
           }
           @keyframes demoRipple {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(2.5); opacity: 0; }
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
           }
         `}</style>
 
