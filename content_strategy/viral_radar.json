@@ -1,76 +1,71 @@
 {
-  "generated_at": "2026-07-23T12:22:21.113669+02:00",
+  "generated_at": "2026-07-23T17:53:17.706205+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Barbieri"
+    "today_niche": "Coach e Consulenti"
   },
   "ideas": [
     {
-      "title": "Elimina le sedie vuote nel tuo salone",
-      "hook": "Quante volte sei rimasto con le forbici in mano ad aspettare un cliente che non si è presentato nel tuo barber shop?",
-      "video_concept": "Mostra la transizione tra un barbiere che aspetta a vuoto e uno che lavora sereno perché ogni slot orario della giornata è stato prenotato con un acconto automatico tramite NeatX.",
-      "gameplay_style": "neon_racer",
-      "blog_title": "Barbieri: Zero No-Show con NeatX grazie alla caparra confirmatoria",
-      "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+      "hook": "Se sei un coach o un consulente e passi la giornata a rispondere a messaggi di prenotazione, stai buttando via ore di lavoro pagate.",
+      "video_concept": "Mostra lo stress di un professionista che deve continuamente concordare gli orari delle sessioni via chat, interrompendo il proprio lavoro. La soluzione viene presentata mostrando lo schermo di uno smartphone con il sistema di prenotazione NeatX attivo, dove i clienti scelgono l'orario e pagano in totale autonomia.",
+      "blog_title": "Coach e Consulenti: Prenotazione 24 ore su 24 con NeatX",
+      "niche": "Coach e Consulenti",
       "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
-      ]
+        "agenda consulente",
+        "prenotazioni coach",
+        "booking consulenze"
+      ],
+      "image_prompt": "photorealistic cinematic scene inside a modern office workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting"
     },
     {
-      "title": "Il filtro automatico per clienti ritardatari",
-      "hook": "Il segreto dei barbieri che hanno l'agenda piena al cento per cento e zero no-show si chiama acconto automatico.",
-      "video_concept": "Spiega come funziona il sistema di NeatX che richiede un piccolo acconto alla prenotazione, scoraggiando chi prenota senza intenzione di presentarsi.",
-      "gameplay_style": "neon_racer",
-      "blog_title": "Come filtrare i clienti che non si presentano nel tuo barber shop",
-      "image_prompt": "photorealistic scene of a modern barber checking his smartphone with a smile, showing a notification of a paid reservation, neon accents in a clean barbershop interior",
+      "hook": "Il telefono che squilla durante una sessione di coaching privato è il modo migliore per perdere la concentrazione e apparire poco professionale.",
+      "video_concept": "Inquadratura di un consulente visibilmente distratto dal telefono che vibra continuamente sulla scrivania durante una videochiamata con un cliente. Subito dopo, lo stesso professionista attiva NeatX e mostra come l'agenda si riempia da sola in background, permettendogli di tenere il telefono in modalità silenziosa.",
+      "blog_title": "Come eliminare le interruzioni telefoniche e gestire i clienti in modo professionale",
+      "niche": "Coach e Consulenti",
       "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
-      ]
+        "agenda consulente",
+        "gestione clienti coach",
+        "booking consulenze"
+      ],
+      "image_prompt": "cinematic professional workspace, a consultant working focused at their desk without distractions, clean office environment, soft warm lighting, a smartphone on the desk displaying a completed booking notification"
     },
     {
-      "title": "Calcola quanto ti costa un no-show",
-      "hook": "Se calcoli quanti soldi perdi ogni mese nel tuo barber shop per colpa dei clienti che dimenticano l'appuntamento, ti viene da chiudere.",
-      "video_concept": "Analisi matematica veloce delle perdite mensili di un barbiere con 4 no-show a settimana, confrontata con la soluzione a costo zero di NeatX con acconti automatici.",
-      "gameplay_style": "neon_racer",
-      "blog_title": "Quanto costa un no-show al tuo barber shop e come risolverlo ora",
-      "image_prompt": "cinematic close up of a barber's hands holding professional clippers, in the background a digital screen displaying green checkmarks for paid appointments",
+      "hook": "Mentre dormi stai perdendo clienti che vorrebbero prenotare una consulenza con te ma trovano solo la tua segreteria telefonica.",
+      "video_concept": "Schermo diviso: a sinistra il consulente che dorme serenamente, a destra un cliente che alle undici di sera naviga sul sito, seleziona una fascia oraria disponibile su NeatX e conferma la sessione. Al risveglio, il coach trova le notifiche di pagamento e prenotazione confermate.",
+      "blog_title": "Smetti di perdere clienti di notte: attiva la prenotazione automatica per la tua attività di consulenza",
+      "niche": "Coach e Consulenti",
       "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
-      ]
+        "prenotazioni coach",
+        "booking consulenze",
+        "agenda online consulenti"
+      ],
+      "image_prompt": "split screen photorealistic style: on one side a peaceful bedroom at night, on the other side a modern dark UI calendar app on a phone showing a confirmed appointment slot, sleek visual style"
     },
     {
-      "title": "La garanzia dell'incasso anticipato",
-      "hook": "Immagina di aprire l'agenda del tuo salone di barbieri e sapere che ogni singolo slot è occupato da persone che hanno già pagato.",
-      "video_concept": "Focus sulla serenità mentale del barbiere che avvia la giornata sapendo che, anche in caso di disdetta dell'ultimo minuto, il suo tempo è già stato remunerato grazie alla caparra.",
-      "gameplay_style": "neon_racer",
-      "blog_title": "Barbieri: come garantire che ogni appuntamento sia pagato in anticipo",
-      "image_prompt": "high-end barbershop workspace, detailed shot of a tablet showing an active booking dashboard with paid badge indicators, warm aesthetic lighting",
+      "hook": "Scambiarsi dieci messaggi per concordare un singolo appuntamento di consulenza è il metodo più rapido per far desistere un potenziale cliente.",
+      "video_concept": "Simulazione comica ma realistica della classica chat infinita: Tu quando ci sei? Io martedì alle 15. Ah no, io posso solo giovedì. La scena si sposta sul consulente che decide di inviare un unico link NeatX, risolvendo la prenotazione in meno di trenta secondi.",
+      "blog_title": "La guida definitiva per eliminare i messaggi infiniti per fissare un appuntamento",
+      "niche": "Coach e Consulenti",
       "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
-      ]
+        "agenda consulente",
+        "prenotazioni coach",
+        "ottimizzazione tempo consulenza"
+      ],
+      "image_prompt": "close up of a modern smartphone screen displaying a streamlined scheduling link page with clear calendar slots, clean aesthetic, holding hand, blurred background of a professional studio"
     },
     {
-      "title": "Stop alle scuse dei clienti dell'ultimo minuto",
-      "hook": "Basta giustificazioni dell'ultimo minuto per appuntamenti saltati: ecco come i barbieri professionisti tutelano il proprio tempo.",
-      "video_concept": "Confronto ironico ma professionale sulle scuse più assurde dei clienti per non presentarsi e su come NeatX risolva il problema alla radice con i pagamenti digitali in fase di prenotazione.",
-      "gameplay_style": "neon_racer",
-      "blog_title": "La guida definitiva per eliminare i no-show nel tuo salone di barbiere",
-      "image_prompt": "cinematic photorealistic wide shot of a luxury barber shop, dynamic lighting, focused on a barber calendar screen with locked and secured slots",
+      "hook": "I tuoi clienti ideali preferiscono prenotare una sessione di coaching a tarda sera in totale autonomia piuttosto che doverti chiamare durante l'orario d'ufficio.",
+      "video_concept": "Analisi visiva delle abitudini dei clienti moderni: mentre il consulente è a cena con la famiglia, NeatX riceve e organizza le prenotazioni della settimana successiva. Viene mostrata la facilità d'uso della piattaforma lato utente.",
+      "blog_title": "Perché l'autonomia di prenotazione aumenta il tasso di conversione dei tuoi servizi di coaching",
+      "niche": "Coach e Consulenti",
       "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
-      ]
+        "booking consulenze",
+        "prenotazioni coach",
+        "agenda automatica"
+      ],
+      "image_prompt": "cozy living room evening lighting, a person relaxed on a sofa using a tablet to book a business coaching session, screen clearly showing available time slots, high-end professional photography style"
     }
   ]
 }
