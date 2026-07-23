@@ -122,14 +122,31 @@ function positiveModulo(value: number, divisor: number) {
   return ((value % divisor) + divisor) % divisor;
 }
 
+function getDynamicImagePrompt(category: string): string {
+  if (category.includes("Barbier")) return "modern stylish luxury barber shop interior, moody lighting, professional aesthetic, elegant, no people";
+  if (category.includes("Estetica")) return "bright clean luxurious beauty salon and spa interior, minimalist, highly aesthetic, no people";
+  if (category.includes("Tattoo")) return "professional tattoo studio interior, modern industrial style, clean, artistic, no people";
+  if (category.includes("Donna")) return "high-end luxury hair salon interior, elegant mirrors, warm lighting, luxurious, no people";
+  return "beautiful modern professional interior, clean, aesthetic, no people";
+}
+
 function getRotationIndex(date: Date) {
-  // Cambia indice ogni 12 ore, così due post nello stesso giorno usano immagini diverse
+  // Cambia indice ogni 12 ore
   return Math.floor(date.getTime() / (12 * 60 * 60 * 1000));
 }
 
 export function selectDailyMarketingAsset(date = new Date()): MarketingAsset {
   const index = positiveModulo(getRotationIndex(date), MARKETING_ASSETS.length);
-  return MARKETING_ASSETS[index];
+  const asset = { ...MARKETING_ASSETS[index] };
+  
+  // Generazione AI GRATUITA "on the fly" con Pollinations.ai
+  // Usiamo l'indice o il timestamp come seed per avere una foto unica ogni mezza giornata
+  const seed = getRotationIndex(date);
+  const prompt = getDynamicImagePrompt(asset.category);
+  
+  asset.image = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1080&height=1080&nologo=true&seed=${seed}`;
+  
+  return asset;
 }
 
 export function getMarketingRotationLength() {
