@@ -17,6 +17,7 @@ export async function GET(req: Request) {
         slug: true,
         name: true,
         category: true,
+        template: true,
         city: true,
         ownerName: true,
         ownerEmail: true,
@@ -46,8 +47,9 @@ export async function GET(req: Request) {
         convertedAt: true,
         plan: true,
         createdAt: true,
+        staffSheetUrl: true,
         // NO: ownerPasswordHash, stripeCustomerId, stripeSubscriptionId,
-        //     staffSheetUrl, referralCode, referredByCode, emailVerifyToken
+        //     referralCode, referredByCode, emailVerifyToken
         services: {
           select: { id: true, name: true, price: true, duration: true },
         },

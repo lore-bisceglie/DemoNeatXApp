@@ -43,6 +43,7 @@ export default function SuperAdminPage() {
   const [staffSheetUrl, setStaffSheetUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPlan, setFilterPlan] = useState<PlanFilter>("all");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
@@ -127,6 +128,17 @@ export default function SuperAdminPage() {
     setPassword("");
   };
 
+  const handleCleanupTests = async () => {
+    if (!confirm("💣 ATTENZIONE: Questo eliminerà dal database TUTTI i clienti tranne demo-vetrina e demo-neatx. Sei assolutamente sicuro? L'azione è IRREVERSIBILE.")) return;
+    try {
+      const res = await fetch("/api/superadmin/cleanup", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-password": password } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Errore cleanup");
+      alert(data.message);
+      fetchTenants();
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore cleanup"); }
+  };
+
   const handleDelete = async (tenantId: string, tenantName: string) => {
     if (!confirm(`Eliminare DEFINITIVAMENTE "${tenantName}"? Irreversibile.`)) return;
     try {
@@ -150,13 +162,13 @@ export default function SuperAdminPage() {
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
-  const handleAddSms = async (tenantId: string) => {
-    const amountStr = prompt("Quanti crediti SMS? (es. 100, 500)");
+  const handleAddSms = async (tenant: any) => {
+    const amountStr = prompt(`Crediti SMS attuali: ${tenant.storeSettings?.smsCredits || 0}\nQuanti crediti vuoi aggiungere? (es. 100 per aggiungere, -50 per rimuovere)`);
     if (!amountStr) return;
     const amount = parseInt(amountStr, 10);
-    if (isNaN(amount) || amount <= 0) return;
+    if (isNaN(amount) || amount === 0) return;
     try {
-      const res = await fetch("/api/superadmin/sms", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId, amount }) });
+      const res = await fetch("/api/superadmin/sms", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId: tenant.id, amount }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
       alert(`Crediti aggiornati: ${data.newTotal}`);
@@ -193,7 +205,8 @@ export default function SuperAdminPage() {
       name: tenant.name || "", ownerEmail: tenant.ownerEmail || "", phone: tenant.phone || "",
       address: tenant.address || "", instagramUrl: tenant.instagramUrl || "", mapsLink: tenant.mapsLink || "",
       description: tenant.description || "", openTime: tenant.openTime || "", closeTime: tenant.closeTime || "",
-      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", password: ""
+      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", password: "",
+      staffSheetUrl: tenant.staffSheetUrl || ""
     });
   };
 
@@ -228,6 +241,7 @@ export default function SuperAdminPage() {
       if (filterPlan === "trial") return exp && exp > now && t.plan !== "pro" && t.plan !== "elite";
       if (filterPlan === "expired") return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
       if (filterPlan === "never") return !t.trialEndsAt && t.plan !== "pro" && t.plan !== "elite";
+      if (filterCategory !== "all" && t.template !== filterCategory) return false;
       return true;
     }).sort((a, b) => {
       if (sortBy === "name") return a.name.localeCompare(b.name);
@@ -286,6 +300,13 @@ export default function SuperAdminPage() {
                 className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/20"
               >
                 Esci
+              </button>
+              <button
+                type="button"
+                onClick={handleCleanupTests}
+                className="ml-auto rounded-full border border-red-500 bg-red-600 px-4 py-1.5 text-sm font-bold text-white transition-colors hover:bg-red-500 shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+              >
+                💣 Elimina tutti i test
               </button>
             </div>
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Pannello Super Admin</h1>
@@ -427,6 +448,12 @@ export default function SuperAdminPage() {
                   </select>
                 </div>
                 <div className="flex gap-2 w-full sm:w-auto">
+                  <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none cursor-pointer">
+                    <option value="all">Tutte le Categorie</option>
+                    {Array.from(new Set(tenants.map(t => t.template).filter(Boolean))).map(cat => (
+                      <option key={cat as string} value={cat as string}>{cat}</option>
+                    ))}
+                  </select>
                   <input type="text" placeholder="Cerca..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="flex-1 sm:w-52 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" />
                   <button onClick={handleExportCsv} className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-600/30 px-3 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap">📥 CSV</button>
                 </div>
@@ -491,7 +518,7 @@ export default function SuperAdminPage() {
                             )}
                           </div>
                           <div className="flex gap-1 w-full mt-1">
-                            <button onClick={() => handleAddSms(tenant.id)} className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 + SMS</button>
+                            <button onClick={() => handleAddSms(tenant)} className="flex-1 text-xs font-bold py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 transition">💬 + SMS</button>
                             <div className="relative flex-1 z-10">
                               <button
                                 onClick={() => setOpenMenuId(openMenuId === tenant.id ? null : tenant.id)}
@@ -510,6 +537,16 @@ export default function SuperAdminPage() {
                                       <div className="h-px bg-slate-800 my-1 w-full" />
                                       <button onClick={() => { handleMakePlan(tenant.id, "basic"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
                                       <button onClick={() => { handleMakePlan(tenant.id, "expire"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>
+                                      <div className="h-px bg-slate-800 my-1 w-full" />
+                                      <button onClick={async () => {
+                                        setOpenMenuId(null);
+                                        try {
+                                          const res = await fetch(`/api/cron/sync-sheets?tenantId=${tenant.id}`);
+                                          const data = await res.json();
+                                          if (res.ok) alert(`Sincronizzazione completata: ${data.message || 'ok'}`);
+                                          else throw new Error(data.error || 'Errore sync');
+                                        } catch (e: any) { alert(e.message); }
+                                      }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-cyan-500/20 text-cyan-400 transition">🔄 Forza Sync Orari</button>
                                     </div>
                                   </div>
                                 </>
@@ -562,6 +599,7 @@ export default function SuperAdminPage() {
                 <div><label className="block text-xs text-slate-400 mb-1">Logo URL</label><input type="url" value={editData.logoUrl} onChange={e => setEditData({ ...editData, logoUrl: e.target.value })} className={IC} /></div>
                 <div><label className="block text-xs text-slate-400 mb-1">Tema</label><select value={editData.themeColor} onChange={e => setEditData({ ...editData, themeColor: e.target.value })} className={IC}>{THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>
               </div>
+              <div><label className="block text-xs text-slate-400 mb-1">Google Sheet URL</label><input type="url" value={editData.staffSheetUrl} onChange={e => setEditData({ ...editData, staffSheetUrl: e.target.value })} className={IC} /></div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Nuova password admin (opzionale)</label>
                 <div className="flex gap-2">

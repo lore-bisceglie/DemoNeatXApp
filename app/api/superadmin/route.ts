@@ -172,6 +172,8 @@ export async function POST(req: Request) {
         staffSheetUrl: staffSheetUrl || null,
         trialStatus: "trial_active",
         isDemoData: false,
+        template: template || 'barbiere',
+        category: template || 'barbiere',
         services: {
           create: defaultServices
         }
@@ -270,7 +272,7 @@ export async function PATCH(req: Request) {
 
     const allowedFields = [
       'name', 'ownerEmail', 'phone', 'address', 'instagramUrl', 'mapsLink',
-      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor',
+      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor', 'staffSheetUrl',
     ];
 
     const updateData: Record<string, any> = {};
