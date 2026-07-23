@@ -40,7 +40,7 @@ export async function GET(req: Request) {
           role: "user",
           content: `Agisci come un Senior Social Media Strategist e Copywriter Esperto (con focus su Niche Intelligence e Viral Hook Creation).
           
-Stai gestendo l'account Instagram di 'NeatX', un software SaaS italiano che offre un gestionale all-in-one (Agenda, Prenotazioni Online, SMS Marketing) per il settore beauty e wellness.
+Stai gestendo l'account Instagram di 'NeatX', un software SaaS italiano che offre un gestionale all-in-one (Agenda, Prenotazioni Online, SMS Marketing) per TUTTE le attività e i professionisti che lavorano su appuntamenti (saloni, centri estetici, tattoo, studi medici, consulenti, ecc.).
 Il tuo posizionamento (Market Positioning): NeatX è l'assistente invisibile che libera i professionisti dal caos delle prenotazioni. Il tono è dinamico, empatico, autorevole ma disruptive.
 
 OGGI DEVI RIVOLGERTI ESCLUSIVAMENTE A: ${asset.category}.
