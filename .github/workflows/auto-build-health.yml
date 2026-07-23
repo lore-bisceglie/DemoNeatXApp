@@ -48,6 +48,8 @@ jobs:
         run: npm run lint
       - name: Typecheck
         run: npm run typecheck
+      - name: Setup Database
+        run: npx prisma db push
       - name: Build site
         run: npm run build
       - name: Check production domain
