@@ -233,6 +233,7 @@ export default function SuperAdminPage() {
   const getSortedTenants = () => {
     return tenants.filter(t => {
       const q = searchTerm.toLowerCase();
+      if (t.isDemoData && !q.includes("demo")) return false;
       if (!t.name.toLowerCase().includes(q) && !(t.ownerEmail?.toLowerCase().includes(q)) && !t.slug.toLowerCase().includes(q)) return false;
       if (filterPlan === "all") return true;
       if (filterPlan === "pro") return t.plan === "pro";
