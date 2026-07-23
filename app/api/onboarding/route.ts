@@ -154,7 +154,7 @@ export async function POST(req: Request) {
     }
 
     const existingAccount = await prisma.tenant.findFirst({
-      where: { ownerEmail: { equals: email, mode: "insensitive" } },
+      where: { ownerEmail: email },
       select: { slug: true, emailVerified: true },
     });
     if (existingAccount) {
