@@ -10,6 +10,8 @@ import {
   parseShiftExceptions,
 } from "@/lib/schedule";
 import { parseClosedDays } from "@/lib/opening-hours";
+import { getRomeDayOfWeek } from "@/lib/rome-time";
+import { canManageAppointment } from "@/lib/appointment-management";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -92,6 +94,12 @@ export async function POST(
     if (!appointment || !appointment.tenantId || !appointment.service) {
       return NextResponse.json({ error: "Appuntamento non trovato" }, { status: 404 });
     }
+    if (!canManageAppointment(appointment)) {
+      return NextResponse.json(
+        { error: "L'appuntamento è già concluso e non può più essere spostato" },
+        { status: 410 },
+      );
+    }
     if (appointment.location && !appointment.location.isActive) {
       return NextResponse.json({ error: "La sede non è più attiva" }, { status: 409 });
     }
@@ -117,7 +125,7 @@ export async function POST(
         return NextResponse.json({ error: "Orario durante la pausa della sede" }, { status: 400 });
       }
     }
-    if (parseClosedDays(scheduleOwner?.closedDays).includes(requestedDate.getDay())) {
+    if (parseClosedDays(scheduleOwner?.closedDays).includes(getRomeDayOfWeek(requestedDate))) {
       return NextResponse.json({ error: "La sede è chiusa in questo giorno" }, { status: 400 });
     }
 

@@ -3,6 +3,10 @@ import "server-only";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
+  shouldSendWelcomeAfterVerification,
+  storedEmailVerificationToken,
+} from "@/lib/email-verification";
+import {
   isSelfReferral,
   normalizeReferralCode,
   normalizeReferralIdentity,
@@ -89,19 +93,45 @@ export async function findEligibleReferrer(rawCode: string, emailValue: string, 
 }
 
 export async function verifyTenantAndGrantReferralBonus(token: string, slug: string) {
+  const storedToken = storedEmailVerificationToken(token);
+  const now = new Date();
   return prisma.$transaction(async (tx) => {
     const tenant = await tx.tenant.findFirst({
-      where: { slug, emailVerifyToken: token, emailVerified: false },
-      select: { id: true, slug: true, referredByCode: true, referralSignupBonusAt: true },
+      where: {
+        slug,
+        emailVerifyToken: storedToken,
+        emailVerified: false,
+        OR: [
+          { emailVerifyExpiresAt: null },
+          { emailVerifyExpiresAt: { gt: now } },
+        ],
+      },
+      select: {
+        id: true,
+        slug: true,
+        ownerEmail: true,
+        ownerName: true,
+        referredByCode: true,
+        referralSignupBonusAt: true,
+      },
     });
     if (!tenant) return null;
 
     const grantBonus = Boolean(tenant.referredByCode && !tenant.referralSignupBonusAt);
     const changed = await tx.tenant.updateMany({
-      where: { id: tenant.id, emailVerifyToken: token, emailVerified: false },
+      where: {
+        id: tenant.id,
+        emailVerifyToken: storedToken,
+        emailVerified: false,
+        OR: [
+          { emailVerifyExpiresAt: null },
+          { emailVerifyExpiresAt: { gt: now } },
+        ],
+      },
       data: {
         emailVerified: true,
         emailVerifyToken: null,
+        emailVerifyExpiresAt: null,
         ...(grantBonus ? { referralSignupBonusAt: new Date() } : {}),
       },
     });
@@ -122,7 +152,14 @@ export async function verifyTenantAndGrantReferralBonus(token: string, slug: str
         },
       });
     }
-    return { tenantId: tenant.id, slug: tenant.slug, bonusCredits: grantBonus ? REFERRED_SIGNUP_BONUS_CREDITS : 0 };
+    return {
+      tenantId: tenant.id,
+      slug: tenant.slug,
+      ownerEmail: tenant.ownerEmail,
+      ownerName: tenant.ownerName,
+      shouldSendWelcomeEmail: shouldSendWelcomeAfterVerification(token),
+      bonusCredits: grantBonus ? REFERRED_SIGNUP_BONUS_CREDITS : 0,
+    };
   }, { isolationLevel: "Serializable" });
 }
 

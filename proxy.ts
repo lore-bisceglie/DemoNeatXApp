@@ -19,7 +19,10 @@ export function proxy(request: NextRequest) {
   }
 
   const isApi = url.pathname.startsWith("/api/");
-  const isTenantPage = url.pathname === "/" || url.pathname.startsWith("/admin");
+  const isTenantPage =
+    url.pathname === "/" ||
+    url.pathname.startsWith("/admin") ||
+    url.pathname.startsWith("/reset-password");
 
   if (tenantSlug) {
     if (isApi) {

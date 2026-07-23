@@ -8,10 +8,11 @@ import {
 import { getTenantAdminUrl, getTenantPublicUrl, isReservedSubdomain } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
 import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
+import { createEmailVerificationToken } from "@/lib/email-verification";
 import { findEligibleReferrer, generateUniqueReferralCode, INITIAL_MESSAGE_CREDITS } from "@/lib/referral";
 import crypto from "crypto";
 
-import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
+import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone, validateInstagramProfile } from "@/lib/contact";
 
 const TRIAL_DAYS = 14;
 
@@ -112,12 +113,14 @@ export async function POST(req: Request) {
     const city = cleanText(body.city);
     const ownerName = cleanText(body.ownerName);
     const email = cleanText(body.email).toLowerCase();
-    const password = cleanText(body.password);
+    const password = typeof body.password === "string" ? body.password : "";
+    const confirmPassword = typeof body.confirmPassword === "string" ? body.confirmPassword : "";
     const phone = normalizeWhatsappPhone(body.phone);
     const address = cleanText(body.address, city) || city;
     const description = cleanText(body.description);
     const trialDays = TRIAL_DAYS;
-    const instagramUrl = normalizeInstagramUrl(body.instagramUrl);
+    const instagramProfile = validateInstagramProfile(body.instagramUrl);
+    const instagramUrl = instagramProfile.url;
     const tiktokUrl = normalizeTikTokUrl(body.tiktokUrl);
     const websiteUrl = null;
     const bookingUrl = null;
@@ -129,6 +132,13 @@ export async function POST(req: Request) {
         : null;
     const themeColor = cleanText(body.themeColor) || "cyan";
 
+    if (!instagramProfile.valid) {
+      return NextResponse.json(
+        { error: "Instagram non valido. Incolla il link del tuo profilo, non il link di un post o Reel." },
+        { status: 400 },
+      );
+    }
+
     if (!businessName || !category || !city || !ownerName || !password || !phone || !email) {
       return NextResponse.json(
         { error: "Inserisci nome attività, categoria, città, email, nome, password e numero WhatsApp." },
@@ -138,6 +148,27 @@ export async function POST(req: Request) {
 
     if (password.length < 8) {
       return NextResponse.json({ error: "La password deve avere almeno 8 caratteri." }, { status: 400 });
+    }
+    if (password !== confirmPassword) {
+      return NextResponse.json({ error: "Le due password non coincidono." }, { status: 400 });
+    }
+
+    const existingAccount = await prisma.tenant.findFirst({
+      where: { ownerEmail: { equals: email, mode: "insensitive" } },
+      select: { slug: true, emailVerified: true },
+    });
+    if (existingAccount) {
+      return NextResponse.json(
+        {
+          error: existingAccount.emailVerified
+            ? "Questa email è già registrata. Accedi al tuo account oppure recupera la password."
+            : "Questa email è già registrata ma non ancora verificata. Accedi e richiedi un nuovo link di verifica.",
+          code: "EMAIL_ALREADY_REGISTERED",
+          slug: existingAccount.slug,
+          needsVerification: !existingAccount.emailVerified,
+        },
+        { status: 409 },
+      );
     }
 
     const disposableDomains = new Set([
@@ -934,10 +965,10 @@ export async function POST(req: Request) {
     const referrer = refCode ? await findEligibleReferrer(refCode, email, phone) : null;
     const referredByCode = referrer?.code || null;
 
-    const emailVerifyToken = crypto.randomUUID();
+    const verificationToken = createEmailVerificationToken();
     const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-    const verifyUrl = `${protocol}://${ROOT_DOMAIN}/api/verify-email?token=${emailVerifyToken}&slug=${slug}`;
+    const verifyUrl = `${protocol}://${ROOT_DOMAIN}/api/verify-email?token=${verificationToken.rawToken}&slug=${slug}`;
 
     const tenant = await prisma.$transaction(async (tx) => {
       const referralCode = await generateUniqueReferralCode(tx, businessName);
@@ -951,8 +982,14 @@ export async function POST(req: Request) {
         ownerName,
         ownerEmail: email,
         ownerPasswordHash: hashPassword(password),
+<<<<<<< HEAD
         emailVerifyToken,
         emailVerified: Boolean(process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test"),
+=======
+        emailVerifyToken: verificationToken.storedToken,
+        emailVerifyExpiresAt: verificationToken.expiresAt,
+        emailVerified: false,
+>>>>>>> origin/main
         description: description || template.description,
         phone,
         address,
@@ -1122,11 +1159,6 @@ export async function POST(req: Request) {
     }
 
     await sendTelegramNotification(tenant, ownerName, template.id);
-
-    // 🚀 Invia Email di Benvenuto
-    await sendWelcomeEmail(email, ownerName, getTenantAdminUrl(tenant.slug)).catch(e =>
-      console.error("[Email] Errore invio benvenuto:", e)
-    );
 
     return NextResponse.json({
       success: true,

@@ -142,7 +142,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ slots: [], isHoliday: true });
     }
     const staffOnHoliday = new Set(
-      holidayAppointments.flatMap((app) => (app.staffId ? [app.staffId] : []))
+      holidayAppointments.flatMap((app) => {
+        if (!app.staffId) return [];
+        // Ferie staff: blocca solo se sono per la sede richiesta (o globali senza sede)
+        if (app.locationId !== null && app.locationId !== effectiveLocationId) return [];
+        return [app.staffId];
+      })
     );
 
     // Intervalli occupati per staff

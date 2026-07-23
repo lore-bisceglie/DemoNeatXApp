@@ -37,6 +37,7 @@ export async function POST(request: Request) {
           where: { id: tenantId },
           select: {
             slug: true,
+            sessionVersion: true,
             isDemoData: true,
             trialStatus: true,
             trialEndsAt: true,
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Negozio non trovato." }, { status: 404 });
     }
     const tenantAuthCookie = cookieStore.get(`admin_auth_${bookingTenant.slug}`)?.value;
-    const isAdmin = isTenantAdminCookieValid(tenantAuthCookie, bookingTenant.slug);
+    const isAdmin = isTenantAdminCookieValid(tenantAuthCookie, bookingTenant.slug, bookingTenant.sessionVersion);
     isPlaygroundDemo =
       isPlaygroundDemo ||
       Boolean(bookingTenant.isDemoData && bookingTenant.trialStatus === "demo");

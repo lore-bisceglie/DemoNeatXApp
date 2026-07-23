@@ -3,6 +3,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
+import {
+  getDayScheduleSlotStatus,
+  parseClosedDays,
+  parseDaySchedule,
+} from "@/lib/opening-hours";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +59,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   if (!tenant) return <div className="p-10 text-white">Attività non trovata.</div>;
 
-  if (!isTenantAdminCookieValid(authCookie, slug)) {
+  if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
     return (
       <LoginScreen
         slug={slug}
@@ -97,23 +102,20 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   // Logica PAYWALL (viene eseguita dopo aver già caricato staff e locations in parallelo)
   const todayDate = new Date();
   const trialEndsAt = tenant.trialEndsAt;
-  const isTrialActive = trialEndsAt && todayDate <= trialEndsAt;
-  const isPaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
-  
-  if (!isPaidPlan && !isTrialActive && tenant.trialStatus !== "converted" && !searchParams?.payment) {
+  const hasActivePaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+  const hasActiveTrial = trialEndsAt && todayDate <= trialEndsAt;
+  const hasNoActivePlanNorTrial = !hasActivePaidPlan && !hasActiveTrial && tenant.trialStatus !== "converted";
+  if (hasNoActivePlanNorTrial && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
 
   
-  // Parse chiusura days
-  let activeClosedDays: number[] = [];
-  if (tenant.closedDays) {
-    try { activeClosedDays = JSON.parse(tenant.closedDays); } catch {}
-  }
+  // Parse chiusura days (supporta sia array [0,6] che WeekSchedule)
+  let activeClosedDays: number[] = parseClosedDays(tenant.closedDays);
   if (filterLocationId) {
     const loc = locations.find(l => l.id === filterLocationId);
     if (loc?.closedDays) {
-      try { activeClosedDays = JSON.parse(loc.closedDays); } catch {}
+      activeClosedDays = parseClosedDays(loc.closedDays);
     }
   }
 
@@ -157,7 +159,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     return `${hours}:${minutes}`;
   };
 
-  const isPremium = isPaidPlan || Boolean(isTrialActive);
+  const isPremium = (tenant.plan === "pro" || tenant.plan === "elite") || (tenant.trialEndsAt != null && new Date(tenant.trialEndsAt) > new Date());
   const isMultiStaff = Boolean(staffList.length > 1 && isPremium);
 
 
@@ -331,6 +333,33 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     );
     const cols = filteredStaff.length > 0 ? filteredStaff.map(s => s.id) : ["unassigned"];
     const map: Record<string, Record<string, Record<string, any>>> = {};
+    const scheduleSource = (
+      locId
+        ? locations.find((location) => location.id === locId)
+        : locations.length === 1
+          ? locations[0]
+          : tenant
+    ) ?? tenant;
+    const daySchedules = Object.fromEntries(
+      weekDays.map((dayInfo) => {
+        const dayOfWeek = new Date(`${dayInfo.date}T12:00:00Z`).getUTCDay();
+        return [
+          dayInfo.date,
+          parseDaySchedule(
+            scheduleSource.closedDays,
+            dayOfWeek,
+            scheduleSource.openTime,
+            scheduleSource.closeTime,
+            scheduleSource.breakStart,
+            scheduleSource.breakEnd,
+          ),
+        ];
+      }),
+    );
+    const viewWeekDays = weekDays.map((dayInfo) => ({
+      ...dayInfo,
+      isClosed: daySchedules[dayInfo.date].isClosed,
+    }));
 
     if (isAgendaTab) {
       weekDatesArray.forEach((d) => {
@@ -393,7 +422,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       });
     }
 
-    const gaps = weekDays.flatMap((dayInfo) => {
+    const gaps = viewWeekDays.flatMap((dayInfo) => {
       const g: { date: string; label: string; start: string; end: string; duration: number }[] = [];
       let gapStart: string | null = null;
       let gapDuration = 0;
@@ -409,7 +438,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             break;
           }
         }
-        const isFree = !isPastToday && isSlotCompletelyFree;
+        const isOpen = getDayScheduleSlotStatus(daySchedules[dayInfo.date], slot) === "open";
+        const isFree = !isPastToday && isOpen && isSlotCompletelyFree;
 
         if (isFree) {
           if (!gapStart) gapStart = slot;
@@ -447,7 +477,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     })
     .slice(0, 6);
 
-    return { columns: cols, radarMap: map, freeGapReports: gaps };
+    return {
+      columns: cols,
+      radarMap: map,
+      freeGapReports: gaps,
+      daySchedules,
+      weekDays: viewWeekDays,
+    };
   };
 
   const agendaViews = locations.length > 1 ? [{ id: "all", name: "Tutte le sedi", ...buildAgendaData(null) }] : [];
@@ -538,63 +574,77 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       if (endMins > startMins) {
         try {
           const storeSettings = await prisma.storeSettings.findUnique({ where: { tenantId } });
+          const maxConcurrent = storeSettings?.maxConcurrentAppointments || 1;
 
-          const existingApps = await prisma.appointment.findMany({
-            where: {
-              date,
-              tenantId,
-              ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
-              NOT: [
-                { customerName: { contains: "PAUSA" } },
-                { customerName: { contains: "FERIE" } },
-                { time: "ALL_DAY" },
-              ],
-            },
+          // Determina staff + location UNA volta fuori dalla transazione
+          const staffWithLocs = await prisma.staff.findMany({
+            where: { tenantId, ...(staffIdParam && staffIdParam !== "all" ? { id: staffIdParam } : {}) },
+            include: { locations: { select: { locationId: true } } },
           });
+          const activeLocIds = (await prisma.location.findMany({
+            where: { tenantId, isActive: true },
+            select: { id: true },
+          })).map(l => l.id);
 
-          let overlapCount = 0;
-          existingApps.forEach((app) => {
-            const aStart =
-              parseInt(app.time.split(":")[0]) * 60 +
-              parseInt(app.time.split(":")[1]);
+          // Per ogni staff risolvi le location; staff senza location -> [null]
+          type LocBlock = { staffId: string | null; locationIds: (string | null)[] };
+          const staffLocBlocks: LocBlock[] =
+            staffWithLocs.length > 0
+              ? staffWithLocs.map(s => ({
+                  staffId: s.id,
+                  locationIds: s.locations.length > 0
+                    ? [...new Set(s.locations.map(l => l.locationId))]
+                    : [null],
+                }))
+              : [{ staffId: null, locationIds: activeLocIds.length > 0 ? activeLocIds : [null] }];
 
-            const aEnd = app.endTime
-              ? parseInt(app.endTime.split(":")[0]) * 60 +
-                parseInt(app.endTime.split(":")[1])
-              : aStart + 15;
+          const label = blockType === "PERMESSO" ? "📋 PERMESSO" : "☕ PAUSA";
 
-            if (Math.max(startMins, aStart) < Math.min(endMins, aEnd)) {
-              overlapCount++;
-            }
-          });
-          const hasOverlap = overlapCount >= (storeSettings?.maxConcurrentAppointments || 1);
+          // Transazione atomica: READ + WRITE in Serializable
+          const created = await prisma.$transaction(async (tx) => {
+            const existing = await tx.appointment.findMany({
+              where: {
+                date,
+                tenantId,
+                ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
+                NOT: [
+                  { customerName: { contains: "PAUSA" } },
+                  { customerName: { contains: "FERIE" } },
+                  { time: "ALL_DAY" },
+                ],
+              },
+            });
 
-          if (hasOverlap) {
-            redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
-          } else {
-            let staffIds: (string | null)[] = [null];
-            
-            if (staffIdParam && staffIdParam !== "all") {
-              staffIds = [staffIdParam];
-            } else {
-              const staffMembers = await prisma.staff.findMany({ where: { tenantId } });
-              if (staffMembers.length > 0) {
-                staffIds = staffMembers.map((s) => s.id);
-              }
-            }
-            
-            const label = blockType === "PERMESSO" ? "📋 PERMESSO" : "☕ PAUSA";
-            const newApps = staffIds.map(sId => ({
+            let overlapCount = 0;
+            existing.forEach((app) => {
+              const aStart = parseInt(app.time.split(":")[0]) * 60 + parseInt(app.time.split(":")[1]);
+              const aEnd = app.endTime
+                ? parseInt(app.endTime.split(":")[0]) * 60 + parseInt(app.endTime.split(":")[1])
+                : aStart + 15;
+              if (Math.max(startMins, aStart) < Math.min(endMins, aEnd)) overlapCount++;
+            });
+
+            if (overlapCount >= maxConcurrent) return null;
+
+            // Un blocco per ogni staff x location (i filtri sede trovano sempre il blocco)
+            const data = staffLocBlocks.flatMap(b =>
+              b.locationIds.map(locId => ({
                 customerName: label,
                 customerPhone: "0000000000",
                 date,
                 time: startTime,
                 endTime,
                 tenantId,
-                staffId: sId,
+                staffId: b.staffId,
+                locationId: locId,
                 cancelToken: crypto.randomUUID(),
-            }));
-            await prisma.appointment.createMany({ data: newApps });
+              }))
+            );
+            return tx.appointment.createMany({ data });
+          }, { isolationLevel: "Serializable" });
+
+          if (!created) {
+            redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
           }
         } catch (error) {
           console.error(error);
@@ -619,20 +669,42 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      const datesToBlock = [];
+      const datesToBlock: string[] = [];
       const checkLoop = new Date(start);
 
       while (checkLoop <= end) {
-        datesToBlock.push(checkLoop.toISOString().split("T")[0]);
+        const y = checkLoop.getFullYear();
+        const m = String(checkLoop.getMonth() + 1).padStart(2, '0');
+        const day = String(checkLoop.getDate()).padStart(2, '0');
+        datesToBlock.push(`${y}-${m}-${day}`);
         checkLoop.setDate(checkLoop.getDate() + 1);
       }
+
+      // Determina staff + location UNA volta
+      const staffWithLocs = await prisma.staff.findMany({
+        where: { tenantId, ...(staffIdParam && staffIdParam !== "all" ? { id: staffIdParam } : {}) },
+        include: { locations: { select: { locationId: true } } },
+      });
+      const activeLocIds = (await prisma.location.findMany({
+        where: { tenantId, isActive: true },
+        select: { id: true },
+      })).map(l => l.id);
+
+      type LocBlock = { staffId: string | null; locationIds: (string | null)[] };
+      const holidayStaffBlocks: LocBlock[] =
+        staffWithLocs.length > 0
+          ? staffWithLocs.map(s => ({
+              staffId: s.id,
+              locationIds: s.locations.length > 0
+                ? [...new Set(s.locations.map(l => l.locationId))]
+                : [null],
+            }))
+          : [{ staffId: null, locationIds: activeLocIds.length > 0 ? activeLocIds : [null] }];
 
       try {
         const existingAppointments = await prisma.appointment.findMany({
           where: {
-            date: {
-              in: datesToBlock,
-            },
+            date: { in: datesToBlock },
             tenantId,
             ...(staffIdParam && staffIdParam !== "all" ? { staffId: staffIdParam } : {}),
             NOT: [
@@ -646,44 +718,31 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         if (existingAppointments.length > 0) {
           redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
         } else {
-          const insertLoop = new Date(start);
-
-          while (insertLoop <= end) {
-            const d = insertLoop.toISOString().split("T")[0];
-
-            let staffIds: (string | null)[] = [null];
-            
-            if (staffIdParam && staffIdParam !== "all") {
-              staffIds = [staffIdParam];
-            } else {
-              const staffMembers = await prisma.staff.findMany({ where: { tenantId } });
-              if (staffMembers.length > 0) {
-                staffIds = staffMembers.map((s) => s.id);
+          // Transazione atomica: crea le ferie per ogni staff x location
+          await prisma.$transaction(async (tx) => {
+            for (const d of datesToBlock) {
+              for (const sb of holidayStaffBlocks) {
+                for (const locId of sb.locationIds) {
+                  const existing = await tx.appointment.findFirst({
+                    where: { date: d, time: "ALL_DAY", tenantId, staffId: sb.staffId, locationId: locId },
+                  });
+                  if (!existing) {
+                    await tx.appointment.create({
+                      data: {
+                        customerName: "🌴 FERIE",
+                        customerPhone: "0000000000",
+                        date: d,
+                        time: "ALL_DAY",
+                        tenantId,
+                        staffId: sb.staffId,
+                        locationId: locId,
+                      },
+                    });
+                  }
+                }
               }
             }
-            
-            for (const sId of staffIds) {
-              const existingFerie = await prisma.appointment.findFirst({
-                where: { date: d, time: "ALL_DAY", tenantId, staffId: sId },
-              });
-
-              if (!existingFerie) {
-                await prisma.appointment.create({
-                  data: {
-                    customerName: "🌴 FERIE",
-                    customerPhone: "0000000000",
-                    date: d,
-                    time: "ALL_DAY",
-                    tenantId,
-                    staffId: sId,
-                    cancelToken: crypto.randomUUID(),
-                  },
-                });
-              }
-            }
-
-            insertLoop.setDate(insertLoop.getDate() + 1);
-          }
+          }, { isolationLevel: "Serializable" });
         }
       } catch (error) {
         console.error(error);
@@ -859,7 +918,19 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               const columns = view.columns;
               const radarMap = view.radarMap;
               const freeGapReports = view.freeGapReports;
+              const daySchedules = view.daySchedules;
+              const viewWeekDays = view.weekDays;
               const maxConcurrent = columns.length;
+              const lastAgendaSlot = allSlots[allSlots.length - 1];
+              const lastSlotHasAppointment = Boolean(lastAgendaSlot) && viewWeekDays.some((day) =>
+                columns.some((columnId) => Boolean(radarMap[day.date]?.[columnId]?.[lastAgendaSlot]))
+              );
+              const lastSlotIsOpen = Boolean(lastAgendaSlot) && viewWeekDays.some((day) =>
+                getDayScheduleSlotStatus(daySchedules[day.date], lastAgendaSlot) === "open"
+              );
+              const agendaDisplaySlots = lastAgendaSlot && !lastSlotHasAppointment && !lastSlotIsOpen
+                ? allSlots.slice(0, -1)
+                : allSlots;
               return (
                 <div key={view.id} data-location={view.id} className="w-full">
                   {/* AGENDA SETTIMANALE TETRIS */}
@@ -898,12 +969,12 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           )}
 
-          <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-cyan-900/10 border border-[#1a2642] mb-6 overflow-hidden flex flex-col">
+          <div className="bg-gradient-to-b from-[#0d1628] to-[#09101d] p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 border border-white/[0.07] mb-6 overflow-hidden flex flex-col">
             <SwipeableAgenda>
               <DayNavigator currentDate={adjustedTargetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 border-b border-[#1e2b4a] pb-4">
-                <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3 border-b border-white/[0.07] pb-4">
+                <h2 className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2 tracking-tight">
                   📒 Agenda Dinamica ({tenantName})
                 </h2>
 
@@ -941,37 +1012,56 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 </div>
               </div>
 
-            <div className="overflow-x-auto pb-4 custom-scrollbar">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3 px-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-cyan-400/70 shadow-[0_0_8px_rgba(34,211,238,0.35)]" />
+                  Disponibile
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-amber-400/70" />
+                  Pausa
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-rose-400/60" />
+                  Chiuso
+                </span>
+                <span className="ml-auto normal-case tracking-normal font-medium text-slate-600">
+                  <span className="sm:hidden">Settimana completa</span>
+                  <span className="hidden sm:inline">Scorri lateralmente per vedere tutta la settimana</span>
+                </span>
+              </div>
+
+            <div className="overflow-x-auto pb-3 custom-scrollbar rounded-2xl border border-white/[0.06] bg-[#070d18]/70">
               <div
-                className="min-w-[650px] md:min-w-[900px] grid gap-x-2 gap-y-0"
+                className="min-w-full md:min-w-[900px] grid gap-x-px sm:gap-x-1 gap-y-0 p-1 sm:p-3"
                 style={{
-                  gridTemplateColumns: `minmax(60px, 80px) repeat(${weekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
+                  gridTemplateColumns: `minmax(52px, 70px) repeat(${viewWeekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
                 }}
               >
-                  <div style={{ gridColumn: 1 }} className="text-slate-500 font-bold text-center flex items-center justify-center sticky left-0 bg-[#0b1221] z-20 pb-2 shadow-[8px_0_0_#0b1221] md:shadow-none border-b border-transparent">
+                  <div style={{ gridColumn: 1 }} className="text-slate-500 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center sticky left-0 top-0 bg-[#09101d]/95 backdrop-blur-md z-40 pb-2 shadow-[8px_0_0_rgba(9,16,29,0.95)] md:shadow-none border-b border-transparent">
                     Ora
                   </div>
 
-                  {weekDays.map((d, _dIndex) => {
+                  {viewWeekDays.map((d, _dIndex) => {
                     const isToday = d.date === todayItaly;
                     
                     return (
-                      <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-2 mb-2">
-                        <div className={`text-center py-2 rounded-xl border capitalize transition-colors ${
+                      <div key={d.date} style={{ gridColumn: `span ${maxConcurrent}` }} className="flex flex-col gap-1.5 mb-2 sticky top-0 z-30 bg-[#09101d]/95 backdrop-blur-md pb-1">
+                        <div className={`text-center py-1.5 sm:py-2 rounded-lg border capitalize transition-colors text-[9px] sm:text-sm leading-tight ${
                           d.isClosed
-                            ? "bg-red-900/20 text-red-400 border-red-800/30"
+                            ? "bg-rose-500/[0.08] text-rose-300/80 border-rose-500/20"
                             : isToday 
-                              ? "bg-cyan-500/10 text-[#00b4ff] font-extrabold border-[#00b4ff]/40 shadow-[0_0_15px_rgba(0,180,255,0.15)]" 
-                              : "bg-[#131c31] text-white font-bold border-[#1e2b4a]"
+                              ? "bg-cyan-400/[0.12] text-cyan-300 font-extrabold border-cyan-400/40 shadow-[0_0_18px_rgba(34,211,238,0.10)]"
+                              : "bg-white/[0.035] text-slate-100 font-bold border-white/[0.08]"
                         }`}>
-                          {d.label} {d.isClosed && <span className="text-[10px] ml-1 font-mono">CHIUSO</span>}
+                          {d.label} {d.isClosed && <span className="hidden sm:inline text-[10px] ml-1 font-mono">CHIUSO</span>}
                         </div>
                         {columns.length > 0 && (
                           <div className="grid gap-x-2" style={{ gridTemplateColumns: `repeat(${maxConcurrent}, minmax(0, 1fr))` }}>
                             {columns.map(colId => {
                               const s = staffList.find(staff => staff.id === colId) || { id: colId, name: colId };
                               return (
-                                <div key={s.id} className="text-center text-[10px] uppercase font-bold text-slate-400 bg-[#0b1221] py-1 rounded border border-[#1e2b4a] truncate px-1">
+                                <div key={s.id} className="text-center text-[7px] sm:text-[10px] uppercase font-bold text-slate-400 bg-white/[0.025] py-1 rounded-md border border-white/[0.07] truncate px-0.5 sm:px-1">
                                   {s.name.split(' ')[0]}
                                 </div>
                               );
@@ -982,24 +1072,26 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                     );
                   })}
 
-                  {allSlots.map((slot) => {
+                  {agendaDisplaySlots.map((slot, slotIndex) => {
                     const isQuarter = slot.endsWith("15") || slot.endsWith("45");
+                    const previousSlot = agendaDisplaySlots[slotIndex - 1];
+                    const nextSlot = agendaDisplaySlots[slotIndex + 1];
 
                     return (
                       <div className="contents" key={slot}>
-                        <div style={{ gridColumn: 1 }} className="w-full h-full text-slate-400 font-medium flex items-center justify-center text-sm bg-[#0b1221] sticky left-0 z-20 border-r border-transparent shadow-[8px_0_0_#0b1221] md:shadow-none">
+                        <div style={{ gridColumn: 1 }} className="w-full h-full min-h-[32px] sm:min-h-[38px] text-slate-400 font-medium flex items-center justify-center text-[10px] sm:text-sm bg-[#09101d]/95 backdrop-blur-md sticky left-0 z-20 border-r border-white/[0.04] shadow-[8px_0_0_rgba(9,16,29,0.95)] md:shadow-none">
                           <span
-                            className={`px-2 py-1 rounded-xl transition-all ${
+                            className={`px-1 sm:px-2 py-1 rounded-xl transition-all ${
                               isQuarter
                                 ? "text-[10px] text-slate-600"
-                                : "bg-[#131c31] border border-[#1e2b4a]"
+                                : "bg-white/[0.035] border border-white/[0.08] text-slate-300"
                             }`}
                           >
                             {slot}
                           </span>
                         </div>
 
-                        {weekDays.map((d, dIndex) => {
+                        {viewWeekDays.map((d, dIndex) => {
                           const cols: any[] = [];
                           columns.forEach((colId, cIndex) => {
                             const apptVal = radarMap[d.date]?.[colId]?.[slot];
@@ -1022,7 +1114,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                                     gridRow: `span ${maxSpan} / span ${maxSpan}`,
                                     gridColumn: targetColumn
                                   }}
-                                  className="h-full min-h-[40px] py-[4px] relative z-10 flex flex-col gap-1"
+                                  className="h-full min-h-[32px] sm:min-h-[38px] py-px relative z-10 flex flex-col gap-1"
                                 >
                                   {appts.map((item: any, itemIdx: number) => (
                                     <AppointmentBlock
@@ -1037,15 +1129,51 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                               return;
                             }
 
-                            if (d.isClosed) {
+                            const slotStatus = getDayScheduleSlotStatus(daySchedules[d.date], slot);
+                            if (slotStatus !== "open") {
+                              const previousAppointment = previousSlot
+                                ? radarMap[d.date]?.[colId]?.[previousSlot]
+                                : null;
+                              const nextAppointment = nextSlot
+                                ? radarMap[d.date]?.[colId]?.[nextSlot]
+                                : null;
+                              const previousStatus = previousSlot
+                                ? getDayScheduleSlotStatus(daySchedules[d.date], previousSlot)
+                                : null;
+                              const nextStatus = nextSlot
+                                ? getDayScheduleSlotStatus(daySchedules[d.date], nextSlot)
+                                : null;
+                              const isStatusStart = !previousSlot || previousStatus !== slotStatus || Boolean(previousAppointment);
+                              const isStatusEnd = !nextSlot || nextStatus !== slotStatus || Boolean(nextAppointment);
+
                               cols.push(
-                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px] flex items-center justify-center">
-                                  <span className="text-[10px] text-red-400/40 font-mono font-bold tracking-wider">CHIUSO</span>
+                                <div
+                                  key={cellKey}
+                                  style={{ gridColumn: targetColumn }}
+                                  aria-label={`${slotStatus === "break" ? "Pausa" : "Chiuso"} alle ${slot}`}
+                                  title={`${slotStatus === "break" ? "Pausa" : "Chiuso"} alle ${slot}`}
+                                  className={`mx-px h-full min-h-[32px] sm:min-h-[38px] flex items-center justify-center border-x ${
+                                    slotStatus === "break"
+                                      ? "bg-amber-400/[0.07] border-amber-400/[0.12]"
+                                      : "bg-rose-400/[0.065] border-rose-400/[0.11]"
+                                  } ${
+                                    isStatusStart ? "rounded-t-xl border-t" : "border-t-0"
+                                  } ${
+                                    isStatusEnd ? "rounded-b-xl border-b" : "border-b-0"
+                                  }`}
+                                >
+                                  {isStatusStart && (
+                                    <span className={`hidden sm:inline text-[10px] font-mono font-bold tracking-wider ${
+                                      slotStatus === "break" ? "text-amber-300/70" : "text-rose-300/55"
+                                    }`}>
+                                      {slotStatus === "break" ? "PAUSA" : "CHIUSO"}
+                                    </span>
+                                  )}
                                 </div>
                               );
                             } else {
                               cols.push(
-                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[40px] py-[4px]">
+                                <div key={cellKey} style={{ gridColumn: targetColumn }} className="h-full min-h-[32px] sm:min-h-[38px]">
                                   <WalkInButton
                                     date={d.date}
                                     time={slot}
@@ -1341,7 +1469,13 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
 
             <div className="mt-6">
-              <LocationTabs tenantId={tenantId} tenantSlug={slug} tenantName={tenantName} plan={tenant.plan} />
+              <LocationTabs
+                tenantId={tenantId}
+                tenantSlug={slug}
+                tenantName={tenantName}
+                tenantLogoUrl={tenant.logoUrl}
+                plan={tenant.plan}
+              />
             </div>
           </div>
 

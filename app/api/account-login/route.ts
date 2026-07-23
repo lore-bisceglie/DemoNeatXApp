@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const email = cleanText(body.email).toLowerCase();
-    const password = cleanText(body.password);
+    const password = typeof body.password === "string" ? body.password : "";
 
     if (!email || !password) {
       return NextResponse.json({ error: "Inserisci email e password." }, { status: 400 });
@@ -96,6 +96,7 @@ export async function POST(req: Request) {
           error: "Email non verificata. È richiesta la verifica dell'email prima di accedere alla dashboard. Controlla la tua casella di posta e clicca sul link di conferma.",
           needsVerification: true,
           email: tenant.ownerEmail,
+          slug: tenant.slug,
         },
         { status: 403 }
       );
@@ -113,7 +114,7 @@ export async function POST(req: Request) {
       adminUrl: getTenantAdminUrl(tenant.slug),
     });
 
-    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug), {
+    response.cookies.set(`admin_auth_${tenant.slug}`, createTenantSessionToken(tenant.slug, undefined, tenant.sessionVersion), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

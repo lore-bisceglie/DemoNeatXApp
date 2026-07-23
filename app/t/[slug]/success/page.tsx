@@ -82,17 +82,31 @@ export default async function SuccessPage(props: {
   let icsDataUri = "";
   let dateFormatted = "";
   if (appointment && appointment.service) {
-    const start = new Date(`${appointment.date}T${appointment.time}:00`);
-    const end = new Date(start.getTime() + appointment.service.duration * 60000);
-    
-    // Formato YYYYMMDDTHHMMSSZ
-    const formatCalDate = (d: Date) => d.toISOString().replace(/-|:|\.\d\d\d/g,"");
+    // Determina l'offset UTC di Europe/Rome per la data specifica
+    function getRomeUtcOffset(dateStr: string, timeStr: string): number {
+      const trialDate = new Date(`${dateStr}T12:00:00`);
+      const tzName = Intl.DateTimeFormat('en', { timeZone: 'Europe/Rome', timeZoneName: 'short' })
+        .formatToParts(trialDate)
+        .find(p => p.type === 'timeZoneName')?.value;
+      return tzName === 'CEST' ? 120 : 60; // CEST = UTC+2, CET = UTC+1
+    }
+
+    const romeOffset = getRomeUtcOffset(appointment.date, appointment.time);
+    const [h, m] = appointment.time.split(':').map(Number);
+    const [y, mo, d] = appointment.date.split('-').map(Number);
+
+    // Converti ora Rome in UTC sottraendo l'offset (CEST=+120, CET=+60 minuti)
+    const startUtc = new Date(Date.UTC(y, mo - 1, d, h, m - romeOffset, 0));
+    const endUtc = new Date(startUtc.getTime() + appointment.service.duration * 60000);
+
+    // Formato YYYYMMDDTHHMMSSZ (sempre UTC)
+    const formatCalDate = (d: Date) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
     
     const text = `Appuntamento: ${appointment.service.name}`;
     const locationStr = appointment.location?.address || appointment.tenant?.address || "";
     const details = `Prenotazione confermata presso ${appointment.tenant?.name || "il salone"}.`;
     
-    googleCalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(text)}&dates=${formatCalDate(start)}/${formatCalDate(end)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(locationStr)}`;
+    googleCalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(text)}&dates=${formatCalDate(startUtc)}/${formatCalDate(endUtc)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(locationStr)}`;
 
     // File .ics universale (Apple Calendar, Outlook, Samsung Calendar, ecc.)
     const icsContent = [
@@ -102,8 +116,8 @@ export default async function SuccessPage(props: {
       "CALSCALE:GREGORIAN",
       "METHOD:PUBLISH",
       "BEGIN:VEVENT",
-      `DTSTART:${formatCalDate(start)}`,
-      `DTEND:${formatCalDate(end)}`,
+      `DTSTART:${formatCalDate(startUtc)}`,
+      `DTEND:${formatCalDate(endUtc)}`,
       `SUMMARY:${text}`,
       `DESCRIPTION:${details.replace(/,/g, "\\,")}`,
       `LOCATION:${locationStr.replace(/,/g, "\\,")}`,
@@ -119,7 +133,7 @@ export default async function SuccessPage(props: {
 
     icsDataUri = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
     
-    dateFormatted = start.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+    dateFormatted = startUtc.toLocaleDateString('it-IT', { timeZone: 'Europe/Rome', weekday: 'long', day: 'numeric', month: 'long' });
   }
 
   return (

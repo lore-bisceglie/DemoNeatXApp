@@ -34,14 +34,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
     }
 
-    const cookieStore = await cookies();
-    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
-      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-    }
-
     const tenant = await prisma.tenant.findUnique({ where: { slug } });
     if (!tenant) return NextResponse.json({ error: "Tenant non trovato" }, { status: 404 });
+    const cookieStore = await cookies();
+    const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
+      return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
+    }
 
     const review = await prisma.platformReview.upsert({
       where: { tenantId: tenant.id },

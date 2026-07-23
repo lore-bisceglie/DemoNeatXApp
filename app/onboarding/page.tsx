@@ -15,9 +15,12 @@ import {
   Sparkles,
   UserRound,
   Image as ImageIcon,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { demoCategoryOptions, sanitizeSlug } from "@/lib/demoShopTemplates";
 import { isReservedSubdomain } from "@/lib/domains";
+import { validateInstagramProfile } from "@/lib/contact";
 
 const categoryHints: Record<string, { services: string; staff: string; bookings: string }> = {
   hair_women: {
@@ -107,6 +110,9 @@ export default function Onboarding() {
   const [city, setCity] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
@@ -117,6 +123,7 @@ export default function Onboarding() {
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [existingAccountSlug, setExistingAccountSlug] = useState("");
   const [successData, setSuccessData] = useState<{
     slug: string;
     publicUrl: string;
@@ -129,6 +136,7 @@ export default function Onboarding() {
     [category]
   );
   const hint = categoryHints[category] || categoryHints.barber;
+  const instagramProfile = useMemo(() => validateInstagramProfile(instagramUrl), [instagramUrl]);
 
   const previewSlug = useMemo(() => {
     if (!businessName.trim()) return "";
@@ -182,15 +190,25 @@ export default function Onboarding() {
   const handleCreate = async () => {
     if (isGenerating) return;
     setError("");
+    setExistingAccountSlug("");
     setAttemptedSubmit(true);
 
-    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !password.trim() || !phone.trim() || !email.trim()) {
+    if (!businessName.trim() || !category || !city.trim() || !ownerName.trim() || !password || !confirmPassword || !phone.trim() || !email.trim()) {
       setError("Compila tutti i campi obbligatori evidenziati in rosso.");
       return;
     }
 
     if (password.length < 8) {
       setError("La password deve avere almeno 8 caratteri.");
+      return;
+    }
+
+    if (!instagramProfile.valid) {
+      setError("Instagram non valido. Incolla il link del tuo profilo, non il link di un post o Reel.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Le due password non coincidono.");
       return;
     }
     if (!legalAccepted) {
@@ -213,6 +231,7 @@ export default function Onboarding() {
           city,
           ownerName,
           password,
+          confirmPassword,
           phone,
           address,
           instagramUrl,
@@ -225,7 +244,12 @@ export default function Onboarding() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Errore durante la creazione.");
+      if (!res.ok) {
+        if (data.code === "EMAIL_ALREADY_REGISTERED" && typeof data.slug === "string") {
+          setExistingAccountSlug(data.slug);
+        }
+        throw new Error(data.error || "Errore durante la creazione.");
+      }
 
       setSuccessData(data);
     } catch (err: unknown) {
@@ -501,9 +525,17 @@ export default function Onboarding() {
                 <input
                   value={instagramUrl}
                   onChange={(event) => setInstagramUrl(event.target.value)}
-                  className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                  placeholder="Es. @neatx_agenda"
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
+                    attemptedSubmit && !instagramProfile.valid ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
+                  placeholder="https://www.instagram.com/nomeprofilo/"
                 />
+                <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+                  Apri il tuo profilo Instagram, scegli <strong>Condividi profilo → Copia link</strong> e incollalo qui. Va bene anche @nomeutente. Non inserire il link di un post o Reel.
+                </p>
+                {attemptedSubmit && !instagramProfile.valid && (
+                  <p className="mt-1 text-xs font-bold text-red-400">Inserisci il link del profilo Instagram corretto.</p>
+                )}
               </label>
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
@@ -565,26 +597,71 @@ export default function Onboarding() {
               </div>
             </div>
 
-            <label className="block">
+            <div>
               <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
                 <UserRound size={14} />
                 Password dashboard
               </span>
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
-                  attemptedSubmit && password.length < 8 ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
-                }`}
-                placeholder="Almeno 8 caratteri"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 pr-12 text-white outline-none transition ${
+                    attemptedSubmit && password.length < 8 ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
+                  placeholder="Almeno 8 caratteri"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-500 hover:text-cyan-300"
+                  aria-label={showPassword ? "Nascondi password" : "Mostra password"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {attemptedSubmit && password.length < 8 && (
                 <p className="mt-1 text-xs font-bold text-red-400">
                   {password.length === 0 ? "Questo campo è richiesto." : "La password deve avere almeno 8 caratteri."}
                 </p>
               )}
-            </label>
+            </div>
+
+            <div>
+              <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <UserRound size={14} />
+                Conferma password
+              </span>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 pr-12 text-white outline-none transition ${
+                    attemptedSubmit && (!confirmPassword || password !== confirmPassword)
+                      ? "border-red-500"
+                      : "border-[#1e2b4a] focus:border-cyan-400"
+                  }`}
+                  placeholder="Ripeti la password"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((visible) => !visible)}
+                  className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-500 hover:text-cyan-300"
+                  aria-label={showConfirmPassword ? "Nascondi password" : "Mostra password"}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {attemptedSubmit && (!confirmPassword || password !== confirmPassword) && (
+                <p className="mt-1 text-xs font-bold text-red-400">
+                  {!confirmPassword ? "Questo campo è richiesto." : "Le due password non coincidono."}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="mt-5 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
@@ -607,7 +684,15 @@ export default function Onboarding() {
 
           {error && (
             <div className="mt-4 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">
-              {error}
+              <p>{error}</p>
+              {existingAccountSlug && (
+                <Link
+                  href={`/t/${existingAccountSlug}/admin`}
+                  className="mt-2 inline-block text-cyan-300 underline underline-offset-2 hover:text-cyan-200"
+                >
+                  Vai all'accesso del tuo account
+                </Link>
+              )}
             </div>
           )}
 

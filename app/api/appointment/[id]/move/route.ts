@@ -12,6 +12,7 @@ import {
   parseShiftExceptions,
 } from "@/lib/schedule";
 import { parseDaySchedule } from "@/lib/opening-hours";
+import { getRomeDayOfWeek } from "@/lib/rome-time";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -114,7 +115,7 @@ export async function POST(
     }
     const endTime = minutesToTime(endMinutes);
     const scheduleOwner = appointment.location || appointment.tenant;
-    const dayOfWeek = requestedDate.getDay();
+    const dayOfWeek = getRomeDayOfWeek(requestedDate);
     const daySchedule = parseDaySchedule(
       scheduleOwner.closedDays,
       dayOfWeek,

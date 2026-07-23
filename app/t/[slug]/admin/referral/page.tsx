@@ -19,7 +19,7 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
   const cookieStore = await cookies();
   const authCookie = cookieStore.get("admin_auth_" + slug)?.value;
   
-  if (!isTenantAdminCookieValid(authCookie, slug)) {
+  if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
     redirect(`/t/${slug}`);
   }
 

@@ -19,6 +19,7 @@ export default function CancelPage() {
   const [moving, setMoving] = useState(false);
   const [tenantPhone, setTenantPhone] = useState("");
   const [moveMessage, setMoveMessage] = useState("");
+  const [canManage, setCanManage] = useState(true);
 
   function whatsappPhone(value: string) {
     let digits = value.replace(/\D/g, "");
@@ -53,13 +54,14 @@ export default function CancelPage() {
       .then((data) => {
         setAppointment(data.appointment);
         setTenantPhone(data.tenantPhone || "");
+        setCanManage(data.appointment ? data.canManage !== false : false);
         setRescheduleDate(data.appointment?.date || "");
         setLoading(false);
       });
   }, [token]);
 
   useEffect(() => {
-    if (!appointment || !rescheduleDate || !appointment.tenantId || !appointment.serviceId) return;
+    if (!canManage || !appointment || !rescheduleDate || !appointment.tenantId || !appointment.serviceId) return;
 
     fetch(
       `/api/availability?date=${encodeURIComponent(rescheduleDate)}&tenantId=${encodeURIComponent(appointment.tenantId)}&serviceId=${encodeURIComponent(appointment.serviceId)}${appointment.locationId ? `&locationId=${encodeURIComponent(appointment.locationId)}` : ""}${appointment.staffId ? `&staffId=${encodeURIComponent(appointment.staffId)}` : ""}`
@@ -72,9 +74,10 @@ export default function CancelPage() {
       .catch(() => {
         setSlots([]);
       });
-  }, [appointment, rescheduleDate]);
+  }, [appointment, canManage, rescheduleDate]);
 
   const handleCancel = async () => {
+    if (!canManage) return;
     setCanceling(true);
 
     const res = await fetch("/api/cancel", {
@@ -83,8 +86,9 @@ export default function CancelPage() {
       body: JSON.stringify({ token }),
     });
 
+    const data = await res.json().catch(() => ({}));
+
     if (res.ok) {
-      const data = await res.json().catch(() => ({}));
       if (data.tenantPhone) setTenantPhone(data.tenantPhone);
 
       const [year, month, day] = appointment.date.split("-");
@@ -97,7 +101,8 @@ export default function CancelPage() {
       notifyTenantViaWhatsApp(data.tenantPhone || tenantPhone, "cancel", { date: displayDate, time: appointment.time });
       setCanceling(false);
     } else {
-      alert("Si e verificato un errore di connessione.");
+      if (res.status === 410) setCanManage(false);
+      alert(data.error || "Si è verificato un errore di connessione.");
       setCanceling(false);
     }
   };
@@ -125,6 +130,10 @@ export default function CancelPage() {
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
+      if (res.status === 410) {
+        setCanManage(false);
+        setRescheduleOpen(false);
+      }
       setMoveMessage(data.error || "Non riesco a spostare l'appuntamento.");
       setMoving(false);
       return;
@@ -251,7 +260,13 @@ export default function CancelPage() {
           </div>
         )}
 
-        {rescheduleOpen && (
+        {!canManage && (
+          <div className="bg-slate-500/10 border border-slate-500/30 text-slate-300 text-xs font-bold rounded-xl px-3 py-3 mb-4">
+            Appuntamento concluso. Il link resta consultabile, ma non è più possibile spostare o annullare la prenotazione.
+          </div>
+        )}
+
+        {rescheduleOpen && canManage && (
           <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 mb-4 text-left">
             <label className="block text-xs text-slate-500 uppercase font-bold tracking-widest mb-2">
               Nuova data
@@ -299,19 +314,20 @@ export default function CancelPage() {
             </button>
           ) : (
             <button
-              onClick={() => setRescheduleOpen(true)}
-              className="w-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold py-3 rounded-xl transition"
+              onClick={() => canManage && setRescheduleOpen(true)}
+              disabled={!canManage}
+              className="w-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold py-3 rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Sposta appuntamento
+              {canManage ? "Sposta appuntamento" : "Spostamento non disponibile"}
             </button>
           )}
 
           <button
             onClick={handleCancel}
-            disabled={canceling}
+            disabled={canceling || !canManage}
             className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold py-3 rounded-xl transition disabled:opacity-50"
           >
-            {canceling ? "Annullamento in corso..." : "Annulla appuntamento"}
+            {canceling ? "Annullamento in corso..." : canManage ? "Annulla appuntamento" : "Annullamento non disponibile"}
           </button>
 
           <Link

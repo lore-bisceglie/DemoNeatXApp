@@ -1,3 +1,5 @@
+import { getRomeDayOfWeek } from "@/lib/rome-time";
+
 export type ScheduleBlock = {
   start: string;
   end: string;
@@ -73,8 +75,8 @@ export function getDayScheduleForDate(
   exceptions: ShiftException[],
   dateStr: string,
 ): { active: boolean; blocks: ScheduleBlock[]; exceptionNote?: string } {
-  const date = new Date(dateStr + "T12:00:00");
-  const dayName = dayIndexToName(date.getDay());
+  const date = new Date(dateStr + "T12:00:00Z");
+  const dayName = dayIndexToName(getRomeDayOfWeek(date));
 
   const exception = exceptions.find((e) => e.date === dateStr);
   if (exception) {

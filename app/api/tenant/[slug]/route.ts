@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
 import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone } from "@/lib/contact";
+import { validateTenantLogo } from "@/lib/tenant-logo";
 
 export async function GET(req: Request, context: { params: Promise<{ slug: string }> }) {
   try {
@@ -134,12 +135,19 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${slug}`)?.value;
 
-    if (!isTenantAdminCookieValid(authCookie, slug)) {
+    if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
       return NextResponse.json({ error: "Accesso non autorizzato" }, { status: 401 });
     }
 
     const body = await req.json();
     const action = typeof body.action === "string" ? body.action : "update";
+
+    const logoValidation = body.logoUrl === undefined
+      ? { ok: true as const, value: tenant.logoUrl }
+      : validateTenantLogo(body.logoUrl);
+    if (!logoValidation.ok) {
+      return NextResponse.json({ error: logoValidation.error }, { status: 400 });
+    }
 
     if (action === "publish") {
       const updated = await prisma.tenant.update({
@@ -184,6 +192,7 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
           ? buildMapsLink(body.mapsLink)
           : cleanUrl(body.mapsLink, tenant.mapsLink) || buildMapsLink(nextAddress),
         bookingUrl: cleanUrl(body.bookingUrl, tenant.bookingUrl),
+        logoUrl: logoValidation.value,
         openTime: cleanString(body.openTime, tenant.openTime) || "09:00",
         closeTime: cleanString(body.closeTime, tenant.closeTime) || "19:00",
         breakStart: cleanString(body.breakStart, tenant.breakStart) || null,

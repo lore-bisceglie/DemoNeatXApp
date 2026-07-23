@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { logActivity } from "@/lib/activity";
 import { sendTenantSms } from "@/lib/sms";
+import { appointmentManagementSelect, canManageAppointment } from "@/lib/appointment-management";
 
 // Recupera i dati dell'appuntamento dal token segreto
 export async function GET(request: Request) {
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
     const appointment = await prisma.appointment.findUnique({
       where: { cancelToken: token },
-      include: { service: true },
+      select: appointmentManagementSelect,
     });
 
     let tenantPhone: string | null = null;
@@ -25,86 +25,121 @@ export async function GET(request: Request) {
       tenantPhone = tenant?.phone ?? null;
     }
 
-    return NextResponse.json({ appointment, tenantPhone });
+    return NextResponse.json({
+      appointment,
+      tenantPhone,
+      canManage: appointment ? canManageAppointment(appointment) : false,
+    });
   } catch (error) {
     console.error("Errore recupero appuntamento:", error);
     return NextResponse.json({ appointment: null });
   }
 }
 
-// Elimina fisicamente l'appuntamento dal database
+// Elimina l'appuntamento dal database (transazione atomica)
 export async function POST(request: Request) {
   try {
     const { token } = await request.json();
-    
-    const appointment = await prisma.appointment.findUnique({
-      where: { cancelToken: token },
-    });
+    if (!token) {
+      return NextResponse.json({ success: false, error: "Token mancante" }, { status: 400 });
+    }
 
-    let tenantPhone: string | null = null;
+    // Transazione atomica: delete appuntamento + waitlist FIFO
+    const result = await prisma.$transaction(async (tx) => {
+      const appointment = await tx.appointment.findUnique({
+        where: { cancelToken: token },
+        select: {
+          id: true,
+          tenantId: true,
+          customerPhone: true,
+          customerName: true,
+          date: true,
+          time: true,
+          endTime: true,
+          locationId: true,
+          service: { select: { duration: true } },
+        },
+      });
+      if (!appointment) return null;
+      if (!canManageAppointment(appointment)) return { expired: true as const };
 
-    if (appointment) {
-      const tenant = await prisma.tenant.findUnique({
+      await tx.appointment.delete({ where: { id: appointment.id } });
+
+      if (appointment.tenantId) {
+        await tx.activityLog.create({
+          data: {
+            action: "CANCEL_APPOINTMENT",
+            actor: "client",
+            message: `${appointment.customerName} ha disdetto l'appuntamento dal sito`,
+            appointmentId: appointment.id,
+            customerName: appointment.customerName,
+            customerPhone: appointment.customerPhone,
+            date: appointment.date,
+            time: appointment.time,
+            tenantId: appointment.tenantId,
+          },
+        });
+      }
+
+      // Waitlist FIFO atomica
+      let waitlistEntry: { name: string; phone: string } | null = null;
+      if (appointment.tenantId && appointment.date) {
+        const entry = await tx.waitlist.findFirst({
+          where: { tenantId: appointment.tenantId, date: appointment.date },
+          orderBy: { createdAt: "asc" },
+        });
+        if (entry) {
+          await tx.waitlist.delete({ where: { id: entry.id } });
+          waitlistEntry = { name: entry.name, phone: entry.phone };
+        }
+      }
+
+      let tenantPhone: string | null = null;
+      const tenant = await tx.tenant.findUnique({
         where: { id: appointment.tenantId ?? "" },
         select: { phone: true },
       });
       tenantPhone = tenant?.phone ?? null;
 
-      await prisma.appointment.delete({
-        where: { id: appointment.id }
+      return { ...appointment, tenantPhone, waitlistEntry };
+    }, { isolationLevel: "Serializable" });
+
+    if (!result) {
+      return NextResponse.json({ success: true, alreadyCancelled: true });
+    }
+    if ("expired" in result) {
+      return NextResponse.json(
+        { success: false, error: "L'appuntamento è già concluso e non può più essere annullato" },
+        { status: 410 },
+      );
+    }
+
+    // Side effects FUORI transazione (SMS)
+    const tid = result.tenantId as string;
+    if (result.locationId) {
+      const loc = await prisma.location.findUnique({
+        where: { id: result.locationId },
+        select: { phone: true, name: true },
       });
-      
-      if (appointment.tenantId) {
-        await logActivity({
-          action: "CANCEL_APPOINTMENT",
-          actor: "client",
-          message: `${appointment.customerName} ha disdetto l'appuntamento dal sito`,
-          appointmentId: appointment.id,
-          customerName: appointment.customerName,
-          customerPhone: appointment.customerPhone,
-          date: appointment.date,
-          time: appointment.time,
-          tenantId: appointment.tenantId,
-        });
-      }
-
-      // Notifica alla sede
-      if (appointment.tenantId && appointment.locationId) {
-        const loc = await prisma.location.findUnique({
-          where: { id: appointment.locationId },
-          select: { phone: true, name: true },
-        });
-        if (loc && loc.phone) {
-          const notifBody = `❌ ${appointment.customerName} ha cancellato\n${appointment.date.split('-').reverse().join('/')} alle ${appointment.time}\nSede: ${loc.name}`;
-          await sendTenantSms(appointment.tenantId, loc.phone, notifBody, undefined, appointment.locationId);
-        }
-      }
-
-      // Avviso automatico lista d'attesa (FIFO)
-      if (appointment.tenantId && appointment.date) {
-        const waitlistEntry = await prisma.waitlist.findFirst({
-          where: { tenantId: appointment.tenantId, date: appointment.date },
-          orderBy: { createdAt: "asc" },
-        });
-
-        if (waitlistEntry) {
-          const t = await prisma.tenant.findUnique({
-            where: { id: appointment.tenantId },
-            select: { name: true, slug: true },
-          });
-
-          if (t && t.slug) {
-            const bookingUrl = `https://${t.slug}.neatx.store`;
-            const msg = `🎉 ${t.name} - Posto Liberato!\nCiao ${waitlistEntry.name}, si è liberato un posto per il ${appointment.date.split('-').reverse().join('/')}. Prenotalo subito: ${bookingUrl}`;
-            await sendTenantSms(appointment.tenantId, waitlistEntry.phone, msg);
-          }
-
-          await prisma.waitlist.delete({ where: { id: waitlistEntry.id } });
-        }
+      if (loc?.phone) {
+        const notifBody = `❌ ${result.customerName} ha cancellato\n${result.date.split('-').reverse().join('/')} alle ${result.time}\nSede: ${loc.name}`;
+        await sendTenantSms(tid, loc.phone, notifBody, undefined, result.locationId);
       }
     }
 
-    return NextResponse.json({ success: true, tenantPhone });
+    if (result.waitlistEntry) {
+      const t = await prisma.tenant.findUnique({
+        where: { id: tid },
+        select: { name: true, slug: true },
+      });
+      if (t?.slug) {
+        const bookingUrl = `https://${t.slug}.neatx.store`;
+        const msg = `🎉 ${t.name} - Posto Liberato!\nCiao ${result.waitlistEntry.name}, si è liberato un posto per il ${result.date.split('-').reverse().join('/')}. Prenotalo subito: ${bookingUrl}`;
+        await sendTenantSms(tid, result.waitlistEntry.phone, msg);
+      }
+    }
+
+    return NextResponse.json({ success: true, tenantPhone: result.tenantPhone });
   } catch (error) {
     console.error("Errore eliminazione appuntamento:", error);
     return NextResponse.json({ success: false });

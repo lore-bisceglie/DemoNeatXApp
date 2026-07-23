@@ -2,44 +2,9 @@ import { NextResponse } from "next/server";
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
+import { selectDailyMarketingAsset } from "@/lib/marketing-rotation";
 
 export const maxDuration = 60; // Max execution time 60 seconds
-
-const CATEGORIES = [
-  {
-    name: "Barbieri e Parrucchieri Uomo",
-    hashtags: "#NeatX #AgendaBarbiere #BarbiereItalia #ParrucchiereItalia #GestioneSalone",
-    images: [
-      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop", // Barbershop chair
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1200&auto=format&fit=crop", // Barber cutting hair
-    ]
-  },
-  {
-    name: "Estetica e Centri Benessere",
-    hashtags: "#NeatX #CentroEstetico #EstetistaItalia #AgendaEstetica #GestioneCentroEstetico",
-    images: [
-      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1200&auto=format&fit=crop", // Spa / Estetica
-      "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=1200&auto=format&fit=crop", // Massage
-      "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=1200&auto=format&fit=crop"  // Nails
-    ]
-  },
-  {
-    name: "Parrucchieri Donna e Saloni di Bellezza",
-    hashtags: "#NeatX #ParrucchieraItalia #SaloneDiBellezza #AgendaParrucchiere #HairStylistItalia",
-    images: [
-      "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop", // Hair salon woman
-      "https://images.unsplash.com/photo-1521590832167-7bfc17484d20?q=80&w=1200&auto=format&fit=crop"  // Hair washing
-    ]
-  },
-  {
-    name: "Tatuatori e Studi di Tattoo",
-    hashtags: "#NeatX #TattooItalia #TatuatoreItaliano #AgendaTattoo #TattooStudioItalia",
-    images: [
-      "https://images.unsplash.com/photo-1598371839696-5e5bb00b059f?q=80&w=1200&auto=format&fit=crop", // Tattoo artist
-      "https://images.unsplash.com/photo-1568347355280-eecc6c3b6526?q=80&w=1200&auto=format&fit=crop"  // Tattoo gun
-    ]
-  }
-];
 
 export async function GET(req: Request) {
   try {
@@ -57,12 +22,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
     }
 
-    // 0. Scegliamo una categoria a caso (es. oggi barbieri, domani estetiste)
-    const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+    // 0. Ruotiamo categoria e immagine senza ripetizioni nelle sedici pubblicazioni successive.
+    const asset = selectDailyMarketingAsset();
 
-    // 1. Scegliamo un'immagine a caso per quella specifica categoria e applichiamo il watermark
-    const randomImage = category.images[Math.floor(Math.random() * category.images.length)];
-    const watermarkedImage = `https://demo-neatx-app.vercel.app/api/og/marketing?bg=${encodeURIComponent(randomImage)}`;
+    // 1. Applichiamo il watermark NeatX all'immagine selezionata per oggi.
+    const selectedImage = asset.image;
+    const watermarkedImage = `https://demo-neatx-app.vercel.app/api/og/marketing?bg=${encodeURIComponent(selectedImage)}`;
 
     // 2. Generiamo il copy per NeatX
     const { object } = await generateObject({
@@ -75,9 +40,9 @@ export async function GET(req: Request) {
           role: "user",
           content: `Sei il Social Media Manager di 'NeatX', una startup italiana che vende un software gestionale (Agenda, Appuntamenti, Prenotazioni Online) per il settore beauty e wellness.
           
-OGGI DEVI RIVOLGERTI ESCLUSIVAMENTE A: ${category.name}.
+OGGI DEVI RIVOLGERTI ESCLUSIVAMENTE A: ${asset.category}.
 
-Scrivi un post coinvolgente per Instagram per convincere i professionisti di questo settore ad abbonarsi. Scegli un problema specifico del loro lavoro (es. appuntamenti sovrapposti, chiamate mentre stanno lavorando con le mani occupate, clienti che non si presentano all'appuntamento) e offri NeatX come la soluzione definitiva. Usa un tono dinamico, professionale ma giovane. DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: ${category.hashtags}. Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.`,
+Scrivi un post coinvolgente per Instagram per convincere i professionisti di questo settore ad abbonarsi. Scegli un problema specifico del loro lavoro (es. appuntamenti sovrapposti, chiamate mentre stanno lavorando con le mani occupate, clienti che non si presentano all'appuntamento) e offri NeatX come la soluzione definitiva. Usa un tono dinamico, professionale ma giovane. DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: ${asset.hashtags}. Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.`,
         },
       ],
     });
@@ -123,7 +88,7 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
     }
 
     // --- PUBBLICAZIONE STORIA ---
-    const storyImage = `https://demo-neatx-app.vercel.app/api/og/story?bg=${encodeURIComponent(randomImage)}`;
+    const storyImage = `https://demo-neatx-app.vercel.app/api/og/story?bg=${encodeURIComponent(selectedImage)}`;
     let storyId = null;
 
     try {
@@ -160,7 +125,7 @@ Scrivi un post coinvolgente per Instagram per convincere i professionisti di que
       message: "Marketing pubblicato con successo!",
       ig_post_id: publishData.id,
       ig_story_id: storyId,
-      image_used: randomImage,
+      image_used: selectedImage,
       caption: captionText
     });
 

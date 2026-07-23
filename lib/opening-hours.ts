@@ -24,6 +24,8 @@ export type DayScheduleResult = {
   breakEnd: string | null;
 };
 
+export type DayScheduleSlotStatus = "open" | "closed" | "break";
+
 // ─── Helpers interni ──────────────────────────────────────────────────────────
 
 function tryParseJson(value: unknown, depth = 2): unknown {
@@ -139,6 +141,37 @@ export function parseDaySchedule(
     breakStart: fallbackBreakStart ?? null,
     breakEnd: fallbackBreakEnd ?? null,
   };
+}
+
+export function getDayScheduleSlotStatus(
+  schedule: DayScheduleResult,
+  startTime: string,
+  durationMinutes = 15,
+): DayScheduleSlotStatus {
+  if (schedule.isClosed) return "closed";
+
+  const toMinutes = (value: string) => {
+    const [hours, minutes] = value.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+  const start = toMinutes(startTime);
+  const end = start + durationMinutes;
+  const open = toMinutes(schedule.open);
+  const close = toMinutes(schedule.close);
+
+  if (![start, end, open, close].every(Number.isFinite) || start < open || end > close) {
+    return "closed";
+  }
+
+  if (schedule.breakStart && schedule.breakEnd) {
+    const breakStart = toMinutes(schedule.breakStart);
+    const breakEnd = toMinutes(schedule.breakEnd);
+    if (Number.isFinite(breakStart) && Number.isFinite(breakEnd) && start < breakEnd && end > breakStart) {
+      return "break";
+    }
+  }
+
+  return "open";
 }
 
 /**

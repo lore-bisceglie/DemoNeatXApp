@@ -1,24 +1,48 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-21T12:25:34.538313+02:00
+Generato: 2026-07-23T12:22:21.113669+02:00
 
-## Idea 1: Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Parrucchieri
-- hook: Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero ore dei dipendenti segnate a mano su fogli Excel persi.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Quante volte sei rimasto con le forbici in mano ad aspettare un cliente che non si è presentato nel tuo barber shop?
+- title: Elimina le sedie vuote nel tuo salone
+- hook: Quante volte sei rimasto con le forbici in mano ad aspettare un cliente che non si è presentato nel tuo barber shop?
+- video_concept: Mostra la transizione tra un barbiere che aspetta a vuoto e uno che lavora sereno perché ogni slot orario della giornata è stato prenotato con un acconto automatico tramite NeatX.
+- gameplay_style: neon_racer
+- blog_title: Barbieri: Zero No-Show con NeatX grazie alla caparra confirmatoria
+- image_prompt: photorealistic cinematic scene inside a luxury barber shop workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting
+- keywords: ['gestionale barbiere', 'prenotazioni barbiere', 'no show barber shop']
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Parrucchieri
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Il segreto dei barbieri che hanno l'agenda piena al cento per cento e zero no-show si chiama acconto automatico.
+- title: Il filtro automatico per clienti ritardatari
+- hook: Il segreto dei barbieri che hanno l'agenda piena al cento per cento e zero no-show si chiama acconto automatico.
+- video_concept: Spiega come funziona il sistema di NeatX che richiede un piccolo acconto alla prenotazione, scoraggiando chi prenota senza intenzione di presentarsi.
+- gameplay_style: neon_racer
+- blog_title: Come filtrare i clienti che non si presentano nel tuo barber shop
+- image_prompt: photorealistic scene of a modern barber checking his smartphone with a smile, showing a notification of a paid reservation, neon accents in a clean barbershop interior
+- keywords: ['gestionale barbiere', 'prenotazioni barbiere', 'no show barber shop']
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Parrucchieri
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Se calcoli quanti soldi perdi ogni mese nel tuo barber shop per colpa dei clienti che dimenticano l'appuntamento, ti viene da chiudere.
+- title: Calcola quanto ti costa un no-show
+- hook: Se calcoli quanti soldi perdi ogni mese nel tuo barber shop per colpa dei clienti che dimenticano l'appuntamento, ti viene da chiudere.
+- video_concept: Analisi matematica veloce delle perdite mensili di un barbiere con 4 no-show a settimana, confrontata con la soluzione a costo zero di NeatX con acconti automatici.
+- gameplay_style: neon_racer
+- blog_title: Quanto costa un no-show al tuo barber shop e come risolverlo ora
+- image_prompt: cinematic close up of a barber's hands holding professional clippers, in the background a digital screen displaying green checkmarks for paid appointments
+- keywords: ['gestionale barbiere', 'prenotazioni barbiere', 'no show barber shop']
+
+## Idea 4: Immagina di aprire l'agenda del tuo salone di barbieri e sapere che ogni singolo slot è occupato da persone che hanno già pagato.
+- title: La garanzia dell'incasso anticipato
+- hook: Immagina di aprire l'agenda del tuo salone di barbieri e sapere che ogni singolo slot è occupato da persone che hanno già pagato.
+- video_concept: Focus sulla serenità mentale del barbiere che avvia la giornata sapendo che, anche in caso di disdetta dell'ultimo minuto, il suo tempo è già stato remunerato grazie alla caparra.
+- gameplay_style: neon_racer
+- blog_title: Barbieri: come garantire che ogni appuntamento sia pagato in anticipo
+- image_prompt: high-end barbershop workspace, detailed shot of a tablet showing an active booking dashboard with paid badge indicators, warm aesthetic lighting
+- keywords: ['gestionale barbiere', 'prenotazioni barbiere', 'no show barber shop']
+
+## Idea 5: Basta giustificazioni dell'ultimo minuto per appuntamenti saltati: ecco come i barbieri professionisti tutelano il proprio tempo.
+- title: Stop alle scuse dei clienti dell'ultimo minuto
+- hook: Basta giustificazioni dell'ultimo minuto per appuntamenti saltati: ecco come i barbieri professionisti tutelano il proprio tempo.
+- video_concept: Confronto ironico ma professionale sulle scuse più assurde dei clienti per non presentarsi e su come NeatX risolva il problema alla radice con i pagamenti digitali in fase di prenotazione.
+- gameplay_style: neon_racer
+- blog_title: La guida definitiva per eliminare i no-show nel tuo salone di barbiere
+- image_prompt: cinematic photorealistic wide shot of a luxury barber shop, dynamic lighting, focused on a barber calendar screen with locked and secured slots
+- keywords: ['gestionale barbiere', 'prenotazioni barbiere', 'no show barber shop']

@@ -59,8 +59,51 @@ function socialHandle(value: unknown, domain: string) {
 }
 
 export function normalizeInstagramUrl(value: unknown) {
-  const handle = socialHandle(value, "instagram.com");
-  return handle ? `https://instagram.com/${handle}` : null;
+  return validateInstagramProfile(value).url;
+}
+
+const INSTAGRAM_RESERVED_PATHS = new Set([
+  "accounts",
+  "direct",
+  "explore",
+  "p",
+  "reel",
+  "reels",
+  "stories",
+]);
+
+export function validateInstagramProfile(value: unknown): {
+  valid: boolean;
+  url: string | null;
+} {
+  if (typeof value !== "string") return { valid: true, url: null };
+  const trimmed = value.trim();
+  if (!trimmed) return { valid: true, url: null };
+
+  let handle = trimmed.replace(/^@+/, "");
+  const looksLikeUrl = /^https?:\/\//i.test(trimmed) || /^(?:www\.|m\.)?instagram\.com\//i.test(trimmed);
+
+  if (looksLikeUrl) {
+    try {
+      const parsed = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
+      const hostname = parsed.hostname.toLowerCase().replace(/^(?:www\.|m\.)/, "");
+      if (hostname !== "instagram.com") return { valid: false, url: null };
+      handle = parsed.pathname.split("/").filter(Boolean)[0] || "";
+    } catch {
+      return { valid: false, url: null };
+    }
+  } else if (trimmed.includes("/") || trimmed.includes("?") || trimmed.includes("#")) {
+    return { valid: false, url: null };
+  }
+
+  handle = handle.replace(/^@+/, "");
+  const lowerHandle = handle.toLowerCase();
+  const validHandle =
+    /^(?!\.)(?!.*\.\.)(?!.*\.$)[a-z0-9._]{1,30}$/i.test(handle) &&
+    !INSTAGRAM_RESERVED_PATHS.has(lowerHandle);
+
+  if (!validHandle) return { valid: false, url: null };
+  return { valid: true, url: `https://www.instagram.com/${handle}/` };
 }
 
 export function normalizeTikTokUrl(value: unknown) {
