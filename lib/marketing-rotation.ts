@@ -88,6 +88,26 @@ const MARKETING_ASSETS: readonly MarketingAsset[] = [
     hashtags: "#NeatX #TattooItalia #TatuatoreItaliano #AgendaTattoo #TattooStudioItalia",
     image: "https://images.unsplash.com/photo-1745777723328-6228e34ed2aa?q=80&w=1200&auto=format&fit=crop",
   },
+  {
+    category: "Barbieri e Parrucchieri Uomo",
+    hashtags: "#NeatX #AgendaBarbiere #BarbiereItalia #ParrucchiereItalia #GestioneSalone",
+    image: "https://demo-neatx-app.vercel.app/marketing/barbershop_promo_1.jpg",
+  },
+  {
+    category: "Estetica e Centri Benessere",
+    hashtags: "#NeatX #CentroEstetico #EstetistaItalia #AgendaEstetica #GestioneCentroEstetico",
+    image: "https://demo-neatx-app.vercel.app/marketing/beauty_salon_promo_1.jpg",
+  },
+  {
+    category: "Tatuatori e Studi di Tattoo",
+    hashtags: "#NeatX #TattooItalia #TatuatoreItaliano #AgendaTattoo #TattooStudioItalia",
+    image: "https://demo-neatx-app.vercel.app/marketing/tattoo_studio_promo_1.jpg",
+  },
+  {
+    category: "Parrucchieri Donna e Saloni di Bellezza",
+    hashtags: "#NeatX #ParrucchieraItalia #SaloneDiBellezza #AgendaParrucchiere #HairStylistItalia",
+    image: "https://demo-neatx-app.vercel.app/marketing/hairsalon_promo_1.jpg",
+  },
 ];
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -102,17 +122,13 @@ function positiveModulo(value: number, divisor: number) {
   return ((value % divisor) + divisor) % divisor;
 }
 
-function getRomeCalendarDay(date: Date) {
-  const parts = ROME_DATE_FORMATTER.formatToParts(date);
-  const year = Number(parts.find((part) => part.type === "year")?.value);
-  const month = Number(parts.find((part) => part.type === "month")?.value);
-  const day = Number(parts.find((part) => part.type === "day")?.value);
-
-  return Math.floor(Date.UTC(year, month - 1, day) / DAY_IN_MS);
+function getRotationIndex(date: Date) {
+  // Cambia indice ogni 12 ore, così due post nello stesso giorno usano immagini diverse
+  return Math.floor(date.getTime() / (12 * 60 * 60 * 1000));
 }
 
 export function selectDailyMarketingAsset(date = new Date()): MarketingAsset {
-  const index = positiveModulo(getRomeCalendarDay(date), MARKETING_ASSETS.length);
+  const index = positiveModulo(getRotationIndex(date), MARKETING_ASSETS.length);
   return MARKETING_ASSETS[index];
 }
 
