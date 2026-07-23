@@ -982,14 +982,9 @@ export async function POST(req: Request) {
         ownerName,
         ownerEmail: email,
         ownerPasswordHash: hashPassword(password),
-<<<<<<< HEAD
-        emailVerifyToken,
-        emailVerified: Boolean(process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test"),
-=======
         emailVerifyToken: verificationToken.storedToken,
         emailVerifyExpiresAt: verificationToken.expiresAt,
-        emailVerified: false,
->>>>>>> origin/main
+        emailVerified: Boolean(process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test"),
         description: description || template.description,
         phone,
         address,
