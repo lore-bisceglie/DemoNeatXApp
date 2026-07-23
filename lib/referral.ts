@@ -1,6 +1,5 @@
 import "server-only";
 
-import { randomBytes } from "crypto";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -16,6 +15,24 @@ export const INITIAL_MESSAGE_CREDITS = 50;
 export const REFERRED_SIGNUP_BONUS_CREDITS = 50;
 export const REFERRER_CONVERSION_REWARD_CREDITS = 100;
 
+export async function generateUniqueReferralCode(
+  client: { tenant: { findUnique: (args: any) => Promise<any> } },
+  businessName: string,
+): Promise<string> {
+  const base = normalizeReferralCode(businessName).slice(0, 12) || "NEATX";
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const suffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const candidate = `${base}-${suffix}`;
+    const existing = await client.tenant.findUnique({
+      where: { referralCode: candidate },
+      select: { id: true },
+    });
+    if (!existing) return candidate;
+  }
+  const fallbackSuffix = Date.now().toString(36).slice(-4).toUpperCase();
+  return `${base}-${fallbackSuffix}`;
+}
+
 export async function ensureReferralCode(tenantId: string) {
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
@@ -24,9 +41,8 @@ export async function ensureReferralCode(tenantId: string) {
   if (!tenant) return null;
   if (tenant.referralCode) return tenant.referralCode;
 
-  const base = normalizeReferralCode(tenant.name || tenant.slug).slice(0, 10) || "NEATX";
   for (let attempt = 0; attempt < 12; attempt += 1) {
-    const candidate = `${base}${randomBytes(3).toString("hex").toUpperCase()}`;
+    const candidate = await generateUniqueReferralCode(prisma, tenant.name || tenant.slug);
     try {
       const assigned = await prisma.tenant.updateMany({
         where: { id: tenant.id, referralCode: null },
@@ -62,7 +78,7 @@ export async function findEligibleReferrer(rawCode: string, emailValue: string, 
   )) return null;
 
   const candidates = await prisma.tenant.findMany({
-    where: { OR: [{ ownerEmail: { equals: email, mode: "insensitive" } }, { phone: { not: null } }] },
+    where: { OR: [{ ownerEmail: email }, { phone: { not: null } }] },
     select: { ownerEmail: true, phone: true },
   });
   const duplicate = candidates.some((item) =>

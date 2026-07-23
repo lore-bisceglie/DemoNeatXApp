@@ -116,3 +116,5 @@ token.json
 session.json
 logs/
 
+
+.agents/

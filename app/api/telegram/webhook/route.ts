@@ -23,7 +23,7 @@ function publicStoreUrl(slug: string) {
 
 async function findTenantByName(query: string) {
   return prisma.tenant.findFirst({
-    where: { name: { contains: query, mode: "insensitive" } },
+    where: { name: { contains: query } },
   });
 }
 
@@ -224,7 +224,7 @@ export async function POST(req: Request) {
           await sendTelegramMessage("Inserisci almeno 2 lettere per cercare.");
         } else {
           const results = await prisma.tenant.findMany({
-            where: { name: { contains: query, mode: "insensitive" } },
+            where: { name: { contains: query } },
             take: 5,
             select: { id: true, name: true, phone: true, ownerEmail: true, city: true, slug: true, plan: true, trialStatus: true },
           });
@@ -404,7 +404,7 @@ export async function POST(req: Request) {
               await sendTelegramMessage("Nessun salone trovato.");
             } else {
               const location = await prisma.location.findFirst({
-                where: { tenantId: tenant.id, slug: { equals: slug, mode: "insensitive" } },
+                where: { tenantId: tenant.id, slug },
               });
               if (!location) {
                 await sendTelegramMessage(`Sede "<b>${escapeHtml(slug)}</b>" non trovata per ${escapeHtml(tenant.name)}. Usa /sedi ${escapeHtml(query)} per vedere gli slug corretti.`);

@@ -35,6 +35,10 @@ function emailShell(title: string, content: string) {
 }
 
 async function send(options: { to: string; subject: string; html: string }) {
+  if (process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test") {
+    console.log(`[Email Mock] Simulated email to ${options.to}: ${options.subject}`);
+    return true;
+  }
   const user = process.env.SMTP_EMAIL || process.env.GMAIL_USER;
   const transporter = getTransporter();
   if (!transporter || !user) {

@@ -1,0 +1,311 @@
+// Isolated test database schema (SQLite)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id            String        @id @default(cuid()) 
+  slug          String        @unique
+  name          String
+  category      String?
+  city          String?
+  ownerName     String?
+  ownerEmail    String?
+  ownerPasswordHash String?
+  logoUrl       String?
+  themeColor    String        @default("cyan")
+  description   String?
+  phone         String?
+  address       String?
+  instagramUrl  String?
+  facebookUrl   String?
+  tiktokUrl     String?
+  websiteUrl    String?
+  mapsLink      String?
+  bookingUrl    String?
+  openTime      String?
+  closeTime     String?
+  breakStart    String?
+  breakEnd      String?
+  closedDays    String?
+  trialStartedAt DateTime?
+  trialEndsAt   DateTime?
+  trialStatus   String        @default("demo")
+  isDemoData    Boolean       @default(true)
+  template      String        @default("barbiere")
+  isElite       Boolean       @default(false)
+  activationRequested Boolean @default(false)
+  publishedAt   DateTime?
+  convertedAt   DateTime?
+  plan          String        @default("basic")
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  createdAt     DateTime      @default(now())
+  staffSheetUrl String?
+  emailVerified Boolean       @default(false)
+  emailVerifyToken String?   @unique
+  failedLoginAttempts Int     @default(0)
+  lockoutUntil  DateTime?
+  referralCode  String?       @unique
+  referredByCode String?
+  referredAt    DateTime?
+  referralSignupBonusAt DateTime?
+  referralRewardedAt DateTime?
+
+  appointments  Appointment[]
+  blockedSlots  BlockedSlot[]
+  services      Service[]
+  storeSettings StoreSettings?
+  noShows       NoShow[]
+  waitlists     Waitlist[]
+  customerNotes CustomerNote[]
+  activityLogs  ActivityLog[]
+  staff         Staff[]
+  locations     Location[]
+  processedStripeEvents ProcessedStripeEvent[]
+  platformReview PlatformReview?
+  socialPosts    SocialPost[]
+}
+
+model ProcessedStripeEvent {
+  id        String   @id
+  type      String
+  status    String   @default("processing")
+  tenantId  String?
+  createdAt DateTime @default(now())
+  processedAt DateTime?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([createdAt])
+}
+
+model Location {
+  id            String        @id @default(cuid())
+  name          String
+  slug          String
+  address       String?
+  city          String?
+  phone         String?
+  mapsLink      String?
+  isMain        Boolean       @default(false)
+  isActive      Boolean       @default(true)
+  openTime      String?
+  closeTime     String?
+  breakStart    String?
+  breakEnd      String?
+  closedDays    String?
+  staffSheetUrl String?
+  tenantId      String
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staff         Staff[]
+  staffLocations StaffLocation[]
+  services      ServiceLocation[]
+  appointments  Appointment[]
+  settings      LocationSettings?
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+}
+
+model LocationSettings {
+  id                String  @id @default(cuid())
+  smsCredits        Int     @default(0)
+  stripeAccountId   String?
+  paymentStrategy   String  @default("OFF")
+  paymentFixedAmount Float?  @default(5.0)
+  paymentPercentage Int?    @default(20)
+  paymentMandatory  Boolean @default(false)
+  locationId        String  @unique
+  location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  updatedAt         DateTime @updatedAt
+}
+
+model ServiceLocation {
+  id         String   @id @default(cuid())
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  price      Float?
+  isActive   Boolean  @default(true)
+  @@unique([serviceId, locationId])
+}
+
+model Service {
+  id           String        @id @default(cuid())
+  name         String
+  duration     Int
+  price        Float?
+  tenantId     String
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  staff        Staff[]
+  locations    ServiceLocation[]
+}
+
+model Appointment {
+  id            String   @id @default(cuid())
+  customerName  String
+  customerPhone String
+  date          String
+  time          String
+  endTime       String?
+  cancelToken   String   @unique @default(uuid())
+  source        String   @default("ONLINE")
+  isPaid        Boolean  @default(false)
+  paymentStatus String   @default("NONE")
+  stripeSession String?
+  createdAt     DateTime @default(now())
+  serviceId     String?
+  service       Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  staffId       String?
+  staff         Staff?   @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  tenantId      String?
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  locationId    String?
+  location      Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  @@index([locationId])
+  @@index([tenantId, date])
+}
+
+model BlockedSlot {
+  id       String  @id @default(cuid())
+  date     String
+  time     String?
+  endTime  String?
+  tenantId String?
+  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model StoreSettings {
+  id                        String   @id @default(cuid())
+  smsCredits                Int      @default(0)
+  maxConcurrentAppointments Int      @default(1)
+  stripeAccountId           String?
+  stripeOnboardingComplete  Boolean  @default(false)
+  paymentStrategy           String   @default("OFF")
+  paymentFixedAmount        Float?   @default(5.0)
+  paymentPercentage         Int?     @default(20)
+  paymentMandatory          Boolean  @default(false)
+  updatedAt                 DateTime @updatedAt
+  tenantId   String   @unique
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model NoShow {
+  id            String   @id @default(cuid())
+  customerPhone String
+  customerName  String?
+  date          String
+  createdAt     DateTime @default(now())
+  tenantId      String?
+  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  date      String
+  createdAt DateTime @default(now())
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model CustomerNote {
+  id           String   @id @default(cuid())
+  phone        String
+  customerName String?
+  note         String   @default("")
+  preference   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@unique([tenantId, phone])
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  source    String   @default("web")
+  status    String   @default("new")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ActivityLog {
+  id            String   @id @default(cuid())
+  action        String
+  actor         String   @default("system")
+  message       String
+  appointmentId String?
+  customerName  String?
+  customerPhone String?
+  date          String?
+  time          String?
+  metadata      String?
+  createdAt     DateTime @default(now())
+  tenantId      String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+}
+
+model Staff {
+  id           String        @id @default(cuid())
+  name         String
+  tenantId     String
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  services     Service[]
+  baseSchedule    String? @default("{}")
+  shiftExceptions String? @default("[]")
+  commissionRate  Int     @default(0)
+  locationId   String?
+  location     Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  locations    StaffLocation[]
+  appointments Appointment[]
+  @@index([locationId])
+}
+
+model StaffLocation {
+  id         String   @id @default(cuid())
+  staffId    String
+  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  @@unique([staffId, locationId])
+  @@index([staffId])
+  @@index([locationId])
+}
+
+model PlatformReview {
+  id          String   @id @default(cuid())
+  rating      Int      @default(5)
+  text        String
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  tenantId    String   @unique
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model SocialPost {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  imageUrl    String?
+  caption     String
+  status      String   @default("SCHEDULED")
+  platform    String   @default("INSTAGRAM")
+  scheduledFor DateTime?
+  createdAt   DateTime @default(now())
+}

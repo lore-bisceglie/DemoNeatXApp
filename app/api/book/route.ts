@@ -112,7 +112,7 @@ export async function POST(request: Request) {
       month: "2-digit",
       day: "2-digit",
     }).format(new Date());
-    if (date < todayInRome) {
+    if (!isAdmin && date < todayInRome) {
       return NextResponse.json({ error: "Non puoi prenotare una data passata." }, { status: 400 });
     }
     const maxDate = new Date();

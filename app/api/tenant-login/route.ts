@@ -93,8 +93,9 @@ export async function POST(req: Request) {
     if (!tenant.emailVerified) {
       return NextResponse.json(
         {
-          error: "Email non verificata. Controlla la tua casella di posta.",
+          error: "Email non verificata. È richiesta la verifica dell'email prima di accedere alla dashboard. Controlla la tua casella di posta e clicca sul link di conferma.",
           needsVerification: true,
+          email: tenant.ownerEmail,
         },
         { status: 403 }
       );

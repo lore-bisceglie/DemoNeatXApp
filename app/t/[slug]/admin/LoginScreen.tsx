@@ -1,23 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Loader2 } from "lucide-react";
+import { Lock, Loader2, Mail } from "lucide-react";
 
 export default function LoginScreen({
   slug,
   tenantName,
   ownerEmail,
   showLegacyHint,
+  isEmailUnverified,
 }: {
   slug: string;
   tenantName: string;
   ownerEmail?: string | null;
   showLegacyHint?: boolean;
+  isEmailUnverified?: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [needsVerificationAlert, setNeedsVerificationAlert] = useState(isEmailUnverified || false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState(ownerEmail || "");
   const needsEmail = Boolean(ownerEmail);
 
   const handleLogin = async (event: React.FormEvent) => {
@@ -35,6 +39,10 @@ export default function LoginScreen({
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
+      if (data.needsVerification) {
+        setNeedsVerificationAlert(true);
+        if (data.email) setUnverifiedEmail(data.email);
+      }
       setError(data.error || "Credenziali non valide.");
       return;
     }
@@ -53,6 +61,18 @@ export default function LoginScreen({
 
         <h1 className="text-2xl font-extrabold text-white text-center mb-2">Area Privata</h1>
         <p className="text-slate-400 text-center mb-8 font-medium">Gestione {tenantName}</p>
+
+        {needsVerificationAlert && (
+          <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-left">
+            <div className="flex items-center gap-2 text-amber-300 text-sm font-bold mb-1">
+              <Mail size={18} />
+              <span>Verifica email richiesta</span>
+            </div>
+            <p className="text-slate-300 text-xs font-medium leading-relaxed">
+              È richiesta la verifica dell'email prima di accedere alla tua dashboard admin. Controlla la tua casella di posta (inclusa la cartella spam) e clicca sul link di conferma inviato a <strong className="text-amber-200">{unverifiedEmail || ownerEmail || "la tua email"}</strong>.
+            </p>
+          </div>
+        )}
 
         {showLegacyHint && (
           <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">

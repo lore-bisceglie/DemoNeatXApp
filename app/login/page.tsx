@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Loader2, Lock, Store, UserPlus } from "lucide-react";
+import { ArrowRight, Loader2, Lock, Mail, Store, UserPlus } from "lucide-react";
 import { useState } from "react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setNeedsVerification(false);
 
     const res = await fetch("/api/account-login", {
       method: "POST",
@@ -25,6 +28,10 @@ export default function Login() {
     setLoading(false);
 
     if (!res.ok) {
+      if (data.needsVerification) {
+        setNeedsVerification(true);
+        setUnverifiedEmail(data.email || email);
+      }
       setError(data.error || "Email o password non valide.");
       return;
     }
@@ -105,11 +112,22 @@ export default function Login() {
               />
             </label>
 
-            {error && (
+            {needsVerification ? (
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-left">
+                <div className="flex items-center gap-2 text-sm font-bold text-amber-300">
+                  <Mail size={16} />
+                  <span>Verifica email richiesta</span>
+                </div>
+                <p className="mt-1 text-xs font-medium leading-relaxed text-slate-300">
+                  È richiesta la conferma dell'email prima di accedere alla dashboard admin.
+                  Controlla la casella di posta di <strong className="text-amber-200">{unverifiedEmail}</strong> (inclusa la cartella spam) e clicca sul link di verifica.
+                </p>
+              </div>
+            ) : error ? (
               <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">
                 {error}
               </div>
-            )}
+            ) : null}
 
             <button
               type="submit"
