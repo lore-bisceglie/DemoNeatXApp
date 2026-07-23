@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Plan {
+  basic
+  pro
+  elite
+}
+
 model Tenant {
   id            String        @id @default(cuid()) 
   slug          String        @unique
@@ -42,7 +48,7 @@ model Tenant {
   activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
-  plan          String        @default("basic")
+  plan          Plan          @default(basic)
   stripeCustomerId String?
   stripeSubscriptionId String?
   createdAt     DateTime      @default(now())
