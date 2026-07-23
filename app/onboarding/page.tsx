@@ -377,6 +377,7 @@ export default function Onboarding() {
                 Nome attività
               </span>
               <input
+                maxLength={50}
                 value={businessName}
                 onChange={(event) => setBusinessName(event.target.value)}
                 className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
@@ -434,6 +435,7 @@ export default function Onboarding() {
                   Città
                 </span>
                 <input
+                  maxLength={50}
                   value={city}
                   onChange={(event) => setCity(event.target.value)}
                   className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
@@ -452,6 +454,7 @@ export default function Onboarding() {
                   Proprietario
                 </span>
                 <input
+                  maxLength={50}
                   value={ownerName}
                   onChange={(event) => setOwnerName(event.target.value)}
                   className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
@@ -472,6 +475,7 @@ export default function Onboarding() {
                   WhatsApp prenotazioni
                 </span>
                 <input
+                  maxLength={50}
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
                   className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${

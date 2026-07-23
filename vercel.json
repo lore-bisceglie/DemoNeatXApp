@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/marketing",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/academy",
+      "schedule": "0 10 * * *"
     }
   ]
 }
