@@ -326,14 +326,3 @@ model SocialPost {
   createdAt   DateTime @default(now())
 }
 
-model AcademyArticle {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  content     String
-  excerpt     String?
-  seoKeywords String?
-  imageUrl    String?
-  publishedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
-}

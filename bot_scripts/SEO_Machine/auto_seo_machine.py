@@ -100,36 +100,27 @@ def genera_articolo_seo(argomento):
     print(f"[*] IA: Sto scrivendo un articolo SEO approfondito su '{argomento}'...")
     
     prompt = f"""
-Sei un Copywriter SEO esperto di posizionamento su Google.
-Scrivi un articolo di blog completo e ottimizzato per i motori di ricerca sull'argomento: "{argomento}".
+Sei un Copywriter d'assalto e spietato, esperto di SEO e Marketing per la nicchia '{argomento}'.
+Lavori per 'NeatX', un software SaaS gestionale per professionisti su appuntamento (saloni, barbieri, centri estetici).
 
-Il tuo obiettivo finale è convincere il lettore che 'NeatX' è la soluzione definitiva.
-Ecco le funzionalità reali di NeatX da menzionare (non inventare altro):
-- **Gestione orari** — blocco orari e ferie, disponibilità personalizzata per giorno
-- **Fogli presenze** — timesheet esportabile in CSV per il commercialista, ore lavorate per ogni collaboratore
-- **Pacchetti messaggi** — crediti SMS/WhatsApp ricaricabili (da 39€ per 500 messaggi)
-- **Invita clienti** — link referral brandizzato per invitare nuovi clienti tramite messaggio
-- **Recupero clienti** — invio automatico di messaggi con sconto integrati ai clienti che non tornano da 30+ giorni
+Obiettivo: Scrivere un articolo di blog SEO bomba per far capire al lettore che NeatX è superiore a tutto (e in particolare ad app generaliste come Treatwell o BarberApp che rubano l'identità del brand).
 
-Struttura richiesta in Markdown (usa esattamente questo formato, mai label come "H1:" o "H2:"):
-# Titolo SEO accattivante
-## Introduzione
-Testo introduttivo...
-## [Titolo sezione corpo]
-Testo del corpo...
-## [Titolo sezione funzionalità]
-Testo su una funzionalità specifica...
-## Call to Action
-Testo finale...
+Argomento o problema da trattare: "{argomento}"
 
-Regole:
-- Scrivi SOLO in Markdown puro (usa # e ## veri, mai "H1:" o "H2:").
-- Scrivi in italiano, tono professionale ma coinvolgente.
-- Almeno 400 parole.
-- Non includere frontmatter, nessun preambolo, solo il Markdown.
-- Inserisci in modo organico due box promozionali all'interno dell'articolo (uno a metà testo e uno alla fine).
-- Il testo del box deve sembrare un consiglio utile, ad esempio: "💡 TIP: Se perdi ore a pensare a cosa scrivere sui social del tuo salone, abbiamo creato 'L'Arsenale dei Prompt': 50 comandi già pronti da copiare e incollare su ChatGPT per fare post perfetti in 3 minuti. [Scoprili qui: https://tinyurl.com/neatxprompt]"
-- Assicurati che il link https://tinyurl.com/neatxprompt sia cliccabile nel Markdown. Adatta il tono della promozione al contesto del paragrafo in cui lo inserisci.
+Criteri di scrittura (Prompting Operativo Avanzato):
+- **Angolo non ovvio**: Spiega la cosa che nessuno ha il coraggio di dire al tuo target (es. "Se il servizio è prenota gratis, la disdetta psicologica è gratis", oppure "Guardare a fine sera quanti soldi hai fatto è inutile").
+- **Anticipa obiezioni**: Il target farà obiezioni tipo "Ma se chiedo l'acconto i clienti scappano", oppure "Ma Treatwell mi porta clienti nuovi". Scrivi il testo in modo da smontarle prima che le pensino.
+- **Ritmo e Tono**: Ritmo incalzante e veloce. Frasi brevi e dritte al punto. Niente burocratese. Devi sembrare il loro manager che gli spiega dove stanno sbagliando.
+- **Formattazione**: Scrivi SOLO in Markdown puro (usa # e ## veri). Almeno 500 parole. 
+- **Chiusura**: Chiudi sempre l'articolo vendendo elegantemente la soluzione definitiva: usare NeatX. 
+
+Ecco le funzionalità reali di NeatX da menzionare per risolvere il loro problema:
+- **Gestione Acconti su Stripe** — per annullare i no-show.
+- **Nessun bot vocale** — l'interazione è pulita, privata e testuale.
+- **App Privata White-Label** — per non essere confusi nell'elenco infinito dei competitor.
+- **Fogli presenze e Analytics** — per sapere quale servizio porta più margine.
+
+Inserisci due box promozionali testuali (es: "💡 TIP: [promozione]") in modo organico. Usa questo link: https://tinyurl.com/neatxprompt.
 """
     openai_article = openai_text(
         prompt,

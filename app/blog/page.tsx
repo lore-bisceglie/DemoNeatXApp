@@ -3,6 +3,19 @@ import path from 'path'
 import matter from 'gray-matter'
 import Link from 'next/link'
 
+function parseDate(dateString: string) {
+  if (!dateString || dateString === 'Recente') return 0;
+  const italianMonths: Record<string, number> = {
+    'gennaio': 1, 'febbraio': 2, 'marzo': 3, 'aprile': 4, 'maggio': 5, 'giugno': 6,
+    'luglio': 7, 'agosto': 8, 'settembre': 9, 'ottobre': 10, 'novembre': 11, 'dicembre': 12
+  };
+  const parts = dateString.toLowerCase().split(' ');
+  if (parts.length === 3 && italianMonths[parts[1]]) {
+    return new Date(parseInt(parts[2]), italianMonths[parts[1]] - 1, parseInt(parts[0])).getTime();
+  }
+  return new Date(dateString).getTime() || 0;
+}
+
 export default function BlogPage() {
   const blogDir = path.join(process.cwd(), 'content', 'blog')
   
@@ -19,7 +32,7 @@ export default function BlogPage() {
         description: data.description || '',
         slug: data.slug || filename.replace('.md', '')
       }
-    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    }).sort((a, b) => parseDate(b.date) - parseDate(a.date))
   } catch (e) {
     console.error("No blog directory found or error reading files", e)
   }
