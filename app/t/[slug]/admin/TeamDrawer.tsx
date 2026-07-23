@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import ScheduleEditor from "@/components/ScheduleEditor";
 
@@ -44,6 +44,10 @@ export default function TeamDrawer({
   const [loading, setLoading] = useState(false);
 
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
+  const selectedStaffRef = useRef<StaffMember | null>(null);
+  useEffect(() => {
+    selectedStaffRef.current = selectedStaff;
+  }, [selectedStaff]);
   const [staffSheetUrl, setStaffSheetUrl] = useState(initialStaffSheetUrl || "");
   const [savingUrl, setSavingUrl] = useState(false);
 
@@ -64,6 +68,9 @@ export default function TeamDrawer({
   const [savingLocations, setSavingLocations] = useState(false);
 
   const [allLocations, setAllLocations] = useState<Location[]>(initialLocations || []);
+
+  const serviceRequestIdRef = useRef(0);
+  const locationRequestIdRef = useRef(0);
 
   useEffect(() => {
     if (isOpen) {
@@ -149,71 +156,120 @@ export default function TeamDrawer({
     }
   };
 
-  const handleToggleService = async (serviceId: string, hasService: boolean) => {
-    if (!selectedStaff) return;
+  const handleToggleService = async (serviceId: string, _hasService: boolean) => {
+    const currentStaff = selectedStaffRef.current;
+    if (!currentStaff) return;
+
+    const requestId = ++serviceRequestIdRef.current;
     setSavingServices(true);
 
-    const currentServiceIds = selectedStaff.services.map((s) => s.id);
-    let newServiceIds = [];
-    if (hasService) {
-      newServiceIds = currentServiceIds.filter((id) => id !== serviceId);
-    } else {
-      newServiceIds = [...currentServiceIds, serviceId];
-    }
+    const currentIds = currentStaff.services.map((s) => s.id);
+    const newIds = currentIds.includes(serviceId)
+      ? currentIds.filter((id) => id !== serviceId)
+      : [...currentIds, serviceId];
+
+    const updatedServices = newIds
+      .map((id) => allServices.find((s) => s.id === id))
+      .filter((s): s is Service => Boolean(s));
+
+    const updatedStaff: StaffMember = { ...currentStaff, services: updatedServices };
+    selectedStaffRef.current = updatedStaff;
+    setSelectedStaff(updatedStaff);
 
     try {
       const res = await fetch("/api/staff", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          staffId: selectedStaff.id,
-          serviceIds: newServiceIds,
+          staffId: currentStaff.id,
+          serviceIds: newIds,
+          locationIds: updatedStaff.locations.map((l) => l.locationId),
         }),
       });
 
+      if (requestId !== serviceRequestIdRef.current) {
+        return;
+      }
+
       if (res.ok) {
-        const updatedStaff = await res.json();
-        setSelectedStaff(updatedStaff);
-        setStaffList(current => current.map(s => s.id === updatedStaff.id ? updatedStaff : s));
+        const serverStaff = await res.json();
+        selectedStaffRef.current = serverStaff;
+        setSelectedStaff(serverStaff);
+        setStaffList((current) =>
+          current.map((s) => (s.id === serverStaff.id ? serverStaff : s))
+        );
+      } else {
+        showNotification("Errore durante il salvataggio dei servizi.", "error");
+        await fetchStaff();
       }
     } catch (error) {
       console.error("Errore salvataggio servizi", error);
+      if (requestId === serviceRequestIdRef.current) {
+        showNotification("Errore di rete durante il salvataggio dei servizi.", "error");
+        await fetchStaff();
+      }
+    } finally {
+      if (requestId === serviceRequestIdRef.current) {
+        setSavingServices(false);
+      }
     }
-    setSavingServices(false);
   };
 
   const handleToggleLocation = async (locationId: string) => {
-    if (!selectedStaff) return;
+    const currentStaff = selectedStaffRef.current;
+    if (!currentStaff) return;
+
+    const requestId = ++locationRequestIdRef.current;
     setSavingLocations(true);
 
-    const currentLocationIds = selectedStaff.locations.map((l) => l.locationId);
-    let newLocationIds: string[];
-    if (currentLocationIds.includes(locationId)) {
-      newLocationIds = currentLocationIds.filter((id) => id !== locationId);
-    } else {
-      newLocationIds = [...currentLocationIds, locationId];
-    }
+    const currentLocationIds = currentStaff.locations.map((l) => l.locationId);
+    const newLocationIds = currentLocationIds.includes(locationId)
+      ? currentLocationIds.filter((id) => id !== locationId)
+      : [...currentLocationIds, locationId];
+
+    const updatedLocations = newLocationIds.map((id) => ({ locationId: id }));
+
+    const updatedStaff: StaffMember = { ...currentStaff, locations: updatedLocations };
+    selectedStaffRef.current = updatedStaff;
+    setSelectedStaff(updatedStaff);
 
     try {
       const res = await fetch("/api/staff", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          staffId: selectedStaff.id,
-          serviceIds: selectedStaff.services.map((s) => s.id),
+          staffId: currentStaff.id,
+          serviceIds: updatedStaff.services.map((s) => s.id),
           locationIds: newLocationIds,
         }),
       });
 
+      if (requestId !== locationRequestIdRef.current) {
+        return;
+      }
+
       if (res.ok) {
-        const updatedStaff = await res.json();
-        setSelectedStaff(updatedStaff);
-        setStaffList(current => current.map(s => s.id === updatedStaff.id ? updatedStaff : s));
+        const serverStaff = await res.json();
+        selectedStaffRef.current = serverStaff;
+        setSelectedStaff(serverStaff);
+        setStaffList((current) =>
+          current.map((s) => (s.id === serverStaff.id ? serverStaff : s))
+        );
+      } else {
+        showNotification("Errore durante il salvataggio delle sedi.", "error");
+        await fetchStaff();
       }
     } catch (error) {
       console.error("Errore salvataggio sedi", error);
+      if (requestId === locationRequestIdRef.current) {
+        showNotification("Errore di rete durante il salvataggio delle sedi.", "error");
+        await fetchStaff();
+      }
+    } finally {
+      if (requestId === locationRequestIdRef.current) {
+        setSavingLocations(false);
+      }
     }
-    setSavingLocations(false);
   };
 
   const handleSaveSheetUrl = async () => {

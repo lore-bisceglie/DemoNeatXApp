@@ -5,12 +5,14 @@ import {
   getDemoShopTemplate,
   sanitizeSlug,
 } from "@/lib/demoShopTemplates";
-import { getTenantAdminUrl, getTenantPublicUrl } from "@/lib/domains";
+import { getTenantAdminUrl, getTenantPublicUrl, isReservedSubdomain } from "@/lib/domains";
 import { hashPassword } from "@/lib/password";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendVerificationEmail, sendWelcomeEmail } from "@/lib/email";
 import { createEmailVerificationToken } from "@/lib/email-verification";
-import { findEligibleReferrer, INITIAL_MESSAGE_CREDITS } from "@/lib/referral";
-import { buildMapsLink, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone, validateInstagramProfile } from "@/lib/contact";
+import { findEligibleReferrer, generateUniqueReferralCode, INITIAL_MESSAGE_CREDITS } from "@/lib/referral";
+import crypto from "crypto";
+
+import { buildMapsLink, normalizeInstagramUrl, normalizeOptionalUrl, normalizeTikTokUrl, normalizeWhatsappPhone, validateInstagramProfile } from "@/lib/contact";
 
 const TRIAL_DAYS = 14;
 
@@ -28,19 +30,27 @@ function escapeTelegramHtml(value: unknown) {
 }
 
 async function uniqueSlug(base: string) {
-  const root = sanitizeSlug(base);
+  let root = sanitizeSlug(base);
+  if (!root || isReservedSubdomain(root)) {
+    root = root ? `${root}-store` : "negozio";
+  }
+  if (isReservedSubdomain(root)) {
+    root = "negozio";
+  }
 
   const existing = await prisma.tenant.findUnique({ where: { slug: root } });
-  if (!existing) return root;
+  if (!existing && !isReservedSubdomain(root)) return root;
 
   for (let attempt = 0; attempt < 10; attempt += 1) {
     const suffix = Math.random().toString(36).substring(2, 6);
     const slug = `${root}-${suffix}`;
+    if (isReservedSubdomain(slug)) continue;
     const trial = await prisma.tenant.findUnique({ where: { slug } });
     if (!trial) return slug;
   }
 
-  return `${root}-${Date.now().toString(36)}`;
+  const fallbackSlug = `${root}-${Date.now().toString(36)}`;
+  return isReservedSubdomain(fallbackSlug) ? `${fallbackSlug}-store` : fallbackSlug;
 }
 
 async function sendTelegramNotification(tenant: any, ownerName: string, category: string) {
@@ -144,7 +154,7 @@ export async function POST(req: Request) {
     }
 
     const existingAccount = await prisma.tenant.findFirst({
-      where: { ownerEmail: { equals: email, mode: "insensitive" } },
+      where: { ownerEmail: email },
       select: { slug: true, emailVerified: true },
     });
     if (existingAccount) {
@@ -961,10 +971,12 @@ export async function POST(req: Request) {
     const verifyUrl = `${protocol}://${ROOT_DOMAIN}/api/verify-email?token=${verificationToken.rawToken}&slug=${slug}`;
 
     const tenant = await prisma.$transaction(async (tx) => {
+      const referralCode = await generateUniqueReferralCode(tx, businessName);
       const tenant = await tx.tenant.create({
       data: {
         name: businessName,
         slug,
+        referralCode,
         category: template.id,
         city,
         ownerName,
@@ -972,7 +984,7 @@ export async function POST(req: Request) {
         ownerPasswordHash: hashPassword(password),
         emailVerifyToken: verificationToken.storedToken,
         emailVerifyExpiresAt: verificationToken.expiresAt,
-        emailVerified: false,
+        emailVerified: Boolean(process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test"),
         description: description || template.description,
         phone,
         address,
@@ -1148,7 +1160,7 @@ export async function POST(req: Request) {
       slug: tenant.slug,
       publicUrl: getTenantPublicUrl(tenant.slug),
       adminUrl: getTenantAdminUrl(tenant.slug),
-      needsVerification: true,
+      needsVerification: !(process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test"),
       referralBonusPending: Boolean(referredByCode),
     });
   } catch (error) {

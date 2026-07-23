@@ -4,14 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-}
-
-enum Plan {
-  basic
-  pro
-  elite
 }
 
 model Tenant {
@@ -48,7 +42,7 @@ model Tenant {
   activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
-  plan          Plan          @default(basic)
+  plan          String        @default("basic")
   stripeCustomerId String?
   stripeSubscriptionId String?
   createdAt     DateTime      @default(now())

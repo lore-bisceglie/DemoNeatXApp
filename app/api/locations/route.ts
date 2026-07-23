@@ -239,10 +239,13 @@ export async function POST(request: Request) {
         select: { id: true },
       });
       if (staffList.length > 0) {
-        await prisma.staffLocation.createMany({
-          data: staffList.map((s) => ({ staffId: s.id, locationId: location.id })),
-          skipDuplicates: true,
-        });
+        for (const s of staffList) {
+          await prisma.staffLocation.upsert({
+            where: { staffId_locationId: { staffId: s.id, locationId: location.id } },
+            create: { staffId: s.id, locationId: location.id },
+            update: {},
+          });
+        }
       }
     }
 

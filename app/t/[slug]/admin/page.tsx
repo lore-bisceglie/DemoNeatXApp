@@ -66,6 +66,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         tenantName={tenant.name}
         ownerEmail={tenant.ownerEmail}
         showLegacyHint={!tenant.ownerPasswordHash}
+        isEmailUnverified={!tenant.emailVerified}
       />
     );
   }
@@ -301,6 +302,31 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const _waitlistData = waitlistItems;
   const _radarAppointments = radarAppointmentsRaw;
 
+  const findNearestSlotIndex = (timeStr: string, slots: string[]): { index: number; slotTime: string } => {
+    if (!slots.length) return { index: -1, slotTime: timeStr };
+    const exactIndex = slots.indexOf(timeStr);
+    if (exactIndex !== -1) return { index: exactIndex, slotTime: slots[exactIndex] };
+
+    const [h, m] = timeStr.split(":").map(Number);
+    if (isNaN(h) || isNaN(m)) return { index: -1, slotTime: timeStr };
+
+    const targetMins = h * 60 + m;
+    let minDiff = Infinity;
+    let bestIndex = 0;
+
+    for (let i = 0; i < slots.length; i++) {
+      const [sh, sm] = slots[i].split(":").map(Number);
+      const slotMins = sh * 60 + sm;
+      const diff = Math.abs(slotMins - targetMins);
+      if (diff < minDiff) {
+        minDiff = diff;
+        bestIndex = i;
+      }
+    }
+
+    return { index: bestIndex, slotTime: slots[bestIndex] };
+  };
+
   const buildAgendaData = (locId: string | null) => {
     const filteredStaff = !locId ? staffList : staffList.filter(s => 
       s.locationId === locId || (s.locations && s.locations.some((l: any) => l.locationId === locId)) || (!s.locationId && (!s.locations || s.locations.length === 0))
@@ -359,22 +385,37 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           durationMins = end[0] * 60 + end[1] - (start[0] * 60 + start[1]);
         }
 
-        const slotsToCover = Math.ceil(durationMins / 15);
-        const startIndex = app.time === "ALL_DAY" ? 0 : allSlots.indexOf(app.time);
+        const slotsToCover = Math.max(1, Math.ceil(durationMins / 15));
+        
+        let startIndex = -1;
+        let slotKey = app.time;
 
-        if (startIndex !== -1) {
+        if (app.time === "ALL_DAY") {
+          startIndex = 0;
+          slotKey = allSlots[0] || "09:00";
+        } else {
+          const matched = findNearestSlotIndex(app.time, allSlots);
+          startIndex = matched.index;
+          slotKey = matched.slotTime;
+        }
+
+        if (startIndex !== -1 && slotKey) {
           const appWithSpan = { ...app, _rowSpan: slotsToCover };
           const targetCol = app.staffId && cols.includes(app.staffId) ? app.staffId : cols[0];
-          const actualTime = app.time === "ALL_DAY" ? "09:00" : app.time;
 
           if (!map[app.date]) map[app.date] = {};
           if (!map[app.date][targetCol]) map[app.date][targetCol] = {};
-          map[app.date][targetCol][actualTime] = appWithSpan;
+          if (!Array.isArray(map[app.date][targetCol][slotKey])) {
+            map[app.date][targetCol][slotKey] = [];
+          }
+          map[app.date][targetCol][slotKey].push(appWithSpan);
 
           for (let idx = 1; idx < slotsToCover; idx++) {
             const coveredSlot = allSlots[startIndex + idx];
             if (coveredSlot) {
-              map[app.date][targetCol][coveredSlot] = "COVERED";
+              if (!map[app.date][targetCol][coveredSlot]) {
+                map[app.date][targetCol][coveredSlot] = "COVERED";
+              }
             }
           }
         }
@@ -390,7 +431,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         const isPastToday = dayInfo.date === todayItaly && timeToMinutes(slot) <= currentTotalMinutes;
         let isSlotCompletelyFree = false;
         for (const colId of cols) {
-          if (!map[dayInfo.date]?.[colId]?.[slot]) {
+          const slotVal = map[dayInfo.date]?.[colId]?.[slot];
+          const hasAppt = slotVal === "COVERED" || (Array.isArray(slotVal) && slotVal.length > 0);
+          if (!hasAppt) {
             isSlotCompletelyFree = true;
             break;
           }
@@ -781,6 +824,21 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </div>
         </div>
 
+        {searchParams?.error && (
+          <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-between gap-4 animate-in fade-in duration-200">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">⚠️</span>
+              <div>
+                <p className="font-bold text-sm">
+                  {searchParams.error === "MULTIPLE_CONFLICTS"
+                    ? "Conflitto orari: Esistono già appuntamenti programmati nella fascia oraria o periodo selezionato."
+                    : `Errore: ${searchParams.error}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Dashboard cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
           <div className="bg-gradient-to-br from-[#0b1221] to-[#0f192b] p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 border border-white/5 flex flex-col justify-center h-full min-h-[320px] transition-all duration-300 hover:-translate-y-1 hover:shadow-cyan-500/10 hover:border-cyan-500/30 group">
@@ -1036,30 +1094,36 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                         {viewWeekDays.map((d, dIndex) => {
                           const cols: any[] = [];
                           columns.forEach((colId, cIndex) => {
-                            const appt = radarMap[d.date]?.[colId]?.[slot];
+                            const apptVal = radarMap[d.date]?.[colId]?.[slot];
                             const cellKey = `${d.date}-${slot}-${colId}`;
                             const targetColumn = (dIndex * maxConcurrent) + cIndex + 2;
 
-                            if (appt === "COVERED") {
+                            if (apptVal === "COVERED") {
                               return;
                             }
 
-                            if (appt) {
+                            const appts = Array.isArray(apptVal) ? apptVal : apptVal ? [apptVal] : [];
+
+                            if (appts.length > 0) {
                               const [y, m, dStr] = d.date.split("-");
+                              const maxSpan = Math.max(...appts.map((a: any) => a._rowSpan || 1));
                               cols.push(
                                 <div
                                   key={cellKey}
                                   style={{
-                                    gridRow: `span ${appt._rowSpan} / span ${appt._rowSpan}`,
+                                    gridRow: `span ${maxSpan} / span ${maxSpan}`,
                                     gridColumn: targetColumn
                                   }}
-                                  className="h-full min-h-[32px] sm:min-h-[38px] py-px relative z-10"
+                                  className="h-full min-h-[32px] sm:min-h-[38px] py-px relative z-10 flex flex-col gap-1"
                                 >
-                                  <AppointmentBlock
-                                    appt={appt}
-                                    italianDate={`${dStr}/${m}/${y}`}
-                                    durationInMinutes={appt._rowSpan * 15}
-                                  />
+                                  {appts.map((item: any, itemIdx: number) => (
+                                    <AppointmentBlock
+                                      key={item.id || itemIdx}
+                                      appt={item}
+                                      italianDate={`${dStr}/${m}/${y}`}
+                                      durationInMinutes={(item._rowSpan || 1) * 15}
+                                    />
+                                  ))}
                                 </div>
                               );
                               return;

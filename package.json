@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit --incremental false",
     "check": "npm run lint && npm run typecheck && npm run build",
     "test:release": "tsx scripts/release-unit-tests.ts",
+    "test": "playwright test",
+    "test:e2e": "playwright test",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"
@@ -26,6 +28,7 @@
     "@supabase/supabase-js": "^2.110.1",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "@vercel/analytics": "^2.0.1",
     "ai": "^7.0.16",
     "gray-matter": "^4.0.3",
     "lucide-react": "^1.23.0",
@@ -42,6 +45,7 @@
     "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.1",

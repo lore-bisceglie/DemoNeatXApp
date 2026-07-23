@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type ModalState = "NONE" | "CONFIRM_NOSHOW";
 
@@ -52,6 +53,7 @@ export default function DeleteButton({
 }) {
   const [loading, setLoading] = useState(false);
   const [modalState, setModalState] = useState<ModalState>("NONE");
+  const router = useRouter();
 
   const deleteAppointment = async () => {
     const noCache = Date.now();
@@ -69,32 +71,41 @@ export default function DeleteButton({
   };
 
   const handleClick = async () => {
-    setLoading(true);
     const digits = whatsappPhone(phone || "");
-    const whatsappTab = !isSpecial && digits && phone !== "0000000000"
-      ? window.open("about:blank", "_blank")
-      : null;
+    const shouldOpenWhatsapp = Boolean(digits && !isSpecial && phone && phone !== "0000000000");
+
+    let popupWindow: Window | null = null;
+    if (shouldOpenWhatsapp) {
+      popupWindow = window.open("about:blank", "_blank");
+    }
+
+    setLoading(true);
 
     try {
       await deleteAppointment();
 
-      if (digits && whatsappTab) {
-        whatsappTab.opener = null;
+      if (shouldOpenWhatsapp) {
         const message = cancellationMessage({ customerName, date, time });
-        whatsappTab.location.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
-        setTimeout(() => window.location.reload(), 500);
-      } else if (digits && !isSpecial && phone && phone !== "0000000000") {
-        const message = cancellationMessage({ customerName, date, time });
-        window.location.href = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+        const targetUrl = `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+        if (popupWindow) {
+          popupWindow.location.href = targetUrl;
+        } else {
+          window.location.href = targetUrl;
+        }
+        router.refresh();
       } else if (!isSpecial && phone && phone !== "0000000000") {
+        if (popupWindow) popupWindow.close();
         alert("Appuntamento eliminato, ma il numero WhatsApp del cliente non è valido.");
-        window.location.reload();
+        router.refresh();
       } else {
-        window.location.reload();
+        if (popupWindow) popupWindow.close();
+        router.refresh();
       }
     } catch (error) {
+      if (popupWindow) popupWindow.close();
       console.error(error);
       alert("Errore durante l'eliminazione. Riprova.");
+    } finally {
       setLoading(false);
     }
   };
@@ -121,10 +132,11 @@ export default function DeleteButton({
         throw new Error("Impossibile registrare il No-Show.");
       }
 
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       console.error(error);
       alert("Errore durante la registrazione dell'assenza. Riprova.");
+    } finally {
       setLoading(false);
     }
   };

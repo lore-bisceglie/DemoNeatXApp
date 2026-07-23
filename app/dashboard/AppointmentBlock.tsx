@@ -18,6 +18,7 @@ export default function AppointmentBlock({
   const [isOpen, setIsOpen] = useState(false);
   const [isPaid, setIsPaid] = useState(appt.isPaid || false);
   const [loading, setLoading] = useState(false);
+  const [paidError, setPaidError] = useState("");
   const [moveOpen, setMoveOpen] = useState(false);
   const [moveDate, setMoveDate] = useState(appt.date || "");
   const [moveTime, setMoveTime] = useState(appt.time || "");
@@ -69,6 +70,12 @@ export default function AppointmentBlock({
 
   const togglePaid = async () => {
     setLoading(true);
+    setPaidError("");
+    const previousPaidState = isPaid;
+    const targetPaidState = !isPaid;
+
+    // Optimistically update UI
+    setIsPaid(targetPaidState);
 
     try {
       const res = await fetch(`/api/appointment/${appt.id}/paid`, {
@@ -77,19 +84,27 @@ export default function AppointmentBlock({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          isPaid: !isPaid,
+          isPaid: targetPaidState,
         }),
       });
 
       if (!res.ok) {
-        console.error("Errore pagamento:", res.status);
+        // Revert UI state on API error
+        setIsPaid(previousPaidState);
+        const errorMsg = "Impossibile aggiornare lo stato del pagamento. Riprova.";
+        setPaidError(errorMsg);
+        alert(errorMsg);
         return;
       }
 
-      setIsPaid(!isPaid);
       router.refresh();
     } catch (error) {
       console.error(error);
+      // Revert UI state on network error
+      setIsPaid(previousPaidState);
+      const errorMsg = "Errore di connessione durante l'aggiornamento del pagamento.";
+      setPaidError(errorMsg);
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -267,28 +282,35 @@ export default function AppointmentBlock({
             )}
 
             {!isSpecial && (
-              <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex items-center justify-between mb-6 shadow-inner">
-                <div>
-                  <p className="text-sm font-bold text-white">
-                    Pagato
-                  </p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
-                    Segna pagamento ricevuto o pagamento online demo
-                  </p>
-                </div>
-                <button
-                  onClick={togglePaid}
-                  disabled={loading}
-                  className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${
-                    isPaid ? "bg-emerald-500" : "bg-slate-700"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
-                      isPaid ? "translate-x-6" : "translate-x-1"
+              <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-4 flex flex-col mb-6 shadow-inner">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-white">
+                      Pagato
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
+                      Segna pagamento ricevuto o pagamento online demo
+                    </p>
+                  </div>
+                  <button
+                    onClick={togglePaid}
+                    disabled={loading}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${
+                      isPaid ? "bg-emerald-500" : "bg-slate-700"
                     }`}
-                  />
-                </button>
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        isPaid ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+                {paidError && (
+                  <p className="text-xs text-red-400 font-bold mt-2 pt-2 border-t border-[#1e2b4a]">
+                    {paidError}
+                  </p>
+                )}
               </div>
             )}
 

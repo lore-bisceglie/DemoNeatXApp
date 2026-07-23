@@ -53,6 +53,11 @@ function actionButton(url: string, label: string, color = "#0ea5e9") {
 }
 
 export async function sendEmail(options: { to: string; subject: string; html: string; replyTo?: string }) {
+  if (process.env.MOCK_EMAIL === "true" || process.env.NODE_ENV === "test") {
+    console.log(`[Email Mock] Simulated email to ${options.to}: ${options.subject}`);
+    return true;
+  }
+
   const replyTo = options.replyTo || supportEmail();
   const resendApiKey = process.env.RESEND_API_KEY;
 
@@ -74,7 +79,6 @@ export async function sendEmail(options: { to: string; subject: string; html: st
       console.error("[Email] Resend non disponibile, provo SMTP:", error instanceof Error ? error.message : "errore sconosciuto");
     }
   }
-
   const user = process.env.SMTP_EMAIL || process.env.GMAIL_USER;
   const transporter = getTransporter();
   if (!transporter || !user) {

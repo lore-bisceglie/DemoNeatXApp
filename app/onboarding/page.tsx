@@ -18,7 +18,8 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import { demoCategoryOptions } from "@/lib/demoShopTemplates";
+import { demoCategoryOptions, sanitizeSlug } from "@/lib/demoShopTemplates";
+import { isReservedSubdomain } from "@/lib/domains";
 import { validateInstagramProfile } from "@/lib/contact";
 
 const categoryHints: Record<string, { services: string; staff: string; bookings: string }> = {
@@ -136,6 +137,28 @@ export default function Onboarding() {
   );
   const hint = categoryHints[category] || categoryHints.barber;
   const instagramProfile = useMemo(() => validateInstagramProfile(instagramUrl), [instagramUrl]);
+
+  const previewSlug = useMemo(() => {
+    if (!businessName.trim()) return "";
+    let raw = sanitizeSlug(businessName);
+    if (!raw || isReservedSubdomain(raw)) {
+      raw = raw ? `${raw}-store` : "negozio";
+    }
+    if (isReservedSubdomain(raw)) {
+      raw = "negozio";
+    }
+    return raw;
+  }, [businessName]);
+
+  const isOnlySpecialChars = useMemo(() => {
+    if (!businessName.trim()) return false;
+    return !/[a-zA-Z0-9]/.test(businessName);
+  }, [businessName]);
+
+  const isReservedName = useMemo(() => {
+    if (!businessName.trim()) return false;
+    return isReservedSubdomain(sanitizeSlug(businessName));
+  }, [businessName]);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -363,6 +386,26 @@ export default function Onboarding() {
               />
               {attemptedSubmit && !businessName.trim() && (
                 <p className="mt-1 text-xs font-bold text-red-400">Questo campo è richiesto.</p>
+              )}
+              {businessName.trim() && (
+                <div className="mt-1.5 text-xs font-medium">
+                  {isOnlySpecialChars ? (
+                    <p className="text-amber-400">
+                      ⚠️ Il nome contiene solo caratteri speciali. Verrà generato lo slug:{" "}
+                      <span className="font-bold text-amber-300">{previewSlug}.neatx.store</span>
+                    </p>
+                  ) : isReservedName ? (
+                    <p className="text-amber-400">
+                      ⚠️ Sottodominio riservato. Verrà generato lo slug alternativo:{" "}
+                      <span className="font-bold text-amber-300">{previewSlug}.neatx.store</span>
+                    </p>
+                  ) : (
+                    <p className="text-slate-400">
+                      Anteprima link:{" "}
+                      <span className="font-bold text-cyan-300">{previewSlug}.neatx.store</span>
+                    </p>
+                  )}
+                </div>
               )}
             </label>
 

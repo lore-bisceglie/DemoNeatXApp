@@ -12,6 +12,8 @@ export default function Login() {
   const [verificationSlug, setVerificationSlug] = useState("");
   const [secondaryLoading, setSecondaryLoading] = useState(false);
   const [error, setError] = useState("");
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +21,7 @@ export default function Login() {
     event.preventDefault();
     setLoading(true);
     setError("");
+    setNeedsVerification(false);
     setMessage("");
     setVerificationSlug("");
 
@@ -32,8 +35,10 @@ export default function Login() {
     setLoading(false);
 
     if (!res.ok) {
-      if (data.needsVerification && typeof data.slug === "string") {
-        setVerificationSlug(data.slug);
+      if (data.needsVerification) {
+        setNeedsVerification(true);
+        setUnverifiedEmail(data.email || email);
+        if (typeof data.slug === "string") setVerificationSlug(data.slug);
       }
       setError(data.error || "Email o password non valide.");
       return;
@@ -165,11 +170,22 @@ export default function Login() {
               </label>
             )}
 
-            {error && (
+            {needsVerification ? (
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-left">
+                <div className="flex items-center gap-2 text-sm font-bold text-amber-300">
+                  <Mail size={16} />
+                  <span>Verifica email richiesta</span>
+                </div>
+                <p className="mt-1 text-xs font-medium leading-relaxed text-slate-300">
+                  È richiesta la conferma dell'email prima di accedere alla dashboard admin.
+                  Controlla la casella di posta di <strong className="text-amber-200">{unverifiedEmail}</strong> (inclusa la cartella spam) e clicca sul link di verifica.
+                </p>
+              </div>
+            ) : error ? (
               <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">
                 {error}
               </div>
-            )}
+            ) : null}
             {message && (
               <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-300">
                 {message}

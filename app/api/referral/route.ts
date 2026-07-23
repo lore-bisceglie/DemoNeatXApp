@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireTenantAdmin } from "@/lib/auth";
+import { ensureReferralCode } from '@/lib/referral';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -21,30 +22,22 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
   }
 
-  // Genera referral code se non esiste
-  if (!tenant.referralCode) {
-    const code = tenant.name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 12) || tenant.slug.toUpperCase().slice(0, 12);
-    await prisma.tenant.update({
-      where: { id: tenantId },
-      data: { referralCode: code },
-    });
-    tenant.referralCode = code;
-  }
+  const referralCode = await ensureReferralCode(tenant.id);
 
   // Conta referral fatti
   const referralCount = await prisma.tenant.count({
-    where: { referredByCode: tenant.referralCode, trialStatus: 'converted' },
+    where: { referredByCode: referralCode, trialStatus: 'converted' },
   });
 
   const totalReferrals = await prisma.tenant.count({
-    where: { referredByCode: tenant.referralCode },
+    where: { referredByCode: referralCode },
   });
 
   const creditsEarned = referralCount * 100; // 100 crediti SMS per ogni referral convertito
 
   return NextResponse.json({
-    referralCode: tenant.referralCode,
-    referralLink: `https://neatx.store/registrazione?ref=${tenant.referralCode}`,
+    referralCode,
+    referralLink: `https://neatx.store/registrazione?ref=${referralCode}`,
     totalReferrals,
     convertedReferrals: referralCount,
     creditsEarned,
