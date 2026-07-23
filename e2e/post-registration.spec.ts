@@ -32,6 +32,7 @@ test("Complete NeatX E2E Journey: Onboarding, Admin Login & Dashboard Booking", 
     await page.fill('input[placeholder="Es. 3331234567"]', testPhone);
     await page.fill('input[placeholder="Es. mario@email.com"]', testEmail);
     await page.fill('input[placeholder="Almeno 8 caratteri"]', testPassword);
+    await page.fill('input[placeholder="Ripeti la password"]', testPassword);
 
     // Accept legal terms
     await page.check("input#onboarding-legal");
@@ -42,10 +43,16 @@ test("Complete NeatX E2E Journey: Onboarding, Admin Login & Dashboard Booking", 
     await createButton.click();
 
     // Expect successful store creation screen
-    await expect(page.getByText(/online|Account creato/i)).toBeVisible({ timeout: 20000 });
+    try {
+      await expect(page.getByText("Account creato")).toBeVisible({ timeout: 20000 });
+    } catch (error) {
+      const pageText = await page.innerText("body");
+      console.log("PAGE TEXT DUMP:", pageText);
+      throw error;
+    }
 
     // Extract admin dashboard link
-    const adminLink = page.getByRole("link", { name: "Entra nella dashboard" });
+    const adminLink = page.locator('a:has-text("Entra nella dashboard")');
     await expect(adminLink).toBeVisible();
 
     const href = await adminLink.getAttribute("href");
