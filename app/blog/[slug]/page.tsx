@@ -1,34 +1,36 @@
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
 import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { prisma } from '@/lib/prisma'
-
-export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   if (!/^[a-z0-9-]+$/.test(slug)) return {}
-  
-  const article = await prisma.academyArticle.findUnique({
-    where: { slug }
-  })
-  if (!article) return {}
-
+  const filePath = path.join(process.cwd(), 'content', 'blog', `${slug}.md`)
+  if (!fs.existsSync(filePath)) return {}
+  const { data, content } = matter(fs.readFileSync(filePath, 'utf-8'))
+  const description = String(data.description || content.replace(/[#*_`\n]/g, ' ').trim().slice(0, 155))
+  const title = String(data.title || 'NeatX Blog')
   const canonical = `https://www.neatx.store/blog/${slug}`
   return {
-    title: article.title,
-    description: article.excerpt || article.title,
-    keywords: article.seoKeywords?.split(',') || [],
+    title,
+    description,
     alternates: { canonical },
-    openGraph: { 
-      title: article.title, 
-      description: article.excerpt || '', 
-      url: canonical, 
-      type: 'article',
-      images: article.imageUrl ? [{ url: article.imageUrl }] : []
-    },
+    openGraph: { title, description, url: canonical, type: 'article' },
   }
+}
+
+export async function generateStaticParams() {
+  const blogDir = path.join(process.cwd(), 'content', 'blog')
+  if (!fs.existsSync(blogDir)) return []
+  
+  const files = fs.readdirSync(blogDir)
+  return files.map((file) => ({
+    slug: file.replace('.md', ''),
+  }))
 }
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
@@ -36,40 +38,37 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const { slug } = resolvedParams;
   if (!/^[a-z0-9-]+$/.test(slug)) notFound()
   
-  const article = await prisma.academyArticle.findUnique({
-    where: { slug }
-  })
+  const blogDir = path.join(process.cwd(), 'content', 'blog')
+  const filePath = path.join(blogDir, `${slug}.md`)
   
-  if (!article) {
+  if (!fs.existsSync(filePath)) {
     notFound()
   }
 
+  const fileContent = fs.readFileSync(filePath, 'utf-8')
+  const { data, content } = matter(fileContent)
+
   // Rimuoviamo il titolo H1 dal Markdown perché lo renderizziamo noi custom in alto
-  const contentWithoutH1 = article.content.replace(/^#\s+.+\n/, '');
+  const contentWithoutH1 = content.replace(/^#\s+.+\n/, '');
 
   return (
     <article className="min-h-screen bg-[#050814]">
       {/* Header Articolo */}
-      <header className="bg-[#0b1221] text-white py-24 px-4 text-center border-b border-[#1a2642] relative overflow-hidden">
-        {article.imageUrl && (
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <img src={article.imageUrl} alt="Background" className="w-full h-full object-cover blur-sm" />
-          </div>
-        )}
-        <div className="max-w-4xl mx-auto relative z-10">
+      <header className="bg-[#0b1221] text-white py-24 px-4 text-center border-b border-[#1a2642]">
+        <div className="max-w-4xl mx-auto">
           <div className="flex justify-center gap-6 mb-8 text-sm font-semibold uppercase tracking-widest">
             <Link href="/" className="text-slate-400 hover:text-[#00b4ff] transition-colors">
               ← NeatX Home
             </Link>
             <Link href="/blog" className="text-[#00b4ff] hover:text-white transition-colors">
-              ← Torna all'Academy
+              ← Torna al Blog
             </Link>
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-            {article.title}
+            {data.title || "Articolo Senza Titolo"}
           </h1>
           <div className="text-slate-400 text-lg">
-            Pubblicato il: {new Date(article.publishedAt).toLocaleDateString('it-IT')}
+            Pubblicato il: {data.date || "Oggi"}
           </div>
         </div>
       </header>
@@ -104,4 +103,3 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     </article>
   )
 }
-
