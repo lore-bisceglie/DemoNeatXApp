@@ -2,9 +2,9 @@ import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
-import dotenv from "dotenv";
+import { loadEnvConfig } from "@next/env";
 
-dotenv.config();
+loadEnvConfig(process.cwd());
 const prisma = new PrismaClient();
 
 const topics = [
