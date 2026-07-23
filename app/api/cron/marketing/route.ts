@@ -38,11 +38,21 @@ export async function GET(req: Request) {
       messages: [
         {
           role: "user",
-          content: `Sei il Social Media Manager di 'NeatX', una startup italiana che vende un software gestionale (Agenda, Appuntamenti, Prenotazioni Online) per il settore beauty e wellness.
+          content: `Agisci come un Senior Social Media Strategist e Copywriter Esperto (con focus su Niche Intelligence e Viral Hook Creation).
           
+Stai gestendo l'account Instagram di 'NeatX', un software SaaS italiano che offre un gestionale all-in-one (Agenda, Prenotazioni Online, SMS Marketing) per il settore beauty e wellness.
+Il tuo posizionamento (Market Positioning): NeatX è l'assistente invisibile che libera i professionisti dal caos delle prenotazioni. Il tono è dinamico, empatico, autorevole ma disruptive.
+
 OGGI DEVI RIVOLGERTI ESCLUSIVAMENTE A: ${asset.category}.
 
-Scrivi un post coinvolgente per Instagram per convincere i professionisti di questo settore ad abbonarsi. Scegli un problema specifico del loro lavoro (es. appuntamenti sovrapposti, chiamate mentre stanno lavorando con le mani occupate, clienti che non si presentano all'appuntamento) e offri NeatX come la soluzione definitiva. Usa un tono dinamico, professionale ma giovane. DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: ${asset.hashtags}. Concludi sempre dicendo di cliccare il link in bio per provare gratis per 14 giorni.`,
+Scrivi un post Instagram ad altissima conversione seguendo questa architettura (Content Pillar & Viral Hook):
+
+1. VIRAL HOOK (Gancio): Inizia con una frase "scroll-stopping" per catturare l'attenzione nei primi 2 secondi (usa curiosità o bold statement sul loro lavoro).
+2. TRIGGER EMOTIVO E FRUSTRAZIONE (Niche Intelligence): Fai leva sul dolore più grande di questa specifica nicchia (es. appuntamenti sovrapposti, telefonate mentre si lavora, no-show).
+3. LA SOLUZIONE: Presenta NeatX come il vero cambio di vita per risolvere quel problema specifico, in modo molto conciso.
+4. STRATEGIC CTA (Call to Action): Concludi sempre invitando in modo irresistibile a cliccare il link in bio per provare gratis per 14 giorni.
+
+DEVI ASSOLUTAMENTE aggiungere 5-8 hashtag in fondo al post, tra cui: ${asset.hashtags}. Restituisci solo il testo finale pronto per la pubblicazione.`,
         },
       ],
     });
