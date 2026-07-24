@@ -9,6 +9,16 @@ export default function TutorialButton() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Auto-start on very first visit
+    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v1");
+    if (!hasSeenTutorial) {
+      // Small timeout to ensure DOM elements (tabs, header) are fully mounted and visible
+      setTimeout(() => {
+        startTour();
+        localStorage.setItem("neatx_tutorial_seen_v1", "true");
+      }, 1000);
+    }
   }, []);
 
   const startTour = () => {
