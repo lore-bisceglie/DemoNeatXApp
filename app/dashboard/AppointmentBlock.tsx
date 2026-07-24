@@ -37,7 +37,7 @@ export default function AppointmentBlock({
   const isSpecial = isPausa || isFerie;
 
   const rowSpan = Math.ceil(durationInMinutes / 15);
-  const textClass = rowSpan > 1 ? "text-xs" : "text-[11px]";
+  const textClass = rowSpan > 1 ? "text-sm" : "text-xs";
 
   let blockClass =
     "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20";
@@ -149,7 +149,7 @@ export default function AppointmentBlock({
       <button
         onClick={() => setIsOpen(true)}
         style={{ gridRow: `span ${rowSpan} / span ${rowSpan}` }}
-        className={`w-full flex flex-col items-center justify-center rounded-xl font-bold border p-1 text-center truncate transition-all relative z-10 ${blockClass} ${textClass} h-full min-h-[35px]`}
+        className={`w-full flex flex-col items-center justify-center rounded-xl font-bold border p-1 text-center truncate transition-all relative z-10 ${blockClass} ${textClass} h-full min-h-[44px]`}
         title={`${appt.customerName}`}
       >
         {isFerie ? (

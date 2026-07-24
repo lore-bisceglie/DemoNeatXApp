@@ -532,7 +532,7 @@ export default function Onboarding() {
                   className={`w-full rounded-2xl border bg-[#050814] px-4 py-3 text-white outline-none transition ${
                     attemptedSubmit && !instagramProfile.valid ? "border-red-500" : "border-[#1e2b4a] focus:border-cyan-400"
                   }`}
-                  placeholder="https://www.instagram.com/nomeprofilo/"
+                  placeholder="Es. https://instagram.com/..."
                 />
                 <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
                   Apri il tuo profilo Instagram, scegli <strong>Condividi profilo → Copia link</strong> e incollalo qui. Va bene anche @nomeutente. Non inserire il link di un post o Reel.
@@ -550,7 +550,7 @@ export default function Onboarding() {
                   value={tiktokUrl}
                   onChange={(event) => setTiktokUrl(event.target.value)}
                   className="w-full rounded-2xl border border-[#1e2b4a] bg-[#050814] px-4 py-3 text-white outline-none transition focus:border-cyan-400"
-                  placeholder="Es. @neatx_agenda"
+                  placeholder="Es. https://tiktok.com/@..."
                 />
               </label>
             </div>

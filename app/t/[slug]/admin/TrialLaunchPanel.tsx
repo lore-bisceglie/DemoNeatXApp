@@ -456,13 +456,13 @@ export default function TrialLaunchPanel({
                 value={shopDraft.instagramUrl}
                 onChange={(event) => setShopDraft((current) => ({ ...current, instagramUrl: event.target.value }))}
                 className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="Instagram, es. @neatx_agenda"
+                placeholder="Instagram, es. https://instagram.com/..."
               />
               <input
                 value={shopDraft.tiktokUrl}
                 onChange={(event) => setShopDraft((current) => ({ ...current, tiktokUrl: event.target.value }))}
                 className="rounded-xl border border-[#1e2b4a] bg-[#050814] px-3 py-2 text-sm text-white outline-none focus:border-cyan-400"
-                placeholder="TikTok, es. @neatx_agenda"
+                placeholder="TikTok, es. https://tiktok.com/@..."
               />
             </div>
 

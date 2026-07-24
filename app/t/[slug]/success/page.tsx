@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { stripe } from "@/lib/stripe";
-import { CheckCircle2, CalendarPlus, MapPin, Phone, ArrowLeft } from "lucide-react";
+import { CheckCircle2, CalendarPlus, MapPin, Phone, ArrowLeft, MessageCircle } from "lucide-react";
 
 export default async function SuccessPage(props: {
   params: Promise<{ slug: string }>;
@@ -108,32 +108,32 @@ export default async function SuccessPage(props: {
     
     googleCalLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(text)}&dates=${formatCalDate(startUtc)}/${formatCalDate(endUtc)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(locationStr)}`;
 
-    // File .ics universale (Apple Calendar, Outlook, Samsung Calendar, ecc.)
-    const icsContent = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//NeatX//Prenotazioni//IT",
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      "BEGIN:VEVENT",
-      `DTSTART:${formatCalDate(startUtc)}`,
-      `DTEND:${formatCalDate(endUtc)}`,
-      `SUMMARY:${text}`,
-      `DESCRIPTION:${details.replace(/,/g, "\\,")}`,
-      `LOCATION:${locationStr.replace(/,/g, "\\,")}`,
-      `STATUS:CONFIRMED`,
-      `BEGIN:VALARM`,
-      `TRIGGER:-PT1H`,
-      `ACTION:DISPLAY`,
-      `DESCRIPTION:Promemoria appuntamento tra 1 ora`,
-      `END:VALARM`,
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
-
-    icsDataUri = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
+    icsDataUri = `/api/calendar/${appointment.id}`;
     
     dateFormatted = startUtc.toLocaleDateString('it-IT', { timeZone: 'Europe/Rome', weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  let waLink = "";
+  if (appointment && appointment.service && !isValid) {
+    const cancelUrl = `https://www.neatx.store/cancel/${appointment.cancelToken}`;
+    const priceString = appointment.service.price ? ` (${appointment.service.price}€)` : "";
+
+    const confirmText = `📅 *Nuova Prenotazione!*\n\n` +
+      `👤 *Cliente:* ${appointment.customerName}\n` +
+      `📱 *Telefono:* ${appointment.customerPhone || "Non inserito"}\n` +
+      `📅 *Data:* ${appointment.date.split("-").reverse().join("/")}\n` +
+      `⏰ *Ora:* ${appointment.time}\n` +
+      `📌 *Servizio:* ${appointment.service.name}${priceString}\n` +
+      `💳 *Pagamento:* in salone\n\n` +
+      `❌ *Per annullare in autonomia:*\n` +
+      `Puoi usare questo link fino a 2 ore prima dell'appuntamento:\n${cancelUrl}\n\n` +
+      `_Prenotazione gestita tramite NeatX._ 🚀`;
+
+    const tenantPhone = appointment.location?.phone || appointment.tenant?.phone || "";
+    const cleanPhone = tenantPhone.replace(/\D/g, "");
+    if (cleanPhone) {
+      waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(confirmText)}`;
+    }
   }
 
   return (
@@ -184,9 +184,20 @@ export default async function SuccessPage(props: {
         <div className="space-y-3">
           {appointment && appointment.service && (
             <>
+              {waLink && !isValid && (
+                <a 
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold rounded-2xl transition shadow-[0_0_20px_rgba(37,211,102,0.15)] mb-3"
+                >
+                  <MessageCircle size={20} />
+                  Invia conferma su WhatsApp
+                </a>
+              )}
+              
               <a 
                 href={icsDataUri}
-                download={`appuntamento-${appointment.date}.ics`}
                 className="flex items-center justify-center gap-2 w-full py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-2xl transition shadow-[0_0_20px_rgba(0,180,255,0.15)]"
               >
                 <CalendarPlus size={20} />

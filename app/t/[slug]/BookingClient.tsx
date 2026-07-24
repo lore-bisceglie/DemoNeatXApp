@@ -533,37 +533,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
           return;
         }
 
-        // Se il pagamento è in salone, apriamo WhatsApp in una nuova scheda
-        const baseUrl = window.location.origin;
-        const cancelUrl = `${baseUrl}/cancel/${data.cancelToken}`;
-        const priceString = effectiveServicePrice ? ` (${effectiveServicePrice}€)` : "";
-
-        const confirmText = `📅 *Nuova Prenotazione!*\n\n` +
-          `👤 *Cliente:* ${name}\n` +
-          `📱 *Telefono:* ${phone || "Non inserito"}\n` +
-          `📅 *Data:* ${date.split("-").reverse().join("/")}\n` +
-          `⏰ *Ora:* ${selectedSlot}\n` +
-          `📌 *Servizio:* ${selectedService?.name}${priceString}\n` +
-          `💳 *Pagamento:* in salone\n\n` +
-          `❌ *Per annullare in autonomia:*\n` +
-          `Puoi usare questo link fino a 2 ore prima dell'appuntamento:\n${cancelUrl}\n\n` +
-          `_Prenotazione gestita tramite NeatX._ 🚀`;
-
-        const tenantPhone = selectedLocation?.phone || tenantInfo.phone;
-        const cleanPhone = tenantPhone.replace(/\D/g, "");
-        const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-          confirmText
-        )}`;
-
-        const link = document.createElement("a");
-        link.href = waLink;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Subito dopo aver aperto WhatsApp, la scheda corrente va alla pagina di successo
+        // Apriamo direttamente la pagina di successo (WhatsApp manuale spostato lì per evitare blocchi popup)
         if (data.appointment?.id) {
           window.location.href = `/t/${slug}/success?app_id=${data.appointment.id}`;
           return;

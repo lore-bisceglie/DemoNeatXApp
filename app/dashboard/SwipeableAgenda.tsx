@@ -69,8 +69,9 @@ export default function SwipeableAgenda({ children }: { children: React.ReactNod
       <div className="md:hidden flex justify-center w-full mb-3 text-[10px] text-slate-500 font-medium tracking-widest uppercase">
         <span className="flex items-center gap-2">← Scorri per cambiare settimana →</span>
       </div>
-      
-      {children}
+      <div key={currentOffset} className="animate-in fade-in duration-300">
+        {children}
+      </div>
     </div>
   );
 }
