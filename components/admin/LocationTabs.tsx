@@ -33,7 +33,7 @@ function LocationCard({ location, tenantSlug: _tenantSlug, tenantName: _tenantNa
   var toggleClass = TOGGLE_BASE + (location.isActive ? TOGGLE_ACTIVE : TOGGLE_INACTIVE);
 
   return (
-    <div className={`${cardClass} p-4`}>
+    <div className={`${cardClass} p-4 min-w-0 overflow-hidden`}>
       <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto sm:flex-1">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shrink-0">

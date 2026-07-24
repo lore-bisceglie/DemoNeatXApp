@@ -136,7 +136,7 @@ export default function StorePhotoCard({ tenantSlug, tenantName, initialLogoUrl 
   }
 
   return (
-    <section className="rounded-2xl border border-[#1a2642] bg-[#0b1221] p-4 sm:p-5">
+    <section className="rounded-2xl border border-[#1a2642] bg-[#0b1221] p-4 sm:p-5 min-w-0 overflow-hidden">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl border border-[#243451] bg-[#050814]">
           {draftLogoUrl && !previewFailed ? (
