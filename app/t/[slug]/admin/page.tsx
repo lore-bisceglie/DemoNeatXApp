@@ -1520,29 +1520,25 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                       <p className="text-[10px] text-slate-600 mt-2 italic">NeatX non riceve, non salva e non vede nessuno di questi dati.</p>
                     </div>
 
-                    <div className="relative rounded-2xl p-5 flex-1 max-w-sm flex flex-col justify-between overflow-hidden shadow-2xl group border border-blue-500/30 bg-[#0b1221]">
-                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-600 rounded-full mix-blend-screen filter blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                    <div className="relative rounded-2xl p-5 flex-1 max-w-sm flex flex-col justify-between overflow-hidden shadow-2xl group border border-white/10 bg-[#111111]">
+                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-600 rounded-full mix-blend-screen filter blur-[50px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                      <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-600 rounded-full mix-blend-screen filter blur-[50px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
                       
                       <div className="z-10 relative">
                         <div className="flex items-center gap-2 mb-3">
-                          <div className="bg-blue-500/20 text-blue-400 p-1.5 rounded-lg">
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                          </div>
-                          <span className="font-extrabold text-white text-[15px] tracking-tight">
-                            Banca Consigliata
+                          <span className="font-sans font-black text-white tracking-tighter text-[18px]">
+                            Revolut <span className="font-normal text-slate-300 tracking-normal">Pro</span>
                           </span>
-                          <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-emerald-500/20 ml-auto">Partner</span>
+                          <span className="bg-white/10 text-white px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border border-white/10">Sponsor</span>
                         </div>
-                        <p className="text-[14px] text-white font-bold mb-2">Revolut Pro</p>
-                        <ul className="text-[12px] text-slate-300 leading-relaxed mb-5 space-y-1.5">
-                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Perfetto per liberi professionisti</li>
-                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Cashback su ogni acquisto Pro</li>
-                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Zero canone mensile</li>
-                        </ul>
+                        <p className="text-[13px] text-white font-semibold mb-1">Il conto business per freelance.</p>
+                        <p className="text-[11px] text-slate-300 leading-relaxed mb-4">
+                          Cashback su ogni acquisto e zero canone mensile. Perfetto da usare per gli incassi Stripe.
+                        </p>
                       </div>
                       
-                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:scale-[1.02]">
-                        👉 Attiva il conto Pro gratuito
+                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-white text-black text-[12px] font-bold py-2.5 px-4 rounded-xl hover:bg-slate-200 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                        Apri conto gratuito →
                       </a>
                     </div>
                   </div>
