@@ -1533,16 +1533,16 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                           </span>
                           <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-emerald-500/20 ml-auto">Partner</span>
                         </div>
-                        <p className="text-[14px] text-white font-bold mb-2">Revolut Business</p>
+                        <p className="text-[14px] text-white font-bold mb-2">Revolut Pro</p>
                         <ul className="text-[12px] text-slate-300 leading-relaxed mb-5 space-y-1.5">
-                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Perfetto per incassi Stripe</li>
-                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Carte virtuali per le Ads</li>
-                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Zero commissioni sui bonifici</li>
+                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Perfetto per liberi professionisti</li>
+                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Cashback su ogni acquisto Pro</li>
+                          <li className="flex items-start gap-1.5"><span className="text-emerald-400">✓</span> Zero canone mensile</li>
                         </ul>
                       </div>
                       
-                      <a href="https://business.revolut.com/signup?promo=C2B-JUL2-26-AR-H1&ext=lorebisceglie&context=C2B_REFERRAL" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:scale-[1.02]">
-                        👉 Attiva il conto Business
+                      <a href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" target="_blank" rel="noopener noreferrer" className="z-10 relative inline-flex items-center justify-center w-full bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-bold py-3 px-4 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:scale-[1.02]">
+                        👉 Attiva il conto Pro gratuito
                       </a>
                     </div>
                   </div>

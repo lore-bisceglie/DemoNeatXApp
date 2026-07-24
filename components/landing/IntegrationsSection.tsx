@@ -27,7 +27,7 @@ export default function IntegrationsSection() {
             <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Promemoria in manutenzione</span>
           </div>
 
-          {/* Revolut Business (Referral) */}
+          {/* Revolut Pro (Referral) */}
           <a 
             href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" 
             target="_blank" 
@@ -42,7 +42,7 @@ export default function IntegrationsSection() {
               <div className="text-white font-black text-[22px] tracking-tighter mb-2 flex items-center gap-1.5">
                 Revolut <ExternalLink size={14} className="text-slate-500 group-hover:text-blue-400 transition-colors" />
               </div>
-              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider group-hover:text-slate-300 transition-colors">Conto Business</span>
+              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider group-hover:text-slate-300 transition-colors">Conto Pro</span>
             </div>
           </a>
 
