@@ -55,10 +55,19 @@ export default function Chatbot() {
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const [proactiveSent, setProactiveSent] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasOpenedRef = useRef(false);
   const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Controllo dominio
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    const isMainDomain = hostname === "localhost" || hostname === "neatx.store" || hostname === "www.neatx.store" || hostname.includes("vercel.app");
+    const isSuperAdmin = document.cookie.includes("superadmin_god_eye=true");
+    setIsVisible(isMainDomain && !isSuperAdmin);
+  }, []);
 
   // Tooltip "Sono un bot" dopo 5s (o al primo scroll) se non ha aperto
   useEffect(() => {
@@ -182,6 +191,8 @@ export default function Chatbot() {
 
   const messageCount = messages.filter(m => m.role === 'user').length;
   const showCTA = messageCount >= 3;
+
+  if (!isVisible) return null;
 
   return (
     <>

@@ -80,10 +80,10 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
 
             <div className="space-y-4 mb-6">
               <div>
-                <input type="text" placeholder="Nome Cliente (Obbligatorio)" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition" autoFocus />
+                <input type="text" placeholder="Nome Cliente (Obbligatorio)" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-[#00b4ff] transition" autoFocus />
               </div>
               <div>
-                <select value={selectedServiceId} onChange={(e) => setSelectedServiceId(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition appearance-none">
+                <select value={selectedServiceId} onChange={(e) => setSelectedServiceId(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-[#00b4ff] transition appearance-none">
                   {services.map(srv => (
                     <option key={srv.id} value={srv.id}>{srv.name} ({srv.duration} min)</option>
                   ))}
@@ -91,7 +91,7 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
               </div>
               {staff.length > 0 && (
                 <div>
-                  <select value={selectedStaffId} onChange={(e) => setSelectedStaffId(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition appearance-none">
+                  <select value={selectedStaffId} onChange={(e) => setSelectedStaffId(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-[#00b4ff] transition appearance-none">
                     <option value="">-- Nessun staff --</option>
                     {staff.map((s: any) => (
                       <option key={s.id} value={s.id}>{s.name}</option>
@@ -100,7 +100,7 @@ export default function WalkInButton({ date, time, tenantId, services, staff = [
                 </div>
               )}
               <div>
-                <input type="tel" placeholder="Telefono (Opzionale per WhatsApp)" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#00b4ff] transition" />
+                <input type="tel" placeholder="Telefono (Opzionale per WhatsApp)" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-[#00b4ff] transition" />
               </div>
             </div>
 

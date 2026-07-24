@@ -69,9 +69,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {children}
         
-        {/* Fix iubenda: restore body scroll when modal closes */}
+        {/* Fix iubenda: restore body scroll when modal closes and hide on subdomains */}
         <Script id="fix-iubenda-scroll" strategy="afterInteractive">
           {`(() => {
+            const hn = window.location.hostname;
+            if (hn !== "localhost" && hn !== "neatx.store" && hn !== "www.neatx.store" && !hn.includes("vercel.app")) {
+              const style = document.createElement('style');
+              style.innerHTML = '#iubenda-ibadge, .iubenda-cs-badge, #iubenda-cs-banner, #iubenda-cookie-banner { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -9999 !important; }';
+              document.head.appendChild(style);
+            }
+
             const restoreScroll = () => {
               document.body.style.overflow = '';
               document.body.style.position = '';

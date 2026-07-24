@@ -29,7 +29,7 @@ function escapeTelegramHtml(value: unknown) {
     .replace(/"/g, "&quot;");
 }
 
-async function uniqueSlug(base: string) {
+async function uniqueSlug(base: string, cityFallback: string = "") {
   let root = sanitizeSlug(base);
   if (!root || isReservedSubdomain(root)) {
     root = root ? `${root}-store` : "negozio";
@@ -40,6 +40,27 @@ async function uniqueSlug(base: string) {
 
   const existing = await prisma.tenant.findUnique({ where: { slug: root } });
   if (!existing && !isReservedSubdomain(root)) return root;
+
+  // Tentativo con la città
+  if (cityFallback) {
+    const cityRoot = sanitizeSlug(cityFallback);
+    if (cityRoot) {
+      const fallbackWithCity = `${root}-${cityRoot}`;
+      if (!isReservedSubdomain(fallbackWithCity)) {
+        const cityExisting = await prisma.tenant.findUnique({ where: { slug: fallbackWithCity } });
+        if (!cityExisting) return fallbackWithCity;
+      }
+      
+      // Prova con città e numero
+      for (let attempt = 2; attempt <= 10; attempt += 1) {
+        const numberedSlug = `${fallbackWithCity}-${attempt}`;
+        if (!isReservedSubdomain(numberedSlug)) {
+          const numExisting = await prisma.tenant.findUnique({ where: { slug: numberedSlug } });
+          if (!numExisting) return numberedSlug;
+        }
+      }
+    }
+  }
 
   for (let attempt = 0; attempt < 10; attempt += 1) {
     const suffix = Math.random().toString(36).substring(2, 6);
@@ -954,7 +975,7 @@ export async function POST(req: Request) {
     }
 
     const template = getDemoShopTemplate(category);
-    const slug = await uniqueSlug(businessName);
+    const slug = await uniqueSlug(businessName, city);
     const now = new Date();
 
     const trialEndsAt = new Date();
