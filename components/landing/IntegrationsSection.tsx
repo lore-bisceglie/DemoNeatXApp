@@ -32,12 +32,15 @@ export default function IntegrationsSection() {
             href="https://revolut.com/referral/?referral-code=lorebisceglie!JUL2-26-AR-RPB&geo-redirect" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="group bg-[#0b1221] border border-[#1a2642] hover:border-white/20 rounded-2xl p-6 flex flex-col items-center justify-center min-w-[160px] transition-all hover:bg-[#0f172a] shadow-lg relative overflow-hidden"
+            className="group bg-[#0b1221] border border-[#1a2642] hover:border-blue-500/30 rounded-2xl p-6 flex flex-col items-center justify-center min-w-[160px] transition-all hover:bg-[#0f172a] shadow-lg relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="relative z-10 flex flex-col items-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute top-2 right-2">
+              <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border border-emerald-500/20">Partner</span>
+            </div>
+            <div className="relative z-10 flex flex-col items-center mt-2">
               <div className="text-white font-black text-[22px] tracking-tighter mb-2 flex items-center gap-1.5">
-                Revolut <ExternalLink size={14} className="text-slate-500 group-hover:text-white transition-colors" />
+                Revolut <ExternalLink size={14} className="text-slate-500 group-hover:text-blue-400 transition-colors" />
               </div>
               <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider group-hover:text-slate-300 transition-colors">Conto Business</span>
             </div>

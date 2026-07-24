@@ -1,14 +1,14 @@
 {
-    "niche": "Fisioterapisti",
-    "script_text": "Se sei tra i fisioterapisti e i clienti soddisfatti non lasciano recensioni, stai perdendo visibilità. Il problema e' clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche. Con NeatX puoi avere recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta, in automatico dopo ogni appuntamento. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
-    "hook_text": "TESTIMONIANZE REALI",
-    "cover_title": "TESTIMONIANZE REALI",
-    "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+    "niche": "Tatuatori",
+    "script_text": "Se sei tra i tatuatori e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' acconti automatici che filtrano i clienti che non si presentano. Con NeatX puoi avere ogni slot occupato da clienti che hanno già pagato, senza rincorrere clienti tutto il giorno. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
+    "hook_text": "ADDIO ACCONTI",
+    "cover_title": "ADDIO ACCONTI",
+    "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
     "gameplay_style": "runner",
-    "caption": "Fisioterapisti: recensioni Google automatiche. Commenta INFO o AGENDA e ti mando la demo NeatX. #NeatX #recensioni #google #automazione #business",
+    "caption": "Tatuatori: basta agenda gestita a mano. Commenta INFO o AGENDA e ti mando la demo NeatX. #perte #fyp #foryou #viral #imprenditore #businessitalia #crescita",
     "strategy_date": "2026-07-24",
-    "strategy_feature": "recensioni",
-    "strategy_pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-    "strategy_promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+    "strategy_feature": "no_show",
+    "strategy_pain": "acconti automatici che filtrano i clienti che non si presentano",
+    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato",
     "fallback_reason": "Gemini non disponibile: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
 }
