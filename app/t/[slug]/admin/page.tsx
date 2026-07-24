@@ -39,6 +39,7 @@ import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
 import SupportWidget from "./SupportWidget";
 import LogoutButton from "./LogoutButton";
+import AdminDropdownMenu from "./AdminDropdownMenu";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -773,54 +774,18 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </span>
           </h1>
 
-          <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} slug={slug} />
             <CustomerDrawer tenantId={tenantId} />
-            <Link
-              href={`/t/${slug}/admin/analytics`}
-              className="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
-            >
-              <BarChart3 size={16} /><span className="hidden sm:inline">Analytics</span>
-            </Link>
-            <Link
-              href={`/t/${slug}/admin/referral`}
-              className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
-            >
-              <Gift size={16} /><span className="hidden sm:inline">Invita</span>
-            </Link>
-            <Link
-              href={`/paywall/${slug}`}
-              className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm active:scale-90 hover:scale-[1.03]"
-            >
-              <CreditCard size={16} /><span className="hidden sm:inline">Piano</span> Pagamenti
-            </Link>
-            {tenant.stripeCustomerId && <PortalButton slug={slug} />}
-            <a
-              href={`/api/export/appointments?tenantId=${tenantId}`}
-              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-emerald-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"
-            >
-              <CalendarDays size={16} /><span className="hidden sm:inline">Export</span> Agenda
-            </a>
-            <a
-              href={`/api/export/customers?tenantId=${tenantId}`}
-              className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-amber-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"
-            >
-              <Users size={16} /><span className="hidden sm:inline">Export</span> Clienti
-            </a>
-            <a
-              href={`/api/export/timesheets?tenantId=${tenantId}`}
-              className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-blue-500/30 transition-all duration-150 flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-90 hover:scale-[1.03]"
-            >
-              <Receipt size={16} /><span className="hidden sm:inline">Export</span> Presenze
-            </a>
+            <AdminDropdownMenu slug={slug} tenantId={tenantId} hasStripe={!!tenant.stripeCustomerId} />
+            
             <Link
               href={`/t/${slug}`}
               target="_blank"
-              className="col-span-3 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-150 flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 hover:scale-[1.03]"
+              className="col-span-2 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-150 flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 hover:scale-[1.03]"
             >
               <Globe size={16} /> Pagina Clienti
             </Link>
-            <LogoutButton slug={slug} />
           </div>
         </div>
 
