@@ -1488,7 +1488,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               </div>
             </div>
 
-            <AnalyticsChart data={analyticsData} plan={tenant.plan} slug={slug} />
+            <AnalyticsChart data={analyticsData} isPro={isPremium} plan={tenant.plan} slug={slug} />
 
 {/* SEZIONE PAGAMENTI STRIPE */}
             <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
