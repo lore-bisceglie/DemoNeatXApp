@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MessageCircleQuestion } from "lucide-react";
 
 export default function SupportWidget({ tenantId }: { tenantId: string; colorTheme: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,14 +38,16 @@ export default function SupportWidget({ tenantId }: { tenantId: string; colorThe
 
   return (
     <>
-      {/* FAB (Floating Action Button) */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-40 bg-slate-800/60 backdrop-blur-md text-white p-3 rounded-full shadow-lg hover:bg-slate-700/90 transition-all border border-slate-700/50 flex items-center justify-center group opacity-60 hover:opacity-100"
-        title="Segnala un Problema / Supporto"
-      >
-        <span className="text-xl">💬</span>
-      </button>
+      {/* FAB (Floating Action Button) - styled like the Translate Globe */}
+      <div className="fixed bottom-3 left-12 sm:bottom-6 sm:left-20 z-[9998] pointer-events-auto">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="bg-[#0b1221] border border-[#1e2b4a] text-slate-300 hover:text-white p-2 sm:p-3 rounded-full shadow-lg hover:shadow-cyan-500/20 transition-all flex items-center justify-center group"
+          title="Segnala un Problema / Supporto"
+        >
+          <MessageCircleQuestion className="w-5 h-5 group-hover:scale-110 transition-transform" />
+        </button>
+      </div>
 
       {/* MODAL */}
       {isOpen && (

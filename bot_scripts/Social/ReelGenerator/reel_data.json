@@ -1,13 +1,14 @@
 {
-    "niche": "Coach e Consulenti",
-    "script_text": "Sei un coach o un consulente, non un centralinista. Perché passi ore su WhatsApp a cercare l'orario perfetto per i tuoi clienti? Ogni minuto perso in chat è un minuto sottratto alle tue consulenze pagate. Con NeatX i tuoi clienti prenotano da soli, 24 ore su 24, anche mentre stai dormendo. Smetti di rincorrere le persone al telefono. Non perdere più appuntamenti, provala gratis su neatx.store!",
-    "hook_text": "COACH: BASTA TELEFONO",
-    "cover_title": "COACH: BASTA TELEFONO",
-    "image_prompt": "A photorealistic cinematic wide shot inside a sleek, modern consultant's office. A professional business coach is focused and conducting a high-value session, completely undisturbed. In the foreground, a client's hand is holding a premium smartphone, effortlessly completing a booking on a clean, modern app screen. Highly detailed, premium corporate lighting, volumetric atmosphere, 8k resolution",
-    "gameplay_style": "neon_racer",
-    "caption": "Sei stanco di passare ore su WhatsApp a coordinare appuntamenti, mandare listini e rincorrere i clienti? 🤯\n\nIl tempo di un Coach o di un Consulente è denaro. Ogni minuto che passi al telefono a fare il centralinista è un minuto in meno dedicato alle tue sessioni pagate.\n\nCon NeatX automatizzi tutto: i tuoi clienti scelgono l'orario, prenotano e gestiscono i loro appuntamenti in totale autonomia, 24 ore su 24. Anche mentre stai lavorando con altri clienti o ti stai riposando.\n\nBasta messaggi infiniti, riprenditi il tuo tempo e focalizzati solo sulla crescita del tuo business.\n\n#coach #consulente #businesscoach #growthmindset #imprenditore #businessitalia #perte #fyp #foryou #viral\n\n👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!",
-    "strategy_date": "2026-07-23",
-    "strategy_feature": "booking",
-    "strategy_pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-    "strategy_promise": "clienti che prenotano da soli anche mentre dormi"
+    "niche": "Fisioterapisti",
+    "script_text": "Se sei tra i fisioterapisti e i clienti soddisfatti non lasciano recensioni, stai perdendo visibilità. Il problema e' clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche. Con NeatX puoi avere recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta, in automatico dopo ogni appuntamento. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
+    "hook_text": "TESTIMONIANZE REALI",
+    "cover_title": "TESTIMONIANZE REALI",
+    "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+    "gameplay_style": "runner",
+    "caption": "Fisioterapisti: recensioni Google automatiche. Commenta INFO o AGENDA e ti mando la demo NeatX. #NeatX #recensioni #google #automazione #business",
+    "strategy_date": "2026-07-24",
+    "strategy_feature": "recensioni",
+    "strategy_pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+    "strategy_promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+    "fallback_reason": "Gemini non disponibile: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
 }
