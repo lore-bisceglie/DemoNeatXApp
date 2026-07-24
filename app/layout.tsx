@@ -6,6 +6,7 @@ import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";
 import PublicWidgetsWrapper from "@/components/landing/PublicWidgetsWrapper";
 import GoogleTranslateWidget from "@/components/GoogleTranslateWidget";
+import IubendaWrapper from "@/components/IubendaWrapper";
 
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
 export const viewport: Viewport = {
@@ -42,11 +43,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="it">
       <body className="bg-[#050814] text-slate-200 antialiased relative">
-        {/* Iubenda Cookie Banner Script */}
-        <Script 
-          src="https://embeds.iubenda.com/widgets/490bbed2-0c2c-47c4-9e1e-80f16c5f0787.js" 
-          strategy="beforeInteractive" 
-        />
+        {/* Iubenda Cookie Banner Script (Conditionally Loaded) */}
+        <IubendaWrapper />
         
         {/* SEO Schema.org (JSON-LD) */}
         <Script id="schema-software" type="application/ld+json" strategy="beforeInteractive">
@@ -69,16 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {children}
         
-        {/* Fix iubenda: restore body scroll when modal closes and hide on subdomains */}
+        {/* Fix iubenda: restore body scroll when modal closes */}
         <Script id="fix-iubenda-scroll" strategy="afterInteractive">
           {`(() => {
-            const hn = window.location.hostname;
-            if (hn !== "localhost" && hn !== "neatx.store" && hn !== "www.neatx.store" && !hn.includes("vercel.app")) {
-              const style = document.createElement('style');
-              style.innerHTML = '#iubenda-ibadge, .iubenda-cs-badge, #iubenda-cs-banner, #iubenda-cookie-banner { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -9999 !important; }';
-              document.head.appendChild(style);
-            }
-
             const restoreScroll = () => {
               document.body.style.overflow = '';
               document.body.style.position = '';
