@@ -34,24 +34,24 @@ function LocationCard({ location, tenantSlug: _tenantSlug, tenantName: _tenantNa
 
   return (
     <div className={`${cardClass} p-4`}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto sm:flex-1">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shrink-0">
             <MapPinIcon size={18} className="text-white" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 w-full">
             <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-bold text-white text-lg truncate">{location.name}</h4>
+              <h4 className="font-bold text-white text-lg truncate max-w-[200px] sm:max-w-none">{location.name}</h4>
               {location.isMain && <span className="px-2 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-400 rounded-full whitespace-nowrap">Principale</span>}
               <span className={badgeClass}>{location.isActive ? "Attiva" : "Disattiva"}</span>
             </div>
-            <p className="text-slate-400 text-sm mt-1 flex items-center gap-1 truncate">
-              <MapPinIcon size={14} className="shrink-0" />
-              <span className="truncate">{location.address || location.city || "Indirizzo non impostato"}</span>
+            <p className="text-slate-400 text-sm mt-1 truncate w-full">
+              <MapPinIcon size={14} className="inline mr-1" style={{ position: 'relative', top: '-1px' }} />
+              {location.address || location.city || "Indirizzo non impostato"}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1 shrink-0 w-full sm:w-auto justify-end mt-2 sm:mt-0">
           <button onClick={onToggle} className={toggleClass} title={location.isActive ? "Disattiva" : "Attiva"}>
             <ToggleRight size={18} />
           </button>
@@ -68,29 +68,29 @@ function LocationCard({ location, tenantSlug: _tenantSlug, tenantName: _tenantNa
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-sm mt-4">
-        <div className="bg-[#050814] rounded-xl p-3">
-          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-            <PhoneIcon size={12} /> Telefono
+        <div className="bg-[#050814] rounded-xl p-3 min-w-0">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1 truncate">
+            <PhoneIcon size={12} className="shrink-0" /> <span className="truncate">Telefono</span>
           </div>
-          <p className="text-white font-medium">{location.phone || "Non impostato"}</p>
+          <p className="text-white font-medium truncate">{location.phone || "Non impostato"}</p>
         </div>
-        <div className="bg-[#050814] rounded-xl p-3">
-          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-            <Activity size={12} /> Staff
+        <div className="bg-[#050814] rounded-xl p-3 min-w-0">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1 truncate">
+            <Activity size={12} className="shrink-0" /> <span className="truncate">Staff</span>
           </div>
-          <p className="text-white font-medium">{location._count ? location._count.staff || 0 : 0} dipendenti</p>
+          <p className="text-white font-medium truncate">{location._count ? location._count.staff || 0 : 0} dipendenti</p>
         </div>
-        <div className="bg-[#050814] rounded-xl p-3">
-          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-            <MapPinIcon size={12} /> Servizi
+        <div className="bg-[#050814] rounded-xl p-3 min-w-0">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1 truncate">
+            <MapPinIcon size={12} className="shrink-0" /> <span className="truncate">Servizi</span>
           </div>
-          <p className="text-white font-medium">{location._count ? location._count.services || 0 : 0} servizi</p>
+          <p className="text-white font-medium truncate">{location._count ? location._count.services || 0 : 0} servizi</p>
         </div>
-        <div className="bg-[#050814] rounded-xl p-3">
-          <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-            <Activity size={12} /> Appuntamenti
+        <div className="bg-[#050814] rounded-xl p-3 min-w-0">
+          <div className="flex items-center gap-1.5 text-slate-400 mb-1 truncate">
+            <Activity size={12} className="shrink-0" /> <span className="truncate">Appuntamenti</span>
           </div>
-          <p className="text-white font-medium">{location._count ? location._count.appointments || 0 : 0}</p>
+          <p className="text-white font-medium truncate">{location._count ? location._count.appointments || 0 : 0}</p>
         </div>
       </div>
 
