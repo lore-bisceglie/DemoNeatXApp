@@ -1,43 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-23T17:53:17.706205+02:00
+Generato: 2026-07-24T10:27:06.846809+02:00
 
-## Idea 1: Se sei un coach o un consulente e passi la giornata a rispondere a messaggi di prenotazione, stai buttando via ore di lavoro pagate.
-- hook: Se sei un coach o un consulente e passi la giornata a rispondere a messaggi di prenotazione, stai buttando via ore di lavoro pagate.
-- video_concept: Mostra lo stress di un professionista che deve continuamente concordare gli orari delle sessioni via chat, interrompendo il proprio lavoro. La soluzione viene presentata mostrando lo schermo di uno smartphone con il sistema di prenotazione NeatX attivo, dove i clienti scelgono l'orario e pagano in totale autonomia.
-- blog_title: Coach e Consulenti: Prenotazione 24 ore su 24 con NeatX
-- niche: Coach e Consulenti
-- keywords: ['agenda consulente', 'prenotazioni coach', 'booking consulenze']
-- image_prompt: photorealistic cinematic scene inside a modern office workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting
+## Idea 1: Se sei un parrucchiere e hai clienti soddisfatti che non lasciano recensioni, stai perdendo opportunità.
+- title: CLIENTI SILENZIOSI: Come far parlare i tuoi clienti
+- hook: Se sei un parrucchiere e hai clienti soddisfatti che non lasciano recensioni, stai perdendo opportunità.
+- content: Scopri come ottenere recensioni Google dai tuoi clienti felici e gestire i feedback negativi in privato.
+- format: video
+- call_to_action: Impara a trasformare il silenzio in successo.
 
-## Idea 2: Il telefono che squilla durante una sessione di coaching privato è il modo migliore per perdere la concentrazione e apparire poco professionale.
-- hook: Il telefono che squilla durante una sessione di coaching privato è il modo migliore per perdere la concentrazione e apparire poco professionale.
-- video_concept: Inquadratura di un consulente visibilmente distratto dal telefono che vibra continuamente sulla scrivania durante una videochiamata con un cliente. Subito dopo, lo stesso professionista attiva NeatX e mostra come l'agenda si riempia da sola in background, permettendogli di tenere il telefono in modalità silenziosa.
-- blog_title: Come eliminare le interruzioni telefoniche e gestire i clienti in modo professionale
-- niche: Coach e Consulenti
-- keywords: ['agenda consulente', 'gestione clienti coach', 'booking consulenze']
-- image_prompt: cinematic professional workspace, a consultant working focused at their desk without distractions, clean office environment, soft warm lighting, a smartphone on the desk displaying a completed booking notification
+## Idea 2: Le recensioni possono fare la differenza. E se potessi riceverle automaticamente?
+- title: Recensioni Automatiche: Il segreto per un salone di successo
+- hook: Le recensioni possono fare la differenza. E se potessi riceverle automaticamente?
+- content: Vediamo come NeatX può aiutarti a ottenere recensioni dai clienti soddisfatti senza sforzo.
+- format: blog
+- call_to_action: Non lasciare che i tuoi clienti parlino solo in privato.
 
-## Idea 3: Mentre dormi stai perdendo clienti che vorrebbero prenotare una consulenza con te ma trovano solo la tua segreteria telefonica.
-- hook: Mentre dormi stai perdendo clienti che vorrebbero prenotare una consulenza con te ma trovano solo la tua segreteria telefonica.
-- video_concept: Schermo diviso: a sinistra il consulente che dorme serenamente, a destra un cliente che alle undici di sera naviga sul sito, seleziona una fascia oraria disponibile su NeatX e conferma la sessione. Al risveglio, il coach trova le notifiche di pagamento e prenotazione confermate.
-- blog_title: Smetti di perdere clienti di notte: attiva la prenotazione automatica per la tua attività di consulenza
-- niche: Coach e Consulenti
-- keywords: ['prenotazioni coach', 'booking consulenze', 'agenda online consulenti']
-- image_prompt: split screen photorealistic style: on one side a peaceful bedroom at night, on the other side a modern dark UI calendar app on a phone showing a confirmed appointment slot, sleek visual style
+## Idea 3: Non tutti i feedback devono essere pubblici. Scopri come gestirli al meglio.
+- title: Feedback Privato: La chiave per clienti felici
+- hook: Non tutti i feedback devono essere pubblici. Scopri come gestirli al meglio.
+- content: Approfondiamo l'importanza di ricevere recensioni positive e gestire le lamentele in modo discreto.
+- format: video
+- call_to_action: Rendi il tuo salone un luogo di feedback costruttivo.
 
-## Idea 4: Scambiarsi dieci messaggi per concordare un singolo appuntamento di consulenza è il metodo più rapido per far desistere un potenziale cliente.
-- hook: Scambiarsi dieci messaggi per concordare un singolo appuntamento di consulenza è il metodo più rapido per far desistere un potenziale cliente.
-- video_concept: Simulazione comica ma realistica della classica chat infinita: Tu quando ci sei? Io martedì alle 15. Ah no, io posso solo giovedì. La scena si sposta sul consulente che decide di inviare un unico link NeatX, risolvendo la prenotazione in meno di trenta secondi.
-- blog_title: La guida definitiva per eliminare i messaggi infiniti per fissare un appuntamento
-- niche: Coach e Consulenti
-- keywords: ['agenda consulente', 'prenotazioni coach', 'ottimizzazione tempo consulenza']
-- image_prompt: close up of a modern smartphone screen displaying a streamlined scheduling link page with clear calendar slots, clean aesthetic, holding hand, blurred background of a professional studio
+## Idea 4: Scopri la causa del silenzio e come trasformarlo in parole di apprezzamento.
+- title: Perché i tuoi clienti felici non lasciano recensioni?
+- hook: Scopri la causa del silenzio e come trasformarlo in parole di apprezzamento.
+- content: Analizziamo le ragioni per cui i clienti soddisfatti non scrivono recensioni e come invogliarli a farlo.
+- format: blog
+- call_to_action: Fai parlare i tuoi clienti con NeatX.
 
-## Idea 5: I tuoi clienti ideali preferiscono prenotare una sessione di coaching a tarda sera in totale autonomia piuttosto che doverti chiamare durante l'orario d'ufficio.
-- hook: I tuoi clienti ideali preferiscono prenotare una sessione di coaching a tarda sera in totale autonomia piuttosto che doverti chiamare durante l'orario d'ufficio.
-- video_concept: Analisi visiva delle abitudini dei clienti moderni: mentre il consulente è a cena con la famiglia, NeatX riceve e organizza le prenotazioni della settimana successiva. Viene mostrata la facilità d'uso della piattaforma lato utente.
-- blog_title: Perché l'autonomia di prenotazione aumenta il tasso di conversione dei tuoi servizi di coaching
-- niche: Coach e Consulenti
-- keywords: ['booking consulenze', 'prenotazioni coach', 'agenda automatica']
-- image_prompt: cozy living room evening lighting, a person relaxed on a sofa using a tablet to book a business coaching session, screen clearly showing available time slots, high-end professional photography style
+## Idea 5: Le recensioni possono aumentare le tue prenotazioni. Ecco come.
+- title: L'impatto delle recensioni sulla tua attività di parrucchiere
+- hook: Le recensioni possono aumentare le tue prenotazioni. Ecco come.
+- content: Osserviamo il legame tra recensioni online e successo commerciale nel settore parrucchieri.
+- format: video
+- call_to_action: Scopri come migliorare la tua reputazione online.
