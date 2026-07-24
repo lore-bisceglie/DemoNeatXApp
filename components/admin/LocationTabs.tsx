@@ -34,13 +34,13 @@ function LocationCard({ location, tenantSlug: _tenantSlug, tenantName: _tenantNa
 
   return (
     <div className={`${cardClass} p-4 min-w-0 overflow-hidden`}>
-      <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-3 min-w-0">
         <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto sm:flex-1">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shrink-0">
             <MapPinIcon size={18} className="text-white" />
           </div>
-          <div className="min-w-0 w-full">
-            <div className="flex items-center gap-2 flex-wrap">
+          <div className="min-w-0 w-full flex-1">
+            <div className="flex items-center gap-2 flex-wrap min-w-0">
               <h4 className="font-bold text-white text-lg truncate max-w-[200px] sm:max-w-none">{location.name}</h4>
               {location.isMain && <span className="px-2 py-0.5 text-xs font-bold bg-amber-500/20 text-amber-400 rounded-full whitespace-nowrap">Principale</span>}
               <span className={badgeClass}>{location.isActive ? "Attiva" : "Disattiva"}</span>
