@@ -40,11 +40,10 @@ export default function SupportWidget({ tenantId }: { tenantId: string; colorThe
       {/* FAB (Floating Action Button) */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-slate-800 text-white p-4 rounded-full shadow-2xl hover:bg-slate-700 transition-transform hover:scale-105 border border-slate-700 flex items-center justify-center group"
+        className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-40 bg-slate-800/60 backdrop-blur-md text-white p-3 rounded-full shadow-lg hover:bg-slate-700/90 transition-all border border-slate-700/50 flex items-center justify-center group opacity-60 hover:opacity-100"
         title="Segnala un Problema / Supporto"
       >
-        <span className="text-2xl group-hover:hidden">💬</span>
-        <span className="hidden group-hover:inline-block px-2 font-bold text-sm">Supporto</span>
+        <span className="text-xl">💬</span>
       </button>
 
       {/* MODAL */}
