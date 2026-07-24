@@ -44,7 +44,7 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-[#0b1221] border border-[#1a2642] rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-[#0b1221] border border-[#1a2642] rounded-2xl shadow-2xl overflow-y-auto max-h-[70vh] z-[999] animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="p-2 space-y-1">
             
             <div className="px-3 pt-2 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-500">

@@ -10,11 +10,11 @@ export default function TutorialButton() {
     setMounted(true);
     
     // Auto-start on very first visit
-    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v2");
+    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v3");
     if (!hasSeenTutorial) {
       setTimeout(() => {
         startTour();
-        localStorage.setItem("neatx_tutorial_seen_v2", "true");
+        localStorage.setItem("neatx_tutorial_seen_v3", "true");
       }, 1000);
     }
   }, []);
@@ -74,16 +74,25 @@ export default function TutorialButton() {
         {
           element: "#tour-tab-gestione",
           popover: {
-            title: "⚙️ Gestione & Link Prenotazione",
-            description: "Clicca qui per collegare Stripe, modificare orari/servizi, attivare le campagne marketing WhatsApp e copiare il tuo LINK PRENOTAZIONE da dare ai clienti.",
+            title: "⚙️ Gestione Orari e Servizi",
+            description: "Clicca qui per modificare orari di apertura, aggiungere servizi, gestire i giorni di chiusura e trovare il tuo LINK PRENOTAZIONE da dare ai clienti.",
+            align: "start",
+            side: "bottom"
+          }
+        },
+        {
+          element: "#tour-tab-business",
+          popover: {
+            title: "📈 Business & Pagamenti",
+            description: "Il cuore del guadagno. Qui colleghi Stripe per farti pagare online dai clienti, attivi il marketing automatico e gestisci le recensioni Google.",
             align: "start",
             side: "bottom"
           }
         },
         {
           popover: {
-            title: "🚀 Pronto a decollare",
-            description: "Consiglio d'oro: quando imposti la durata dei servizi, usa multipli di 15 minuti per incastrare tutto perfettamente. Ora sei pronto per iniziare!",
+            title: "🚀 Tip PRO: WhatsApp Business",
+            description: "Per massimizzare la resa e abbattere il tempo perso al telefono, usa WhatsApp Business impostando un messaggio automatico di benvenuto con il tuo LINK PRENOTAZIONE. Così il cliente prenota da solo senza farti impazzire! (Consiglio Extra: in Gestione usa durate di 15 in 15 minuti).",
           }
         }
       ]
