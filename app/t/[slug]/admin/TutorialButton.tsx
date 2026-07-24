@@ -10,11 +10,11 @@ export default function TutorialButton() {
     setMounted(true);
     
     // Auto-start on very first visit
-    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v1");
+    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v2");
     if (!hasSeenTutorial) {
       setTimeout(() => {
         startTour();
-        localStorage.setItem("neatx_tutorial_seen_v1", "true");
+        localStorage.setItem("neatx_tutorial_seen_v2", "true");
       }, 1000);
     }
   }, []);
@@ -22,9 +22,9 @@ export default function TutorialButton() {
   const startTour = () => {
     const driverObj = driver({
       showProgress: true,
-      allowClose: false,
+      allowClose: true, // Allow user to skip if they want
       animate: true,
-      stagePadding: 5,
+      stagePadding: 8,
       doneBtnText: "Ho capito! ✨",
       nextBtnText: "Avanti →",
       prevBtnText: "← Indietro",
@@ -32,31 +32,58 @@ export default function TutorialButton() {
         {
           popover: {
             title: "👋 Benvenuto nella tua Dashboard",
-            description: "Questa è la tua centrale operativa. Da qui gestisci prenotazioni, clienti, staff e impostazioni del tuo salone.",
+            description: "Questa è la tua centrale operativa premium. Da qui hai il controllo totale su prenotazioni, clienti, staff e incassi.",
           }
         },
         {
           element: "#tour-header-actions",
           popover: {
-            title: "📋 Team e Rubrica",
-            description: "Da questo menu in alto puoi aggiungere collaboratori (Team) e visualizzare la lista dei tuoi clienti (Rubrica) con tutte le loro preferenze.",
+            title: "👥 Team e Rubrica",
+            description: "Aggiungi collaboratori al tuo Team e visualizza la rubrica completa dei tuoi clienti. Puoi assegnare permessi specifici a ogni membro.",
             align: "start",
             side: "bottom"
+          }
+        },
+        {
+          element: "#tour-dashboard-cards",
+          popover: {
+            title: "📊 Statistiche & Prossimo Cliente",
+            description: "Tieni sempre d'occhio chi è il prossimo cliente in arrivo e il fatturato stimato del mese calcolato dinamicamente.",
+            align: "center",
+            side: "bottom"
+          }
+        },
+        {
+          element: "#tour-waitlist",
+          popover: {
+            title: "📋 Lista d'Attesa Intelligente",
+            description: "Niente più buchi in agenda. Se qualcuno disdice, avvisa con un click i clienti in lista d'attesa per riempire il posto.",
+            align: "center",
+            side: "top"
+          }
+        },
+        {
+          element: "#tour-agenda-dynamic",
+          popover: {
+            title: "📅 Agenda Dinamica",
+            description: "Gestisci gli appuntamenti con swipe e drag. Sulla sinistra trovi i buchi liberi per piazzare incastri al volo, e ogni servizio ha un colore personalizzato.",
+            align: "center",
+            side: "top"
           }
         },
         {
           element: "#tour-tab-gestione",
           popover: {
             title: "⚙️ Gestione & Link Prenotazione",
-            description: "Clicca su questo tab per modificare i servizi, collegare Stripe e trovare il TUO LINK PERSONALE da mettere su Instagram per far prenotare i clienti in autonomia.",
+            description: "Clicca qui per collegare Stripe, modificare orari/servizi, attivare le campagne marketing WhatsApp e copiare il tuo LINK PRENOTAZIONE da dare ai clienti.",
             align: "start",
             side: "bottom"
           }
         },
         {
           popover: {
-            title: "⏰ Consiglio: Intervalli di 15 minuti",
-            description: "Quando imposti la durata dei servizi nella scheda Gestione, usa multipli di 15 minuti (15, 30, 45, 60...) per incastrare perfettamente gli appuntamenti nell'agenda.",
+            title: "🚀 Pronto a decollare",
+            description: "Consiglio d'oro: quando imposti la durata dei servizi, usa multipli di 15 minuti per incastrare tutto perfettamente. Ora sei pronto per iniziare!",
           }
         }
       ]
@@ -70,7 +97,7 @@ export default function TutorialButton() {
   return (
     <button
       onClick={startTour}
-      className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 hover:border-amber-500/40 text-sm font-bold px-3 py-2.5 rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap"
+      className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/20 hover:border-cyan-500/40 text-sm font-bold px-3 py-2.5 rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap"
       title="Guida rapida"
     >
       <HelpCircle size={16} /> Tutorial

@@ -800,7 +800,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         )}
 
         {/* Dashboard cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+        <div id="tour-dashboard-cards" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
           <div className="bg-gradient-to-br from-[#0b1221] to-[#0f192b] p-8 rounded-3xl shadow-2xl shadow-cyan-900/20 border border-white/5 flex flex-col justify-center h-full min-h-[320px] transition-all duration-300 hover:-translate-y-1 hover:shadow-cyan-500/10 hover:border-cyan-500/30 group">
             <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest flex items-center gap-2 group-hover:text-cyan-400 transition-colors">
               <span className="relative flex h-3 w-3">
@@ -867,7 +867,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
         </div>
 
         {/* LISTA ATTESA — sempre visibile */}
-        <div className="mb-6">
+        <div id="tour-waitlist" className="mb-6">
           <WaitlistDashboard initialData={waitlistItems} tenantId={tenant.id} slug={slug} />
         </div>
 
@@ -929,7 +929,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             </div>
           )}
 
-          <div className="bg-gradient-to-b from-[#0d1628] to-[#09101d] p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 border border-white/[0.07] mb-6 overflow-hidden flex flex-col">
+          <div id="tour-agenda-dynamic" className="bg-gradient-to-b from-[#0d1628] to-[#09101d] p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 border border-white/[0.07] mb-6 overflow-hidden flex flex-col">
             <SwipeableAgenda>
               <DayNavigator currentDate={adjustedTargetDate} slug={slug} isMultiStaff={isMultiStaff} locationId={filterLocationId || undefined} />
 
