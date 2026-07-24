@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
     const cookieStore = await cookies();
     const authCookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
-    const isSuperAdmin = cookieStore.get("superadmin_auth")?.value;
+    const isSuperAdmin = cookieStore.get("superadmin_session")?.value;
 
     if (!isSuperAdmin && !isTenantAdminCookieValid(authCookie, tenant.slug, tenant.sessionVersion)) {
       return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });

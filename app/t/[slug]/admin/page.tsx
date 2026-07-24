@@ -54,7 +54,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const { slug } = await props.params;
   const cookieStore = await cookies();
   const authCookie = cookieStore.get('admin_auth_' + slug)?.value;
-  const isSuperAdmin = cookieStore.get('superadmin_auth')?.value;
+  const isSuperAdmin = cookieStore.get('superadmin_session')?.value;
 
   const tenant = await prisma.tenant.findUnique({
     where: { slug },
