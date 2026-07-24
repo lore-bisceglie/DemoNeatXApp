@@ -41,6 +41,7 @@ import SupportWidget from "./SupportWidget";
 import LogoutButton from "./LogoutButton";
 import AdminDropdownMenu from "./AdminDropdownMenu";
 import TutorialButton from "./TutorialButton";
+import ActivityLogPanel from "./ActivityLogPanel";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -1646,6 +1647,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         </TabbedArea>
         
+        <ActivityLogPanel tenantId={tenantId} />
+
         <SupportWidget tenantId={tenant.id} colorTheme={tenant.themeColor} />
       </div>
     </div>
