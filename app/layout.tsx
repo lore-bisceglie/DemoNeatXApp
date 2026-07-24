@@ -11,6 +11,9 @@ import IubendaWrapper from "@/components/IubendaWrapper";
 // ✅ 1. QUESTO È IL TRUCCO PER LA BARRA DI STATO DEGLI SMARTPHONE
 export const viewport: Viewport = {
   themeColor: "#050814",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export const metadata: Metadata = {
