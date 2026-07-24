@@ -1033,7 +1033,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
             <div className="overflow-x-auto pb-3 custom-scrollbar rounded-2xl border border-white/[0.06] bg-[#070d18]/70">
               <div
-                className="min-w-full md:min-w-[900px] grid gap-x-px sm:gap-x-1 gap-y-0 p-1 sm:p-3"
+                className="min-w-full md:min-w-[900px] grid gap-x-px sm:gap-x-1 gap-y-0 p-1 pr-6 sm:p-3 sm:pr-8"
                 style={{
                   gridTemplateColumns: `minmax(52px, 70px) repeat(${viewWeekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
                 }}
