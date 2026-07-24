@@ -29,7 +29,8 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const menuItemClass = "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors text-left";
+  const getMenuItemClass = (colorClass: string) => 
+    `flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${colorClass}`;
 
   return (
     <div className="relative" ref={menuRef}>
@@ -50,16 +51,16 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
             <Link
               href={`/t/${slug}/admin/analytics`}
               onClick={() => setIsOpen(false)}
-              className={menuItemClass + " hover:text-purple-400 hover:bg-purple-500/10"}
+              className={getMenuItemClass("text-slate-300 hover:text-purple-300 hover:bg-purple-500/10")}
             >
-              <BarChart3 size={16} /> Analytics
+              <div className="bg-purple-500/20 p-1.5 rounded-lg text-purple-400"><BarChart3 size={16} /></div> Analytics
             </Link>
             <Link
               href={`/t/${slug}/admin/referral`}
               onClick={() => setIsOpen(false)}
-              className={menuItemClass + " hover:text-rose-400 hover:bg-rose-500/10"}
+              className={getMenuItemClass("text-slate-300 hover:text-rose-300 hover:bg-rose-500/10")}
             >
-              <Gift size={16} /> Programma Invita
+              <div className="bg-rose-500/20 p-1.5 rounded-lg text-rose-400"><Gift size={16} /></div> Invita e Guadagna
             </Link>
 
             <div className="h-px bg-[#1a2642] my-2" />
@@ -70,23 +71,23 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
             <a
               href={`/api/export/appointments?tenantId=${tenantId}`}
               onClick={() => setIsOpen(false)}
-              className={menuItemClass + " hover:text-emerald-400 hover:bg-emerald-500/10"}
+              className={getMenuItemClass("text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10")}
             >
-              <CalendarDays size={16} /> Export Agenda
+              <div className="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-400"><CalendarDays size={16} /></div> Export Agenda
             </a>
             <a
               href={`/api/export/customers?tenantId=${tenantId}`}
               onClick={() => setIsOpen(false)}
-              className={menuItemClass + " hover:text-amber-400 hover:bg-amber-500/10"}
+              className={getMenuItemClass("text-slate-300 hover:text-amber-300 hover:bg-amber-500/10")}
             >
-              <Users size={16} /> Export Clienti
+              <div className="bg-amber-500/20 p-1.5 rounded-lg text-amber-400"><Users size={16} /></div> Export Clienti
             </a>
             <a
               href={`/api/export/timesheets?tenantId=${tenantId}`}
               onClick={() => setIsOpen(false)}
-              className={menuItemClass + " hover:text-blue-400 hover:bg-blue-500/10"}
+              className={getMenuItemClass("text-slate-300 hover:text-blue-300 hover:bg-blue-500/10")}
             >
-              <Receipt size={16} /> Export Presenze
+              <div className="bg-blue-500/20 p-1.5 rounded-lg text-blue-400"><Receipt size={16} /></div> Export Presenze
             </a>
 
             <div className="h-px bg-[#1a2642] my-2" />
@@ -97,16 +98,16 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
             <Link
               href={`/paywall/${slug}`}
               onClick={() => setIsOpen(false)}
-              className={menuItemClass + " hover:text-cyan-400 hover:bg-cyan-500/10"}
+              className={getMenuItemClass("text-slate-300 hover:text-cyan-300 hover:bg-cyan-500/10")}
             >
-              <CreditCard size={16} /> Piano Pagamenti
+              <div className="bg-cyan-500/20 p-1.5 rounded-lg text-cyan-400"><CreditCard size={16} /></div> Piano Pagamenti
             </Link>
             
             {hasStripe && (
               <div onClick={() => setIsOpen(false)}>
                 <PortalButton 
                   slug={slug} 
-                  className={menuItemClass + " hover:text-emerald-400 hover:bg-emerald-500/10"}
+                  className={getMenuItemClass("text-slate-300 hover:text-teal-300 hover:bg-teal-500/10")}
                 />
               </div>
             )}
@@ -114,7 +115,7 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
             <div onClick={() => setIsOpen(false)}>
               <LogoutButton 
                 slug={slug} 
-                className={menuItemClass + " text-red-400 hover:bg-red-500/10"}
+                className={getMenuItemClass("text-red-400 hover:bg-red-500/10")}
               />
             </div>
             
