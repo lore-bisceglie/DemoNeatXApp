@@ -1038,7 +1038,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   gridTemplateColumns: `minmax(52px, 70px) repeat(${viewWeekDays.length}, repeat(${maxConcurrent}, minmax(0, 1fr)))`
                 }}
               >
-                  <div style={{ gridColumn: 1 }} className="text-slate-500 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center sticky left-0 top-0 bg-[#09101d]/95 backdrop-blur-md z-40 pb-2 shadow-[8px_0_0_rgba(9,16,29,0.95)] md:shadow-none border-b border-transparent">
+                  <div style={{ gridColumn: 1 }} className="text-slate-500 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center sticky left-0 top-0 bg-[#09101d]/95 backdrop-blur-md z-40 pb-2 shadow-[4px_0_12px_rgba(0,0,0,0.5)] md:shadow-none border-b border-white/[0.04] border-r">
                     Ora
                   </div>
 
@@ -1079,7 +1079,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
                     return (
                       <div className="contents" key={slot}>
-                        <div style={{ gridColumn: 1 }} className="w-full h-full min-h-[32px] sm:min-h-[38px] text-slate-400 font-medium flex items-center justify-center text-[10px] sm:text-sm bg-[#09101d]/95 backdrop-blur-md sticky left-0 z-20 border-r border-white/[0.04] shadow-[8px_0_0_rgba(9,16,29,0.95)] md:shadow-none">
+                        <div style={{ gridColumn: 1 }} className="w-full h-full min-h-[32px] sm:min-h-[38px] text-slate-400 font-medium flex items-center justify-center text-[10px] sm:text-sm bg-[#09101d]/95 backdrop-blur-md sticky left-0 z-20 border-r border-white/[0.04] shadow-[4px_0_12px_rgba(0,0,0,0.5)] md:shadow-none">
                           <span
                             className={`px-1 sm:px-2 py-1 rounded-xl transition-all ${
                               isQuarter
