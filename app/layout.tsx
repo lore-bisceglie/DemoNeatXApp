@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
+import "driver.js/dist/driver.css";
 import SocialFloatingGroup from "@/components/landing/SocialFloatingGroup";
 import Chatbot from "@/components/Chatbot";
 import GodmodeHub from "@/components/landing/GodmodeHub";

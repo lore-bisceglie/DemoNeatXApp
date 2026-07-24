@@ -1,7 +1,6 @@
 "use client";
 import { HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
 import { useEffect, useState } from "react";
 
 export default function TutorialButton() {
@@ -13,7 +12,6 @@ export default function TutorialButton() {
     // Auto-start on very first visit
     const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v1");
     if (!hasSeenTutorial) {
-      // Small timeout to ensure DOM elements (tabs, header) are fully mounted and visible
       setTimeout(() => {
         startTour();
         localStorage.setItem("neatx_tutorial_seen_v1", "true");
@@ -24,7 +22,9 @@ export default function TutorialButton() {
   const startTour = () => {
     const driverObj = driver({
       showProgress: true,
-      allowClose: false, // Prevents accidental closing by clicking outside
+      allowClose: false,
+      animate: true,
+      stagePadding: 5,
       doneBtnText: "Ho capito! ✨",
       nextBtnText: "Avanti →",
       prevBtnText: "← Indietro",
@@ -40,29 +40,23 @@ export default function TutorialButton() {
           popover: {
             title: "📋 Team e Rubrica",
             description: "Da questo menu in alto puoi aggiungere collaboratori (Team) e visualizzare la lista dei tuoi clienti (Rubrica) con tutte le loro preferenze.",
-            align: "start"
+            align: "start",
+            side: "bottom"
           }
         },
         {
           element: "#tour-tab-gestione",
           popover: {
-            title: "⚙️ Gestione",
-            description: "Cliccando qui puoi modificare i servizi, gli orari di apertura, e collegare Stripe per ricevere pagamenti online.",
-            align: "start"
-          }
-        },
-        {
-          element: "#tour-link",
-          popover: {
-            title: "📎 Link Prenotazione",
-            description: "Questo è il tuo link personale! Copialo e mettilo su Instagram o WhatsApp per far prenotare i clienti in autonomia.",
-            align: "center"
+            title: "⚙️ Gestione & Link Prenotazione",
+            description: "Clicca su questo tab per modificare i servizi, collegare Stripe e trovare il TUO LINK PERSONALE da mettere su Instagram per far prenotare i clienti in autonomia.",
+            align: "start",
+            side: "bottom"
           }
         },
         {
           popover: {
             title: "⏰ Consiglio: Intervalli di 15 minuti",
-            description: "Quando imposti la durata dei servizi, usa multipli di 15 minuti (15, 30, 45, 60...) per massimizzare gli appuntamenti nell'agenda.",
+            description: "Quando imposti la durata dei servizi nella scheda Gestione, usa multipli di 15 minuti (15, 30, 45, 60...) per incastrare perfettamente gli appuntamenti nell'agenda.",
           }
         }
       ]
