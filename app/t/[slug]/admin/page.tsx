@@ -1647,7 +1647,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
         </TabbedArea>
         
-        <ActivityLogPanel tenantId={tenantId} />
 
         <SupportWidget tenantId={tenant.id} colorTheme={tenant.themeColor} />
       </div>

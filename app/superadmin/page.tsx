@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import ActivityLogPanel from "@/app/t/[slug]/admin/ActivityLogPanel";
 
 type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never";
 
@@ -725,6 +726,10 @@ export default function SuperAdminPage() {
                 <button onClick={() => handleImpersonate(detailTenant.slug)} className="text-sm font-bold bg-amber-600/20 text-amber-400 border border-amber-600/30 px-4 py-3 rounded-xl hover:bg-amber-600/30 transition">🕵️ Entra Admin</button>
                 <button onClick={() => handleCopyCredentials(detailTenant)} className={`text-sm font-bold border px-4 py-3 rounded-xl transition ${copiedId === detailTenant.id ? "bg-emerald-600/30 text-emerald-300 border-emerald-600/50" : "bg-emerald-600/20 text-emerald-400 border-emerald-600/30 hover:bg-emerald-600/30"}`}>{copiedId === detailTenant.id ? "✅ Copiato!" : "📋 Copia Credenziali"}</button>
                 <button onClick={() => { setDetailTenant(null); openEdit(detailTenant); }} className="text-sm font-bold bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 px-4 py-3 rounded-xl hover:bg-cyan-600/30 transition">✏️ Modifica</button>
+              </div>
+
+              <div className="mt-4">
+                <ActivityLogPanel tenantId={detailTenant.id} />
               </div>
             </div>
           </div>
