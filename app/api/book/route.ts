@@ -47,6 +47,7 @@ export async function POST(request: Request) {
             breakStart: true,
             breakEnd: true,
             closedDays: true,
+            publishedAt: true,
           },
         })
       : null;
@@ -75,6 +76,11 @@ export async function POST(request: Request) {
 
     if (!isAdmin && isTrialExpired) {
       return NextResponse.json({ error: "La prova gratuita è scaduta." }, { status: 402 });
+    }
+
+    // SECURITY: Block bookings on unpublished salons (admins can still book via dashboard)
+    if (!isAdmin && !isPlaygroundDemo && !bookingTenant.publishedAt) {
+      return NextResponse.json({ error: "Il salone non è ancora attivo." }, { status: 403 });
     }
 
     if (!isAdmin) {

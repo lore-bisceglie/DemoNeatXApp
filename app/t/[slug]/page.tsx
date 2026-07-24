@@ -34,6 +34,7 @@ const getPublicTenant = cache((slug: string) =>
       trialEndsAt: true,
       trialStatus: true,
       isDemoData: true,
+      publishedAt: true,
       plan: true,
       services: {
         select: {
@@ -133,6 +134,29 @@ export default async function TenantPage({
   const { slug } = await params;
   const tenant = await getPublicTenant(slug);
   if (!tenant) notFound();
+
+  // SECURITY: Block bookings on unpublished salons
+  const isPublished = Boolean(tenant.publishedAt);
+  const isDemoOrTrial = tenant.isDemoData || tenant.trialStatus === "active";
+  if (!isPublished && !isDemoOrTrial) {
+    return (
+      <div className="min-h-screen bg-[#050814] flex items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-6">🚧</div>
+          <h1 className="text-2xl font-bold text-white mb-3">Sito in allestimento</h1>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            La pagina di prenotazione di <span className="text-white font-semibold">{tenant.name}</span> non è ancora attiva.
+            Contatta direttamente il salone per prenotare.
+          </p>
+          {tenant.phone && (
+            <a href={`tel:${tenant.phone}`} className="mt-6 inline-flex items-center gap-2 bg-[#00b4ff] text-[#050814] font-bold px-6 py-3 rounded-xl hover:bg-cyan-400 transition-colors">
+              📞 Chiama il salone
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const now = new Date();
   const trialActive = Boolean(tenant.trialEndsAt && tenant.trialEndsAt > now);

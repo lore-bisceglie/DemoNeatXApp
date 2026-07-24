@@ -252,7 +252,24 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
                       <div className="flex items-center gap-2 text-red-400">
                         <span className="font-extrabold uppercase text-xs tracking-widest">⚠️ Allerta No-Show</span>
                       </div>
-                      <span className="text-red-400 font-bold text-sm">{selectedCustomer.noShows} assenze registrate</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-red-400 font-bold text-sm">{selectedCustomer.noShows} assenze</span>
+                        <button
+                          onClick={async () => {
+                            if (!confirm(`Perdonare tutti i No-Show di ${selectedCustomer.name}?`)) return;
+                            try {
+                              const res = await fetch(`/api/actions/noshow?phone=${encodeURIComponent(selectedCustomer.phone)}&tenantId=${tenantId}`, { method: "DELETE" });
+                              if (res.ok) {
+                                setSelectedCustomer({ ...selectedCustomer, noShows: 0 });
+                                setCustomers(prev => prev.map(c => c.phone === selectedCustomer.phone ? { ...c, noShows: 0 } : c));
+                              }
+                            } catch {}
+                          }}
+                          className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                          ✓ Perdona
+                        </button>
+                      </div>
                     </div>
                   )}
                   <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-3">

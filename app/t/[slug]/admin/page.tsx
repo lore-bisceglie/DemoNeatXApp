@@ -40,6 +40,7 @@ import TrialLaunchPanel from "./TrialLaunchPanel";
 import SupportWidget from "./SupportWidget";
 import LogoutButton from "./LogoutButton";
 import AdminDropdownMenu from "./AdminDropdownMenu";
+import TutorialButton from "./TutorialButton";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -778,14 +779,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} slug={slug} />
             <CustomerDrawer tenantId={tenantId} />
             <AdminDropdownMenu slug={slug} tenantId={tenantId} hasStripe={!!tenant.stripeCustomerId} />
-            
-            <Link
-              href={`/t/${slug}`}
-              target="_blank"
-              className="col-span-2 sm:col-span-1 bg-gradient-to-r from-[#00b4ff] to-cyan-400 hover:from-cyan-400 hover:to-[#00b4ff] text-[#050814] text-sm font-extrabold px-5 py-2.5 rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-150 flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 hover:scale-[1.03]"
-            >
-              <Globe size={16} /> Pagina Clienti
-            </Link>
+            <TutorialButton />
           </div>
         </div>
 
