@@ -325,7 +325,7 @@ export default function TeamDrawer({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-indigo-500/30 transition flex justify-center items-center gap-2 whitespace-nowrap shadow-lg snap-center"
+        className="bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95 snap-center"
         title="Gestione Team e Servizi"
       >
         <span>👥</span> Team

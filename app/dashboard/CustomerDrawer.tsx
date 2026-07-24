@@ -99,7 +99,7 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-[#131c31] border border-[#1e2b4a] hover:bg-[#1e2b4a] text-slate-300 hover:text-white px-4 py-2 rounded-xl transition flex items-center gap-2 text-sm font-bold shadow-lg"
+        className="bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95"
         title="Apri rubrica clienti"
       >
         Rubrica
