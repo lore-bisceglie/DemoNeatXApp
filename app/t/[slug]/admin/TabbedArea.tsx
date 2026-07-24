@@ -42,6 +42,7 @@ export default function TabbedArea({
         {tabConfig.map((tab) => (
           <button
             key={tab.id}
+            id={`tour-tab-${tab.id}`}
             type="button"
             onClick={() => handleTabClick(tab.id)}
             className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-150 active:scale-95 snap-start ${

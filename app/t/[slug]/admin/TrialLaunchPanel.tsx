@@ -375,7 +375,7 @@ export default function TrialLaunchPanel({
         </div>
       </div>
 
-      <div className="mt-5 rounded-2xl border border-[#1a2642] bg-[#050814] p-4">
+      <div id="tour-link" className="mt-5 rounded-2xl border border-[#1a2642] bg-[#050814] p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-xs font-black uppercase tracking-widest text-slate-500">Link da mandare ai clienti</p>
