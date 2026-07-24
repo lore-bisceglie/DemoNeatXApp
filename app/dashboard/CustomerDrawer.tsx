@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BookOpen } from "lucide-react";
 
 type Customer = {
   phone: string;
@@ -99,10 +100,10 @@ export default function CustomerDrawer({ tenantId }: { tenantId: string }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95"
+        className="bg-[#131c31] hover:bg-blue-500/10 text-slate-300 hover:text-blue-300 font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] hover:border-blue-500/30 transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95"
         title="Apri rubrica clienti"
       >
-        Rubrica
+        <BookOpen size={16} className="text-blue-400" /> Rubrica
       </button>
 
       {isOpen && (

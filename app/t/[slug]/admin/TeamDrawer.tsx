@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { Users } from "lucide-react";
 import ScheduleEditor from "@/components/ScheduleEditor";
 
 type Service = {
@@ -325,10 +326,10 @@ export default function TeamDrawer({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95 snap-center"
+        className="bg-[#131c31] hover:bg-purple-500/10 text-slate-300 hover:text-purple-300 font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] hover:border-purple-500/30 transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95 snap-center"
         title="Gestione Team e Servizi"
       >
-        <span>👥</span> Team
+        <Users size={16} className="text-purple-400" /> Team
       </button>
 
       {isOpen && (

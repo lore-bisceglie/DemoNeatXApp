@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { 
   BarChart3, CalendarDays, Users, Receipt, 
-  CreditCard, Gift, MoreVertical
+  CreditCard, Gift, Settings2, ChevronDown
 } from "lucide-react";
 import PortalButton from "./PortalButton";
 import LogoutButton from "./LogoutButton";
@@ -36,9 +36,11 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-[#131c31] hover:bg-[#1a2642] text-slate-300 font-bold px-4 py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm border border-[#1e2b4a] active:scale-95"
+        className="bg-[#131c31] hover:bg-slate-800/80 text-slate-300 hover:text-white font-bold px-4 py-2.5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 text-sm border border-[#2a3a5e] hover:border-slate-500/50 active:scale-95 shadow-md"
       >
-        <MoreVertical size={16} /> <span className="hidden sm:inline">Gestione</span>
+        <Settings2 size={16} className="text-slate-400" /> 
+        <span className="hidden sm:inline">Gestione</span>
+        <ChevronDown size={14} className={`text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (
