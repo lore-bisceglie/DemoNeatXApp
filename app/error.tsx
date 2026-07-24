@@ -10,8 +10,18 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Optionally log the error to an error reporting service
     console.error("NeatX Global Error Caught:", error);
+    
+    // Invia l'errore al nostro bot Telegram interno
+    fetch("/api/syslog", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: error.message,
+        stack: error.stack,
+        url: window.location.href,
+      }),
+    }).catch(() => {});
   }, [error]);
 
   return (
