@@ -122,12 +122,13 @@ function positiveModulo(value: number, divisor: number) {
   return ((value % divisor) + divisor) % divisor;
 }
 
-function getDynamicImagePrompt(category: string): string {
-  if (category.includes("Barbier")) return "modern stylish luxury barber shop interior, moody lighting, professional aesthetic, elegant, no people";
-  if (category.includes("Estetica")) return "bright clean luxurious beauty salon and spa interior, minimalist, highly aesthetic, no people";
-  if (category.includes("Tattoo")) return "professional tattoo studio interior, modern industrial style, clean, artistic, no people";
-  if (category.includes("Donna")) return "high-end luxury hair salon interior, elegant mirrors, warm lighting, luxurious, no people";
-  return "beautiful modern professional interior, clean, aesthetic, no people";
+function getDynamicImagePrompt(category: string, seed: number): string {
+  const uniqueSuffix = ` hyperrealistic 8k resolution highly detailed photography (unique seed: ${seed})`;
+  if (category.includes("Barbier")) return "modern stylish luxury barber shop interior, moody lighting, professional aesthetic, elegant, no people" + uniqueSuffix;
+  if (category.includes("Estetica")) return "bright clean luxurious beauty salon and spa interior, minimalist, highly aesthetic, no people" + uniqueSuffix;
+  if (category.includes("Tattoo")) return "professional tattoo studio interior, modern industrial style, clean, artistic, no people" + uniqueSuffix;
+  if (category.includes("Donna")) return "high-end luxury hair salon interior, elegant mirrors, warm lighting, luxurious, no people" + uniqueSuffix;
+  return "beautiful modern professional interior, clean, aesthetic, no people" + uniqueSuffix;
 }
 
 function getRotationIndex(date: Date) {
@@ -142,7 +143,7 @@ export function selectDailyMarketingAsset(date = new Date()): MarketingAsset {
   // Generazione AI GRATUITA "on the fly" con Pollinations.ai
   // Usiamo l'indice o il timestamp come seed per avere una foto unica ogni mezza giornata
   const seed = getRotationIndex(date);
-  const prompt = getDynamicImagePrompt(asset.category);
+  const prompt = getDynamicImagePrompt(asset.category, seed);
   
   asset.image = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1080&height=1080&nologo=true&seed=${seed}`;
   
