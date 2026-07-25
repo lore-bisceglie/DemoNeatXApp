@@ -25,9 +25,9 @@ export default function TutorialButton() {
       allowClose: true, // Allow user to skip if they want
       animate: true,
       stagePadding: 8,
-      doneBtnText: "Ho capito! ✨",
+      doneBtnText: "Finito ✨",
       nextBtnText: "Avanti →",
-      prevBtnText: "← Indietro",
+      prevBtnText: "← Prec.",
       steps: [
         {
           popover: {

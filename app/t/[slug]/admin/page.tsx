@@ -1491,7 +1491,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             <AnalyticsChart data={analyticsData} isPro={isPremium} plan={tenant.plan} slug={slug} />
 
 {/* SEZIONE PAGAMENTI STRIPE */}
-            <div className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
+            <div id="tour-stripe-form" className="bg-[#0b1221] p-6 rounded-3xl shadow-xl shadow-blue-900/10 border border-[#1a2642] h-full flex flex-col relative overflow-hidden mb-6">
               <div className="absolute -right-4 -top-4 text-8xl opacity-[0.02] pointer-events-none">
                 💳
               </div>

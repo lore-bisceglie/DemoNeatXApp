@@ -32,7 +32,7 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
     </div>
   );
 
-  if (!data || data.count === 0) return null;
+  if (!data) return null;
 
   return (
     <PaywallOverlay 
@@ -52,12 +52,26 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
               <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md border border-emerald-500/30">Mini Marketing</span>
               <span className="text-slate-400 text-sm font-medium">Recupero Clienti</span>
             </div>
-            <h2 className="text-2xl font-extrabold text-white leading-tight">
-              Hai <span className="text-emerald-400">{data.count} clienti</span> che non tornano da oltre 30 giorni.
-            </h2>
-            <p className="text-slate-400 mt-1">
-              Valore potenziale stimato perso: <span className="text-white font-bold">€{data.estimatedRevenue}</span>
-            </p>
+            
+            {data.count === 0 ? (
+              <>
+                <h2 className="text-2xl font-extrabold text-white leading-tight">
+                  I tuoi clienti <span className="text-emerald-400">sono fedeli!</span>
+                </h2>
+                <p className="text-slate-400 mt-1">
+                  Al momento non hai clienti dormienti da oltre 30 giorni.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-extrabold text-white leading-tight">
+                  Hai <span className="text-emerald-400">{data.count} clienti</span> che non tornano da oltre 30 giorni.
+                </h2>
+                <p className="text-slate-400 mt-1">
+                  Valore potenziale stimato perso: <span className="text-white font-bold">€{data.estimatedRevenue}</span>
+                </p>
+              </>
+            )}
           </div>
 
           <button
