@@ -41,8 +41,7 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
       plan={plan || (isPremium ? "elite" : "basic")}
       className="mb-8"
     >
-      {/* Widget Dashboard */}
-      <div className="w-full relative bg-gradient-to-br from-[#0b242e] to-[#050814] rounded-3xl p-6 border border-emerald-500/30 overflow-hidden group shadow-lg shadow-emerald-500/5">
+      <div id="tour-marketing-widget" className="w-full relative bg-gradient-to-br from-[#0b242e] to-[#050814] rounded-3xl p-6 border border-emerald-500/30 overflow-hidden group shadow-lg shadow-emerald-500/5">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition duration-700"></div>
         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl"></div>

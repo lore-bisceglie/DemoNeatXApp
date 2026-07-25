@@ -1,14 +1,13 @@
 {
-    "niche": "Tatuatori",
-    "script_text": "Se sei tra i tatuatori e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' acconti automatici che filtrano i clienti che non si presentano. Con NeatX puoi avere ogni slot occupato da clienti che hanno già pagato, senza rincorrere clienti tutto il giorno. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
-    "hook_text": "ADDIO ACCONTI",
-    "cover_title": "ADDIO ACCONTI",
-    "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
-    "gameplay_style": "runner",
-    "caption": "Tatuatori: basta agenda gestita a mano. Commenta INFO o AGENDA e ti mando la demo NeatX. #perte #fyp #foryou #viral #imprenditore #businessitalia #crescita",
-    "strategy_date": "2026-07-24",
-    "strategy_feature": "no_show",
-    "strategy_pain": "acconti automatici che filtrano i clienti che non si presentano",
-    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato",
-    "fallback_reason": "Gemini non disponibile: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    "niche": "Barbieri",
+    "script_text": "Ancora a calcolare i turni dei tuoi collaboratori su fogli di carta o tabelle Excel che si perdono sempre? Stai letteralmente buttando ore di lavoro. Con NeatX gestisci turni, ferie e permessi dei tuoi barbieri in un click. A fine mese hai il file CSV gia pronto da inviare direttamente al tuo commercialista, senza errori e senza stress. Riprenditi il tuo tempo e automatizza il tuo salone. Prova gratis NeatX su neatx.store",
+    "hook_text": "BARBIERI: STOP EXCEL TURNI",
+    "cover_title": "BARBIERI: STOP EXCEL TURNI",
+    "image_prompt": "Photorealistic cinematic scene of a modern, high-end barber shop. In the foreground, a frustrated barber shop owner is staring at a messy desk cluttered with paper timesheets and a broken calculator, while next to him, a glowing modern tablet screen displays NeatX with a clean digital dashboard showing organized staff shifts and a button saying 'Export CSV for Accountant'. Premium realistic cinematic lighting, dramatic depth of field",
+    "gameplay_style": "block_miner",
+    "caption": "Passi ancora le domeniche a calcolare le ore dei tuoi dipendenti su fogli volanti o tabelle Excel che si cancellano? 🤯\n\nI fogli si perdono, i conti non tornano mai e il tuo commercialista continua a chiederti i resoconti delle ore. Smetti di buttare tempo prezioso che potresti dedicare ai tuoi clienti o al tuo relax!\n\nCon NeatX gestisci turni, ferie e permessi del tuo staff in un click. A fine mese, scarichi il file CSV già pronto e lo invii direttamente al commercialista. Zero carta, zero errori, zero stress. 🚀\n\n#barbiere #barbershopitalia #barbieri #gestionale #imprenditore #businessitalia #perte #fyp #foryou #viral\n\n👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!",
+    "strategy_date": "2026-07-25",
+    "strategy_feature": "timesheet",
+    "strategy_pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+    "strategy_promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista"
 }

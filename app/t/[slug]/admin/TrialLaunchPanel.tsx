@@ -327,7 +327,7 @@ export default function TrialLaunchPanel({
   };
 
   return (
-    <section className="mb-6 rounded-3xl border border-cyan-500/20 bg-[#07111f] p-4 shadow-2xl shadow-cyan-950/30 sm:p-6">
+    <section id="tour-settings-panel" className="mb-6 rounded-3xl border border-cyan-500/20 bg-[#07111f] p-4 shadow-2xl shadow-cyan-950/30 sm:p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <div className="mb-3 flex flex-wrap items-center gap-2">

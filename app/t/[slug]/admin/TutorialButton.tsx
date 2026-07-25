@@ -75,14 +75,23 @@ export default function TutorialButton() {
         {
           element: "#tour-tab-gestione",
           popover: {
-            title: "⚙️ Gestione Orari e Servizi",
-            description: "Questo pulsante apre le impostazioni avanzate. Clicchiamo Avanti per entrarci e vedere come configurare il tuo salone.",
+            title: "⚙️ Entriamo in Gestione",
+            description: "Questo pulsante apre il cuore del tuo sistema. Clicchiamo Avanti per entrarci e scoprire cosa puoi configurare.",
             align: "start",
             side: "bottom"
           },
           onHighlightStarted: () => {
             const tab = document.getElementById('tour-tab-gestione');
             if(tab) tab.click();
+          }
+        },
+        {
+          element: "#tour-settings-panel",
+          popover: {
+            title: "🕒 Orari, Servizi e Team",
+            description: "Da questo riquadro puoi configurare gli orari di apertura, i giorni di chiusura, i servizi offerti (con durata e prezzo) e gestire i membri del tuo staff.",
+            align: "center",
+            side: "top"
           }
         },
         {
@@ -95,10 +104,28 @@ export default function TutorialButton() {
           }
         },
         {
+          element: "#tour-marketing-widget",
+          popover: {
+            title: "🎯 Mini-Marketing",
+            description: "L'Intelligenza Artificiale di NeatX scova in automatico i clienti 'dormienti' (che non tornano da più di 30 giorni) e ti permette di recuperarli con 1 solo click.",
+            align: "center",
+            side: "bottom"
+          }
+        },
+        {
+          element: "#tour-review-widget",
+          popover: {
+            title: "⭐ Aumenta le tue Recensioni",
+            description: "Incolla qui il link della tua pagina Google. NeatX invierà un messaggio automatico dopo ogni appuntamento per chiedergli 5 stelle, spingendoti in alto su Google!",
+            align: "center",
+            side: "top"
+          }
+        },
+        {
           element: "#tour-tab-business",
           popover: {
-            title: "📈 Business & Pagamenti",
-            description: "Entriamo nella sezione Business per vedere come incassare online e far crescere il fatturato.",
+            title: "📈 Passiamo a Business",
+            description: "Ora clicchiamo avanti per entrare nella sezione Business, dove si gestiscono gli incassi.",
             align: "start",
             side: "bottom"
           },
@@ -110,10 +137,19 @@ export default function TutorialButton() {
         {
           element: "#tour-business-focus",
           popover: {
-            title: "🎯 Focus e Stripe",
-            description: "Qui tieni d'occhio i pagamenti. Scorrendo in basso in questa scheda potrai collegare Stripe per ricevere acconti o saldi online in totale sicurezza.",
+            title: "💰 Focus di Oggi",
+            description: "Un colpo d'occhio immediato sui clienti attesi oggi, su chi ha già pagato online e sul potenziale incasso totale della giornata.",
             align: "center",
             side: "bottom"
+          }
+        },
+        {
+          element: "#tour-stripe-form",
+          popover: {
+            title: "💳 Pagamenti Online (Stripe)",
+            description: "Vuoi eliminare chi prenota e non si presenta? Attiva i pagamenti! Puoi decidere di chiedere un Acconto, il Saldo Totale o solo il salvataggio della Carta di Credito.",
+            align: "center",
+            side: "top"
           }
         },
         {

@@ -52,7 +52,7 @@ export default function StripeSettingsForm({
   };
 
   return (
-    <div className="mt-6 border-t border-[#1e2b4a] pt-6">
+    <div id="tour-stripe-form" className="mt-6 border-t border-[#1e2b4a] pt-6">
       <h3 className="text-sm font-bold text-white mb-4">Regole di Pagamento</h3>
       
       <div className="space-y-4">

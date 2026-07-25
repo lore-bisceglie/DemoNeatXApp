@@ -67,7 +67,7 @@ export default function ReviewNeatxWidget({ slug, initialReview }: ReviewNeatxWi
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#0b1221] to-[#0f192b] p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/5 flex flex-col md:flex-row gap-6 lg:gap-10 relative overflow-hidden group transition-all hover:border-[#00b4ff]/30 hover:shadow-[#00b4ff]/10">
+    <div id="tour-review-widget" className="bg-gradient-to-br from-[#0b1221] to-[#0f192b] p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/5 flex flex-col md:flex-row gap-6 lg:gap-10 relative overflow-hidden group transition-all hover:border-[#00b4ff]/30 hover:shadow-[#00b4ff]/10">
       <div className="absolute -right-4 -bottom-4 text-8xl opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform duration-500">
         <MessageSquareQuote />
       </div>
