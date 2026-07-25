@@ -144,13 +144,15 @@ export default async function SuccessPage(props: {
         </div>
         
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
-          {isValid ? "Pagamento Riuscito!" : "Prenotazione Effettuata"}
+          {isValid ? "Pagamento Riuscito!" : (waLink ? "⚠️ Un Ultimo Passaggio..." : "Prenotazione Effettuata")}
         </h1>
         
         <p className="text-slate-400 text-sm mb-6 leading-relaxed">
           {isValid 
             ? "Abbiamo ricevuto il tuo pagamento online. La prenotazione è confermata e il salone ti aspetta." 
-            : "La tua prenotazione è confermata. Pagherai direttamente in salone."}
+            : (waLink
+                ? "Per confermare definitivamente l'appuntamento e salvare il link di cancellazione, devi inviare il messaggio WhatsApp al salone."
+                : "La tua prenotazione è confermata. Pagherai direttamente in salone.")}
         </p>
 
         {appointment && appointment.service && (
@@ -189,10 +191,10 @@ export default async function SuccessPage(props: {
                   href={waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold rounded-2xl transition shadow-[0_0_20px_rgba(37,211,102,0.15)] mb-3"
+                  className="flex items-center justify-center gap-2 w-full py-4 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-extrabold text-lg rounded-2xl transition shadow-[0_0_30px_rgba(37,211,102,0.4)] animate-pulse mb-3"
                 >
-                  <MessageCircle size={20} />
-                  Invia conferma su WhatsApp
+                  <MessageCircle size={24} />
+                  Conferma su WhatsApp
                 </a>
               )}
               
