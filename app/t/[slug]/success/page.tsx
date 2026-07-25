@@ -207,11 +207,18 @@ export default async function SuccessPage(props: {
                 href={googleCalLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] text-slate-400 hover:text-slate-300 text-sm font-medium rounded-2xl transition"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-[#131c31] hover:bg-[#1a2642] border border-[#1e2b4a] text-slate-400 hover:text-slate-300 text-sm font-medium rounded-2xl transition mb-3"
               >
                 <CalendarPlus size={16} />
                 oppure apri in Google Calendar
               </a>
+
+              <Link 
+                href={`/cancel/${appointment.cancelToken}`}
+                className="flex items-center justify-center gap-2 w-full py-3 bg-transparent border border-red-500/20 hover:bg-red-500/10 text-red-400 font-bold rounded-2xl transition"
+              >
+                Gestisci / Annulla Appuntamento
+              </Link>
             </>
           )}
 
