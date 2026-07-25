@@ -1,48 +1,43 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-25T11:46:01.186182+02:00
+Generato: 2026-07-25T16:59:21.277365+02:00
 
-## Idea 1: Se sei un barbiere e segni ancora le ore dei dipendenti su fogli Excel che poi perdi, stai perdendo soldi ogni mese.
-- title: BARBIERI: ADDIO FOGLI EXCEL
-- hook: Se sei un barbiere e segni ancora le ore dei dipendenti su fogli Excel che poi perdi, stai perdendo soldi ogni mese.
-- pain: ore dei dipendenti segnate a mano su fogli Excel persi
-- promise: turni, ferie e permessi in un click, CSV pronto per il commercialista
-- blog_topic: Barbieri: Timesheet Commercialista con NeatX
-- gameplay_style: block_miner
-- image_prompt: photorealistic cinematic scene inside a luxury barber shop workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting
+## Idea 1: Centri estetici: le clienti soddisfatte non vi lasciano recensioni e quelle arrabbiate corrono subito su Google.
+- video_title: La trappola delle recensioni nei centri estetici
+- hook: Centri estetici: le clienti soddisfatte non vi lasciano recensioni e quelle arrabbiate corrono subito su Google.
+- visual_concept: Video di gameplay in stile block miner in sottofondo con testi ad alto contrasto posizionati al centro dello schermo e una voce narrante chiara.
+- script_outline: ['Spiega il paradosso dei centri estetici: chi riceve un ottimo servizio spesso si dimentica di recensire, mentre chi ha un minimo problema corre a scrivere una recensione negativa pubblica.', 'Mostra come questa dinamica danneggi la reputazione del salone e faccia perdere potenziali prenotazioni.', 'Presenta NeatX e il suo sistema di recensioni automatiche post-trattamento.', 'Spiega il doppio canale: i clienti soddisfatti vengono indirizzati a Google, mentre le critiche vengono intercettate tramite un modulo di feedback privato.']
+- blog_title: Centri Estetici: Recensioni Automatiche con NeatX
+- keywords: ['gestionale centro estetico', 'prenotazioni estetista', 'agenda centro estetico']
 
-## Idea 2: Il tuo commercialista detesta ricevere foto sfuocate su WhatsApp o foglietti stropicciati con le ore lavorate dai tuoi barbieri.
-- title: BARBIERI: CSV COMMERCIALISTA
-- hook: Il tuo commercialista detesta ricevere foto sfuocate su WhatsApp o foglietti stropicciati con le ore lavorate dai tuoi barbieri.
-- pain: tempo perso a trascrivere a mano le ore e a rincorrere i dati per le buste paga
-- promise: un file CSV pulito, strutturato e pronto da inviare al consulente del lavoro in un click
-- blog_topic: Come semplificare la contabilità del personale nel tuo barber shop con NeatX
-- gameplay_style: block_miner
-- image_prompt: close up of a sleek modern tablet displaying an organized digital timesheet with green and blue color indicators, on a dark wooden barber station with clippers, cinematic lighting
+## Idea 2: Se gestisci un centro estetico, ecco come intercettare le clienti insoddisfatte prima che lascino una recensione negativa pubblica.
+- video_title: Come azzerare le recensioni negative su Google
+- hook: Se gestisci un centro estetico, ecco come intercettare le clienti insoddisfatte prima che lascino una recensione negativa pubblica.
+- visual_concept: Gameplay rilassante block miner con sovrimpressione di un finto messaggio WhatsApp inviato dal sistema NeatX che mostra l'opzione di feedback privato.
+- script_outline: ["Rivela l'ansia di ogni estetista: la recensione a una stella che rovina anni di lavoro e la media su Google Maps.", 'Spiega come NeatX risolve il problema automatizzando la richiesta di feedback dopo ogni appuntamento.', 'Mostra il funzionamento del filtro: se il cliente seleziona un punteggio basso, il sistema lo invita a scrivere un feedback privato per il titolare invece di pubblicarlo online.', 'Invita a implementare questo sistema per proteggere il brand del salone.']
+- blog_title: Come gestire e prevenire le recensioni negative nel tuo centro estetico
+- keywords: ['gestionale centro estetico', 'recensioni centro estetico', 'agenda centro estetico']
 
-## Idea 3: Basta rincorrere i tuoi collaboratori in salone a fine giornata per capire chi ha fatto straordinari, permessi o ferie.
-- title: BARBER SHOP: TURNI SENZA ERRORI
-- hook: Basta rincorrere i tuoi collaboratori in salone a fine giornata per capire chi ha fatto straordinari, permessi o ferie.
-- pain: disorganizzazione nella gestione giornaliera del personale e contestazioni sulle ore effettive
-- promise: tracciamento centralizzato delle presenze e approvazione dei turni in tempo reale dal telefono
-- blog_topic: Gestione collaboratori per barbieri: addio contestazioni sulle ore lavorate
-- gameplay_style: block_miner
-- image_prompt: professional overhead shot of a modern barber shop layout with glowing digital displays representing staff schedules and timecards, realistic volumetric fog, hyperdetailed
+## Idea 3: Estetiste: smettete di chiedere recensioni a voce a fine trattamento, esiste un metodo automatico che lo fa per voi senza imbarazzi.
+- video_title: Ottenere recensioni a 5 stelle in automatico
+- hook: Estetiste: smettete di chiedere recensioni a voce a fine trattamento, esiste un metodo automatico che lo fa per voi senza imbarazzi.
+- visual_concept: Gameplay fluido block miner abbinato a testi dinamici che mostrano l'incremento di recensioni positive mensili stimato con l'uso del gestionale.
+- script_outline: ["Evidenzia l'imbarazzo e la scomodità di chiedere una recensione alla cliente mentre sta pagando alla cassa.", 'Spiega che la maggior parte delle clienti vorrebbe lasciarla, ma poi si dimentica una volta uscita dal centro estetico.', 'Presenta la soluzione NeatX: un messaggio automatico inviato poco dopo il trattamento con un link diretto per lasciare le 5 stelle con un click.', 'Mostra i risultati in termini di visibilità locale del salone.']
+- blog_title: Come aumentare le recensioni Google del tuo salone senza chiederle a voce
+- keywords: ['prenotazioni estetista', 'gestionale centro estetico', 'recensioni google estetista']
 
-## Idea 4: Smetti di sprecare la domenica pomeriggio a fare i calcoli delle ore dei tuoi barbieri per colpa di foglietti volanti che non quadrano.
-- title: BARBIERI: ZERO ORE PERSE
-- hook: Smetti di sprecare la domenica pomeriggio a fare i calcoli delle ore dei tuoi barbieri per colpa di foglietti volanti che non quadrano.
-- pain: perdita di tempo libero nel weekend per riordinare la rendicontazione dei dipendenti
-- promise: calcolo automatico e istantaneo di ore ordinarie, straordinari e assenze senza usare calcolatrici
-- blog_topic: Ottimizzazione del tempo per titolari di barber shop: automatizza i fogli presenze
-- gameplay_style: block_miner
-- image_prompt: a macro shot of a barber cutting hair, with a subtle digital transparent overlay showing a weekly timesheet schedule interface, cinematic atmosphere, premium grading
+## Idea 4: Il motivo per cui i centri estetici concorrenti nella tua zona hanno l'agenda piena dipende spesso solo dal numero di recensioni recenti su Google.
+- video_title: Il segreto per riempire l'agenda dell'estetista
+- hook: Il motivo per cui i centri estetici concorrenti nella tua zona hanno l'agenda piena dipende spesso solo dal numero di recensioni recenti su Google.
+- visual_concept: Video di gioco block miner veloce con grafiche animate che mostrano la crescita del posizionamento su Google Maps di un salone di bellezza.
+- script_outline: ["Sottolinea che l'algoritmo di Google premia i centri estetici che ricevono recensioni costanti e positive.", 'Spiega che i vecchi sistemi manuali non garantiscono questa costanza.', 'Mostra come NeatX trasformi ogni singolo appuntamento completato in una potenziale recensione a 5 stelle in modo automatico.', 'Invita a digitalizzare il flusso di lavoro per dominare le ricerche locali di estetiste nella propria città.']
+- blog_title: Come scalare la classifica di Google Maps con il tuo centro estetico
+- keywords: ['agenda centro estetico', 'gestionale centro estetico', 'prenotazioni estetista']
 
-## Idea 5: Gestire le ore lavorate dei tuoi barbieri a occhio ti sta costando centinaia di euro ogni mese in straordinari non giustificati.
-- title: BARBERIA: CONTROLLO COSTI STAFF
-- hook: Gestire le ore lavorate dei tuoi barbieri a occhio ti sta costando centinaia di euro ogni mese in straordinari non giustificati.
-- pain: mancanza di controllo reale sulle ore lavorate e budget dello staff fuori controllo
-- promise: report storici dettagliati e approvazione formale delle ore effettivamente svolte prima dell'invio
-- blog_topic: Controllo di gestione per barber shop: monitorare il costo del personale con facilità
-- gameplay_style: block_miner
-- image_prompt: sharp detailed shot of a luxury barber shop reception counter featuring a modern terminal screen with an active timesheet export interface, clean aesthetic, moody lighting
+## Idea 5: Se le tue clienti escono dal centro estetico felicissime ma su Google non hai nuove recensioni da mesi, stai regalando fatturato ai concorrenti.
+- video_title: Digitalizzare le recensioni del centro estetico
+- hook: Se le tue clienti escono dal centro estetico felicissime ma su Google non hai nuove recensioni da mesi, stai regalando fatturato ai concorrenti.
+- visual_concept: Sottofondo gameplay block miner con grafiche minimaliste che mettono a confronto un salone senza recensioni con uno che ne riceve in automatico ogni giorno.
+- script_outline: ['Rifletti sulla frustrazione di fare trattamenti eccellenti senza che la reputazione online rispecchi la realtà del salone.', 'Mostra come NeatX renda il processo semplicissimo per la cliente: basta un tocco sullo smartphone per confermare la soddisfazione.', 'Evidenzia che più recensioni positive significano più fiducia per chi cerca un nuovo centro estetico online.', "Chiudi con l'invito a provare NeatX per automatizzare agenda, prenotazioni e recensioni in un'unica piattaforma."]
+- blog_title: Perché le recensioni non lasciate stanno frenando la crescita del tuo centro estetico
+- keywords: ['gestionale centro estetico', 'agenda centro estetico', 'recensioni automatiche estetista']
