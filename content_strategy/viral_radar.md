@@ -1,33 +1,48 @@
 # NeatX Viral Radar
 
-Generato: 2026-07-25T10:05:29.727200+02:00
+Generato: 2026-07-25T11:46:01.186182+02:00
 
-## Idea 1: Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.
-- title: PARRUCCHIERI: OGNI SLOT OCCUPATO
-- hook: Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.
-- type: video
-- content: Mostra come la gestione delle prenotazioni con acconti automatici può rivoluzionare il tuo salone.
+## Idea 1: Se sei un barbiere e segni ancora le ore dei dipendenti su fogli Excel che poi perdi, stai perdendo soldi ogni mese.
+- title: BARBIERI: ADDIO FOGLI EXCEL
+- hook: Se sei un barbiere e segni ancora le ore dei dipendenti su fogli Excel che poi perdi, stai perdendo soldi ogni mese.
+- pain: ore dei dipendenti segnate a mano su fogli Excel persi
+- promise: turni, ferie e permessi in un click, CSV pronto per il commercialista
+- blog_topic: Barbieri: Timesheet Commercialista con NeatX
+- gameplay_style: block_miner
+- image_prompt: photorealistic cinematic scene inside a luxury barber shop workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting
 
-## Idea 2: Scopri il metodo che garantisce clienti pagati e slot sempre pieni.
-- title: Zero No-Show: La Rivoluzione nei Saloni
-- hook: Scopri il metodo che garantisce clienti pagati e slot sempre pieni.
-- type: blog
-- content: Approfondisci come implementare un sistema di prenotazioni efficace riducendo i no-show.
+## Idea 2: Il tuo commercialista detesta ricevere foto sfuocate su WhatsApp o foglietti stropicciati con le ore lavorate dai tuoi barbieri.
+- title: BARBIERI: CSV COMMERCIALISTA
+- hook: Il tuo commercialista detesta ricevere foto sfuocate su WhatsApp o foglietti stropicciati con le ore lavorate dai tuoi barbieri.
+- pain: tempo perso a trascrivere a mano le ore e a rincorrere i dati per le buste paga
+- promise: un file CSV pulito, strutturato e pronto da inviare al consulente del lavoro in un click
+- blog_topic: Come semplificare la contabilità del personale nel tuo barber shop con NeatX
+- gameplay_style: block_miner
+- image_prompt: close up of a sleek modern tablet displaying an organized digital timesheet with green and blue color indicators, on a dark wooden barber station with clippers, cinematic lighting
 
-## Idea 3: Un sistema che premia la puntualità e penalizza l'assenza.
-- title: Acconti Automatici: La Chiave del Successo
-- hook: Un sistema che premia la puntualità e penalizza l'assenza.
-- type: video
-- content: Spiega come gli acconti automatici possono migliorare la tua attività e la soddisfazione dei clienti.
+## Idea 3: Basta rincorrere i tuoi collaboratori in salone a fine giornata per capire chi ha fatto straordinari, permessi o ferie.
+- title: BARBER SHOP: TURNI SENZA ERRORI
+- hook: Basta rincorrere i tuoi collaboratori in salone a fine giornata per capire chi ha fatto straordinari, permessi o ferie.
+- pain: disorganizzazione nella gestione giornaliera del personale e contestazioni sulle ore effettive
+- promise: tracciamento centralizzato delle presenze e approvazione dei turni in tempo reale dal telefono
+- blog_topic: Gestione collaboratori per barbieri: addio contestazioni sulle ore lavorate
+- gameplay_style: block_miner
+- image_prompt: professional overhead shot of a modern barber shop layout with glowing digital displays representing staff schedules and timecards, realistic volumetric fog, hyperdetailed
 
-## Idea 4: Liberati dalla confusione delle prenotazioni con il giusto gestionale.
-- title: Gestire il Salone senza Stress
-- hook: Liberati dalla confusione delle prenotazioni con il giusto gestionale.
-- type: blog
-- content: Condividi consigli su come semplificare la gestione delle prenotazioni utilizzando NeatX.
+## Idea 4: Smetti di sprecare la domenica pomeriggio a fare i calcoli delle ore dei tuoi barbieri per colpa di foglietti volanti che non quadrano.
+- title: BARBIERI: ZERO ORE PERSE
+- hook: Smetti di sprecare la domenica pomeriggio a fare i calcoli delle ore dei tuoi barbieri per colpa di foglietti volanti che non quadrano.
+- pain: perdita di tempo libero nel weekend per riordinare la rendicontazione dei dipendenti
+- promise: calcolo automatico e istantaneo di ore ordinarie, straordinari e assenze senza usare calcolatrici
+- blog_topic: Ottimizzazione del tempo per titolari di barber shop: automatizza i fogli presenze
+- gameplay_style: block_miner
+- image_prompt: a macro shot of a barber cutting hair, with a subtle digital transparent overlay showing a weekly timesheet schedule interface, cinematic atmosphere, premium grading
 
-## Idea 5: Non lasciare che i no-show rovinino il tuo business!
-- title: Il Futuro dei Parrucchieri è Digitale
-- hook: Non lasciare che i no-show rovinino il tuo business!
-- type: video
-- content: Illustra come la digitalizzazione delle prenotazioni può trasformare il tuo salone.
+## Idea 5: Gestire le ore lavorate dei tuoi barbieri a occhio ti sta costando centinaia di euro ogni mese in straordinari non giustificati.
+- title: BARBERIA: CONTROLLO COSTI STAFF
+- hook: Gestire le ore lavorate dei tuoi barbieri a occhio ti sta costando centinaia di euro ogni mese in straordinari non giustificati.
+- pain: mancanza di controllo reale sulle ore lavorate e budget dello staff fuori controllo
+- promise: report storici dettagliati e approvazione formale delle ore effettivamente svolte prima dell'invio
+- blog_topic: Controllo di gestione per barber shop: monitorare il costo del personale con facilità
+- gameplay_style: block_miner
+- image_prompt: sharp detailed shot of a luxury barber shop reception counter featuring a modern terminal screen with an active timesheet export interface, clean aesthetic, moody lighting
