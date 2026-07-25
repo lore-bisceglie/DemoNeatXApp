@@ -40,10 +40,30 @@ export async function POST(req: Request) {
 
     console.log(`📩 Messaggio in entrata da ${from}: "${body}"`);
 
-    // Risposta automatica TwiML
-    const autoReply = isWhatsApp
-      ? "Ciao! 👋 Questo è un servizio automatico per la gestione appuntamenti e non leggiamo i messaggi.\n\nPer parlare con il salone, contattali direttamente sul loro numero.\n\nSe devi annullare un appuntamento, clicca il link nel promemoria che hai ricevuto. Grazie! 🙏"
-      : "Ciao! Questo è un servizio automatico. Per parlare con il salone, contattali direttamente. Per annullare un appuntamento, usa il link nel promemoria. Grazie!";
+    // Check se è una richiesta VIP
+    const isVipRequest = body.toLowerCase().includes("voglio attivare il piano vip");
+
+    let autoReply = "";
+    if (isVipRequest) {
+      autoReply = "Ottima scelta! 🚀\n\nAbbiamo ricevuto la tua richiesta VIP per il piano 'Senza Pensieri'.\n\nUn nostro consulente ti chiamerà su questo numero il prima possibile durante l'orario lavorativo per attivarti tutto.";
+      
+      // Manda notifica Telegram
+      const configuredBase = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BASE_URL || "https://neatx.store";
+      fetch(`${configuredBase}/api/syslog`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: `🚨 NUOVO LEAD VIP! (Piano Acchiappa-Boomer)\n\nIl numero ${from} ha appena richiesto il piano da 149€.\nMessaggio: "${body}"\n\nChiamalo appena puoi!`,
+          url: "WhatsApp Bot",
+        }),
+      }).catch(e => console.error("Errore invio syslog VIP", e));
+
+    } else {
+      // Risposta automatica standard
+      autoReply = isWhatsApp
+        ? "Ciao! 👋 Questo è un servizio automatico per la gestione appuntamenti e non leggiamo i messaggi.\n\nPer parlare con il salone, contattali direttamente sul loro numero.\n\nSe devi annullare un appuntamento, clicca il link nel promemoria che hai ricevuto. Grazie! 🙏"
+        : "Ciao! Questo è un servizio automatico. Per parlare con il salone, contattali direttamente. Per annullare un appuntamento, usa il link nel promemoria. Grazie!";
+    }
 
     // Twilio si aspetta una risposta TwiML
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
