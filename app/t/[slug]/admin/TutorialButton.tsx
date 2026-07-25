@@ -115,8 +115,8 @@ export default function TutorialButton() {
         {
           element: "#tour-review-widget",
           popover: {
-            title: "⭐ Aumenta le tue Recensioni",
-            description: "Incolla qui il link della tua pagina Google. NeatX invierà un messaggio automatico dopo ogni appuntamento per chiedergli 5 stelle, spingendoti in alto su Google!",
+            title: "⭐ Aiutaci a Crescere (Recensioni)",
+            description: "Ti piace NeatX? Lasciaci una recensione in questo riquadro! Le recensioni a 5 stelle verranno pubblicate sulla nostra Home Page, dando visibilità gratuita al tuo salone (inseriremo il tuo nome).",
             align: "center",
             side: "top"
           }
