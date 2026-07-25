@@ -84,7 +84,7 @@ export default function PricingSection() {
             </ul>
             <div className="mt-8 flex flex-col gap-3 relative z-10">
               <a
-                href="https://wa.me/393409280798?text=Ciao%20team%20NeatX!%20%F0%9F%91%8B%0AVoglio%20attivare%20il%20piano%20VIP%20Senza%20Pensieri%20per%20il%20mio%20salone.%20%0APotete%20chiamarmi%20per%20configurare%20tutto%3F"
+                href="https://wa.me/393793874593?text=Ciao%20team%20NeatX!%20%F0%9F%91%8B%0AVoglio%20attivare%20il%20piano%20VIP%20Senza%20Pensieri%20per%20il%20mio%20salone.%20%0APotete%20chiamarmi%20per%20configurare%20tutto%3F"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-4 block bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-slate-900 font-extrabold rounded-xl transition-all text-center shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-105"
