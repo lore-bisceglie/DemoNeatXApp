@@ -42,7 +42,8 @@ export default function TutorialButton() {
             description: "Aggiungi collaboratori al tuo Team e visualizza la rubrica completa dei tuoi clienti. Puoi assegnare permessi specifici a ogni membro.",
             align: "start",
             side: "bottom"
-          }
+          },
+          onHighlightStarted: () => { document.getElementById('tour-tab-agenda')?.click(); }
         },
         {
           element: "#tour-dashboard-cards",
@@ -75,24 +76,50 @@ export default function TutorialButton() {
           element: "#tour-tab-gestione",
           popover: {
             title: "⚙️ Gestione Orari e Servizi",
-            description: "Clicca qui per modificare orari di apertura, aggiungere servizi, gestire i giorni di chiusura e trovare il tuo LINK PRENOTAZIONE da dare ai clienti.",
+            description: "Questo pulsante apre le impostazioni avanzate. Clicchiamo Avanti per entrarci e vedere come configurare il tuo salone.",
             align: "start",
             side: "bottom"
+          },
+          onHighlightStarted: () => {
+            const tab = document.getElementById('tour-tab-gestione');
+            if(tab) tab.click();
+          }
+        },
+        {
+          element: "#tour-link",
+          popover: {
+            title: "🔗 Il tuo Link Prenotazione",
+            description: "Questo è il link d'oro. Copialo e mettilo nella Bio di Instagram o giralo su WhatsApp. I clienti prenoteranno in autonomia H24!",
+            align: "center",
+            side: "top"
           }
         },
         {
           element: "#tour-tab-business",
           popover: {
             title: "📈 Business & Pagamenti",
-            description: "Il cuore del guadagno. Qui colleghi Stripe per farti pagare online dai clienti, attivi il marketing automatico e gestisci le recensioni Google.",
+            description: "Entriamo nella sezione Business per vedere come incassare online e far crescere il fatturato.",
             align: "start",
+            side: "bottom"
+          },
+          onHighlightStarted: () => {
+            const tab = document.getElementById('tour-tab-business');
+            if(tab) tab.click();
+          }
+        },
+        {
+          element: "#tour-business-focus",
+          popover: {
+            title: "🎯 Focus e Stripe",
+            description: "Qui tieni d'occhio i pagamenti. Scorrendo in basso in questa scheda potrai collegare Stripe per ricevere acconti o saldi online in totale sicurezza.",
+            align: "center",
             side: "bottom"
           }
         },
         {
           popover: {
             title: "🚀 Tip PRO: WhatsApp Business",
-            description: "Per massimizzare la resa e abbattere il tempo perso al telefono, usa WhatsApp Business impostando un messaggio automatico di benvenuto con il tuo LINK PRENOTAZIONE. Così il cliente prenota da solo senza farti impazzire! (Consiglio Extra: in Gestione usa durate di 15 in 15 minuti).",
+            description: "Consiglio d'oro: imposta su WhatsApp Business un messaggio automatico con il tuo LINK PRENOTAZIONE. Così, se un cliente ti scrive mentre lavori, WhatsApp gli risponde col link per prenotare da solo!",
           }
         }
       ]
