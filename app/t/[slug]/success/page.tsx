@@ -143,17 +143,27 @@ export default async function SuccessPage(props: {
           <CheckCircle2 size={40} className="text-emerald-400" />
         </div>
         
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
-          {isValid ? "Pagamento Riuscito!" : (waLink ? "⚠️ Un Ultimo Passaggio..." : "Prenotazione Effettuata")}
-        </h1>
-        
-        <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-          {isValid 
-            ? "Abbiamo ricevuto il tuo pagamento online. La prenotazione è confermata e il salone ti aspetta." 
-            : (waLink
-                ? "Per confermare definitivamente l'appuntamento e salvare il link di cancellazione, devi inviare il messaggio WhatsApp al salone."
-                : "La tua prenotazione è confermata. Pagherai direttamente in salone.")}
-        </p>
+        {waLink && !isValid ? (
+          <div className="bg-amber-500/10 border-2 border-amber-500/50 rounded-2xl p-4 sm:p-5 mb-6 shadow-[0_0_30px_rgba(245,158,11,0.2)] animate-pulse">
+            <h1 className="text-xl sm:text-2xl font-black text-amber-400 mb-2 uppercase tracking-wide">
+              ⚠️ Un Ultimo Passaggio...
+            </h1>
+            <p className="text-amber-200/90 text-sm font-medium leading-relaxed">
+              Per confermare definitivamente l'appuntamento e salvare il link di cancellazione, <span className="font-bold text-amber-400">devi inviare il messaggio WhatsApp</span> al salone.
+            </p>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
+              {isValid ? "Pagamento Riuscito!" : "Prenotazione Effettuata"}
+            </h1>
+            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+              {isValid 
+                ? "Abbiamo ricevuto il tuo pagamento online. La prenotazione è confermata e il salone ti aspetta." 
+                : "La tua prenotazione è confermata. Pagherai direttamente in salone."}
+            </p>
+          </>
+        )}
 
         {appointment && appointment.service && (
           <div className="bg-[#131c31] border border-[#1e2b4a] rounded-2xl p-5 mb-6 text-left">
