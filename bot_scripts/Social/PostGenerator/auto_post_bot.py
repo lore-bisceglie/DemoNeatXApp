@@ -89,7 +89,6 @@ def create_graphic_post(title, bg_url):
     html_path = SCRIPT_DIR / "temp_post.html"
     
     background_css = f"url('{bg_url}') center center / cover no-repeat"
-    title_html = title.replace(" ", "<br>") if len(title) < 20 else title
     
     html_content = f"""
     <!doctype html>
@@ -98,45 +97,33 @@ def create_graphic_post(title, bg_url):
       <meta charset="utf-8">
       <style>
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        html, body {{ width: 1080px; height: 1350px; overflow: hidden; }}
-        body {{ font-family: "Segoe UI", Arial, sans-serif; color: #fff; background: #020617; }}
-        .background {{ position: absolute; inset: 0; background: {background_css}; transform: scale(1.025); }}
-        .scrim {{
-          position: absolute; inset: 0;
-          background: linear-gradient(180deg, rgba(2, 6, 23, .1) 0%, rgba(2, 6, 23, .4) 60%, rgba(2, 6, 23, .95) 100%);
+        html, body {{ width: 1080px; height: 1350px; overflow: hidden; font-family: "Segoe UI", Arial, sans-serif; }}
+        .background {{ position: absolute; inset: 0; background: {background_css}; }}
+        .banner {{
+          position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+          background: linear-gradient(0deg, rgba(11,18,33,1) 0%, rgba(11,18,33,1) 80%, rgba(11,18,33,0) 100%);
+          display: flex; justify-content: space-between; align-items: flex-end; padding: 0 60px 40px 60px;
         }}
-        .brand {{
-          position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
-          font-size: 70px; font-weight: 300; letter-spacing: -4px; text-shadow: 0 5px 20px rgba(0, 0, 0, .8);
+        .logo {{
+          font-size: 80px; font-weight: 400; color: #ffffff; letter-spacing: -2px; margin-bottom: -15px;
         }}
-        .brand strong {{ color: #11bff5; font-weight: 500; }}
-        .title-card {{
-          position: absolute; bottom: 120px; left: 80px; right: 80px;
-          display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+        .logo strong {{ color: #11bff5; font-weight: 500; }}
+        .text-container {{
+          text-align: right; display: flex; flex-direction: column; justify-content: flex-end;
         }}
-        .title {{
-          font-size: 85px; line-height: 1.1; font-weight: 900; letter-spacing: -2px;
-          text-transform: uppercase; text-shadow: 0 5px 25px rgba(0, 0, 0, .9);
-        }}
-        .accent {{
-          width: 120px; height: 8px; margin-top: 30px; border-radius: 99px;
-          background: linear-gradient(90deg, #22d3ee, #3b82f6);
-        }}
-        .site {{
-          position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
-          color: #7dd3fc; font-size: 26px; font-weight: 800; letter-spacing: 4px;
-        }}
+        .text-line1 {{ font-size: 30px; font-weight: 500; color: #ffffff; margin-bottom: 5px; }}
+        .text-line2 {{ font-size: 26px; font-weight: 600; color: #7dd3fc; }}
       </style>
     </head>
     <body>
       <div class="background"></div>
-      <div class="scrim"></div>
-      <div class="brand">Neat<strong>X</strong></div>
-      <div class="title-card">
-        <div class="title">{title}</div>
-        <div class="accent"></div>
+      <div class="banner">
+        <div class="logo">Neat<strong>X</strong></div>
+        <div class="text-container">
+          <div class="text-line1">Il gestionale per il tuo Salone</div>
+          <div class="text-line2">Prova gratis su neatx.it</div>
+        </div>
       </div>
-      <div class="site">NEATX.STORE</div>
     </body>
     </html>
     """
