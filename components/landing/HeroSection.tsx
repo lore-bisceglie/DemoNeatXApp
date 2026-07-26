@@ -18,7 +18,7 @@ const TRUST_POINTS = [
 
 export default function HeroSection() {
   return (
-    <main className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 md:pt-20 pb-20 flex flex-col items-center text-center">
+    <main className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-32 md:pt-40 pb-20 flex flex-col items-center text-center">
       
       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-extrabold tracking-widest uppercase mb-8  hover:bg-cyan-500/20 transition-all cursor-default">
         <span className="relative flex h-2 w-2">
