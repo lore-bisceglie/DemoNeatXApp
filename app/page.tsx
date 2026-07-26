@@ -62,6 +62,14 @@ export default function Home() {
       
       {/* VERCEL/STRIPE STYLE GRID BACKGROUND */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#ffffff0f_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+      
+      {/* GLOBAL SPOTLIGHT (LIGHT FOLLOWING MOUSE) */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 opacity-40 mix-blend-screen transition-opacity duration-300 hidden md:block"
+        style={{
+          background: 'radial-gradient(1000px circle at var(--mouse-x) var(--mouse-y), rgba(0, 180, 255, 0.07), transparent 50%)'
+        }}
+      />
 
       <Navbar onOpenRoi={() => setShowRoiModal(true)} />
       <HeroSection />
