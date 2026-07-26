@@ -115,8 +115,8 @@ export function parseDaySchedule(
         isClosed: false,
         open: dayConfig.open ?? fallbackOpen ?? "09:00",
         close: dayConfig.close ?? fallbackClose ?? "19:00",
-        breakStart: dayConfig.breakStart ?? null,
-        breakEnd: dayConfig.breakEnd ?? null,
+        breakStart: dayConfig.breakStart ?? fallbackBreakStart ?? null,
+        breakEnd: dayConfig.breakEnd ?? fallbackBreakEnd ?? null,
       };
     }
     // Giorno aperto ma senza config specifica → usa fallback flat
