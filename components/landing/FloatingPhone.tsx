@@ -64,7 +64,7 @@ export default function FloatingPhone() {
         <div className="flex-1 bg-[#050814] flex flex-col relative w-full h-full border-x border-b border-white/5">
           
           {/* Header Premium */}
-          <div className="bg-emerald-500/10 backdrop-blur-md pt-12 pb-3 px-4 border-b border-emerald-500/20 z-20 flex items-center gap-3">
+          <div className="bg-emerald-500/10  pt-12 pb-3 px-4 border-b border-emerald-500/20 z-20 flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-[#050814] text-xs font-black shadow-[0_0_10px_rgba(16,185,129,0.5)]">
               NX
             </div>
@@ -82,7 +82,7 @@ export default function FloatingPhone() {
 
             {messages.map((msg, idx) => (
               <div key={idx} className="relative z-10 animate-in slide-in-from-bottom-2 fade-in duration-300">
-                <div className="bg-[#131c31]/90 backdrop-blur-xl p-3.5 rounded-2xl rounded-tl-sm shadow-[0_5px_15px_rgba(0,0,0,0.3)] max-w-[85%] border border-[#2a3a5a]">
+                <div className="bg-[#131c31]/90  p-3.5 rounded-2xl rounded-tl-sm shadow-[0_5px_15px_rgba(0,0,0,0.3)] max-w-[85%] border border-[#2a3a5a]">
                   <p className="text-xs text-slate-100 font-medium leading-relaxed">{msg.text}</p>
                   <div className="text-[9px] text-emerald-400 font-bold text-right mt-1.5 uppercase tracking-widest">{msg.time}</div>
                 </div>

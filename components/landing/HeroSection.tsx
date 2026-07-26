@@ -69,7 +69,7 @@ export default function HeroSection() {
         </Link>
         <Link
           href="/demo"
-          className="glow-card w-full sm:w-auto px-8 py-4 bg-[#131c31]/80 backdrop-blur-md hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
+          className="glow-card w-full sm:w-auto px-8 py-4 bg-[#131c31]/80  hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
         >
           Esplora la demo
           <ArrowRight size={20} />
@@ -78,7 +78,7 @@ export default function HeroSection() {
 
       <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl">
         {HERO_METRICS.map((metric) => (
-          <div key={metric.label} className="glow-card rounded-2xl border border-white/10 bg-[#0b1221]/60 backdrop-blur-md px-4 py-5 hover:border-cyan-500/30 transition-all">
+          <div key={metric.label} className="glow-card rounded-2xl border border-white/10 bg-[#0b1221]/60  px-4 py-5 hover:border-cyan-500/30 transition-all">
             <div className="text-2xl md:text-3xl font-extrabold text-white">{metric.value}</div>
             <div className="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-500">{metric.label}</div>
           </div>
@@ -95,7 +95,7 @@ export default function HeroSection() {
         {/* 3D GLASSMORPHISM MOCKUP */}
         <div className="w-full lg:w-2/3 relative  perspective-1000">
         <div className="absolute inset-0 bg-gradient-to-r from-[#00b4ff] via-purple-600 to-[#00b4ff] animate-gradient-xy rounded-3xl blur-[80px] opacity-30"></div>
-        <div className="glow-card relative w-full aspect-video bg-[#0b1221]/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transform hover:rotate-x-12 hover:scale-[1.02] transition-all duration-700 ease-out group cursor-crosshair">
+        <div className="glow-card relative w-full aspect-video bg-[#0b1221]/60  border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transform hover:rotate-x-12 hover:scale-[1.02] transition-all duration-700 ease-out group cursor-crosshair">
           
           {/* Header Mockup */}
           <div className="h-12 border-b border-white/5 flex items-center px-4 gap-2 bg-black/20">

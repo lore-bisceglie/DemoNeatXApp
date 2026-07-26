@@ -15,19 +15,7 @@ export default function IPhone17Pro({ children, className = "" }: IPhone17ProPro
     >
       
       {/* Floating Animation Wrapper */}
-      <div 
-        className="w-full h-full relative"
-        style={{
-          animation: 'float-device 6s ease-in-out infinite',
-        }}
-      >
-        <style>{`
-          @keyframes float-device {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-          }
-        `}</style>
+      <div className="w-full h-full relative">
         
         {/* iPhone 17 Pro Chassis (Orange Titanium Rim) */}
         <div className="absolute inset-0 rounded-[48px] shadow-2xl p-[4px] bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 flex flex-col z-10"
