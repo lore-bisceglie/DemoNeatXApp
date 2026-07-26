@@ -32,7 +32,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#050814] text-slate-200 font-sans selection:bg-[#00b4ff]/30 overflow-x-hidden relative">
+    <div className="min-h-screen bg-[#050814] text-slate-200 font-sans selection:bg-[#00b4ff]/30 w-full">
       <style>{`
         .glow-card {
           position: relative;
