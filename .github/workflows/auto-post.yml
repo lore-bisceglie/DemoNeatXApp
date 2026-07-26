@@ -22,7 +22,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests python-dotenv google-genai
+          pip install requests python-dotenv google-genai playwright
+          python -m playwright install --with-deps chromium
       - name: Run Auto-Post Publisher
         env:
           GITHUB_ACTIONS: "true"
