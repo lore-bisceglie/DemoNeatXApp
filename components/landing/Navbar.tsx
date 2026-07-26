@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { LogIn, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type NavbarProps = {
   onOpenRoi?: () => void;
@@ -10,10 +10,20 @@ type NavbarProps = {
 
 export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div className="w-full md:w-auto flex items-center justify-between">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#050814]/80 backdrop-blur-md border-b border-white/5 py-3" : "bg-transparent py-6"}`}>
+      <div className="w-full max-w-6xl mx-auto px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="w-full md:w-auto flex items-center justify-between">
         <Link href="/" className="text-2xl font-extrabold tracking-tight notranslate">
           <span className="text-white">Neat</span>
           <span className="text-[#00b4ff]">X</span>
@@ -87,6 +97,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
           </Link>
         </div>
       )}
+      </div>
     </nav>
   );
 }

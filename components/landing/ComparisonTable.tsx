@@ -40,8 +40,8 @@ export default function ComparisonTable() {
             </thead>
             <tbody>
               {ROWS.map((row, i) => (
-                <tr key={row.label} className={`border-b border-[#1a2642] ${i % 2 === 0 ? "bg-[#0b1221]/50" : "bg-[#050814]/30"} hover:bg-[#131c31] transition-colors`}>
-                  <td className="p-5 text-sm font-bold text-white">{row.label}</td>
+                <tr key={row.label} className={`border-b border-[#1a2642] ${i % 2 === 0 ? "bg-[#0b1221]/50" : "bg-[#050814]/30"} hover:bg-cyan-900/20 hover:shadow-[inset_2px_0_0_#00b4ff] transition-all cursor-default`}>
+                  <td className="p-5 text-sm font-bold text-white group-hover:text-cyan-300">{row.label}</td>
                   <td className="p-5 text-sm font-semibold text-slate-200">{row.neatx}</td>
                   <td className="p-5 text-sm text-slate-400">{row.booksy}</td>
                   <td className="p-5 text-sm text-slate-400">{row.treatwell}</td>

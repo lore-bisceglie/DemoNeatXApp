@@ -61,7 +61,7 @@ export default function FAQSection() {
           {FAQS.map((faq, i) => (
             <div
               key={i}
-              className="rounded-2xl border border-[#1a2642] bg-[#0b1221]/60 overflow-hidden transition-all duration-300 hover:border-[#1e2b4a]"
+              className="glow-card rounded-2xl border border-[#1a2642] bg-[#0b1221]/60 overflow-hidden transition-all duration-500 hover:border-cyan-500/30 hover:shadow-[0_4px_20px_-5px_rgba(0,180,255,0.1)] hover:-translate-y-1"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}

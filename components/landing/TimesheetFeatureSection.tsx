@@ -187,7 +187,7 @@ export default function TimesheetFeatureSection() {
         {/* Layout principale: mockup + pannello fasi */}
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_420px]">
           {/* Mockup animato con altezza FISSA assoluta per sradicare alla radice ogni microscatto su mobile */}
-          <div className="relative rounded-3xl border border-white/10 bg-[#050c16] p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-xl h-[580px] sm:h-[480px]">
+          <div className="glow-card relative rounded-3xl border border-white/10 bg-[#050c16]/60 p-5 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-xl h-[580px] sm:h-[480px] group transition-all duration-500 hover:shadow-cyan-900/20">
             {/* Tab fasi */}
             <div className="mb-5 flex gap-2">
               {(["sheet", "agenda", "csv"] as Phase[]).map((p) => (
@@ -422,7 +422,7 @@ export default function TimesheetFeatureSection() {
               return (
                 <div
                   key={card.title}
-                  className={`rounded-2xl border border-${c}-500/15 bg-${c}-500/5 p-5`}
+                  className={`glow-card rounded-2xl border border-${c}-500/15 bg-${c}-500/5 p-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]`}
                 >
                   <div className="mb-3 flex items-center gap-3">
                     <div

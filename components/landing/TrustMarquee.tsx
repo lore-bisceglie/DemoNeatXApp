@@ -35,9 +35,9 @@ export default function TrustMarquee() {
   return (
     <div className="w-full bg-[#050814] border-y border-[#1a2642] py-5 overflow-hidden relative z-10 flex">
       <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050814] to-transparent z-10"></div>
-      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050814] to-transparent z-10"></div>
+      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050814] to-transparent z-10 pointer-events-none"></div>
       
-      <div className="flex animate-marquee w-max">
+      <div className="flex animate-marquee hover:[animation-play-state:paused] w-max cursor-default">
         {/* Metà 1 (Scorre fino al centro) */}
         <div className="flex w-max">
           {renderItems("set1")}

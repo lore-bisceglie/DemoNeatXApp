@@ -2,28 +2,34 @@
 
 import { Check, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import ScrollReveal from "@/components/landing/ScrollReveal";
 
 export default function PricingSection() {
   return (
     <section id="pricing" className="relative z-10 bg-[#050814] py-24 border-y border-[#1a2642]">
       <div className="max-w-6xl mx-auto px-6">
         
-        <div className="mb-20 max-w-3xl mx-auto bg-gradient-to-r from-emerald-500/10 to-emerald-900/20 border border-emerald-500/30 rounded-3xl p-8 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/20 blur-[60px]"></div>
-          <h2 className="text-3xl font-extrabold text-white mb-3 relative z-10">0% Commissioni. <span className="text-emerald-400">Zero trattenute.</span></h2>
-          <p className="text-emerald-100/70 font-medium relative z-10 text-lg">
-            A differenza delle altre piattaforme che si tengono il 20-30% sui tuoi incassi, con NeatX i soldi sono tutti tuoi. Paghi solo l&apos;abbonamento mensile, e basta.
-          </p>
-        </div>
+        <ScrollReveal direction="up">
+          <div className="glow-card mb-20 max-w-3xl mx-auto bg-gradient-to-r from-emerald-500/10 to-emerald-900/20 border border-emerald-500/30 rounded-3xl p-8 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/20 blur-[60px] animate-pulse-slow"></div>
+            <h2 className="text-3xl font-extrabold text-white mb-3 relative z-10">0% Commissioni. <span className="text-emerald-400">Zero trattenute.</span></h2>
+            <p className="text-emerald-100/70 font-medium relative z-10 text-lg">
+              A differenza delle altre piattaforme che si tengono il 20-30% sui tuoi incassi, con NeatX i soldi sono tutti tuoi. Paghi solo l&apos;abbonamento mensile, e basta.
+            </p>
+          </div>
+        </ScrollReveal>
 
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Scegli il piano per il tuo Salone</h2>
-          <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
-        </div>
+        <ScrollReveal direction="up">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Scegli il piano per il tuo Salone</h2>
+            <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
+          </div>
+        </ScrollReveal>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
           {/* PIANO PRO */}
-          <div className="bg-[#0b1221] p-8 rounded-3xl border border-[#1e2b4a] flex flex-col transform transition-transform hover:scale-105 z-10 mt-0 md:mt-4">
+          <ScrollReveal direction="left">
+          <div className="glow-card bg-[#0b1221] p-8 rounded-3xl border border-[#1e2b4a] flex flex-col transform transition-transform hover:scale-105 z-10 mt-0 md:mt-4 h-full">
             <h3 className="text-xl font-bold text-[#00b4ff] mb-2">Pro</h3>
             <div className="text-4xl font-extrabold text-white mb-1">29€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
             <div className="text-emerald-400 font-bold text-sm mb-6">290€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 58€)</span></div>
@@ -42,10 +48,12 @@ export default function PricingSection() {
               Inizia Prova Gratuita
             </Link>
           </div>
+          </ScrollReveal>
 
           {/* PIANO ELITE (EVIDENZIATO - L'ESCA CHE VOGLIAMO VENDERE DI PIU') */}
-          <div className="glow-card bg-[#0b1221] p-8 rounded-3xl border-2 border-purple-500 shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)] flex flex-col md:-mt-4 transform transition-transform hover:scale-105 relative z-20">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+          <ScrollReveal direction="up" className="z-20 md:-mt-4">
+          <div className="glow-card bg-[#0b1221] p-8 rounded-3xl border-2 border-purple-500 shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)] flex flex-col md:-mt-4 transform transition-all duration-500 hover:scale-[1.07] hover:shadow-[0_0_50px_-10px_rgba(168,85,247,0.5)] relative z-20">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(168,85,247,0.8)] hover:scale-105 transition-all">
               Il Più Scelto
             </div>
             <h3 className="text-xl font-bold text-purple-400 mb-2">Elite</h3>
@@ -68,10 +76,12 @@ export default function PricingSection() {
               </Link>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* PIANO VIP (DONE-FOR-YOU) - L'ACCHIAPPA BOOMER / DECOY */}
-          <div className="bg-gradient-to-b from-amber-500/10 to-[#0b1221] p-8 rounded-3xl border border-amber-500/30 flex flex-col transform transition-transform hover:scale-105 z-10 mt-0 md:mt-4 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/20 blur-[50px] pointer-events-none"></div>
+          <ScrollReveal direction="right">
+          <div className="glow-card bg-gradient-to-b from-amber-500/10 to-[#0b1221] p-8 rounded-3xl border border-amber-500/30 flex flex-col transform transition-transform hover:scale-105 z-10 mt-0 md:mt-4 relative overflow-hidden h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/20 blur-[50px] pointer-events-none animate-pulse-slow"></div>
             <h3 className="text-xl font-bold text-amber-500 mb-2 flex items-center gap-2">Senza Pensieri <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] uppercase tracking-wider border border-amber-500/30">VIP</span></h3>
             <div className="text-4xl font-extrabold text-white mb-1">149€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
             <div className="text-amber-500 font-bold text-sm mb-6">1490€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 298€)</span></div>
@@ -94,11 +104,13 @@ export default function PricingSection() {
               </p>
             </div>
           </div>
+          </ScrollReveal>
         </div>
         
         {/* BANNER TRASPARENZA SMS */}
-        <div className="mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+        <ScrollReveal direction="up">
+        <div className="glow-card mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500 animate-pulse-slow"></div>
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
             <ShieldCheck size={26} />
           </div>
@@ -120,6 +132,7 @@ export default function PricingSection() {
             </div>
           </div>
         </div>
+        </ScrollReveal>
       </div>
     </section>
   );

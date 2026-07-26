@@ -70,7 +70,7 @@ export default function FeaturesSection() {
           {FEATURE_CARDS.map((feature) => {
             const Icon = feature.icon;
             return (
-              <div key={feature.title} className={`glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl group ${feature.border} transition-all duration-300`}>
+              <div key={feature.title} className={`glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl group ${feature.border} transition-all duration-500 hover:-translate-y-2 hover:shadow-cyan-900/20`}>
                 <div className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 ${feature.accent} group-hover:scale-110 transition-transform`}>
                   <Icon size={26} />
                 </div>
