@@ -15,6 +15,7 @@ import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 
@@ -78,6 +79,7 @@ export default function Home() {
       <ScrollReveal><FinalCTA /></ScrollReveal>
       
       <Footer />
+      <LiveNotification />
       <ROICalculator show={showRoiModal} onClose={() => setShowRoiModal(false)} />
     </div>
   );
