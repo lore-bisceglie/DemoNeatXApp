@@ -9,50 +9,9 @@ interface ScrollRevealProps {
 }
 
 export default function ScrollReveal({ children, className = "", direction = "up" }: ScrollRevealProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          // Attiva l'animazione solo quando entra nello schermo,
-          // senza spegnerla quando esce per evitare loop infiniti di salti!
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          }
-        },
-      {
-        threshold: 0,
-        rootMargin: "0px 0px 50px 0px", // Trigger poco prima che entri
-      }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
-      }
-    };
-  }, []);
-
-  const getTransform = () => {
-    if (isVisible) return "translate-y-0 translate-x-0 scale-100";
-    if (direction === "up") return "translate-y-32 scale-95";
-    if (direction === "left") return "-translate-x-48 scale-95";
-    if (direction === "right") return "translate-x-48 scale-95";
-    return "";
-  };
-
+  // Animazione disabilitata temporaneamente per risolvere il bug di iOS Safari
   return (
-    <div
-      ref={ref}
-      className={`transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        isVisible ? "opacity-100" : "opacity-0"
-      } ${getTransform()} ${className}`}
-    >
+    <div className={className}>
       {children}
     </div>
   );
