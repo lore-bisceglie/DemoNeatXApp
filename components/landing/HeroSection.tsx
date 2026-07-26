@@ -20,7 +20,7 @@ export default function HeroSection() {
   return (
     <main className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 md:pt-20 pb-20 flex flex-col items-center text-center">
       
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-extrabold tracking-widest uppercase mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 hover:bg-cyan-500/20 transition-all cursor-default">
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-extrabold tracking-widest uppercase mb-8  hover:bg-cyan-500/20 transition-all cursor-default">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
@@ -39,18 +39,18 @@ export default function HeroSection() {
         }
       `}</style>
 
-      <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 relative z-20">
+      <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl  relative z-20">
         Vedi il tuo negozio online <br className="hidden md:block" />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] via-purple-400 to-[#00b4ff] animate-shimmer-text drop-shadow-[0_0_15px_rgba(0,180,255,0.4)]">
           già funzionante
         </span>
       </h1>
 
-      <p className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+      <p className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed font-medium ">
         NeatX è la tua agenda online brandizzata: i clienti prenotano in totale autonomia, pagano l&apos;acconto se serve e ricevono promemoria senza farti perdere tempo al telefono.
       </p>
 
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl ">
         {TRUST_POINTS.map((point) => (
           <div key={point} className="glow-card flex items-center justify-center gap-2 rounded-2xl border border-[#1a2642] bg-[#0b1221]/70 px-4 py-3 text-sm font-semibold text-slate-300">
             <BadgeCheck size={16} className="text-emerald-400 flex-shrink-0" />
@@ -59,7 +59,7 @@ export default function HeroSection() {
         ))}
       </div>
 
-      <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300 relative z-20">
+      <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto  relative z-20">
         <Link 
           href="/registrazione"
           className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
@@ -76,7 +76,7 @@ export default function HeroSection() {
         </Link>
       </div>
 
-      <div className="mt-10 grid grid-cols-3 gap-3 w-full max-w-2xl">
+      <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl">
         {HERO_METRICS.map((metric) => (
           <div key={metric.label} className="glow-card rounded-2xl border border-white/10 bg-[#0b1221]/60 backdrop-blur-md px-4 py-5 hover:border-cyan-500/30 transition-all">
             <div className="text-2xl md:text-3xl font-extrabold text-white">{metric.value}</div>
@@ -93,7 +93,7 @@ export default function HeroSection() {
         </div>
         
         {/* 3D GLASSMORPHISM MOCKUP */}
-        <div className="w-full lg:w-2/3 relative animate-in fade-in zoom-in slide-in-from-bottom-12 duration-1000 delay-500 perspective-1000">
+        <div className="w-full lg:w-2/3 relative  perspective-1000">
         <div className="absolute inset-0 bg-gradient-to-r from-[#00b4ff] via-purple-600 to-[#00b4ff] animate-gradient-xy rounded-3xl blur-[80px] opacity-30"></div>
         <div className="glow-card relative w-full aspect-video bg-[#0b1221]/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col transform hover:rotate-x-12 hover:scale-[1.02] transition-all duration-700 ease-out group cursor-crosshair">
           
