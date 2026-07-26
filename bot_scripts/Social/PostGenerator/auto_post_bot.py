@@ -121,7 +121,7 @@ def create_graphic_post(title, bg_url):
         <div class="logo">Neat<strong>X</strong></div>
         <div class="text-container">
           <div class="text-line1">Il gestionale per il tuo Salone</div>
-          <div class="text-line2">Prova gratis su neatx.it</div>
+          <div class="text-line2">Prova gratis su neatx.store</div>
         </div>
       </div>
     </body>
