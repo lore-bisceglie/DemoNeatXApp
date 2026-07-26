@@ -245,7 +245,7 @@
         "title": "TESTIMONIANZE REALI",
         "hook": "TESTIMONIANZE REALI",
         "date": "2026-07-24",
-        "views": 158,
+        "views": 157,
         "likes": 2
     },
     {
@@ -253,13 +253,20 @@
         "title": "ADDIO ACCONTI",
         "hook": "ADDIO ACCONTI",
         "date": "2026-07-24",
-        "views": 208,
+        "views": 202,
         "likes": 2
     },
     {
         "youtube_id": "EXxKOjBkpT0",
         "title": "BARBIERI: STOP EXCEL TURNI",
         "hook": "BARBIERI: STOP EXCEL TURNI",
+        "date": "2026-07-25",
+        "views": 0
+    },
+    {
+        "youtube_id": "MN2_V9Ib3Gc",
+        "title": "BARBIERI: STOP FOGLI EXCEL",
+        "hook": "BARBIERI: STOP FOGLI EXCEL",
         "date": "2026-07-25",
         "views": 0
     }
