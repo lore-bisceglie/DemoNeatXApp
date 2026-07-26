@@ -15,14 +15,12 @@ export default function ScrollReveal({ children, className = "", direction = "up
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (ref.current) observer.unobserve(ref.current);
-        }
+        // Toggle visibility basandoci sull'intersezione
+        setIsVisible(entry.isIntersecting);
       },
       {
         threshold: 0,
-        rootMargin: "0px 0px 200px 0px", // Trigger 200px prima che entri nello schermo
+        rootMargin: "0px 0px 50px 0px", // Trigger poco prima che entri
       }
     );
 
@@ -30,17 +28,10 @@ export default function ScrollReveal({ children, className = "", direction = "up
       observer.observe(ref.current);
     }
 
-    // Safety fallback: se dopo 2.5 secondi non è ancora visibile, mostralo comunque
-    // Questo previene l'effetto "schermo nero" se l'observer fallisce su iOS o se l'utente scrolla velocissimo
-    const fallbackTimer = setTimeout(() => {
-      setIsVisible(true);
-    }, 2500);
-
     return () => {
       if (ref.current) {
         observer.unobserve(ref.current);
       }
-      clearTimeout(fallbackTimer);
     };
   }, []);
 
