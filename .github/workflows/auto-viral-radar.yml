@@ -1,10 +1,7 @@
 name: NeatX Viral Radar
 on:
   schedule:
-    # 10:00, 16:00 e 08:43 Europe/Rome in estate.
     - cron: '0 8 * * *'
-    - cron: '0 14 * * *'
-    - cron: '0 6 * * *'
   workflow_dispatch:
 permissions:
   contents: write
