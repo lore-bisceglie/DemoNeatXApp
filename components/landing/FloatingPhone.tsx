@@ -54,7 +54,7 @@ export default function FloatingPhone() {
   }, []);
 
   return (
-    <div className="relative mx-auto mt-16 perspective-1000 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+    <div className="relative mx-auto mt-16 perspective-1000 ">
       
       {/* Glow Dietro */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[650px] bg-gradient-to-r from-[#00b4ff]/20 to-purple-500/20 blur-[60px] rounded-full pointer-events-none opacity-80 animate-pulse"></div>

@@ -59,9 +59,7 @@ export default function Home() {
         }
       `}</style>
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[#00b4ff]/10 blur-[150px] rounded-full pointer-events-none opacity-60 animate-pulse" />
-      
-      {/* VERCEL/STRIPE STYLE GRID BACKGROUND */}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#ffffff0f_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+
       
       {/* GLOBAL SPOTLIGHT (LIGHT FOLLOWING MOUSE) */}
       <div 
