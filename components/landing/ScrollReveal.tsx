@@ -13,11 +13,14 @@ export default function ScrollReveal({ children, className = "", direction = "up
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Toggle visibility basandoci sull'intersezione
-        setIsVisible(entry.isIntersecting);
-      },
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          // Attiva l'animazione solo quando entra nello schermo,
+          // senza spegnerla quando esce per evitare loop infiniti di salti!
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        },
       {
         threshold: 0,
         rootMargin: "0px 0px 50px 0px", // Trigger poco prima che entri
