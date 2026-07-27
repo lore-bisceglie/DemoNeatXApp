@@ -1,18 +1,18 @@
 {
   "date": "2026-07-27",
-  "niche": "Tatuatori",
-  "feature": "timesheet",
-  "feature_label": "Timesheet Commercialista",
-  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-  "cover_title": "STOP AI FOLI PERDUTI",
-  "hook_hint": "Se sei tra i tatuatori e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: Timesheet Commercialista con NeatX",
+  "niche": "Centri Estetici",
+  "feature": "analytics",
+  "feature_label": "Statistiche e Dati",
+  "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti",
+  "promise": "dashboard con incassi, trend e performance in tempo reale",
+  "cover_title": "GUADAGNI SVELATI",
+  "hook_hint": "Se sei tra i centri estetici e non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Statistiche e Dati con NeatX",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers, premium realistic lighting",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
