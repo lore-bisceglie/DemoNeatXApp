@@ -7,7 +7,7 @@
     {
       "path": "/api/cron/marketing",
       "schedule": "0 6 * * *"
-    }
+    },
     {
       "path": "/api/cron/reminders",
       "schedule": "0 16 * * *"
