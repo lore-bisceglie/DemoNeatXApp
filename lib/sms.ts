@@ -1,8 +1,8 @@
 import { prisma } from "./prisma";
 
-// Meta WhatsApp Cloud API configuration
-const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
-const WHATSAPP_CLOUD_TOKEN = process.env.WHATSAPP_CLOUD_TOKEN || "";
+// UltraMsg configuration
+const ULTRAMSG_INSTANCE_ID = process.env.ULTRAMSG_INSTANCE_ID || "";
+const ULTRAMSG_TOKEN = process.env.ULTRAMSG_TOKEN || "";
 
 interface WhatsAppTemplateVars {
   storeName: string;
@@ -14,13 +14,11 @@ interface WhatsAppTemplateVars {
 }
 
 function formatPhone(raw: string): string {
-  // Mantieni solo i numeri
   let p = raw.replace(/\D/g, "");
-  // Aggiungi 39 se non c'è, perché Meta Cloud API vuole il prefisso internazionale
   if (!p.startsWith("39")) {
     p = `39${p}`;
   }
-  return p;
+  return `+${p}`;
 }
 
 async function reserveCredit(tenantId: string) {
@@ -41,15 +39,15 @@ async function refundCredit(tenantId: string) {
 export async function sendTenantMessage(
   tenantId: string,
   toPhone: string,
-  _smsBody: string, // non usato con Meta Template, ignorato
-  whatsappVars?: WhatsAppTemplateVars,
+  smsBody: string,
+  _whatsappVars?: WhatsAppTemplateVars,
   _locationId?: string
 ) {
   if (process.env.REMINDERS_ENABLED !== "true") {
     return { success: false, disabled: true, error: "Promemoria disattivati" };
   }
-  if (!WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_CLOUD_TOKEN) {
-    return { success: false, error: "Meta WhatsApp API non configurato" };
+  if (!ULTRAMSG_INSTANCE_ID || !ULTRAMSG_TOKEN) {
+    return { success: false, error: "UltraMsg non configurato" };
   }
 
   try {
@@ -60,50 +58,29 @@ export async function sendTenantMessage(
     }
 
     const phone = formatPhone(toPhone);
-    const url = `https://graph.facebook.com/v19.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`;
-    
-    // Payload per il template di promemoria ufficiale (Utility)
-    const payload = {
-      messaging_product: "whatsapp",
+    const url = `https://api.ultramsg.com/${ULTRAMSG_INSTANCE_ID}/messages/chat`;
+
+    const payload = new URLSearchParams({
+      token: ULTRAMSG_TOKEN,
       to: phone,
-      type: "template",
-      template: {
-        name: "appointment_reminder",
-        language: { code: "it" },
-        components: [
-          {
-            type: "body",
-            parameters: [
-              { type: "text", text: whatsappVars?.customerName || "Cliente" }, // {{1}}
-              { type: "text", text: whatsappVars?.storeName || "il salone" }, // {{2}}
-              { type: "text", text: whatsappVars?.date || "" }, // {{3}}
-              { type: "text", text: whatsappVars?.time || "" }, // {{4}}
-              { type: "text", text: whatsappVars?.serviceName || "Servizio" }, // {{5}}
-              { type: "text", text: whatsappVars?.cancelUrl || "qui" } // {{6}}
-            ]
-          }
-        ]
-      }
-    };
+      body: smsBody,
+    });
 
     const response = await fetch(url, {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${WHATSAPP_CLOUD_TOKEN}`
-      },
-      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: payload.toString(),
     });
 
     const data = await response.json();
 
-    if (response.ok && data.messages && data.messages.length > 0) {
-      console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.messages[0].id})`);
-      return { success: true, messageId: data.messages[0].id, channel: "whatsapp" as const };
+    if (response.ok && data.id) {
+      console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.id})`);
+      return { success: true, messageId: data.id, channel: "whatsapp" as const };
     } else {
       await refundCredit(tenantId);
       console.error(`[whatsapp] Fallito:`, data);
-      return { success: false, error: "Errore invio WhatsApp Meta" };
+      return { success: false, error: "Errore invio WhatsApp" };
     }
   } catch (err: any) {
     await refundCredit(tenantId).catch(() => undefined);
