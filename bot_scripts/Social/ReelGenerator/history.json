@@ -261,13 +261,45 @@
         "title": "BARBIERI: STOP EXCEL TURNI",
         "hook": "BARBIERI: STOP EXCEL TURNI",
         "date": "2026-07-25",
-        "views": 0
+        "views": 43,
+        "likes": 0
     },
     {
         "youtube_id": "MN2_V9Ib3Gc",
         "title": "BARBIERI: STOP FOGLI EXCEL",
         "hook": "BARBIERI: STOP FOGLI EXCEL",
         "date": "2026-07-25",
+        "views": 0
+    },
+    {
+        "youtube_id": "ZTel98dg-eg",
+        "title": "ESTETISTE: BASTA TELEFONO",
+        "hook": "ESTETISTE: BASTA TELEFONO",
+        "date": "2026-07-26",
+        "views": 74,
+        "likes": 1
+    },
+    {
+        "youtube_id": "6IAbs70IUEo",
+        "title": "ESTETISTE: BASTA TELEFONATE",
+        "hook": "ESTETISTE: BASTA TELEFONATE",
+        "date": "2026-07-26",
+        "views": 239,
+        "likes": 1
+    },
+    {
+        "youtube_id": "lufW8GUVIts",
+        "title": "ESTETISTE: BASTA MESSAGGI",
+        "hook": "ESTETISTE: BASTA MESSAGGI",
+        "date": "2026-07-27",
+        "views": 239,
+        "likes": 1
+    },
+    {
+        "youtube_id": "fWQ-J6IGuWk",
+        "title": "CENTRI ESTETICI: BASTA TELEFONATE",
+        "hook": "CENTRI ESTETICI: BASTA TELEFONATE",
+        "date": "2026-07-27",
         "views": 0
     }
 ]

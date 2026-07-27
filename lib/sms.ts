@@ -1,20 +1,22 @@
 import { prisma } from "./prisma";
 
-// Green-API configuration
-const GREEN_API_ID_INSTANCE = process.env.GREEN_API_ID_INSTANCE || "";
-const GREEN_API_TOKEN_INSTANCE = process.env.GREEN_API_TOKEN_INSTANCE || "";
+// Meta WhatsApp Cloud API configuration
+const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
+const WHATSAPP_CLOUD_TOKEN = process.env.WHATSAPP_CLOUD_TOKEN || "";
 
 interface WhatsAppTemplateVars {
   storeName: string;
   customerName: string;
   date: string;
   time: string;
+  serviceName?: string;
+  cancelUrl?: string;
 }
 
 function formatPhone(raw: string): string {
   // Mantieni solo i numeri
   let p = raw.replace(/\D/g, "");
-  // Aggiungi 39 se non c'è, perché Green API vuole il formato internazionale senza +
+  // Aggiungi 39 se non c'è, perché Meta Cloud API vuole il prefisso internazionale
   if (!p.startsWith("39")) {
     p = `39${p}`;
   }
@@ -39,15 +41,15 @@ async function refundCredit(tenantId: string) {
 export async function sendTenantMessage(
   tenantId: string,
   toPhone: string,
-  smsBody: string,
-  _whatsappVars?: WhatsAppTemplateVars,
+  _smsBody: string, // non usato con Meta Template, ignorato
+  whatsappVars?: WhatsAppTemplateVars,
   _locationId?: string
 ) {
   if (process.env.REMINDERS_ENABLED !== "true") {
     return { success: false, disabled: true, error: "Promemoria disattivati" };
   }
-  if (!GREEN_API_ID_INSTANCE || !GREEN_API_TOKEN_INSTANCE) {
-    return { success: false, error: "Green API non configurato" };
+  if (!WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_CLOUD_TOKEN) {
+    return { success: false, error: "Meta WhatsApp API non configurato" };
   }
 
   try {
@@ -58,31 +60,50 @@ export async function sendTenantMessage(
     }
 
     const phone = formatPhone(toPhone);
-    // Endpoint ufficiale che instrada automaticamente la richiesta verso il
-    // server corretto dell'istanza.
-    const url = `https://api.green-api.com/waInstance${GREEN_API_ID_INSTANCE}/sendMessage/${GREEN_API_TOKEN_INSTANCE}`;
+    const url = `https://graph.facebook.com/v19.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`;
     
-    // In WhatsApp con Green API mandiamo il body diretto, non ci serve il template.
+    // Payload per il template di promemoria ufficiale (Utility)
     const payload = {
-      chatId: `${phone}@c.us`,
-      message: smsBody,
+      messaging_product: "whatsapp",
+      to: phone,
+      type: "template",
+      template: {
+        name: "appointment_reminder",
+        language: { code: "it" },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: whatsappVars?.customerName || "Cliente" }, // {{1}}
+              { type: "text", text: whatsappVars?.storeName || "il salone" }, // {{2}}
+              { type: "text", text: whatsappVars?.date || "" }, // {{3}}
+              { type: "text", text: whatsappVars?.time || "" }, // {{4}}
+              { type: "text", text: whatsappVars?.serviceName || "Servizio" }, // {{5}}
+              { type: "text", text: whatsappVars?.cancelUrl || "qui" } // {{6}}
+            ]
+          }
+        ]
+      }
     };
 
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${WHATSAPP_CLOUD_TOKEN}`
+      },
       body: JSON.stringify(payload),
     });
 
     const data = await response.json();
 
-    if (response.ok && data.idMessage) {
-      console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.idMessage})`);
-      return { success: true, messageId: data.idMessage, channel: "whatsapp" as const };
+    if (response.ok && data.messages && data.messages.length > 0) {
+      console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.messages[0].id})`);
+      return { success: true, messageId: data.messages[0].id, channel: "whatsapp" as const };
     } else {
       await refundCredit(tenantId);
       console.error(`[whatsapp] Fallito:`, data);
-      return { success: false, error: "Errore invio WhatsApp" };
+      return { success: false, error: "Errore invio WhatsApp Meta" };
     }
   } catch (err: any) {
     await refundCredit(tenantId).catch(() => undefined);

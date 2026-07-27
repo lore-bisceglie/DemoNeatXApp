@@ -1,13 +1,13 @@
 {
-    "niche": "Barbieri",
-    "script_text": "Ancora a segnare le ore dei tuoi dipendenti a mano su fogli Excel che poi puntualmente perdi? Stai buttando ore di lavoro ogni mese dietro a turni, ferie e permessi dello staff del tuo salone. Smettila di impazzire. Con NeatX gestisci tutto in un click e scarichi il file CSV gia pronto da mandare al commercialista. Zero carta, zero calcoli, tutto in automatico 24 ore su 24. Prova gratis la nostra Agenda su neatx.store!",
-    "hook_text": "BARBIERI: STOP FOGLI EXCEL",
-    "cover_title": "BARBIERI: STOP FOGLI EXCEL",
-    "image_prompt": "photorealistic cinematic scene inside a modern luxury barber shop: a frustrated barber owner is throwing away messy paper timesheets. In the foreground, a sleek tablet shows the digital timesheet dashboard with clean staff shifts and a button saying 'Export CSV', premium realistic lighting, cinematic depth of field",
-    "gameplay_style": "block_miner",
-    "caption": "Ancora a impazzire a fine mese tra fogli Excel persi e ore dei dipendenti segnate a mano? 🤯\n\nCon NeatX gestisci turni, ferie e permessi del tuo staff in un click. Generi il file CSV perfetto e lo mandi direttamente al commercialista senza perdere tempo.\n\n#barbiere #barbershop #barbieriitalia #imprenditore #businessitalia #perte #fyp #foryou #viral\n\n👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!",
-    "strategy_date": "2026-07-25",
-    "strategy_feature": "timesheet",
-    "strategy_pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-    "strategy_promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista"
+    "niche": "Centri Estetici",
+    "script_text": "Ancora a rispondere a messaggi e telefonate mentre fai un trattamento? Ogni squillo è un cliente perso o un'interruzione di troppo. Smetti di fare la segretaria del tuo stesso centro estetico. Con NeatX i tuoi clienti prenotano da soli, a qualsiasi ora, anche di notte. Tu lavori senza interruzioni e la tua agenda si riempie in automatico 24 ore su 24. Non perdere più appuntamenti, provala su neatx.store!",
+    "hook_text": "CENTRI ESTETICI: BASTA TELEFONATE",
+    "cover_title": "CENTRI ESTETICI: BASTA TELEFONATE",
+    "image_prompt": "A photorealistic cinematic scene inside a modern beauty center: a professional esthetician is calmly performing a treatment on a client, while on a sleek nearby table, a smartphone screen brightly displays a clean booking confirmation app, showing that a new client has just booked an appointment completely on their own. Premium realistic lighting, warm and relaxing atmosphere, high-end spa aesthetic.",
+    "gameplay_style": "neon_racer",
+    "caption": "Stanca di interrompere i trattamenti per rispondere al telefono o inviare messaggi su WhatsApp? 💆‍♀️ Nel tuo centro estetico il tempo è denaro, e ogni minuto passato a gestire appuntamenti è tempo sottratto al tuo lavoro. \n\nCon NeatX elimini il caos delle prenotazioni. I tuoi clienti scelgono l'orario e il trattamento direttamente online, in totale autonomia, anche quando il tuo centro è chiuso. Tu ti godi il tuo lavoro e vedi l'agenda riempirsi da sola senza stress. 📈\n\n#perte #fyp #foryou #viral #imprenditore #businessitalia #centroestetico #estetista #centriestetici #estetica #gestionalesaloni\n\n👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!",
+    "strategy_date": "2026-07-26",
+    "strategy_feature": "booking",
+    "strategy_pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+    "strategy_promise": "clienti che prenotano da soli anche mentre dormi"
 }

@@ -80,6 +80,8 @@ export async function GET(request: Request) {
         customerName: appt.customerName.trim(),
         date: displayDate,
         time: appt.time,
+        serviceName: serviceName,
+        cancelUrl: cancelUrl,
       };
 
       const result = await sendTenantSms(
