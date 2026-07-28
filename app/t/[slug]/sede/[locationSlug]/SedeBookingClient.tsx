@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Calendar, MapPin, Users, CheckCircle, ChevronRight, ChevronLeft, AlertCircle, Loader2 } from "lucide-react";
+import { FirstAvailableButton, type FirstAvailableResult } from "@/components/tenant/FirstAvailableButton";
 import { getRomeDate } from "@/lib/rome-time";
 
 interface Props {
@@ -61,6 +62,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
   const [selectedDate, setSelectedDate] = useState<string>(calendarBounds.today);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [availabilityRefreshKey, setAvailabilityRefreshKey] = useState(0);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -102,7 +104,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
       }
     }
     fetchSlots();
-  }, [selectedDate, selectedService, location.id, tenant.id, services]);
+  }, [selectedDate, selectedService, location.id, tenant.id, services, availabilityRefreshKey]);
 
   var selectedServiceData = useMemo(function () {
     return services.find(function (s) { return s.id === selectedService; });
@@ -121,6 +123,15 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
     if (step === "datetime") { setStep("service"); return; }
     if (step === "details") { setStep("datetime"); return; }
     if (step === "confirm") { setStep("details"); return; }
+  }
+
+  function handleFirstAvailableFound(result: FirstAvailableResult) {
+    if (!result.date || !result.time) return;
+    setSelectedDate(result.date);
+    setSelectedTime(result.time);
+    setAvailableSlots([]);
+    setAvailabilityRefreshKey(function (current) { return current + 1; });
+    setError(null);
   }
 
   async function handleSubmit() {
@@ -323,12 +334,29 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
           <input
             type="date"
             value={selectedDate}
+            onClick={(event) => {
+              const input = event.currentTarget;
+              if (typeof input.showPicker === "function") {
+                try {
+                  input.showPicker();
+                } catch {
+                  // Some browsers can reject showPicker when their native picker is already open.
+                }
+              }
+            }}
             onChange={handleDateChange}
             min={calendarBounds.today}
             max={calendarBounds.maxDate}
-            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 cursor-pointer focus:border-cyan-500 focus:outline-none"
           />
         </div>
+
+        <FirstAvailableButton
+          tenantId={tenant.id}
+          serviceId={selectedService || ""}
+          locationId={location.id}
+          onFound={handleFirstAvailableFound}
+        />
 
         <div>
           <label className="block text-sm font-medium text-slate-400 mb-2">

@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import WaitlistButton from "@/app/WaitlistButton";
+import { FirstAvailableButton, type FirstAvailableResult } from "./FirstAvailableButton";
 import { Service, TenantInfoType, ThemeConfig } from "./types";
 
 interface BookingFormProps {
@@ -41,7 +42,9 @@ interface BookingFormProps {
   demandMode: { title: string; message: string } | null;
   demandClass: string;
   demandAccent: string;
-  handleFirstAvailable: () => void;
+  firstAvailableLocationId?: string | null;
+  firstAvailableStaffId?: string | null;
+  onFirstAvailable: (result: FirstAvailableResult) => void;
   fillDemoCustomer: () => void;
   handleBook: () => void;
 }
@@ -84,7 +87,9 @@ export function BookingForm({
   demandMode,
   demandClass,
   demandAccent,
-  handleFirstAvailable,
+  firstAvailableLocationId,
+  firstAvailableStaffId,
+  onFirstAvailable,
   fillDemoCustomer,
   handleBook,
 }: BookingFormProps) {
@@ -95,6 +100,8 @@ export function BookingForm({
       isPlaygroundDemo
     )
   );
+
+  if (!selectedService) return null;
 
   return (
     <>
@@ -107,13 +114,23 @@ export function BookingForm({
           value={date}
           min={today}
           max={maxDate}
+          onClick={(event) => {
+            const input = event.currentTarget;
+            if (typeof input.showPicker === "function") {
+              try {
+                input.showPicker();
+              } catch {
+                // Some browsers can reject showPicker when their native picker is already open.
+              }
+            }
+          }}
           onChange={(e) => {
             setDate(e.target.value);
             setFormError("");
           }}
           className={`w-full bg-[#131c31] border ${
             dateError ? "border-red-500" : "border-[#1e2b4a]"
-          } text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition`}
+          } text-white rounded-xl px-4 py-3 cursor-pointer focus:outline-none focus:border-[#00b4ff] focus:ring-1 focus:ring-[#00b4ff] transition`}
           style={{ colorScheme: "dark" }}
         />
         {dateError && (
@@ -122,6 +139,14 @@ export function BookingForm({
           </div>
         )}
       </div>
+
+      <FirstAvailableButton
+        tenantId={tenantInfo.id}
+        serviceId={selectedService.id}
+        locationId={firstAvailableLocationId}
+        staffId={firstAvailableStaffId}
+        onFound={onFirstAvailable}
+      />
 
       {isHoliday ? (
         <div className="bg-orange-500/10 border border-orange-500/20 text-orange-400 p-6 rounded-2xl text-center shadow-inner animate-in fade-in zoom-in duration-150">
@@ -217,16 +242,6 @@ export function BookingForm({
                   </option>
                 ))}
               </select>
-              <button
-                onClick={handleFirstAvailable}
-                className={`w-full text-xs font-bold py-2 rounded-xl border transition-all duration-150 active:scale-95 ${
-                  slots.length > 0
-                    ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-400 shadow-[0_0_10px_rgba(0,180,255,0.12)]"
-                    : "bg-[#131c31] text-slate-600 border-[#1e2b4a] cursor-not-allowed"
-                }`}
-              >
-                [+] Primo disponibile
-              </button>
             </div>
           </div>
 

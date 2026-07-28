@@ -9,6 +9,7 @@ import { LocationPicker } from "@/components/tenant/LocationPicker";
 import { ServiceList } from "@/components/tenant/ServiceList";
 import { StaffPicker } from "@/components/tenant/StaffPicker";
 import { BookingForm } from "@/components/tenant/BookingForm";
+import type { FirstAvailableResult } from "@/components/tenant/FirstAvailableButton";
 import { ActivitySelectionModal } from "@/components/tenant/modals/ActivitySelectionModal";
 import { DemoSuccessModal, DemoModalState } from "@/components/tenant/modals/DemoSuccessModal";
 import { BookingInitialData, Service, TenantInfoType, ThemeConfig } from "@/components/tenant/types";
@@ -92,6 +93,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const [showCancelBanner, setShowCancelBanner] = useState(false);
   const [isHoliday, setIsHoliday] = useState(false);
   const [initialLoad, setInitialLoad] = useState(false);
+  const [availabilityRefreshKey, setAvailabilityRefreshKey] = useState(0);
   const [romeClock, setRomeClock] = useState<{ date: string; minutes: number } | null>(null);
 
   const [logoClicked, setLogoClicked] = useState(false);
@@ -348,6 +350,15 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   useEffect(() => {
     if (!date || !selectedService) return;
 
+    if (locations.length > 1 && !selectedLocationId) {
+      setDateError("");
+      setSlots([]);
+      setSelectedSlot("");
+      setIsHoliday(false);
+      setInitialLoad(false);
+      return;
+    }
+
     const day = new Date(`${date}T12:00:00Z`).getUTCDay();
 
     if (date > maxDate) {
@@ -412,14 +423,23 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [date, selectedService, tenantInfo.id, effectiveClosedDays, selectedStaffId, selectedLocationId, maxDate, today]);
+  }, [date, selectedService, tenantInfo.id, effectiveClosedDays, selectedStaffId, selectedLocationId, maxDate, today, locations.length, availabilityRefreshKey]);
 
-  const handleFirstAvailable = () => {
-    if (slots.length > 0) {
-      setSelectedSlot(slots[0]);
-      setFormError("");
-      setFieldErrors([]);
+  const handleFirstAvailableFound = (result: FirstAvailableResult) => {
+    if (!result.date || !result.time) return;
+
+    if (result.locationId && result.locationId !== selectedLocationId) {
+      setSelectedLocationId(result.locationId);
     }
+
+    setDate(result.date);
+    setSelectedSlot(result.time);
+    setSlots([]);
+    setIsHoliday(false);
+    setDateError("");
+    setFormError("");
+    setFieldErrors([]);
+    setAvailabilityRefreshKey((current) => current + 1);
   };
 
   const handleBook = async () => {
@@ -802,8 +822,10 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
           selectedLocationId={selectedLocationId}
           onSelectLocation={(id) => {
             setSelectedLocationId(id);
+            setSelectedStaffId("any");
             setSlots([]);
             setSelectedSlot("");
+            setDateError("");
           }}
         />
 
@@ -828,19 +850,21 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
           }}
         />
 
-        <StaffPicker
-          isPremium={tenantInfo.isPremium}
-          selectedService={selectedService}
-          filteredStaff={filteredStaff}
-          selectedStaffId={selectedStaffId}
-          onSelectStaff={(id) => setSelectedStaffId(id)}
-          onClearSlots={() => {
-            setSlots([]);
-            setSelectedSlot("");
-          }}
-        />
+        {(locations.length <= 1 || selectedLocationId) && (
+          <StaffPicker
+            isPremium={tenantInfo.isPremium}
+            selectedService={selectedService}
+            filteredStaff={filteredStaff}
+            selectedStaffId={selectedStaffId}
+            onSelectStaff={(id) => setSelectedStaffId(id)}
+            onClearSlots={() => {
+              setSlots([]);
+              setSelectedSlot("");
+            }}
+          />
+        )}
 
-        {selectedService && (
+        {selectedService && (locations.length <= 1 || selectedLocationId) && (
           <BookingForm
             date={date}
             setDate={setDate}
@@ -879,7 +903,9 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
             demandMode={demandMode}
             demandClass={demandClass}
             demandAccent={demandAccent}
-            handleFirstAvailable={handleFirstAvailable}
+            firstAvailableLocationId={selectedLocationId || null}
+            firstAvailableStaffId={selectedStaffId}
+            onFirstAvailable={handleFirstAvailableFound}
             fillDemoCustomer={fillDemoCustomer}
             handleBook={handleBook}
           />
