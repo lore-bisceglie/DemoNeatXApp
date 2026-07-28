@@ -1,34 +1,24 @@
 import { prisma } from "./prisma";
 
-// Green-API configuration
-const GREEN_API_ID_INSTANCE = process.env.GREEN_API_ID_INSTANCE || "";
-const GREEN_API_TOKEN_INSTANCE = process.env.GREEN_API_TOKEN_INSTANCE || "";
+// UltraMsg configuration
 const ULTRAMSG_INSTANCE_ID = process.env.ULTRAMSG_INSTANCE_ID || "";
 const ULTRAMSG_TOKEN = process.env.ULTRAMSG_TOKEN || "";
-
-type WhatsAppProvider = "ultramsg" | "greenapi";
-
-function getWhatsAppProvider(): WhatsAppProvider {
-  const configured = process.env.WHATSAPP_PROVIDER?.trim().toLowerCase();
-  if (configured === "greenapi" || configured === "ultramsg") return configured;
-  return ULTRAMSG_INSTANCE_ID && ULTRAMSG_TOKEN ? "ultramsg" : "greenapi";
-}
 
 interface WhatsAppTemplateVars {
   storeName: string;
   customerName: string;
   date: string;
   time: string;
+  serviceName?: string;
+  cancelUrl?: string;
 }
 
-function formatPhone(raw: string, provider: WhatsAppProvider): string {
-  // Mantieni solo i numeri
+function formatPhone(raw: string): string {
   let p = raw.replace(/\D/g, "");
-  // Aggiungi il prefisso italiano se manca quello internazionale.
   if (!p.startsWith("39")) {
     p = `39${p}`;
   }
-  return provider === "ultramsg" ? `+${p}` : p;
+  return `+${p}`;
 }
 
 async function reserveCredit(tenantId: string) {
@@ -56,12 +46,8 @@ export async function sendTenantMessage(
   if (process.env.REMINDERS_ENABLED !== "true") {
     return { success: false, disabled: true, error: "Promemoria disattivati" };
   }
-  const provider = getWhatsAppProvider();
-  if (provider === "ultramsg" && (!ULTRAMSG_INSTANCE_ID || !ULTRAMSG_TOKEN)) {
+  if (!ULTRAMSG_INSTANCE_ID || !ULTRAMSG_TOKEN) {
     return { success: false, error: "UltraMsg non configurato" };
-  }
-  if (provider === "greenapi" && (!GREEN_API_ID_INSTANCE || !GREEN_API_TOKEN_INSTANCE)) {
-    return { success: false, error: "Green API non configurato" };
   }
 
   try {
@@ -71,47 +57,26 @@ export async function sendTenantMessage(
       return { success: false, error: "Crediti esauriti" };
     }
 
-    const phone = formatPhone(toPhone, provider);
-    let url: string;
-    let headers: Record<string, string>;
-    let body: string;
+    const phone = formatPhone(toPhone);
+    const url = `https://api.ultramsg.com/${ULTRAMSG_INSTANCE_ID}/messages/chat`;
 
-    if (provider === "ultramsg") {
-      url = `https://api.ultramsg.com/${encodeURIComponent(ULTRAMSG_INSTANCE_ID)}/messages/chat`;
-      headers = { "Content-Type": "application/x-www-form-urlencoded" };
-      body = new URLSearchParams({
-        token: ULTRAMSG_TOKEN,
-        to: phone,
-        body: smsBody,
-      }).toString();
-    } else {
-      url = `https://api.green-api.com/waInstance${GREEN_API_ID_INSTANCE}/sendMessage/${GREEN_API_TOKEN_INSTANCE}`;
-      headers = { "Content-Type": "application/json" };
-      body = JSON.stringify({ chatId: `${phone}@c.us`, message: smsBody });
-    }
+    const payload = new URLSearchParams({
+      token: ULTRAMSG_TOKEN,
+      to: phone,
+      body: smsBody,
+    });
 
     const response = await fetch(url, {
       method: "POST",
-      headers: { Accept: "application/json", ...headers },
-      body,
-      signal: AbortSignal.timeout(15_000),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: payload.toString(),
     });
-    const responseText = await response.text();
-    let data: Record<string, unknown> = {};
-    try {
-      data = JSON.parse(responseText) as Record<string, unknown>;
-    } catch {
-      // UltraMsg/Green API errors are occasionally returned as plain text.
-      // Treat them as failed sends so the reserved credit is refunded.
-    }
-    const sent = provider === "ultramsg"
-      ? (data.sent === true || data.sent === "true") && data.id !== undefined
-      : typeof data.idMessage === "string" && data.idMessage.length > 0;
 
-    if (response.ok && sent) {
-      const messageId = String(provider === "ultramsg" ? data.id : data.idMessage);
-      console.log(`[WHATSAPP:${provider}] Inviato a ${phone} (id: ${messageId})`);
-      return { success: true, messageId, channel: "whatsapp" as const };
+    const data = await response.json();
+
+    if (response.ok && data.id) {
+      console.log(`[WHATSAPP] Inviato a ${phone} (id: ${data.id})`);
+      return { success: true, messageId: data.id, channel: "whatsapp" as const };
     } else {
       await refundCredit(tenantId);
       console.error(`[whatsapp] Fallito:`, data);
@@ -125,4 +90,3 @@ export async function sendTenantMessage(
 }
 
 export const sendTenantSms = sendTenantMessage;
-
