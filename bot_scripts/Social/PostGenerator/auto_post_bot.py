@@ -55,10 +55,25 @@ def load_theme():
     with open(THEME_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def get_pexels_image(query="barbershop"):
+def get_pexels_image(query=None):
+    # Ampliamo il target a tutta la categoria beauty/wellness
+    target_queries = [
+        "beauty salon", "hair salon", "barbershop", 
+        "spa", "nail salon", "wellness center", 
+        "hairdresser", "makeup artist"
+    ]
+    
+    # Se la query passata è generica o manca, ne scegliamo una a caso
+    if not query or query in ["barbershop", "beauty salon", "hair salon"]:
+        query = random.choice(target_queries)
+        
     print(f"Cercando immagine su Pexels per query: {query}")
-    url = f"https://api.pexels.com/v1/search?query={query}&per_page=15&orientation=portrait"
+    
+    # Randomizziamo la pagina (1-15) per non avere mai le stesse 15 foto
+    page_num = random.randint(1, 15)
+    url = f"https://api.pexels.com/v1/search?query={query}&per_page=15&page={page_num}&orientation=portrait"
     headers = {"Authorization": PEXELS_API_KEY}
+    
     resp = requests.get(url, headers=headers)
     if resp.status_code == 200:
         data = resp.json()
@@ -66,21 +81,34 @@ def get_pexels_image(query="barbershop"):
             photo = random.choice(data["photos"])
             image_url = photo["src"]["large2x"]
             return image_url
-    return "https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            
+    # Fallback image generica se fallisce
+    return "https://images.pexels.com/photos/3993444/pexels-photo-3993444.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
 
-def generate_caption(theme):
+def generate_caption(theme, industry_query):
     topic = theme.get('main_topic', 'Gestione Salone')
     angle = theme.get('angle', 'Innovazione')
-    hashtags = " ".join(theme.get('hashtags', ['#NeatX', '#Barbiere']))
     
+    # Adattiamo l'hashtag in base alla categoria trovata per Pexels
+    industry_hashtags = "#NeatX #GestioneSalone"
+    if "barber" in industry_query:
+        industry_hashtags += " #BarberShop #Barbiere"
+    elif "beauty" in industry_query or "nail" in industry_query or "makeup" in industry_query:
+        industry_hashtags += " #CentroEstetico #Estetica #BeautySalon"
+    elif "hair" in industry_query:
+        industry_hashtags += " #Parrucchiere #HairSalon #Hairdresser"
+    elif "spa" in industry_query or "wellness" in industry_query:
+        industry_hashtags += " #CentroBenessere #Spa #Wellness"
+        
     prompt = f"""Scrivi una caption avvincente per un post Instagram (massimo 150 parole).
-Il brand è NeatX (un'app gestionale per barbieri, estetiste e saloni).
+Il brand è NeatX (il gestionale all-in-one per Saloni di Bellezza, Parrucchieri, Centri Benessere, SPA, ed Estetiste).
+Evita di parlare solo di barbieri, mantieni il testo adatto a tutta l'industria del beauty e wellness.
 Tema del giorno: {topic}
 Angolazione: {angle}
-Hashtag da usare: {hashtags}
+Hashtag da usare: {industry_hashtags}
 Finisci con una call to action: Clicca il link in bio per provare NeatX."""
 
-    response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
     return response.text.strip()
 
 def create_graphic_post(title, bg_url):
@@ -200,7 +228,7 @@ def main():
         search_query = "hair salon"
         
     bg_url = get_pexels_image(search_query)
-    caption = generate_caption(theme)
+    caption = generate_caption(theme, search_query)
     
     # Genera la grafica con Playwright
     title = theme.get("main_topic", "L'Innovazione nel Salone")
