@@ -29,8 +29,8 @@ const FAQS = [
     a: "Puoi richiedere acconti parziali o pagamenti completi al momento della prenotazione. I fondi finiscono direttamente sul tuo conto Stripe in tempo reale — nessuna trattenuta extra da parte nostra.",
   },
   {
-    q: "Funziona solo per barbieri?",
-    a: "No, NeatX è perfetto per qualsiasi professionista su appuntamento: barbieri, parrucchieri, estetiste, tattoo studio, psicologi, personal trainer e studi medici.",
+    q: "Chi può usare questa agenda?",
+    a: "NeatX è perfetto per qualsiasi professionista su appuntamento: barbieri, parrucchieri, estetiste, tattoo studio, psicologi, personal trainer e studi medici.",
   },
   {
     q: "Posso cancellare quando voglio?",
@@ -38,7 +38,7 @@ const FAQS = [
   },
   {
     q: "Come funziona il periodo di prova e i piani a pagamento?",
-    a: "Hai 14 giorni di prova gratuiti per configurare e provare agenda, prenotazioni e pagamenti. I promemoria WhatsApp sono temporaneamente disattivati e non consumano crediti. Al termine puoi scegliere Pro (29€/mese o 290€/anno) oppure Elite (59€/mese o 590€/anno).",
+    a: "Hai 14 giorni di prova gratuiti per configurare e provare agenda, prenotazioni e pagamenti. I promemoria WhatsApp sono temporaneamente disattivati e non consumano crediti. Al termine puoi scegliere tra Pro (29€/mese o 290€/anno), Elite (59€/mese o 590€/anno) oppure il pacchetto VIP (149€/mese o 1490€/anno).",
   },
 ];
 
