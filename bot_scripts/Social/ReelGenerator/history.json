@@ -253,7 +253,7 @@
         "title": "ADDIO ACCONTI",
         "hook": "ADDIO ACCONTI",
         "date": "2026-07-24",
-        "views": 202,
+        "views": 205,
         "likes": 2
     },
     {
@@ -292,7 +292,7 @@
         "title": "ESTETISTE: BASTA MESSAGGI",
         "hook": "ESTETISTE: BASTA MESSAGGI",
         "date": "2026-07-27",
-        "views": 239,
+        "views": 240,
         "likes": 1
     },
     {
@@ -300,6 +300,45 @@
         "title": "CENTRI ESTETICI: BASTA TELEFONATE",
         "hook": "CENTRI ESTETICI: BASTA TELEFONATE",
         "date": "2026-07-27",
+        "views": 249,
+        "likes": 0
+    },
+    {
+        "youtube_id": "qzUfOMvw-80",
+        "title": "GUADAGNI SVELATI",
+        "hook": "GUADAGNI SVELATI",
+        "date": "2026-07-28",
+        "views": 0
+    },
+    {
+        "youtube_id": "NXonM8U75S8",
+        "title": "ADDIO TURNI",
+        "hook": "ADDIO TURNI",
+        "date": "2026-07-28",
+        "views": 2,
+        "likes": 0
+    },
+    {
+        "youtube_id": "W6Qc8OJ70Ig",
+        "title": "CLIENTI CHE NON MANCANO",
+        "hook": "CLIENTI CHE NON MANCANO",
+        "date": "2026-07-29",
+        "views": 9,
+        "likes": 0
+    },
+    {
+        "youtube_id": "FJyI2FhGspQ",
+        "title": "ADDIO TURNI",
+        "hook": "ADDIO TURNI",
+        "date": "2026-07-29",
+        "views": 127,
+        "likes": 0
+    },
+    {
+        "youtube_id": "fKWeTE8AMug",
+        "title": "ZERO NO-SHOW ORA",
+        "hook": "ZERO NO-SHOW ORA",
+        "date": "2026-07-30",
         "views": 0
     }
 ]

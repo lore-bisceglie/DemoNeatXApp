@@ -1,13 +1,14 @@
 {
-    "niche": "Centri Estetici",
-    "script_text": "Ancora a rispondere a messaggi e telefonate mentre fai un trattamento? Ogni squillo è un cliente perso o un'interruzione di troppo. Smetti di fare la segretaria del tuo stesso centro estetico. Con NeatX i tuoi clienti prenotano da soli, a qualsiasi ora, anche di notte. Tu lavori senza interruzioni e la tua agenda si riempie in automatico 24 ore su 24. Non perdere più appuntamenti, provala su neatx.store!",
-    "hook_text": "CENTRI ESTETICI: BASTA TELEFONATE",
-    "cover_title": "CENTRI ESTETICI: BASTA TELEFONATE",
-    "image_prompt": "A photorealistic cinematic scene inside a modern beauty center: a professional esthetician is calmly performing a treatment on a client, while on a sleek nearby table, a smartphone screen brightly displays a clean booking confirmation app, showing that a new client has just booked an appointment completely on their own. Premium realistic lighting, warm and relaxing atmosphere, high-end spa aesthetic.",
-    "gameplay_style": "neon_racer",
-    "caption": "Stanca di interrompere i trattamenti per rispondere al telefono o inviare messaggi su WhatsApp? 💆‍♀️ Nel tuo centro estetico il tempo è denaro, e ogni minuto passato a gestire appuntamenti è tempo sottratto al tuo lavoro. \n\nCon NeatX elimini il caos delle prenotazioni. I tuoi clienti scelgono l'orario e il trattamento direttamente online, in totale autonomia, anche quando il tuo centro è chiuso. Tu ti godi il tuo lavoro e vedi l'agenda riempirsi da sola senza stress. 📈\n\n#perte #fyp #foryou #viral #imprenditore #businessitalia #centroestetico #estetista #centriestetici #estetica #gestionalesaloni\n\n👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!",
-    "strategy_date": "2026-07-26",
-    "strategy_feature": "booking",
-    "strategy_pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-    "strategy_promise": "clienti che prenotano da soli anche mentre dormi"
+    "niche": "Parrucchieri",
+    "script_text": "Se sei tra i parrucchieri e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' acconti automatici che filtrano i clienti che non si presentano. Con NeatX puoi avere ogni slot occupato da clienti che hanno già pagato, senza rincorrere clienti tutto il giorno. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
+    "hook_text": "ZERO NO-SHOW ORA",
+    "cover_title": "ZERO NO-SHOW ORA",
+    "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+    "gameplay_style": "runner",
+    "caption": "Parrucchieri: basta agenda gestita a mano. Commenta INFO o AGENDA e ti mando la demo NeatX. #perte #fyp #foryou #viral #imprenditore #businessitalia #crescita",
+    "strategy_date": "2026-07-30",
+    "strategy_feature": "no_show",
+    "strategy_pain": "acconti automatici che filtrano i clienti che non si presentano",
+    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato",
+    "fallback_reason": "Gemini non disponibile: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
 }

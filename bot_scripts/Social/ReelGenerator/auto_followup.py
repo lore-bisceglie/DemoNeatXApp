@@ -37,17 +37,13 @@ def main():
             if elapsed >= (INITIAL_HOURS * 3600):
                 to_follow_up_24.append(item)
         
-        # Secondo follow-up dopo 72h (segna come reminder=True)
-        if item.get("followed_up", False) and not item.get("reminder_sent", False):
-            elapsed = current_time - item.get("followed_up_at", item.get("timestamp", 0))
-            if elapsed >= (REMINDER_HOURS * 3600):
-                to_follow_up_72.append(item)
 
-    if not to_follow_up_24 and not to_follow_up_72:
+
+    if not to_follow_up_24:
         print("[*] Nessun utente necessita di Follow-Up al momento.")
         return
 
-    print(f"[*] Follow-up 24h: {len(to_follow_up_24)} utenti | Follow-up 72h: {len(to_follow_up_72)} utenti")
+    print(f"[*] Follow-up 24h: {len(to_follow_up_24)} utenti")
     
     cl = Client()
     cl.delay_range = [2, 5]
@@ -75,16 +71,7 @@ def main():
         except Exception as e:
             print(f"  [!] Errore follow-up 24h @{user['username']}: {e}")
 
-    for user in to_follow_up_72:
-        msg = random.choice(FOLLOWUP_TEMPLATES) + "\n\nOfferta speciale per te: se attivi oggi, il primo mese è gratis! 🎁"
-        try:
-            cl.direct_send(msg, user_ids=[int(user["user_id"])])
-            user["reminder_sent"] = True
-            save_processed_comments(processed_ids)
-            print(f"  [+] Follow-up 72h inviato a @{user['username']}")
-            time.sleep(15)
-        except Exception as e:
-            print(f"  [!] Errore follow-up 72h @{user['username']}: {e}")
+
 
     print("\n[+] Follow-Up Completato.")
 

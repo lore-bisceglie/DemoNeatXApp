@@ -214,12 +214,21 @@ def main():
             messages['follow_up'],
             f"💬 *Risposta ai Commenti*:\n(Copia il messaggio qui sotto 👇)",
             messages['comment_reply'],
-            "🔍 *Target di Oggi*:\n" + "\n".join([f"- {r['search_query']} ({r['priority']})" for r in rows[:3]])
+            "🔍 *Target di Oggi*:\n" + "\n".join([f"- {r['search_query']} ({r['priority']})" for r in rows])
         ]
         
-        for part in msg_parts:
+        for i, part in enumerate(msg_parts):
             try:
-                requests.post(url, json={"chat_id": chat_id, "text": part, "parse_mode": "Markdown"})
+                payload = {
+                    "chat_id": chat_id, 
+                    "text": part, 
+                    "parse_mode": "Markdown"
+                }
+                # Suona solo al primo messaggio, gli altri arrivano silenziosi
+                if i > 0:
+                    payload["disable_notification"] = True
+                    
+                requests.post(url, json=payload)
             except Exception as e:
                 print(f"[Lead Pipeline] Errore invio Telegram: {e}")
                 

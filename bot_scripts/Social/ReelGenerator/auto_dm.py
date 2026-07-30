@@ -13,8 +13,8 @@ PROCESSED_COMMENTS_FILE = "processed_comments.json"
 # ==========================================
 # CONFIGURAZIONI
 # ==========================================
-IG_USERNAME = os.environ.get("INSTA_USER", "")
-IG_PASSWORD = os.environ.get("INSTA_PASS", "")
+IG_USERNAME = os.environ.get("IG_USERNAME", os.environ.get("INSTA_USER", ""))
+IG_PASSWORD = os.environ.get("IG_PASSWORD", os.environ.get("INSTA_PASS", ""))
 
 TRIGGER_WORDS = [
     "agenda", "info", "prezzo", "costo", "link", "demo", "provare",
