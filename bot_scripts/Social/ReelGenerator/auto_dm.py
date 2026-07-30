@@ -27,24 +27,20 @@ TRIGGER_WORDS = [
 
 DM_TEMPLATES = [
     (
-        "Ciao! Ho visto il tuo commento su NeatX. "
-        "Qui trovi la demo gratuita: https://www.neatx.store/\n\n"
-        "Se mi dici che attività hai, posso mostrarti esattamente come funziona per te!"
+        "Ehi ciao! Grazie mille per il commento 🙏 Ti lascio subito il link diretto a NeatX: https://www.neatx.store/\n\n"
+        "Ci metti davvero due minuti a farti la tua agenda online. Fammi sapere se ti serve una mano a impostare qualcosa!"
     ),
     (
-        "Grazie per l'interesse! 👋\n"
-        "Ecco il link per provare NeatX gratis: https://www.neatx.store/\n\n"
-        "Se hai dubbi su prezzi o funzioni, scrivimi pure qui!"
+        "Ciao! Eccomi, ti giro il link come richiesto: https://www.neatx.store/\n\n"
+        "Puoi registrarti subito e iniziare ad automatizzare gli appuntamenti e azzerare i ritardi. Se hai qualsiasi dubbio scrivimi pure qui in chat! 👋"
     ),
     (
-        "Ciao! Ecco il link diretto per la demo gratuita: https://www.neatx.store/\n\n"
-        "Lo uso per automatizzare appuntamenti 24/7, promemoria WhatsApp, timesheet e incassi.\n"
-        "Se vuoi vedere come si adatta alla tua attività, dimmi che settore sei!"
+        "Ehi, grazie per l'interesse! Ti lascio il link per farti la tua pagina appuntamenti: https://www.neatx.store/\n\n"
+        "È comodissima per i promemoria automatici ai clienti. Se vuoi un consiglio su come usarla al meglio per il tuo settore, dimmi pure!"
     ),
     (
-        "Ecco il link per provare NeatX: https://www.neatx.store/\n\n"
-        "Niente commissioni, prenotazioni 24/7, promemoria WhatsApp automatici e timesheet per il commercialista.\n"
-        "Fammi sapere se hai domande!"
+        "Ciao! Ecco qui il link di NeatX: https://www.neatx.store/\n\n"
+        "L'obiettivo è liberarti dalle chat per gli appuntamenti e gestire tutto in automatico. Dacci un'occhiata e fammi sapere cosa ne pensi!"
     ),
 ]
 
