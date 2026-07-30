@@ -1,18 +1,18 @@
 {
-  "date": "2026-07-28",
-  "niche": "Centri Estetici",
-  "feature": "multi_staff",
-  "feature_label": "Gestione Staff",
-  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
-  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
-  "cover_title": "ADDIO TURNI",
-  "hook_hint": "Se sei tra i centri estetici e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: Gestione Staff con NeatX",
-  "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
+  "date": "2026-07-30",
+  "niche": "Parrucchieri",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "ZERO NO-SHOW ORA",
+  "hook_hint": "Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Parrucchieri: Zero No-Show con NeatX",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "gestionale parrucchieri",
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }
