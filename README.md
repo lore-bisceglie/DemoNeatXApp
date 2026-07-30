@@ -305,6 +305,35 @@ Gli endpoint critici (prenotazione appuntamenti, invio OTP, reset password) sono
 
 ---
 
+## 📝 Changelog
+
+### 2026-07-30
+
+#### 🔧 Fix: ScrollReveal SSR-Friendly (`components/landing/ScrollReveal.tsx`)
+- **Problema**: Le sezioni della landing page partivano invisibili (`opacity: 0`) durante l'idratazione React, causando un "buco nero" visibile per 2-3 secondi su dispositivi mobili.
+- **Causa**: `useState(false)` rendeva tutto invisibile prima che l'`IntersectionObserver` potesse attivarsi.
+- **Fix**: Il contenuto ora parte visibile di default (SSR). Dopo l'idratazione, solo gli elementi fuori dallo schermo vengono nascosti e animati allo scroll. Gli elementi già in viewport restano visibili senza flash.
+
+#### 🔕 Fix: Notifiche Telegram Silenziose (`bot_scripts/Automation/lead_pipeline.py`)
+- Aggiunto `disable_notification: True` a tutti i messaggi Telegram successivi al primo.
+- Il telefono suona **una sola volta** per sessione, invece di squillare per ogni bolla di messaggio inviata.
+
+#### 💬 Miglioramento: Template DM Instagram (`bot_scripts/Social/ReelGenerator/auto_dm.py`)
+- Sostituiti i 4 template di risposta automatica ai commenti Instagram.
+- Rimossi riferimenti freddi/aziendali ("demo gratuita") a favore di un tono caldo e diretto.
+- Focus spostato sull'azione: registrarsi e crearsi l'agenda, non guardare una demo.
+
+#### ⚡ Ottimizzazione: Performance Mobile Landing Page
+- **LiveNotification**: Timer JS disattivati su mobile (il componente era già nascosto via CSS `hidden md:flex` ma i timer giravano comunque a vuoto). Fix anche del memory leak dei timer ricorsivi.
+- **FloatingPhone**: L'intervallo da 2.5s ora si attiva solo quando il componente è visibile sullo schermo (via `IntersectionObserver`). Quando l'utente scrolla altrove, il timer si ferma.
+- **BeforeAfterSlider**: Rimosso `@import` Google Font bloccante dentro `<style>` inline, sostituito con `<link rel="stylesheet">` non bloccante con `preconnect`.
+- **FeaturesSection**: Rimosso `"use client"` inutile — il componente è puramente statico (zero stato/hook), ora è un Server Component che riduce il bundle JS.
+- **page.tsx + FloatingPhone**: Blur di sfondo ridotti su mobile (`blur-[80px]` vs `blur-[150px]` e `blur-[30px]` vs `blur-[60px]`) per alleggerire la GPU. Stessi valori su desktop.
+- **TrustMarquee**: Ridotto da 6 a 4 copie del ticker (144 → 96 nodi DOM), stessa scorrevolezza visiva.
+
+---
+
 <p center="align">
-  Sviluppato con ❤️ per trasformare l'operatività di barbieri e saloni di bellezza.
+  Sviluppato con ❤️ per trasformare l'operatività di barbieri, saloni e professionisti che lavorano su appuntamento.
 </p>
+

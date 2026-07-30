@@ -15,15 +15,26 @@ export default function LiveNotification() {
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
+    // Il componente è nascosto su mobile (hidden md:flex) — non sprecare CPU
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (!mq.matches) return;
+
+    let hideTimer: ReturnType<typeof setTimeout>;
+    let nextTimer: ReturnType<typeof setTimeout>;
+
     const showRandomNotification = () => {
       const randomText = FAKE_NOTIFICATIONS[Math.floor(Math.random() * FAKE_NOTIFICATIONS.length)];
       setNotification(randomText);
       setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 4000);
-      setTimeout(showRandomNotification, Math.random() * 10000 + 10000);
+      hideTimer = setTimeout(() => setShowNotification(false), 4000);
+      nextTimer = setTimeout(showRandomNotification, Math.random() * 10000 + 10000);
     };
     const timer = setTimeout(showRandomNotification, 5000);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(hideTimer);
+      clearTimeout(nextTimer);
+    };
   }, []);
 
   return (

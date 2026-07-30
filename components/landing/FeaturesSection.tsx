@@ -1,4 +1,4 @@
-"use client";
+// Server Component — nessun hook o stato, riduce il bundle JS client
 
 import { MousePointerClick, BellRing, WalletCards, CalendarSync, FileSpreadsheet, MapPin } from "lucide-react";
 

@@ -45,8 +45,10 @@ export default function BeforeAfterSlider() {
   return (
     <div className="relative w-full max-w-5xl mx-auto my-24 px-4 sm:px-6">
       
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap');
         .font-handwriting { font-family: 'Caveat', cursive; }
         
         /* Realistic Paper Texture */

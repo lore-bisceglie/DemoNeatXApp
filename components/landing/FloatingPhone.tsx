@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import IPhone17Pro from "./IPhone17Pro";
 
 export default function FloatingPhone() {
@@ -18,8 +18,18 @@ export default function FloatingPhone() {
 
   // Inizializza vuoto per mostrare l'arrivo progressivo
   const [messages, setMessages] = useState<{text: string, time: string}[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisibleRef = useRef(false);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(containerRef.current);
+
     // Primo messaggio quasi subito per rompere il ghiaccio
     const initialTimer = setTimeout(() => {
       setMessages([{
@@ -29,6 +39,9 @@ export default function FloatingPhone() {
     }, 1000);
 
     const interval = setInterval(() => {
+      // Non aggiornare se il componente non è visibile
+      if (!isVisibleRef.current) return;
+
       setMessages(prev => {
         let nextMsgText;
         do {
@@ -41,7 +54,7 @@ export default function FloatingPhone() {
         };
         
         const newMessages = [...prev, newMsgObj];
-        if (newMessages.length > 5) newMessages.shift(); // keep only last 5
+        if (newMessages.length > 5) newMessages.shift();
         return newMessages;
       });
     }, 2500);
@@ -49,15 +62,16 @@ export default function FloatingPhone() {
     return () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
+      observer.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="relative mx-auto mt-16 perspective-1000 ">
+    <div ref={containerRef} className="relative mx-auto mt-16 perspective-1000 ">
       
       {/* Glow Dietro */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[650px] bg-gradient-to-r from-[#00b4ff]/20 to-purple-500/20 blur-[60px] rounded-full pointer-events-none opacity-80 animate-pulse"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] md:w-[350px] h-[500px] md:h-[650px] bg-gradient-to-r from-[#00b4ff]/20 to-purple-500/20 blur-[30px] md:blur-[60px] rounded-full pointer-events-none opacity-80 animate-pulse"></div>
 
       <IPhone17Pro>
         {/* Screen Content - Premium Dark Simulation */}

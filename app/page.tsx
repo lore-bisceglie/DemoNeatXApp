@@ -58,7 +58,7 @@ export default function Home() {
           }
         }
       `}</style>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[#00b4ff]/10 blur-[150px] rounded-full pointer-events-none opacity-60 animate-pulse" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] md:w-[1000px] h-[400px] md:h-[600px] bg-[#00b4ff]/10 blur-[80px] md:blur-[150px] rounded-full pointer-events-none opacity-60 animate-pulse" />
 
       
       {/* GLOBAL SPOTLIGHT (LIGHT FOLLOWING MOUSE) */}

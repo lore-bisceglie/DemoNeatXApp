@@ -42,14 +42,12 @@ export default function TrustMarquee() {
         <div className="flex w-max">
           {renderItems("set1")}
           {renderItems("set2")}
-          {renderItems("set3")}
         </div>
         
         {/* Metà 2 (Copia esatta per il loop) */}
         <div className="flex w-max">
+          {renderItems("set3")}
           {renderItems("set4")}
-          {renderItems("set5")}
-          {renderItems("set6")}
         </div>
       </div>
     </div>
