@@ -108,8 +108,22 @@ Angolazione: {angle}
 Hashtag da usare: {industry_hashtags}
 Finisci con una call to action: Clicca il link in bio per provare NeatX."""
 
-    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
-    return response.text.strip()
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+            return response.text.strip()
+        except Exception as e:
+            error_str = str(e).lower()
+            if "503" in error_str or "unavailable" in error_str or "demand" in error_str:
+                print(f"Alta richiesta API Gemini (tentativo {attempt+1}/{max_retries}). Attendo 30 secondi e riprovo...")
+                time.sleep(30)
+            else:
+                print(f"Errore imprevisto durante la generazione della caption: {e}")
+                break
+                
+    # Fallback d'emergenza se Gemini è bloccato (evita di far fallire la Action)
+    return f"Semplifica la gestione del tuo Salone con NeatX. Meno tempo speso al telefono, più tempo per i tuoi clienti.\n\nClicca il link in bio per provare NeatX! {industry_hashtags}"
 
 def create_graphic_post(title, bg_url):
     print("Creazione grafica con Playwright (4:5 1080x1350)...")
