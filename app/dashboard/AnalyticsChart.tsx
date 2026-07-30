@@ -30,6 +30,7 @@ export default function AnalyticsChart({ data, isPro, plan, slug }: AnalyticsCha
       title="Sblocca le Statistiche Avanzate" 
       description="Scopri quali sono i tuoi giorni migliori, quanto incassi realmente, e tieni traccia della tua crescita finanziaria." 
       plan={plan || (isPro ? "elite" : "basic")}
+      isPro={isPro}
       slug={slug}
     >
       <div className="bg-[#0b1221] border border-[#1a2642] p-6 rounded-3xl shadow-xl mb-8">
