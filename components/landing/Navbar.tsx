@@ -22,7 +22,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 transform-gpu will-change-transform ${scrolled ? "bg-[#050814]/80 backdrop-blur-md border-b border-white/5 py-3" : "bg-transparent py-6"}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-[#050814]/80 backdrop-blur-md border-b border-white/5 py-3" : "bg-transparent py-6"}`}>
       <div className="w-full max-w-6xl mx-auto px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="w-full md:w-auto flex items-center justify-between">
         <Link href="/" className="text-2xl font-extrabold tracking-tight notranslate">

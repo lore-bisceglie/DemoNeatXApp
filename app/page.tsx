@@ -18,7 +18,6 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 import ScrollReveal from "@/components/landing/ScrollReveal";
-import WhatsAppFloatingBtn from "@/components/WhatsAppFloatingBtn";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
@@ -87,7 +86,6 @@ export default function Home() {
       
       <Footer />
       <LiveNotification />
-      <WhatsAppFloatingBtn />
       <ROICalculator show={showRoiModal} onClose={() => setShowRoiModal(false)} />
     </div>
   );
