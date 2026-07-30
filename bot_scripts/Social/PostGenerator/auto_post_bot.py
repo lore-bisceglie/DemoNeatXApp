@@ -60,7 +60,10 @@ def get_pexels_image(query=None):
     target_queries = [
         "beauty salon", "hair salon", "barbershop", 
         "spa", "nail salon", "wellness center", 
-        "hairdresser", "makeup artist"
+        "hairdresser", "makeup artist",
+        "massage therapy", "skincare routine", "haircut men",
+        "salon interior", "relaxing spa", "facial treatment",
+        "shaving", "hairstylist", "beauty products", "wellness retreat"
     ]
     
     # Se la query passata è generica o manca, ne scegliamo una a caso
@@ -230,6 +233,39 @@ def publish_to_instagram(image_url, caption):
         print(f"ERRORE Pubblicazione: {pub_data}")
         return False
 
+def publish_story_to_instagram(image_url):
+    print("Inizio procedura di pubblicazione STORIA su Instagram...")
+    url_media = f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}/media"
+    payload = {
+        "image_url": image_url,
+        "media_type": "STORIES",
+        "access_token": META_ACCESS_TOKEN
+    }
+    resp = requests.post(url_media, data=payload)
+    data = resp.json()
+    if "id" not in data:
+        print(f"ERRORE Creazione Container Storia: {data}")
+        return False
+        
+    container_id = data["id"]
+    print(f"Container ID Storia creato: {container_id}")
+    time.sleep(15)
+    
+    url_publish = f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}/media_publish"
+    pub_payload = {
+        "creation_id": container_id,
+        "access_token": META_ACCESS_TOKEN
+    }
+    pub_resp = requests.post(url_publish, data=pub_payload)
+    pub_data = pub_resp.json()
+    
+    if "id" in pub_data:
+        print(f"SUCCESSO! Storia pubblicata. ID: {pub_data['id']}")
+        return True
+    else:
+        print(f"ERRORE Pubblicazione Storia: {pub_data}")
+        return False
+
 def main():
     print("=== Avvio Auto-Post Bot per Instagram ===")
     theme = load_theme()
@@ -253,6 +289,8 @@ def main():
     
     if public_url:
         publish_to_instagram(public_url, caption)
+        time.sleep(5)
+        publish_story_to_instagram(public_url)
         
     print("=== Auto-Post Bot terminato ===")
 
