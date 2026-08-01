@@ -1,18 +1,18 @@
 {
   "date": "2026-08-01",
-  "niche": "Tatuatori",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "TATUATORI: RECENSIONI GOOGLE DA",
-  "hook_hint": "Se sei tra i tatuatori e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: Recensioni Automatiche con NeatX",
+  "niche": "Coach e Consulenti",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "CLIENTI PAGATI, NESSUN NO-SHOW",
+  "hook_hint": "Se sei tra i coach e consulenti e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Coach e Consulenti: Zero No-Show con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern office workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "agenda consulente",
+    "prenotazioni coach",
+    "booking consulenze"
   ]
 }
