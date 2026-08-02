@@ -29,7 +29,7 @@ jobs:
           fi
           rome_hour="$(TZ=Europe/Rome date +'%H')"
           rome_time="$(TZ=Europe/Rome date +'%Y-%m-%d %H:%M:%S %Z')"
-          if [ "$rome_hour" = "14" ] || [ "$rome_hour" = "20" ]; then
+          if [[ "$rome_hour" =~ ^(14|15|20|21)$ ]]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             echo "Posting window matched: $rome_time"
           else
