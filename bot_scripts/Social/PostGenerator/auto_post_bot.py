@@ -189,9 +189,10 @@ def create_graphic_post(title, bg_url):
 
 def upload_to_temp_server(file_path):
     print("Caricamento immagine sul server temporaneo...")
-    url = "https://litterbox.catbox.moe/resources/internals/api.php"
+    url = "https://catbox.moe/user/api.php"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     with open(file_path, "rb") as f:
-        resp = requests.post(url, data={"reqtype": "fileupload", "time": "12h"}, files={"fileToUpload": f}, timeout=60)
+        resp = requests.post(url, data={"reqtype": "fileupload"}, files={"fileToUpload": f}, headers=headers, timeout=60)
     
     public_url = resp.text.strip()
     if not public_url.startswith("http"):
