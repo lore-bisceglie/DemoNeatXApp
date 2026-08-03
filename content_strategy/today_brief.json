@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-02",
-  "niche": "Centri Estetici",
-  "feature": "analytics",
-  "feature_label": "Statistiche e Dati",
-  "pain": "non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti",
-  "promise": "dashboard con incassi, trend e performance in tempo reale",
-  "cover_title": "STATISTICHE E D ORA",
-  "hook_hint": "Se sei tra i centri estetici e non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: Statistiche e Dati con NeatX",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers, premium realistic lighting",
+  "date": "2026-08-03",
+  "niche": "Tatuatori",
+  "feature": "booking",
+  "feature_label": "Prenotazione 24 ore su 24",
+  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+  "promise": "clienti che prenotano da soli anche mentre dormi",
+  "cover_title": "BASTA BOOKING",
+  "hook_hint": "Se sei tra i tatuatori e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Prenotazione 24 ore su 24 con NeatX",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
