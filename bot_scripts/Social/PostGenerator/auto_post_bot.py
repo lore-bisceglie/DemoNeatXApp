@@ -189,17 +189,19 @@ def create_graphic_post(title, bg_url):
 
 def upload_to_temp_server(file_path):
     print("Caricamento immagine sul server temporaneo...")
-    url = "https://catbox.moe/user/api.php"
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    url = "https://tmpfiles.org/api/v1/upload"
     with open(file_path, "rb") as f:
-        resp = requests.post(url, data={"reqtype": "fileupload"}, files={"fileToUpload": f}, headers=headers, timeout=60)
+        resp = requests.post(url, files={"file": f}, timeout=60)
     
-    public_url = resp.text.strip()
-    if not public_url.startswith("http"):
-        print(f"Errore caricamento temp: {public_url}")
+    data = resp.json()
+    if "data" in data and "url" in data["data"]:
+        # tmpfiles.org URL needs to be converted from /f/ to /dl/ to get direct image
+        public_url = data["data"]["url"].replace("tmpfiles.org/", "tmpfiles.org/dl/")
+        print(f"Immagine hostata temporaneamente su: {public_url}")
+        return public_url
+    else:
+        print(f"Errore caricamento temp: {resp.text}")
         return None
-    print(f"Immagine hostata temporaneamente su: {public_url}")
-    return public_url
 
 def publish_to_instagram(image_url, caption):
     print("Inizio procedura di pubblicazione su Instagram...")
@@ -289,9 +291,18 @@ def main():
     public_url = upload_to_temp_server(img_path)
     
     if public_url:
-        publish_to_instagram(public_url, caption)
-        time.sleep(5)
-        publish_story_to_instagram(public_url)
+        success = publish_to_instagram(public_url, caption)
+        if success:
+            time.sleep(5)
+            publish_story_to_instagram(public_url)
+        else:
+            import sys
+            print("Errore: Pubblicazione su Instagram fallita.")
+            sys.exit(1)
+    else:
+        import sys
+        print("Errore: Impossibile completare il caricamento.")
+        sys.exit(1)
         
     print("=== Auto-Post Bot terminato ===")
 
