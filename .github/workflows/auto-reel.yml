@@ -1,8 +1,8 @@
 name: NeatX Auto-Reel Machine
 on:
   schedule:
-    # 14:00 e 20:00 Europe/Rome
-    - cron: '0 12,13,18,19 * * *'
+    # 14:19 e 20:19 Europe/Rome
+    - cron: '19 12,13,18,19 * * *'
   workflow_dispatch:
 concurrency:
   group: neatx-auto-reel
