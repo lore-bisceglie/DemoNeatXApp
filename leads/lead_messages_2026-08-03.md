@@ -1,21 +1,21 @@
 # Lead Pipeline NeatX - 2026-08-03
 
 ## Messaggio iniziale
-Ciao! Ho sentito che gestisci un centro estetico. Hai mai pensato a come ridurre i no-show? Con NeatX, i clienti pagano in anticipo, così ogni slot è occupato. Dai un'occhiata qui: https://www.neatx.store/
+Ciao! Ho visto il tuo salone e devo dire che spaccate! Ma non ti stressi a gestire le prenotazioni a mano, vero? Ho qualcosa che potrebbe renderti la vita molto più semplice. In 2 minuti puoi avere una pagina per le prenotazioni e zero no-show. Dai un'occhiata qui: https://www.neatx.store/
 
 ## Follow-up
-Hey! Volevo solo ripassare. Hai dato un'occhiata a NeatX? Potrebbe davvero semplificarti la vita e farti guadagnare di più. Controlla qui: https://www.neatx.store/
+Ehi, hai avuto modo di dare un'occhiata? Fammi sapere se ti va di chiacchierare!
 
 ## Risposta commento
-Ciao! Ti capisco, gestire l'agenda è complicato. NeatX potrebbe aiutarti a evitare i no-show e a rendere tutto più semplice!
+Ciao! Grazie per il tuo interesse! Se vuoi sapere di più su come funziona, scrivimi pure in DM!
 
 ## Ricerche consigliate
-- centri estetici Milano | priorita alta | da cercare
-- centri estetici Roma | priorita alta | da cercare
-- centri estetici Torino | priorita alta | da cercare
-- centri estetici Napoli | priorita media | da cercare
-- centri estetici Bologna | priorita media | da cercare
-- centri estetici Bologna | priorita media | da cercare
-- centri estetici Firenze | priorita media | da cercare
-- centri estetici Verona | priorita media | da cercare
-- centri estetici Brescia | priorita media | da cercare
+- parrucchieri Milano | priorita alta | da cercare
+- parrucchieri Roma | priorita alta | da cercare
+- parrucchieri Torino | priorita alta | da cercare
+- parrucchieri Napoli | priorita media | da cercare
+- parrucchieri Bologna | priorita media | da cercare
+- parrucchieri Bologna | priorita media | da cercare
+- parrucchieri Firenze | priorita media | da cercare
+- parrucchieri Verona | priorita media | da cercare
+- parrucchieri Brescia | priorita media | da cercare
