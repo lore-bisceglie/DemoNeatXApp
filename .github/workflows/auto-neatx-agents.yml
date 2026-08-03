@@ -27,7 +27,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
-        run: python bot_scripts/Agents/coordinator.py
+        run: python bot_scripts/Agents/coordinator.py 2>&1 | tee /tmp/workflow.log
 
       - name: Commit blackboard updates
         uses: stefanzweifel/git-auto-commit-action@v7
@@ -38,3 +38,12 @@ jobs:
           file_pattern: |
             bot_scripts/Agents/blackboard/*.json
             content_strategy/*.json
+
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "auto-neatx-agents" --status "${{ job.status }}" --log /tmp/workflow.log

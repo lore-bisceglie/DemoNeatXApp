@@ -27,4 +27,12 @@ jobs:
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
           NEXT_PUBLIC_ROOT_DOMAIN: "neatx.store"
         run: |
-          python bot_scripts/GrowthHack/treatwell_vampire.py
+          python bot_scripts/GrowthHack/treatwell_vampire.py 2>&1 | tee /tmp/workflow.log
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Treatwell Vampire" --status "${{ job.status }}" --log /tmp/workflow.log

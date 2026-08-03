@@ -391,19 +391,24 @@ def publish_tiktok_local(caption):
     return platform_result(False, f"TikTok upload locale fallito dopo {max_retries} tentativi.")
 
 def publish_to_tiktok():
-    webhook_url = os.environ.get("TIKTOK_MAKE_WEBHOOK_URL", "").strip()
     caption = get_caption()
 
+    # Prova sempre prima l'upload locale (più affidabile di Make.com)
+    local_result = publish_tiktok_local(caption)
+    if local_result.get("ok"):
+        return local_result
+
+    # Fallback: prova Make.com se il locale fallisce
+    webhook_url = os.environ.get("TIKTOK_MAKE_WEBHOOK_URL", "").strip()
     if not webhook_url:
-        print("[*] TIKTOK_MAKE_WEBHOOK_URL assente. Ripiego su TikTok Uploader Locale...")
-        return publish_tiktok_local(caption)
-        
+        return local_result  # Nessun fallback disponibile
+
     if not os.path.exists(VIDEO_FILE):
         message = f"Il video {VIDEO_FILE} non esiste."
         print(f"[!] Errore: {message}")
         return platform_result(False, message)
-        
-    print("[*] Preparazione video per TikTok via Make.com...")
+
+    print("[*] Upload locale fallito, provo via Make.com come fallback...")
     video_url = get_shared_video_url()
     if not video_url:
         return platform_result(False, "Impossibile caricare il video sul server temporaneo.")

@@ -27,10 +27,18 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python bot_scripts/Automation/generate_content_calendar.py
-          python bot_scripts/Automation/viral_radar.py
+          python bot_scripts/Automation/generate_content_calendar.py 2>&1 | tee /tmp/workflow.log
+          python bot_scripts/Automation/viral_radar.py 2>&1 | tee -a /tmp/workflow.log
       - name: Commit viral radar
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'Auto-radar: aggiorna idee virali'
           file_pattern: 'content_strategy/*.json content_strategy/*.md'
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Viral Radar" --status "${{ job.status }}" --log /tmp/workflow.log

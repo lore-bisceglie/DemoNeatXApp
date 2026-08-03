@@ -26,7 +26,7 @@ jobs:
           INSTA_PASS: ${{ secrets.INSTA_PASS }}
         run: |
           cd bot_scripts/Social/ReelGenerator
-          python auto_dm.py || true
+          python auto_dm.py 2>&1 | tee /tmp/workflow.log || true
       - name: Follow-up 24h/72h
         continue-on-error: true
         env:
@@ -34,7 +34,15 @@ jobs:
           INSTA_PASS: ${{ secrets.INSTA_PASS }}
         run: |
           cd bot_scripts/Social/ReelGenerator
-          python auto_followup.py || true
+          python auto_followup.py 2>&1 | tee -a /tmp/workflow.log || true
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "DM Auto-Responder" --status "${{ job.status }}" --log /tmp/workflow.log
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Auto-DM: aggiorna commenti processati"

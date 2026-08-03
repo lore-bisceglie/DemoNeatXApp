@@ -30,8 +30,16 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python bot_scripts/Automation/generate_content_calendar.py
-          python bot_scripts/Automation/lead_pipeline.py
+          python bot_scripts/Automation/generate_content_calendar.py 2>&1 | tee /tmp/workflow.log
+          python bot_scripts/Automation/lead_pipeline.py 2>&1 | tee -a /tmp/workflow.log
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Lead Pipeline" --status "${{ job.status }}" --log /tmp/workflow.log
       - name: Commit lead pipeline
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

@@ -27,12 +27,20 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_ACTIONS: "true"
-        run: python bot_scripts/Content/content_calendar.py || true
+        run: python bot_scripts/Content/content_calendar.py 2>&1 | tee /tmp/workflow.log || true
       - name: Generate unified content strategy
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python bot_scripts/Automation/generate_content_calendar.py
+        run: python bot_scripts/Automation/generate_content_calendar.py 2>&1 | tee -a /tmp/workflow.log
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Content Calendar" --status "${{ job.status }}" --log /tmp/workflow.log
       - name: Commit content strategy
         uses: stefanzweifel/git-auto-commit-action@v7
         with:

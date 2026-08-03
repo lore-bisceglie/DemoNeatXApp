@@ -43,14 +43,22 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        run: npm ci 2>&1 | tee /tmp/workflow.log
       - name: Lint
-        run: npm run lint
+        run: npm run lint 2>&1 | tee -a /tmp/workflow.log
       - name: Typecheck
-        run: npm run typecheck
+        run: npm run typecheck 2>&1 | tee -a /tmp/workflow.log
       - name: Setup Database
-        run: npx prisma db push
+        run: npx prisma db push 2>&1 | tee -a /tmp/workflow.log
       - name: Build site
-        run: npm run build
+        run: npm run build 2>&1 | tee -a /tmp/workflow.log
       - name: Check production domain
-        run: curl --fail --silent --show-error --location https://www.neatx.store > /dev/null
+        run: curl --fail --silent --show-error --location https://www.neatx.store 2>&1 | tee -a /tmp/workflow.log
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Build Health" --status "${{ job.status }}" --log /tmp/workflow.log

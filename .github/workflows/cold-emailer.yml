@@ -28,10 +28,18 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
         run: |
-          python bot_scripts/Email/cold_emailer.py
+          python bot_scripts/Email/cold_emailer.py 2>&1 | tee /tmp/workflow.log
       - name: Upload Generated Emails
         uses: actions/upload-artifact@v4
         with:
           name: Generated_Cold_Emails
           path: email_generate/
           retention-days: 5
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Cold Emailer" --status "${{ job.status }}" --log /tmp/workflow.log

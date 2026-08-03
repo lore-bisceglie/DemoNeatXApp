@@ -19,7 +19,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          python - <<'PY'
+          python - <<'PY' 2>&1 | tee /tmp/workflow.log
           import json
           import os
           import sys
@@ -131,3 +131,11 @@ jobs:
           check_daily_blog()
           create_issue()
           PY
+      - name: Notifica Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pip install requests python-dotenv -q 2>/dev/null
+          python bot_scripts/notify_telegram.py --workflow "NeatX Guardian" --status "${{ job.status }}" --log /tmp/workflow.log
