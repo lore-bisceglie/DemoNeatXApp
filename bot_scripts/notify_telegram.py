@@ -14,7 +14,7 @@ TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 
-def send(title, message, emoji="", parse_mode=""):
+def send(title, message, emoji="", parse_mode="", silent=False):
     if not TOKEN or not CHAT_ID:
         print("[!] Credenziali Telegram mancanti: notifica non inviata")
         return False
@@ -30,6 +30,8 @@ def send(title, message, emoji="", parse_mode=""):
     payload = {"chat_id": CHAT_ID, "text": text, "disable_web_page_preview": True}
     if parse_mode:
         payload["parse_mode"] = parse_mode
+    if silent:
+        payload["disable_notification"] = True
 
     try:
         response = requests.post(
@@ -69,7 +71,7 @@ def workflow_status(name, status, log_file=None):
         log_file: Optional path to a log file to include on failure
     """
     if status == "success":
-        return send(name, "Completato con successo.", "✅")
+        return send(name, "Completato con successo.", "✅", silent=True)
     
     # Read last 40 lines of log file for error context
     log_tail = ""
