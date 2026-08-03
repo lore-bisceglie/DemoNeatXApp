@@ -3,7 +3,7 @@ import { HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
 import { useEffect, useState } from "react";
 
-export default function TutorialButton() {
+export default function TutorialButton({ showInstallStep = false }: { showInstallStep?: boolean }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,6 +20,18 @@ export default function TutorialButton() {
   }, []);
 
   const startTour = () => {
+    const installStep = showInstallStep
+      ? [{
+          element: "#tour-install-app",
+          popover: {
+            title: "📲 Installa NeatX sul dispositivo",
+            description: "Questo pulsante crea un’icona di NeatX sulla schermata Home: così puoi aprire direttamente la tua agenda, senza cercare ogni volta il sito nel browser. L’app si apre in una finestra dedicata e non modifica account, clienti o appuntamenti. Se il browser non mostra il comando automatico, dopo il clic ti spieghiamo dove trovarlo.",
+            align: "end" as const,
+            side: "bottom" as const
+          }
+        }]
+      : [];
+
     const driverObj = driver({
       showProgress: true,
       allowClose: true, // Allow user to skip if they want
@@ -45,6 +57,7 @@ export default function TutorialButton() {
           },
           onHighlightStarted: () => { document.getElementById('tour-tab-agenda')?.click(); }
         },
+        ...installStep,
         {
           element: "#tour-dashboard-cards",
           popover: {

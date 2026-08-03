@@ -42,6 +42,7 @@ import LogoutButton from "./LogoutButton";
 import AdminDropdownMenu from "./AdminDropdownMenu";
 import TutorialButton from "./TutorialButton";
 import ActivityLogPanel from "./ActivityLogPanel";
+import InstallAppButton from "./InstallAppButton";
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -781,7 +782,8 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
             <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} slug={slug} />
             <CustomerDrawer tenantId={tenantId} />
             <AdminDropdownMenu slug={slug} tenantId={tenantId} hasStripe={!!tenant.stripeCustomerId} />
-            <TutorialButton />
+            <TutorialButton showInstallStep />
+            <InstallAppButton />
           </div>
         </div>
 
