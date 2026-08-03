@@ -1,0 +1,39 @@
+name: IG Lead Scraper (Daily)
+
+on:
+  schedule:
+    # Esegue ogni giorno alle 08:00 UTC (corrispondono alle 09:00 o 10:00 in Italia)
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    # Permette di avviare lo script manualmente cliccando un bottone su GitHub
+    inputs:
+      city:
+        description: 'Città da scansionare'
+        required: true
+        default: 'Milano'
+
+jobs:
+  scrape_and_notify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Install Puppeteer Browsers
+        run: npx puppeteer browsers install chrome
+        
+      - name: Run Scraper
+        # Se avviato manualmente usa la città scelta, altrimenti usa Milano di default
+        run: node scripts/scrape_ig_and_notify.js "${{ github.event.inputs.city || 'Milano' }}"
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
