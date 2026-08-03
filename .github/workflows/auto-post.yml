@@ -33,6 +33,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           set -o pipefail
+          python bot_scripts/debug_meta.py
           python bot_scripts/Social/PostGenerator/auto_post_bot.py 2>&1 | tee /tmp/workflow.log
           exit ${PIPESTATUS[0]}
       - name: Notifica Telegram
