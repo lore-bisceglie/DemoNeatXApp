@@ -89,46 +89,51 @@ def build_targets(brief):
 
 
 def fallback_messages(brief, rows):
-    niche = brief.get("niche") or rows[0]["niche"]
-    pain = brief.get("pain") or "perdere tempo tra messaggi e telefonate"
-    promise = brief.get("promise") or "riempire l'agenda con prenotazioni automatiche"
     return {
         "dm_1": (
-            "Ehi ciao! Ho visto il tuo profilo, complimenti. "
-            "Ti scrivo al volo perché ho lanciato NeatX, un'app che ti gestisce in automatico tutte le prenotazioni senza farti impazzire al telefono. "
-            "Ti lascio il link, ci metti 2 minuti a farti la tua agenda online da zero: https://www.neatx.store/ "
-            "Fammi sapere che ne pensi!"
+            "Ehi ciao, scusa il disturbo. Ho dato un'occhiata alla vostra pagina e spaccate davvero. "
+            "Ti scrivo al volo perché ho creato un'app per aiutare chi ha la vostra mole di lavoro a non impazzire con le prenotazioni su WhatsApp. "
+            "Ci metti letteralmente due minuti a creare la tua agenda online da zero: https://www.neatx.store/ "
+            "Dacci un'occhiata quando hai tempo e dimmi che ne pensi!"
         ),
         "follow_up": (
-            "Ciao! Ti lascio di nuovo il link nel caso ti fosse sfuggito, avere la pagina prenotazioni h24 ti salva un sacco di tempo: https://www.neatx.store/"
+            "Ciao! Ti lascio di nuovo il link nel caso ti fosse sfuggito, l'agenda online ti salva un sacco di tempo: https://www.neatx.store/"
         ),
         "comment_reply": (
-            "Te la mando volentieri. Scrivimi AGENDA in DM e ti giro il link della demo NeatX."
+            "Te la mando volentieri in DM, ti giro il link diretto così puoi provarla."
         ),
     }
 
 
 def generate_messages(brief, rows):
     prompt = {
-        "task": "Scrivi messaggi brevi per prospect B2B italiani.",
-        "product": "NeatX, app per prenotazioni automatiche online, promemoria e riduzione no-show.",
-        "rules": [
-            "Scrivi in modo ESTREMAMENTE informale e casuale, come se scrivessi a un conoscente su Instagram.",
-            "NIENTE linguaggio corporate, niente parole come 'ottimizzare', 'soluzione', 'settore', 'professionisti'.",
-            "Usa un tono diretto, amichevole e umano. Frasi corte.",
-            "Niente schema 'Problema -> Soluzione', sii molto più colloquiale.",
+        "task": "Genera 3 brevi messaggi di outreach a freddo per prospect B2B italiani su Instagram (dm_1, follow_up, comment_reply).",
+        "role": "Agisci come un founder di una startup (NeatX) che sta contattando direttamente su Instagram dei piccoli imprenditori (es. centri estetici). Sei una persona vera, alla mano, che odia i messaggi copia-incolla.",
+        "product": "NeatX (https://www.neatx.store/) - App che crea in 2 minuti una pagina per le prenotazioni. Invia promemoria WhatsApp e permette pagamenti anticipati, azzerando i ritardi e le perdite di tempo in chat.",
+        "obiettivo_specifico": "Portare il prospect a cliccare sul link in modo organico e spontaneo, senza sembrare un'agenzia marketing o un bot.",
+        "obiezioni_da_anticipare": [
+            "L'ennesimo venditore -> Usa un approccio ultra-casuale, inizia complimentandoti davvero col loro lavoro, zero puzza di vendita.",
+            "Le app sono difficili -> Sottolinea la velocità (in 2 minuti è pronta da usare).",
+            "Costa troppo -> Non parlare mai di prezzo, l'obiettivo è solo incuriosire."
+        ],
+        "criteri_di_stile": [
+            "Velocità e Ritmo: Frasi spezzate, ritmo colloquiale, punteggiatura informale.",
+            "Angoli non ovvi: Evita frasi banali come 'Hai mai pensato di ridurre i no-show?'. Usa invece approcci come 'Ho visto come lavorate, spaccate. Ma non impazzite a gestire le prenotazioni a mano?'.",
+            "NIENTE formule pubblicitarie, NIENTE schema 'Problema->Soluzione', NIENTE parole come 'soluzione', 'ottimizzare', 'gestire', 'business'.",
+            "Vietato dire 'Ho sentito che gestisci un centro estetico' o frasi aliene simili. Sii super umano.",
+            "Massimo 400 caratteri per il dm_1."
+        ],
+        "regole_tecniche": [
             "Niente emoji.",
-            "Massimo 420 caratteri per messaggio.",
-            "Il messaggio 'dm_1' e 'follow_up' devono SEMPRE contenere il link esatto: https://www.neatx.store/",
-            "L'obiettivo è farli registrare dal link in modo naturale, senza spingere troppo come un venditore."
+            "dm_1 e follow_up DEVONO finire con il link esatto: https://www.neatx.store/"
         ],
         "today_brief": brief,
         "target_rows": rows[:3],
         "output_schema": {
-            "dm_1": "primo messaggio Instagram",
-            "follow_up": "follow-up leggero",
-            "comment_reply": "risposta a chi commenta AGENDA",
-        },
+            "dm_1": "Il primo DM di contatto a freddo",
+            "follow_up": "Un messaggio di follow-up (24/48h dopo) ultra-light, es. 'Ehi, hai avuto modo di dare un'occhiata? Fammi sapere!'",
+            "comment_reply": "Risposta a chi commenta sotto i post per chiedere info",
+        }
     }
 
     data = openai_json(prompt, max_tokens=900)
