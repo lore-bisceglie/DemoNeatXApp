@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install AI dependency
-        run: pip install google-genai
+        run: pip install google-genai python-dotenv
       - name: Build lead pipeline
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

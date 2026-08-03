@@ -184,9 +184,10 @@ def get_shared_video_url():
     for attempt in range(1, max_retries + 1):
         try:
             r_upload = requests.post(
-                "https://litterbox.catbox.moe/resources/internals/api.php",
-                data={"reqtype": "fileupload", "time": "24h"},
+                "https://catbox.moe/user/api.php",
+                data={"reqtype": "fileupload"},
                 files={"fileToUpload": open(VIDEO_FILE, "rb")},
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
                 timeout=120
             )
             video_url = r_upload.text.strip()
@@ -244,9 +245,10 @@ def publish_to_instagram():
         for attempt in range(1, 4):
             try:
                 r_cover = requests.post(
-                    "https://litterbox.catbox.moe/resources/internals/api.php",
-                    data={"reqtype": "fileupload", "time": "24h"},
+                    "https://catbox.moe/user/api.php",
+                    data={"reqtype": "fileupload"},
                     files={"fileToUpload": open(path_cover, "rb")},
+                    headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
                     timeout=60
                 )
                 cover_url_temp = r_cover.text.strip()
