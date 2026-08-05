@@ -1,58 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-04T12:37:23.806755+02:00
+Generato: 2026-08-05T12:33:26.768109+02:00
 
-## Idea 1: Quante ore perdi ogni mese a rincorrere i tuoi fisioterapisti per farti dare i fogli presenza compilati a mano?
-- title: ADDIO ORE
-- hook: Quante ore perdi ogni mese a rincorrere i tuoi fisioterapisti per farti dare i fogli presenza compilati a mano?
-- niche: Fisioterapisti
-- pain: ore dei dipendenti segnate a mano su fogli Excel persi
-- promise: turni, ferie e permessi in un click, CSV pronto per il commercialista
-- blog_topic: Fisioterapisti: Timesheet Commercialista con NeatX
-- gameplay_style: block_miner
-- image_prompt: photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting
-- keywords: ['agenda fisioterapista', 'prenotazioni fisioterapia', 'gestionale fisioterapisti']
+## Idea 1: Se gestisci uno studio di personal training e i tuoi collaboratori segnano ancora le ore su Excel, stai perdendo ore di tempo e soldi ogni mese.
+- hook: Se gestisci uno studio di personal training e i tuoi collaboratori segnano ancora le ore su Excel, stai perdendo ore di tempo e soldi ogni mese.
+- video_title: STOP TURNI EXCEL PALESTRA
+- blog_title: Come gestire i turni dei personal trainer senza impazzire su Excel
+- description: Analisi dei costi nascosti e degli errori causati dalla gestione manuale delle ore dello staff di personal trainer, mostrando la transizione a un sistema digitale automatico.
+- keywords: ['gestionale personal trainer', 'agenda personal trainer', 'prenotazioni palestra']
 
-## Idea 2: Se gestisci uno studio di fisioterapia e passi l'ultimo giorno del mese a decifrare gli Excel dei turni dei collaboratori, stai sprecando tempo prezioso.
-- title: FINE MESE SENZA CAOS
-- hook: Se gestisci uno studio di fisioterapia e passi l'ultimo giorno del mese a decifrare gli Excel dei turni dei collaboratori, stai sprecando tempo prezioso.
-- niche: Fisioterapisti
-- pain: ore dei collaboratori perse tra chat e fogli Excel incompleti
-- promise: esporta il riepilogo ore in CSV per il commercialista in un secondo con NeatX
-- blog_topic: Come semplificare la contabilità dello studio di fisioterapia: addio Excel
-- gameplay_style: block_miner
-- image_prompt: cinematic photorealistic office of a physiotherapy clinic manager, clean desk with a laptop displaying a generated payroll CSV, modern medical decorations in the background, warm natural light
-- keywords: ['gestione personale fisioterapia', 'gestionale fisioterapisti', 'agenda fisioterapista']
+## Idea 2: Il tuo commercialista ti odia perché a fine mese gli mandi foto di fogli di carta con i turni dei tuoi personal trainer?
+- hook: Il tuo commercialista ti odia perché a fine mese gli mandi foto di fogli di carta con i turni dei tuoi personal trainer?
+- video_title: COMMERCIALISTA FELICE CON NEATX
+- blog_title: Timesheet per personal trainer: invia le ore dello staff al commercialista in un click
+- description: Come semplificare la burocrazia di fine mese esportando un file CSV pulito con ferie, permessi e turni pronti per l'elaborazione dei cedolini.
+- keywords: ['gestionale personal trainer', 'prenotazioni palestra', 'agenda personal trainer']
 
-## Idea 3: I tuoi fisioterapisti segnano ancora le ore di lavoro su fogli volanti che puntualmente spariscono prima di andare dal commercialista?
-- title: TURNI FISIOTERAPISTI
-- hook: I tuoi fisioterapisti segnano ancora le ore di lavoro su fogli volanti che puntualmente spariscono prima di andare dal commercialista?
-- niche: Fisioterapisti
-- pain: dimenticanze e fogli cartacei smarriti dallo staff della clinica
-- promise: gestione presenze e permessi digitale per tutto lo staff in un'unica schermata
-- blog_topic: Gestione collaboratori fisioterapisti: stop ai fogli ore cartacei
-- gameplay_style: block_miner
-- image_prompt: photorealistic workspace of a modern rehabilitation center, tablet showing staff timesheets and digital signatures, physiotherapy equipment in soft focus in the background
-- keywords: ['gestionale fisioterapisti', 'agenda fisioterapista', 'turni studio fisioterapia']
+## Idea 3: Calcolare le ore e i permessi dei tuoi personal trainer ti porta via intere domeniche di lavoro manuale?
+- hook: Calcolare le ore e i permessi dei tuoi personal trainer ti porta via intere domeniche di lavoro manuale?
+- video_title: DOMENICHE LIBERE PER GESTORI PALESTRE
+- blog_title: Pianificazione ferie e permessi: l'agenda intelligente per personal trainer
+- description: Un focus sul recupero del tempo libero per i proprietari di palestre e studi di personal training grazie all'automazione dei flussi di lavoro dei dipendenti.
+- keywords: ['agenda personal trainer', 'gestionale personal trainer', 'prenotazioni palestra']
 
-## Idea 4: Ogni volta che un tuo fisioterapista sbaglia a segnare le ore su Excel o dimentica un permesso, il tuo studio sta perdendo soldi.
-- title: ERRORI NEI TURNI
-- hook: Ogni volta che un tuo fisioterapista sbaglia a segnare le ore su Excel o dimentica un permesso, il tuo studio sta perdendo soldi.
-- niche: Fisioterapisti
-- pain: calcolo errato delle ore dei dipendenti e discrepanze nei fogli presenza
-- promise: un sistema automatico che traccia i turni e genera il file pronto per la busta paga
-- blog_topic: Ottimizzare i costi del personale in uno studio di fisioterapia
-- gameplay_style: block_miner
-- image_prompt: high quality realistic shot of a physical therapist holding a tablet showing perfect green shift matches, bright clinic interior with treatment tables
-- keywords: ['prenotazioni fisioterapia', 'gestionale fisioterapisti', 'costi studio fisioterapia']
+## Idea 4: Sei sicuro che i tuoi trainer stiano segnando le ore di lavoro corrette o stai pagando ore fantasma su fogli persi in reception?
+- hook: Sei sicuro che i tuoi trainer stiano segnando le ore di lavoro corrette o stai pagando ore fantasma su fogli persi in reception?
+- video_title: CONTROLLO COSTI PERSONALE PALESTRA
+- blog_title: I rischi dei fogli ore cartacei nella gestione dei dipendenti in palestra
+- description: Come centralizzare la rendicontazione delle ore lavorate dei trainer per eliminare gli sprechi monetari dovuti ad appunti imprecisi o smarriti.
+- keywords: ['gestionale personal trainer', 'prenotazioni palestra', 'agenda personal trainer']
 
-## Idea 5: Excel è ottimo per i bilanci, ma se lo usi ancora per segnare i turni e le ferie dei tuoi fisioterapisti stai rallentando il tuo studio.
-- title: BASTA EXCEL TURNI
-- hook: Excel è ottimo per i bilanci, ma se lo usi ancora per segnare i turni e le ferie dei tuoi fisioterapisti stai rallentando il tuo studio.
-- niche: Fisioterapisti
-- pain: rigidità e perdite di tempo causate da tabelle Excel manuali per lo staff
-- promise: timesheet digitale integrato nell'agenda con report immediati per il commercialista
-- blog_topic: Perché i fogli Excel stanno rallentando la crescita del tuo centro di fisioterapia
-- gameplay_style: block_miner
-- image_prompt: cinematic high detail image, split screen concept, on one side a messy pile of handwritten paper, on the other a clean modern monitor with NeatX timesheet software
-- keywords: ['agenda fisioterapista', 'gestionale fisioterapisti', 'ottimizzazione studio fisioterapia']
+## Idea 5: Ferie, permessi e turni dei tuoi personal trainer approvati in un click senza scambiare decine di messaggi su WhatsApp.
+- hook: Ferie, permessi e turni dei tuoi personal trainer approvati in un click senza scambiare decine di messaggi su WhatsApp.
+- video_title: TURNI TRAINER SENZA CHAT
+- blog_title: Migliorare la comunicazione interna dello staff tecnico con un gestionale per personal trainer
+- description: Come ridurre lo stress organizzativo e i messaggi fuori dall'orario di lavoro centralizzando le richieste di ferie e i cambi turno su NeatX.
+- keywords: ['agenda personal trainer', 'gestionale personal trainer', 'prenotazioni palestra']
