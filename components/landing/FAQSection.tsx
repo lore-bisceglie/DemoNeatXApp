@@ -10,15 +10,15 @@ const FAQS = [
   },
   {
     q: "Come faccio a iniziare?",
-    a: "Clicca su 'Inizia la Prova', inserisci i dati del tuo salone e in 30 secondi la tua agenda è già online. Hai 14 giorni gratuiti per testare tutto senza inserire la carta di credito.",
+    a: "Clicca su 'Inizia la Prova', inserisci i dati del tuo salone e in pochi minuti la tua agenda è pronta da configurare. Hai 14 giorni gratuiti per testare tutto senza inserire la carta di credito.",
   },
   {
     q: "I clienti devono scaricare un'app?",
     a: "No. I tuoi clienti prenotano direttamente dal browser cliccando sul tuo link da Instagram, Google, WhatsApp o dal sito. Niente app da installare, niente account da creare.",
   },
   {
-    q: "Come funziona il Google Sheet per turni e commercialista?",
-    a: "Crei una copia del foglio turni, scrivi per ogni collaboratore orari, riposi, ferie o permessi e incolli il link in NeatX. L'agenda usa quei turni per mostrare gli slot corretti e puoi scaricare un export ordinato delle ore da mandare al commercialista.",
+    q: "Come gestisco turni e report per il commercialista?",
+    a: "Imposti gli orari fissi e registri ferie o permessi nel calendario del collaboratore. L'agenda aggiorna gli slot in tempo reale e puoi scaricare un export ordinato delle ore e degli appuntamenti.",
   },
   {
     q: "Posso usare il mio dominio?",
@@ -37,8 +37,8 @@ const FAQS = [
     a: "Assolutamente sì. Non ci sono contratti annuali o vincoli nascosti. Paghi l'abbonamento mensile e, se vuoi disdire, lo fai con un clic. Dal mese successivo non ti verrà addebitato nulla.",
   },
   {
-    q: "Come funziona il periodo di prova e i piani a pagamento?",
-    a: "Hai 14 giorni di prova gratuiti per configurare e provare agenda, prenotazioni e pagamenti. I promemoria WhatsApp sono temporaneamente disattivati e non consumano crediti. Al termine puoi scegliere tra Pro (29€/mese o 290€/anno), Elite (59€/mese o 590€/anno) oppure il pacchetto VIP (149€/mese o 1490€/anno).",
+    q: "Come funzionano prova gratuita, piani e servizio VIP?",
+    a: "Hai 14 giorni gratuiti per configurare e provare agenda, prenotazioni e pagamenti. Poi puoi scegliere Pro (29€/mese o 290€/anno) o Elite (59€/mese o 590€/anno). Il servizio VIP (149€/mese o 1490€/anno) include anche configurazione e supporto dedicato. I promemoria WhatsApp sono temporaneamente disattivati e non consumano crediti.",
   },
 ];
 

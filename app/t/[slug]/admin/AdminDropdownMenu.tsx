@@ -3,11 +3,12 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { 
-  BarChart3, CalendarDays, Users, Receipt, 
+  BarChart3, CalendarDays, Users,
   CreditCard, Gift, Settings2, ChevronDown
 } from "lucide-react";
 import PortalButton from "./PortalButton";
 import LogoutButton from "./LogoutButton";
+import CommercialistaExportButton from "./CommercialistaExportButton";
 
 interface AdminDropdownMenuProps {
   slug: string;
@@ -84,13 +85,7 @@ export default function AdminDropdownMenu({ slug, tenantId, hasStripe }: AdminDr
             >
               <div className="bg-amber-500/20 p-1.5 rounded-lg text-amber-400"><Users size={16} /></div> Export Clienti
             </a>
-            <a
-              href={`/api/export/timesheets?tenantId=${tenantId}`}
-              onClick={() => setIsOpen(false)}
-              className={getMenuItemClass("text-slate-300 hover:text-blue-300 hover:bg-blue-500/10")}
-            >
-              <div className="bg-blue-500/20 p-1.5 rounded-lg text-blue-400"><Receipt size={16} /></div> Export Presenze
-            </a>
+            <CommercialistaExportButton tenantId={tenantId} variant="menu" onDownload={() => setIsOpen(false)} />
 
             <div className="h-px bg-[#1a2642] my-2" />
 

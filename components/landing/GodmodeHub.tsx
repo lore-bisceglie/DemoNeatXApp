@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShieldAlert, LayoutDashboard, Crown, LogOut, Bot } from "lucide-react";
 
 export default function GodmodeHub() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -22,7 +24,7 @@ export default function GodmodeHub() {
     setIsOpen(false);
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || pathname?.startsWith("/staff/")) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-[9999] font-sans">

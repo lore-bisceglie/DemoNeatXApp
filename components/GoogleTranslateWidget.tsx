@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
+import { usePathname } from "next/navigation";
 import { Globe } from "lucide-react";
 
 const LANGUAGES = [
@@ -14,6 +15,7 @@ const LANGUAGES = [
 ];
 
 export default function GoogleTranslateWidget() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("it");
 
@@ -84,6 +86,8 @@ export default function GoogleTranslateWidget() {
       window.location.reload();
     }, 150);
   };
+
+  if (pathname?.startsWith("/staff/")) return null;
 
   return (
     <>

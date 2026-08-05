@@ -80,6 +80,7 @@ model Tenant {
   customerNotes CustomerNote[]
   activityLogs  ActivityLog[]
   staff         Staff[]
+  staffLeaveRequests StaffLeaveRequest[]
   locations     Location[]
   processedStripeEvents ProcessedStripeEvent[]
   platformReview PlatformReview?
@@ -285,12 +286,36 @@ model Staff {
   services     Service[]
   baseSchedule    String? @default("{}")
   shiftExceptions String? @default("[]")
+  staffAccessTokenHash String? @unique
+  staffAccessTokenCreatedAt DateTime?
+  staffAccessTokenRevokedAt DateTime?
+  staffAccessLastUsedAt DateTime?
   commissionRate  Int     @default(0)
   locationId   String?
   location     Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
   locations    StaffLocation[]
   appointments Appointment[]
+  leaveRequests StaffLeaveRequest[]
   @@index([locationId])
+}
+
+model StaffLeaveRequest {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staffId    String
+  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  date       String
+  type       String
+  start      String?
+  end        String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  reviewedAt DateTime?
+  reviewedBy String?
+
+  @@index([tenantId, status, date])
+  @@index([staffId, date])
 }
 
 model StaffLocation {

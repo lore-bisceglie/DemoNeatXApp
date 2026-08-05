@@ -23,7 +23,6 @@ interface LocationFormProps {
     breakStart: string | null;
     breakEnd: string | null;
     closedDays: string | null;
-    staffSheetUrl: string | null;
     isActive: boolean;
   } | null;
 }
@@ -46,7 +45,6 @@ export default function LocationForm({ tenantId: _tenantId, tenantSlug, onClose,
   const [city, setCity] = useState(initialData?.city || "");
   const [phone, setPhone] = useState(initialData?.phone || "");
   const [mapsLink, setMapsLink] = useState(initialData?.mapsLink || "");
-  const [staffSheetUrl, setStaffSheetUrl] = useState(initialData?.staffSheetUrl || "");
   const [weekSchedule, setWeekSchedule] = useState<WeekSchedule | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -75,8 +73,6 @@ export default function LocationForm({ tenantId: _tenantId, tenantSlug, onClose,
         body.closedDays = weekSchedule.closed;
         body.weekSchedule = weekSchedule;
       }
-
-      if (staffSheetUrl) body.staffSheetUrl = staffSheetUrl;
 
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       if (res.ok) {
@@ -146,11 +142,6 @@ export default function LocationForm({ tenantId: _tenantId, tenantSlug, onClose,
               defaultClose={initialData?.closeTime ?? "19:00"}
               onChange={setWeekSchedule}
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Google Sheets URL (staff)</label>
-            <input value={staffSheetUrl} onChange={function (e) { setStaffSheetUrl(e.target.value); }} className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none" placeholder="https://docs.google.com/..." />
           </div>
 
           <div className="flex gap-3 pt-2">

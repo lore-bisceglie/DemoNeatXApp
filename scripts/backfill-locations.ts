@@ -33,7 +33,6 @@ async function main() {
           breakStart: tenant.breakStart,
           breakEnd: tenant.breakEnd,
           closedDays: tenant.closedDays,
-          staffSheetUrl: tenant.staffSheetUrl,
           isMain: true,
           tenantId: tenant.id,
         },

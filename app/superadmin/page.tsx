@@ -41,7 +41,6 @@ export default function SuperAdminPage() {
   const [closeTime, setCloseTime] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [themeColor, setThemeColor] = useState("cyan");
-  const [staffSheetUrl, setStaffSheetUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPlan, setFilterPlan] = useState<PlanFilter>("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
@@ -111,12 +110,12 @@ export default function SuperAdminPage() {
       const res = await fetch("/api/superadmin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, slug, template, password: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor, staffSheetUrl })
+        body: JSON.stringify({ name, slug, template, password: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
       setName(""); setSlug(""); setTenantPassword(""); setPhone(""); setAddress("");
-      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan"); setStaffSheetUrl("");
+      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan");
       fetchTenants();
     } catch (e: unknown) { setError(e instanceof Error ? e.message : "Errore"); }
     finally { setCreating(false); }
@@ -206,8 +205,7 @@ export default function SuperAdminPage() {
       name: tenant.name || "", ownerEmail: tenant.ownerEmail || "", phone: tenant.phone || "",
       address: tenant.address || "", instagramUrl: tenant.instagramUrl || "", mapsLink: tenant.mapsLink || "",
       description: tenant.description || "", openTime: tenant.openTime || "", closeTime: tenant.closeTime || "",
-      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", password: "",
-      staffSheetUrl: tenant.staffSheetUrl || ""
+      logoUrl: tenant.logoUrl || "", themeColor: tenant.themeColor || "cyan", password: ""
     });
   };
 
@@ -234,8 +232,9 @@ export default function SuperAdminPage() {
   const getSortedTenants = () => {
     return tenants.filter(t => {
       const q = searchTerm.toLowerCase();
-      if (t.isDemoData && !q.includes("demo")) return false;
       if (!t.name.toLowerCase().includes(q) && !(t.ownerEmail?.toLowerCase().includes(q)) && !t.slug.toLowerCase().includes(q)) return false;
+      if (filterCategory !== "all" && t.template !== filterCategory) return false;
+
       if (filterPlan === "all") return true;
       if (filterPlan === "pro") return t.plan === "pro";
       if (filterPlan === "elite") return t.plan === "elite";
@@ -243,7 +242,6 @@ export default function SuperAdminPage() {
       if (filterPlan === "trial") return exp && exp > now && t.plan !== "pro" && t.plan !== "elite";
       if (filterPlan === "expired") return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
       if (filterPlan === "never") return !t.trialEndsAt && t.plan !== "pro" && t.plan !== "elite";
-      if (filterCategory !== "all" && t.template !== filterCategory) return false;
       return true;
     }).sort((a, b) => {
       if (sortBy === "name") return a.name.localeCompare(b.name);
@@ -426,10 +424,6 @@ export default function SuperAdminPage() {
                         </select>
                       </div>
                     </div>
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">Google Sheet URL (Opzionale)</label>
-                      <input type="url" value={staffSheetUrl} onChange={e => setStaffSheetUrl(e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/..." className={ISM} />
-                    </div>
                   </div>
                 </details>
                 {error && <div className="p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg">{error}</div>}
@@ -539,16 +533,9 @@ export default function SuperAdminPage() {
                                       <div className="h-px bg-slate-800 my-1 w-full" />
                                       <button onClick={() => { handleMakePlan(tenant.id, "basic"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
                                       <button onClick={() => { handleMakePlan(tenant.id, "expire"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>
-                                      <div className="h-px bg-slate-800 my-1 w-full" />
-                                      <button onClick={async () => {
-                                        setOpenMenuId(null);
-                                        try {
-                                          const res = await fetch(`/api/cron/sync-sheets?tenantId=${tenant.id}`);
-                                          const data = await res.json();
-                                          if (res.ok) alert(`Sincronizzazione completata: ${data.message || 'ok'}`);
-                                          else throw new Error(data.error || 'Errore sync');
-                                        } catch (e: any) { alert(e.message); }
-                                      }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-cyan-500/20 text-cyan-400 transition">🔄 Forza Sync Orari</button>
+                                      <div className="rounded-lg bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300">
+                                        ✓ Turni gestiti nel calendario NeatX
+                                      </div>
                                     </div>
                                   </div>
                                 </>
@@ -601,7 +588,6 @@ export default function SuperAdminPage() {
                 <div><label className="block text-xs text-slate-400 mb-1">Logo URL</label><input type="url" value={editData.logoUrl} onChange={e => setEditData({ ...editData, logoUrl: e.target.value })} className={IC} /></div>
                 <div><label className="block text-xs text-slate-400 mb-1">Tema</label><select value={editData.themeColor} onChange={e => setEditData({ ...editData, themeColor: e.target.value })} className={IC}>{THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>
               </div>
-              <div><label className="block text-xs text-slate-400 mb-1">Google Sheet URL</label><input type="url" value={editData.staffSheetUrl} onChange={e => setEditData({ ...editData, staffSheetUrl: e.target.value })} className={IC} /></div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Nuova password admin (opzionale)</label>
                 <div className="flex gap-2">

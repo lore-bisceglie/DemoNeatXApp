@@ -1,12 +1,17 @@
 "use client";
 
-import { Sparkles, CalendarCheck2, LineChart, LockKeyhole, Clock3, ShieldCheck, Star } from "lucide-react";
+import { Sparkles, CalendarCheck2, LineChart, LockKeyhole, Clock3, ShieldCheck, Star, UsersRound } from "lucide-react";
 
 const OPERATING_STEPS = [
   {
     icon: Sparkles,
     title: "Crea profilo, servizi e turni",
-    text: "Inserisci servizi e orari base. Se hai uno staff, colleghi un Google Sheet con turni, riposi e ferie: NeatX lo usa per costruire l'agenda reale.",
+    text: "Inserisci servizi e orari base. Se hai uno staff, gestisci turni, riposi e ferie direttamente nel calendario nativo: NeatX costruisce l'agenda reale.",
+  },
+  {
+    icon: UsersRound,
+    title: "Ogni dipendente ha la sua app",
+    text: "Dal suo link personale vede turni e clienti assegnati, poi chiede ferie o permessi dal telefono. Tu approvi con un tocco: gli orari si bloccano subito per i clienti.",
   },
   {
     icon: CalendarCheck2,
@@ -16,14 +21,14 @@ const OPERATING_STEPS = [
   {
     icon: LineChart,
     title: "L'agenda si riempie da sola",
-    text: "I clienti scelgono il servizio, pagano l'acconto e ricevono il promemoria. Tu ti ritrovi l'agenda piena senza aver mai risposto al telefono.",
+    text: "I clienti scelgono servizio e orario, poi pagano l'acconto quando serve. Tu ritrovi l'agenda piena senza aver mai risposto al telefono.",
   },
 ];
 
 const PROOF_ITEMS = [
   { icon: Clock3, title: "Basta squilli a vuoto", text: "Il telefono smette di suonare di continuo. Le richieste diventano appuntamenti in automatico." },
   { icon: ShieldCheck, title: "Zero accavallamenti", text: "Nessun errore umano. NeatX incastra gli appuntamenti al posto tuo seguendo le tue regole." },
-  { icon: Star, title: "Incassi garantiti", text: "Con gli acconti automatici e i promemoria intelligenti, dici addio ai clienti che non si presentano." },
+  { icon: Star, title: "Meno no-show", text: "Con gli acconti online proteggi il tuo tempo e riduci il rischio di appuntamenti saltati." },
 ];
 
 export default function OperatingSteps() {

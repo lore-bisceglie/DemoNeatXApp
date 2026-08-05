@@ -1,223 +1,150 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { isTenantAdminCookieValid } from "@/lib/auth";
-import { parseBaseSchedule, parseShiftExceptions, getDayScheduleForDate, timeToMins } from "@/lib/schedule";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
+import { DEMO_TENANT_ID } from "@/lib/demoService";
+import { getRomeDayOfWeek, getRomeDate } from "@/lib/rome-time";
+import { parseDaySchedule } from "@/lib/opening-hours";
+import { getDayScheduleForDate, parseBaseSchedule, parseShiftExceptions, timeToMins } from "@/lib/schedule";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
+
+const pad = (value: number) => String(value).padStart(2, "0");
+const currentRomeMonth = () => getRomeDate(new Date()).slice(0, 7);
+const csvCell = (value: string | number | null | undefined) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+const csvNumber = (value: number) => value.toFixed(2).replace(".", ",");
+const isLegacyAbsence = (name: string) => /FERIE|PAUSA|PERMESSO/i.test(name);
+
+type Interval = { start: number; end: number };
+
+function clippedAbsenceMinutes(blocks: Interval[], start: number, end: number): number {
+  return blocks.reduce((total, block) => total + Math.max(0, Math.min(block.end, end) - Math.max(block.start, start)), 0);
+}
+
+function mergeIntervals(intervals: Interval[]): Interval[] {
+  return intervals.filter((item) => item.end > item.start).sort((a, b) => a.start - b.start).reduce<Interval[]>((merged, item) => {
+    const last = merged[merged.length - 1];
+    if (last && item.start <= last.end) last.end = Math.max(last.end, item.end);
+    else merged.push({ ...item });
+    return merged;
+  }, []);
+}
+
+function toDateRange(monthParam: string) {
+  const match = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(monthParam);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return {
+    year,
+    month,
+    first: `${year}-${pad(month)}-01`,
+    last: `${year}-${pad(month)}-${pad(lastDay)}`,
+    lastDay,
+  };
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const tenantId = searchParams.get("tenantId");
-
-  if (!tenantId) {
-    return new NextResponse("Manca tenantId", { status: 400 });
-  }
+  const range = toDateRange(searchParams.get("month") || currentRomeMonth());
+  if (!tenantId) return new NextResponse("Manca tenantId", { status: 400 });
+  if (!range) return new NextResponse("Mese non valido. Usa il formato YYYY-MM.", { status: 400 });
 
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: tenantId },
-      select: { id: true, slug: true, sessionVersion: true, name: true, plan: true, trialEndsAt: true, trialStatus: true, openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true, staffSheetUrl: true, staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } } }
-    });
-
-    if (!tenant) {
-      return new NextResponse("Tenant non trovato", { status: 404 });
-    }
-
-    const cookieStore = await cookies();
-    const authCookie = cookieStore.get("admin_auth_" + tenant.slug)?.value;
-    if (!isTenantAdminCookieValid(authCookie, tenant.slug, tenant.sessionVersion)) {
-      return new NextResponse("Non autorizzato", { status: 401 });
-    }
-
-    // Piano check: solo tenant con piano attivo o in trial possono esportare
-    const hasActivePaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
-    const hasActiveTrial = tenant.trialEndsAt && new Date() <= tenant.trialEndsAt;
-    if (!hasActivePaidPlan && !hasActiveTrial && tenant.trialStatus !== "converted") {
-      return new NextResponse("Esportazione disponibile solo con abbonamento Pro o Elite attivo.", { status: 403 });
-    }
-
-    if (!tenant) {
-      return new NextResponse("Tenant non trovato", { status: 404 });
-    }
-
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-
-    let openMins = 540;
-    if (tenant.openTime) {
-      const [h, m] = tenant.openTime.split(":");
-      openMins = parseInt(h) * 60 + parseInt(m);
-    }
-
-    let closeMins = 1140;
-    if (tenant.closeTime) {
-      const [h, m] = tenant.closeTime.split(":");
-      closeMins = parseInt(h) * 60 + parseInt(m);
-    }
-
-    let breakStartMins = 780;
-    let breakEndMins = 840;
-    if (tenant.breakStart && tenant.breakEnd) {
-      const [sh, sm] = tenant.breakStart.split(":");
-      breakStartMins = parseInt(sh) * 60 + parseInt(sm);
-      const [eh, em] = tenant.breakEnd.split(":");
-      breakEndMins = parseInt(eh) * 60 + parseInt(em);
-    }
-
-    const dailyWorkMins = (closeMins - openMins) - (breakEndMins - breakStartMins);
-    const dailyWorkHours = Math.max(0, dailyWorkMins / 60);
-
-    let closedDaysArr: string[] = [];
-    if (tenant.closedDays) {
-      if (typeof tenant.closedDays === "string") {
-        try { closedDaysArr = JSON.parse(tenant.closedDays); } catch(_e) {}
-      } else {
-        closedDaysArr = tenant.closedDays as string[];
-      }
-    }
-
-    const dayNameMapping: Record<number, string> = {
-      0: "domenica", 1: "lunedì", 2: "martedì", 3: "mercoledì", 4: "giovedì", 5: "venerdì", 6: "sabato"
-    };
-
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    // Costruiamo le stringhe data locali senza passare da UTC (evita bug DST month boundary)
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const firstDayStr = `${year}-${pad(month + 1)}-01`;
-    const lastDayStr = `${year}-${pad(month + 1)}-${pad(lastDay.getDate())}`;
-
-    // Vecchie assenze da Appuntamenti (FERIE/PAUSA/PERMESSO — backward compat)
-    const legacyAbsences = await prisma.appointment.findMany({
-      where: {
-        tenantId,
-        date: { gte: firstDayStr, lte: lastDayStr },
-        OR: [
-          { customerName: { contains: "FERIE" } },
-          { customerName: { contains: "PAUSA" } },
-          { customerName: { contains: "PERMESSO" } },
-        ]
-      }
-    });
-
-    let csv = "Data;Giorno;Dipendente;Stato Negozio;Ore Teoriche;Ore Ferie;Ore Pausa;Ore Permesso;Note Assenze;Ore Effettive Lavorate\n";
-    const monthName = firstDay.toLocaleString('it-IT', { timeZone: 'Europe/Rome', month: 'long', year: 'numeric' });
-
-    for (const s of tenant.staff) {
-      const weeklySchedule = parseBaseSchedule(s.baseSchedule);
-      const shiftExceptions = parseShiftExceptions(s.shiftExceptions);
-
-      const staffAbsences = legacyAbsences.filter(a => a.staffId === s.id || !a.staffId);
-
-      let totalExpected = 0;
-      let totalFerie = 0;
-      let totalPausa = 0;
-      let totalPermesso = 0;
-      let totalWorked = 0;
-
-      for (let d = 1; d <= lastDay.getDate(); d++) {
-        const dateStr = `${year}-${pad(month + 1)}-${pad(d)}`;
-        const dayIndex = new Date(dateStr + "T12:00:00Z").getUTCDay();
-        const dayName = dayNameMapping[dayIndex];
-        const dataIta = `${d.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
-
-        const isClosed = closedDaysArr.includes(dayIndex.toString()) || closedDaysArr.includes(dayName);
-
-        // 1. BASE expected hours (senza eccezioni — per calcolare ferie/pausa/permesso)
-        let baseExpectedHours = 0;
-        if (Object.keys(weeklySchedule).length > 0) {
-          const baseDay = getDayScheduleForDate(weeklySchedule, [], dateStr);
-          if (baseDay.active) {
-            let mins = 0;
-            for (const b of baseDay.blocks) {
-              mins += Math.max(0, timeToMins(b.end) - timeToMins(b.start));
-            }
-            baseExpectedHours = mins / 60;
-          }
-        } else {
-          baseExpectedHours = isClosed ? 0 : dailyWorkHours;
-        }
-
-        // 2. Ore teoriche effettive (con eccezioni applicate)
-        let expectedHours = baseExpectedHours;
-        if (Object.keys(weeklySchedule).length > 0) {
-          const daySchedule = getDayScheduleForDate(weeklySchedule, shiftExceptions, dateStr);
-          if (!daySchedule.active) expectedHours = 0;
-        }
-
-        let ferieH = 0;
-        let pausaH = 0;
-        let permessoH = 0;
-        let notesArr: string[] = [];
-
-        // 3. Eccezioni dal DB (nuovo sistema)
-        const dayExceptions = shiftExceptions.filter(e => e.date === dateStr);
-        for (const ex of dayExceptions) {
-          if (ex.type === "ferie") {
-            ferieH = Math.max(ferieH, baseExpectedHours);
-            notesArr.push("Ferie");
-          } else if (ex.type === "permesso" && ex.start && ex.end) {
-            const p = Math.max(0, timeToMins(ex.end) - timeToMins(ex.start)) / 60;
-            permessoH = Math.max(permessoH, p);
-            notesArr.push(`Permesso ${ex.start}-${ex.end}`);
-          } else if (ex.type === "pausa" && ex.start && ex.end) {
-            const p = Math.max(0, timeToMins(ex.end) - timeToMins(ex.start)) / 60;
-            pausaH = Math.max(pausaH, p);
-            notesArr.push(`Pausa ${ex.start}-${ex.end}`);
-          }
-        }
-
-        // 4. Legacy absences da appuntamenti (vecchio sistema) — deduplicato con MAX()
-        const dayAbsences = staffAbsences.filter(a => a.date === dateStr);
-        for (const abs of dayAbsences) {
-          if (abs.customerName.includes("FERIE")) {
-            ferieH = Math.max(ferieH, baseExpectedHours);
-            if (!notesArr.includes("Ferie")) notesArr.push("Ferie (app.)");
-          } else if (abs.customerName.includes("PERMESSO")) {
-            if (abs.time && abs.endTime) {
-              const p = Math.max(0, timeToMins(abs.endTime) - timeToMins(abs.time)) / 60;
-              permessoH = Math.max(permessoH, p);
-              if (!notesArr.find(n => n.includes("Permesso"))) notesArr.push(`Permesso ${abs.time}-${abs.endTime} (app.)`);
-            }
-          } else if (abs.customerName.includes("PAUSA")) {
-            if (abs.time && abs.endTime) {
-              const p = Math.max(0, timeToMins(abs.endTime) - timeToMins(abs.time)) / 60;
-              pausaH = Math.max(pausaH, p);
-              if (!notesArr.find(n => n.includes("Pausa"))) notesArr.push(`Pausa ${abs.time}-${abs.endTime} (app.)`);
-            }
-          }
-        }
-
-        // 5. Calcolo ore lavorate: baseExpected - assenze (deduplicate)
-        let workedHours = baseExpectedHours - ferieH - pausaH - permessoH;
-        if (workedHours < 0) workedHours = 0;
-
-        totalExpected += baseExpectedHours;
-        totalFerie += ferieH;
-        totalPausa += pausaH;
-        totalPermesso += permessoH;
-        totalWorked += workedHours;
-
-        const statoNegozio = isClosed ? "CHIUSO" : "Aperto";
-        const notes = notesArr.length > 0 ? notesArr.join(", ") : "";
-
-        csv += `"${dataIta}";"${dayName}";"${s.name}";"${statoNegozio}";${baseExpectedHours.toFixed(2)};${ferieH.toFixed(2)};${pausaH.toFixed(2)};${permessoH.toFixed(2)};"${notes}";${workedHours.toFixed(2)}\n`;
-      }
-
-      csv += `\n"TOTALE ${monthName.toUpperCase()}";;"${s.name}";;${totalExpected.toFixed(2)};${totalFerie.toFixed(2)};${totalPausa.toFixed(2)};${totalPermesso.toFixed(2)};;${totalWorked.toFixed(2)}\n\n`;
-    }
-
-    return new NextResponse(csv, {
-      status: 200,
-      headers: {
-        "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="timesheet_${tenant.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${monthName.replace(/\s+/g, "_")}.csv"`,
+      select: {
+        slug: true, sessionVersion: true, name: true, plan: true, trialEndsAt: true, trialStatus: true,
+        openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true,
+        staff: { select: { id: true, name: true, baseSchedule: true, shiftExceptions: true } },
       },
     });
+    if (!tenant) return new NextResponse("Tenant non trovato", { status: 404 });
+
+    const isDemoTenant = tenantId === DEMO_TENANT_ID;
+    if (isDemoTenant) {
+      const authError = await requireTenantAdminOrDemo(request, tenantId, "export-timesheets", 20);
+      if (authError) return authError;
+    } else {
+      const cookieStore = await cookies();
+      const cookie = cookieStore.get(`admin_auth_${tenant.slug}`)?.value;
+      if (!isTenantAdminCookieValid(cookie, tenant.slug, tenant.sessionVersion)) return new NextResponse("Non autorizzato", { status: 401 });
+    }
+
+    const hasPaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
+    const hasTrial = Boolean(tenant.trialEndsAt && new Date() <= tenant.trialEndsAt);
+    if (!isDemoTenant && !hasPaidPlan && !hasTrial && tenant.trialStatus !== "converted") return new NextResponse("Esportazione disponibile solo con piano attivo o trial.", { status: 403 });
+
+    const appointments = await prisma.appointment.findMany({
+      where: { tenantId, date: { gte: range.first, lte: range.last } },
+      select: { date: true, time: true, endTime: true, customerName: true, staffId: true, source: true, isPaid: true, paymentStatus: true, service: { select: { name: true } }, staff: { select: { name: true } } },
+      orderBy: [{ date: "asc" }, { time: "asc" }],
+    });
+
+    const rows: string[][] = [];
+    const totals = new Map<string, { expected: number; ferie: number; pausa: number; permesso: number; worked: number }>();
+    const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+
+    for (const staff of tenant.staff) {
+      const weekly = parseBaseSchedule(staff.baseSchedule);
+      const exceptions = parseShiftExceptions(staff.shiftExceptions);
+      let total = { expected: 0, ferie: 0, pausa: 0, permesso: 0, worked: 0 };
+
+      for (let day = 1; day <= range.lastDay; day += 1) {
+        const date = `${range.year}-${pad(range.month)}-${pad(day)}`;
+        const dow = getRomeDayOfWeek(new Date(`${date}T12:00:00Z`));
+        const fallback = parseDaySchedule(tenant.closedDays, dow, tenant.openTime, tenant.closeTime, tenant.breakStart, tenant.breakEnd);
+        const baseBlocks: Interval[] = Object.keys(weekly).length > 0
+          ? getDayScheduleForDate(weekly, [], date).blocks.map((block) => ({ start: timeToMins(block.start), end: timeToMins(block.end) }))
+          : fallback.isClosed ? [] : [{ start: timeToMins(fallback.open), end: timeToMins(fallback.close) }];
+        const breakInterval = fallback.breakStart && fallback.breakEnd ? [{ start: timeToMins(fallback.breakStart), end: timeToMins(fallback.breakEnd) }] : [];
+        const baseMinutes = Math.max(0, baseBlocks.reduce((sum, block) => sum + block.end - block.start, 0) - clippedAbsenceMinutes(baseBlocks, breakInterval[0]?.start ?? -1, breakInterval[0]?.end ?? -1));
+        const dayExceptions = exceptions.filter((exception) => exception.date === date);
+        const ferie = dayExceptions.some((exception) => exception.type === "ferie");
+        const excluded: Interval[] = dayExceptions.filter((exception) => exception.type !== "ferie" && exception.start && exception.end).map((exception) => ({ start: timeToMins(exception.start!), end: timeToMins(exception.end!) }));
+        const excludedMinutes = ferie ? baseMinutes : mergeIntervals(excluded).reduce((sum, interval) => sum + clippedAbsenceMinutes(baseBlocks, interval.start, interval.end), 0);
+        const effectiveMinutes = ferie ? 0 : Math.max(0, baseMinutes - excludedMinutes);
+        const ferieMinutes = ferie ? baseMinutes : 0;
+        const pausaMinutes = ferie ? 0 : dayExceptions.filter((exception) => exception.type === "pausa" && exception.start && exception.end).reduce((sum, exception) => sum + clippedAbsenceMinutes(baseBlocks, timeToMins(exception.start!), timeToMins(exception.end!)), 0);
+        const permessoMinutes = ferie ? 0 : dayExceptions.filter((exception) => exception.type === "permesso" && exception.start && exception.end).reduce((sum, exception) => sum + clippedAbsenceMinutes(baseBlocks, timeToMins(exception.start!), timeToMins(exception.end!)), 0);
+        const note = dayExceptions.map((exception) => exception.type === "ferie" ? "Ferie" : `${exception.type} ${exception.start || ""}-${exception.end || ""}`).join(", ");
+
+        total.expected += baseMinutes / 60; total.ferie += ferieMinutes / 60; total.pausa += pausaMinutes / 60; total.permesso += permessoMinutes / 60; total.worked += effectiveMinutes / 60;
+        rows.push(["PRESENZA", `${pad(day)}/${pad(range.month)}/${range.year}`, dayNames[dow], staff.name, ferie ? "FERIE" : effectiveMinutes > 0 ? "PRESENTE" : "ASSENTE", "", "", "", "", csvNumber(baseMinutes / 60), csvNumber(ferieMinutes / 60), csvNumber(pausaMinutes / 60), csvNumber(permessoMinutes / 60), csvNumber(effectiveMinutes / 60), note]);
+      }
+      totals.set(staff.id, total);
+    }
+
+    for (const appointment of appointments) {
+      if (appointment.time === "ALL_DAY" || isLegacyAbsence(appointment.customerName)) continue;
+      const date = dateFromDb(appointment.date);
+      const dow = getRomeDayOfWeek(new Date(`${appointment.date}T12:00:00Z`));
+      rows.push(["APPUNTAMENTO", date, dayNames[dow], appointment.staff?.name || "Non assegnato", appointment.paymentStatus === "PAID" || appointment.isPaid ? "PAGATO" : "APPUNTAMENTO", appointment.customerName, appointment.service?.name || "", appointment.time, appointment.endTime || "", "", "", "", "", "", `${appointment.source}${appointment.isPaid ? " · pagato" : ""}`]);
+    }
+
+    const header = ["Tipo riga", "Data", "Giorno", "Dipendente", "Stato", "Cliente", "Servizio", "Inizio", "Fine", "Ore previste", "Ore ferie", "Ore pausa", "Ore permesso", "Ore lavorabili", "Note"];
+    let csv = "\uFEFF" + header.map(csvCell).join(";") + "\r\n";
+    csv += rows.map((row) => row.map(csvCell).join(";")).join("\r\n");
+    csv += "\r\n\r\n";
+    for (const staff of tenant.staff) {
+      const total = totals.get(staff.id);
+      if (!total) continue;
+      csv += ["TOTALE", "", "", staff.name, "", "", "", "", "", csvNumber(total.expected), csvNumber(total.ferie), csvNumber(total.pausa), csvNumber(total.permesso), csvNumber(total.worked), ""].map(csvCell).join(";") + "\r\n";
+    }
+    csv += ["Fuso orario", "Europe/Rome", "", "", "", "", "", "", "", "", "", "", "", "", "Report generato da NeatX"].map(csvCell).join(";") + "\r\n";
+
+    const safeName = tenant.name.replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "").toLowerCase() || "salone";
+    return new NextResponse(csv, { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="presenze_${safeName}_${range.year}-${pad(range.month)}.csv"` } });
   } catch (error) {
-    console.error(error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error("Export timesheet error", error);
+    return new NextResponse("Errore durante la generazione del report", { status: 500 });
   }
+}
+
+function dateFromDb(value: string): string {
+  const [year, month, day] = value.split("-");
+  return `${day}/${month}/${year}`;
 }

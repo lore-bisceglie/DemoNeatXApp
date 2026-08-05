@@ -1,20 +1,14 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users } from "lucide-react";
+import { CalendarClock, Trash2, Users, X } from "lucide-react";
 import ScheduleEditor from "@/components/ScheduleEditor";
+import StaffAccessControls from "./StaffAccessControls";
+import StaffRequestsPanel from "./StaffRequestsPanel";
 
-type Service = {
-  id: string;
-  name: string;
-};
-
-type Location = {
-  id: string;
-  name: string;
-};
-
+type Service = { id: string; name: string };
+type Location = { id: string; name: string };
 type StaffMember = {
   id: string;
   name: string;
@@ -25,17 +19,14 @@ type StaffMember = {
 export default function TeamDrawer({
   tenantId,
   isPremium,
-  plan: _plan,
   allServices,
-  initialStaffSheetUrl,
-  locations: initialLocations,
+  locations: initialLocations = [],
   slug,
 }: {
   tenantId: string;
   isPremium: boolean;
   plan?: string;
   allServices: Service[];
-  initialStaffSheetUrl: string | null;
   locations?: Location[];
   slug?: string;
 }) {
@@ -43,583 +34,178 @@ export default function TeamDrawer({
   const [isOpen, setIsOpen] = useState(false);
   const [staffList, setStaffList] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(false);
-
   const [selectedStaff, setSelectedStaff] = useState<StaffMember | null>(null);
   const selectedStaffRef = useRef<StaffMember | null>(null);
-  useEffect(() => {
-    selectedStaffRef.current = selectedStaff;
-  }, [selectedStaff]);
-  const [staffSheetUrl, setStaffSheetUrl] = useState(initialStaffSheetUrl || "");
-  const [savingUrl, setSavingUrl] = useState(false);
-
+  const [scheduleEditorStaff, setScheduleEditorStaff] = useState<StaffMember | null>(null);
   const [newStaffName, setNewStaffName] = useState("");
   const [adding, setAdding] = useState(false);
-
-  const [scheduleEditorStaff, setScheduleEditorStaff] = useState<StaffMember | null>(null);
-
-  // Notifiche in stile NeatX
-  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
-
-  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
-
   const [savingServices, setSavingServices] = useState(false);
   const [savingLocations, setSavingLocations] = useState(false);
+  const [allLocations, setAllLocations] = useState<Location[]>(initialLocations);
+  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [pendingRequestCount, setPendingRequestCount] = useState(0);
 
-  const [allLocations, setAllLocations] = useState<Location[]>(initialLocations || []);
-
-  const serviceRequestIdRef = useRef(0);
-  const locationRequestIdRef = useRef(0);
-
+  useEffect(() => { selectedStaffRef.current = selectedStaff; }, [selectedStaff]);
   useEffect(() => {
-    if (isOpen) {
-      fetchStaff();
-      if (!initialLocations) fetchLocations();
-    }
+    if (!isOpen) return;
+    void fetchStaff();
+    if (initialLocations.length === 0) void fetchLocations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, tenantId]);
 
-  const fetchLocations = async () => {
-    try {
-      const res = await fetch(`/api/locations?tenantId=${tenantId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setAllLocations(data);
-      }
-    } catch (e) {
-      console.error("Errore caricamento sedi:", e);
-    }
+  useEffect(() => {
+    const loadPendingCount = async () => {
+      const response = await fetch(`/api/staff/requests?tenantId=${encodeURIComponent(tenantId)}&status=pending`);
+      if (response.ok) setPendingRequestCount(((await response.json()).requests || []).length);
+    };
+    void loadPendingCount();
+    const timer = window.setInterval(() => void loadPendingCount(), 30000);
+    return () => window.clearInterval(timer);
+  }, [tenantId]);
+
+  const showNotification = (message: string, type: "success" | "error" = "success") => {
+    setNotification({ message, type });
+    window.setTimeout(() => setNotification(null), 4500);
   };
 
   const fetchStaff = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/staff?tenantId=${tenantId}`);
-      const data = await res.json();
+      const response = await fetch(`/api/staff?tenantId=${tenantId}`);
+      if (!response.ok) throw new Error("staff");
+      const data = await response.json() as StaffMember[];
       setStaffList(data);
-      if (selectedStaff) {
-        const updated = data.find((s: StaffMember) => s.id === selectedStaff.id);
-        if (updated) setSelectedStaff(updated);
-      }
-    } catch (error) {
-      console.error("Errore caricamento staff", error);
-    }
-    setLoading(false);
+      const current = selectedStaffRef.current;
+      if (current) setSelectedStaff(data.find((staff) => staff.id === current.id) || null);
+      else setSelectedStaff(data[0] || null);
+    } catch { showNotification("Impossibile caricare il team.", "error"); }
+    finally { setLoading(false); }
   };
 
-  const openStaff = (staff: StaffMember) => {
-    setSelectedStaff(staff);
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch(`/api/locations?tenantId=${tenantId}`);
+      if (response.ok) setAllLocations(await response.json() as Location[]);
+    } catch { showNotification("Impossibile caricare le sedi.", "error"); }
   };
 
-  const handleAddStaff = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddStaff = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!newStaffName.trim()) return;
-
     if (!isPremium && staffList.length >= 1) {
-      alert("Il tuo piano attuale include un solo collaboratore. Passa all’Elite (59€/mese) per sbloccare i membri illimitati!");
+      showNotification("Il tuo piano include un solo collaboratore. Passa a Pro o Elite.", "error");
       return;
     }
-
     setAdding(true);
     try {
-      const res = await fetch("/api/staff", {
+      const response = await fetch("/api/staff", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newStaffName, tenantId }),
+        body: JSON.stringify({ name: newStaffName.trim(), tenantId }),
       });
-      if (res.ok) {
-        setNewStaffName("");
-        await fetchStaff();
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("Errore aggiunta staff", error);
-    }
-    setAdding(false);
+      if (!response.ok) throw new Error("add");
+      setNewStaffName("");
+      await fetchStaff();
+      router.refresh();
+    } catch { showNotification("Errore durante l'aggiunta del collaboratore.", "error"); }
+    finally { setAdding(false); }
   };
 
   const handleDeleteStaff = async (staffId: string) => {
-    if (!confirm("Sei sicuro di voler eliminare questo collaboratore?")) return;
-
-    try {
-      const res = await fetch(`/api/staff?id=${staffId}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        if (selectedStaff?.id === staffId) setSelectedStaff(null);
-        await fetchStaff();
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("Errore eliminazione staff", error);
-    }
+    if (!window.confirm("Sei sicuro di voler eliminare questo collaboratore?")) return;
+    const response = await fetch(`/api/staff?id=${staffId}`, { method: "DELETE" });
+    if (!response.ok) { showNotification("Errore durante l'eliminazione.", "error"); return; }
+    if (selectedStaff?.id === staffId) setSelectedStaff(null);
+    await fetchStaff();
+    router.refresh();
   };
 
-  const handleToggleService = async (serviceId: string, _hasService: boolean) => {
+  const updateStaffRelations = async (serviceIds: string[], locationIds: string[], kind: "services" | "locations") => {
     const currentStaff = selectedStaffRef.current;
     if (!currentStaff) return;
-
-    const requestId = ++serviceRequestIdRef.current;
-    setSavingServices(true);
-
-    const currentIds = currentStaff.services.map((s) => s.id);
-    const newIds = currentIds.includes(serviceId)
-      ? currentIds.filter((id) => id !== serviceId)
-      : [...currentIds, serviceId];
-
-    const updatedServices = newIds
-      .map((id) => allServices.find((s) => s.id === id))
-      .filter((s): s is Service => Boolean(s));
-
-    const updatedStaff: StaffMember = { ...currentStaff, services: updatedServices };
-    selectedStaffRef.current = updatedStaff;
-    setSelectedStaff(updatedStaff);
-
+    if (kind === "services") setSavingServices(true); else setSavingLocations(true);
     try {
-      const res = await fetch("/api/staff", {
+      const response = await fetch("/api/staff", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          staffId: currentStaff.id,
-          serviceIds: newIds,
-          locationIds: updatedStaff.locations.map((l) => l.locationId),
-        }),
+        body: JSON.stringify({ staffId: currentStaff.id, serviceIds, locationIds }),
       });
-
-      if (requestId !== serviceRequestIdRef.current) {
-        return;
-      }
-
-      if (res.ok) {
-        const serverStaff = await res.json();
-        selectedStaffRef.current = serverStaff;
-        setSelectedStaff(serverStaff);
-        setStaffList((current) =>
-          current.map((s) => (s.id === serverStaff.id ? serverStaff : s))
-        );
-      } else {
-        showNotification("Errore durante il salvataggio dei servizi.", "error");
-        await fetchStaff();
-      }
-    } catch (error) {
-      console.error("Errore salvataggio servizi", error);
-      if (requestId === serviceRequestIdRef.current) {
-        showNotification("Errore di rete durante il salvataggio dei servizi.", "error");
-        await fetchStaff();
-      }
-    } finally {
-      if (requestId === serviceRequestIdRef.current) {
-        setSavingServices(false);
-      }
-    }
+      if (!response.ok) throw new Error("update");
+      const serverStaff = await response.json() as StaffMember;
+      selectedStaffRef.current = serverStaff;
+      setSelectedStaff(serverStaff);
+      setStaffList((items) => items.map((item) => item.id === serverStaff.id ? serverStaff : item));
+    } catch { showNotification("Errore durante il salvataggio.", "error"); }
+    finally { if (kind === "services") setSavingServices(false); else setSavingLocations(false); }
   };
 
-  const handleToggleLocation = async (locationId: string) => {
-    const currentStaff = selectedStaffRef.current;
-    if (!currentStaff) return;
-
-    const requestId = ++locationRequestIdRef.current;
-    setSavingLocations(true);
-
-    const currentLocationIds = currentStaff.locations.map((l) => l.locationId);
-    const newLocationIds = currentLocationIds.includes(locationId)
-      ? currentLocationIds.filter((id) => id !== locationId)
-      : [...currentLocationIds, locationId];
-
-    const updatedLocations = newLocationIds.map((id) => ({ locationId: id }));
-
-    const updatedStaff: StaffMember = { ...currentStaff, locations: updatedLocations };
-    selectedStaffRef.current = updatedStaff;
-    setSelectedStaff(updatedStaff);
-
-    try {
-      const res = await fetch("/api/staff", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          staffId: currentStaff.id,
-          serviceIds: updatedStaff.services.map((s) => s.id),
-          locationIds: newLocationIds,
-        }),
-      });
-
-      if (requestId !== locationRequestIdRef.current) {
-        return;
-      }
-
-      if (res.ok) {
-        const serverStaff = await res.json();
-        selectedStaffRef.current = serverStaff;
-        setSelectedStaff(serverStaff);
-        setStaffList((current) =>
-          current.map((s) => (s.id === serverStaff.id ? serverStaff : s))
-        );
-      } else {
-        showNotification("Errore durante il salvataggio delle sedi.", "error");
-        await fetchStaff();
-      }
-    } catch (error) {
-      console.error("Errore salvataggio sedi", error);
-      if (requestId === locationRequestIdRef.current) {
-        showNotification("Errore di rete durante il salvataggio delle sedi.", "error");
-        await fetchStaff();
-      }
-    } finally {
-      if (requestId === locationRequestIdRef.current) {
-        setSavingLocations(false);
-      }
-    }
+  const toggleService = (serviceId: string) => {
+    const staff = selectedStaffRef.current;
+    if (!staff) return;
+    const serviceIds = staff.services.some((service) => service.id === serviceId)
+      ? staff.services.filter((service) => service.id !== serviceId).map((service) => service.id)
+      : [...staff.services.map((service) => service.id), serviceId];
+    void updateStaffRelations(serviceIds, staff.locations.map((location) => location.locationId), "services");
   };
 
-  const handleSaveSheetUrl = async () => {
-    setSavingUrl(true);
-    try {
-      const res = await fetch(`/api/tenant/settings`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantId, staffSheetUrl }),
-      });
-      if (res.ok) {
-        showNotification("Link salvato con successo!", "success");
-        router.refresh();
-      } else {
-        showNotification("Errore nel salvataggio del link.", "error");
-      }
-    } catch (e) {
-      console.error(e);
-      showNotification("Errore di rete.", "error");
-    }
-    setSavingUrl(false);
+  const toggleLocation = (locationId: string) => {
+    const staff = selectedStaffRef.current;
+    if (!staff) return;
+    const current = staff.locations.map((location) => location.locationId);
+    const locationIds = current.includes(locationId) ? current.filter((id) => id !== locationId) : [...current, locationId];
+    void updateStaffRelations(staff.services.map((service) => service.id), locationIds, "locations");
   };
 
-  const handleSyncSheets = async () => {
-    if (!staffSheetUrl) {
-      showNotification("Salva prima un link valido!", "error");
-      return;
-    }
-    setSavingUrl(true);
-    try {
-      const res = await fetch(`/api/tenant/sync-sheets`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenantId }),
-      });
-      if (res.ok) {
-        showNotification("Sincronizzazione completata con successo! Il Database è aggiornato.", "success");
-        await fetchStaff();
-      } else {
-        const errorText = await res.text();
-        showNotification("Errore sincronizzazione: " + errorText, "error");
-      }
-    } catch (e) {
-      console.error(e);
-      showNotification("Errore di rete durante la sincronizzazione.", "error");
-    }
-    setSavingUrl(false);
-  };
+  const selectedLocationIds = selectedStaff?.locations.map((location) => location.locationId) || [];
 
-  const selectedLocationIds = selectedStaff?.locations?.map((l) => l.locationId) || [];
+  return <>
+    <button id="tour-team-button" onClick={() => setIsOpen(true)} className="relative flex items-center justify-center gap-2 rounded-xl border border-[#1e2b4a] bg-[#131c31] px-4 py-2.5 text-sm font-bold text-slate-300 transition hover:border-purple-500/30 hover:bg-purple-500/10 hover:text-purple-300">
+      <Users size={16} className="text-purple-400" /> Team {pendingRequestCount > 0 && <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-black text-[#211500]">{pendingRequestCount}</span>}
+    </button>
 
-  return (
-    <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-[#131c31] hover:bg-purple-500/10 text-slate-300 hover:text-purple-300 font-bold px-4 py-2.5 rounded-xl border border-[#1e2b4a] hover:border-purple-500/30 transition-all duration-150 flex items-center justify-center gap-2 text-sm whitespace-nowrap active:scale-95 snap-center"
-        title="Gestione Team e Servizi"
-      >
-        <Users size={16} className="text-purple-400" /> Team
-      </button>
+    {isOpen && <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />}
+    <aside id="tour-team-drawer" className={`fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl transform flex-col border-l border-[#1e2b4a] bg-[#0b1221] shadow-2xl transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+      <header className="relative flex items-center justify-between border-b border-[#1e2b4a] bg-[#131c31] p-5">
+        <h2 className="flex items-center gap-2 text-lg font-extrabold text-white"><Users size={19} className="text-purple-400" /> Gestione Team & Servizi</h2>
+        <button onClick={() => setIsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1e2b4a] text-slate-300 transition hover:bg-red-500 hover:text-white" aria-label="Chiudi Team"><X size={16} /></button>
+        {notification && <div className={`absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 rounded-xl border px-4 py-2 text-sm font-medium shadow-xl ${notification.type === "success" ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-300" : "border-red-500/50 bg-red-500/20 text-red-300"}`}>{notification.message}</div>}
+      </header>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] animate-in fade-in duration-300"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      {!isPremium && <div className="border-b border-amber-500/20 bg-amber-500/10 p-4 text-sm font-medium text-amber-200">Il tuo piano include un solo collaboratore. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 underline">Passa a Pro o Elite</a> per sbloccare il team.</div>}
 
-      <div
-        className={`fixed inset-y-0 right-0 w-full max-w-xl bg-[#0b1221] shadow-2xl border-l border-[#1e2b4a] z-[101] transform transition-transform duration-300 flex flex-col ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="p-5 border-b border-[#1e2b4a] flex items-center justify-between bg-[#131c31] relative">
-          <h2 className="text-white font-extrabold text-lg flex items-center gap-2">
-            <span>👥</span> Gestione Team & Servizi
-          </h2>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1e2b4a] text-slate-300 hover:text-white hover:bg-red-500 transition"
-          >
-            x
-          </button>
-
-          {/* Toast Notification in-component */}
-          {notification && (
-            <div className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-4 py-2 rounded-xl shadow-xl border backdrop-blur-md font-medium text-sm animate-in slide-in-from-top-2 fade-in duration-300 flex items-center gap-2 ${
-              notification.type === 'success' 
-                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
-                : 'bg-red-500/20 border-red-500/50 text-red-400'
-            }`}>
-              <span>{notification.type === 'success' ? '✅' : '❌'}</span>
-              {notification.message}
-            </div>
-          )}
-        </div>
-
-        {!isPremium && (
-          <div className="bg-amber-500/10 border-b border-amber-500/20 p-4">
-            <p className="text-amber-200 text-sm font-medium flex items-center gap-2">
-              <span>🔒</span>
-              <>Il tuo piano include un solo collaboratore. <a href={slug ? `/paywall/${slug}` : "#"} className="text-amber-400 hover:text-amber-300 underline underline-offset-2">Passa all&apos;Elite (59€/mese)</a> per sbloccare collaboratori illimitati e la gestione avanzata dei servizi.</>
-            </p>
-          </div>
-        )}
-
-        <div className="p-4 border-b border-[#1e2b4a] bg-[#0b1221]">
-          <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
-            Link Orari (Google Sheet)
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Incolla qui il link di condivisione pubblica"
-              value={staffSheetUrl}
-              onChange={(e) => setStaffSheetUrl(e.target.value)}
-              className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500 text-sm placeholder:text-slate-600"
-            />
-            <button
-              onClick={handleSaveSheetUrl}
-              disabled={savingUrl}
-              className="bg-[#1e2b4a] hover:bg-[#2a3a5e] text-slate-300 font-bold px-4 py-2 rounded-xl text-sm transition disabled:opacity-50 whitespace-nowrap"
-            >
-              {savingUrl ? "..." : "Salva"}
-            </button>
-            <button
-              onClick={handleSyncSheets}
-              disabled={savingUrl || !staffSheetUrl}
-              className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-4 py-2 rounded-xl text-sm transition disabled:opacity-50 whitespace-nowrap flex items-center gap-1"
-            >
-              {savingUrl ? "⏳" : "🔄 Sincronizza"}
-            </button>
-          </div>
-          <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-            1. Crea una copia del <a href="https://docs.google.com/spreadsheets/d/1eyOExG-DexeWZeYKWk3FjNxzIQ-hITWGh7S5fR8OS10/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline font-medium">Foglio Turni Ufficiale</a>{" "}
-            e impostalo su &quot;Chiunque abbia il link&quot;.<br/>
-            2. Scrivi il <strong className="text-slate-300">nome</strong> di ogni dipendente nella colonna A.<br/>
-            3. Per ogni giorno inserisci gli orari nel formato <strong className="text-slate-300">09:00-13:00, 14:00-19:00</strong> (più turni separati da virgola).<br/>
-            4. Per i giorni di riposo scrivi <strong className="text-slate-300">Riposo</strong>.<br/>
-            5. Incolla il link qui sopra e clicca Salva, poi Sincronizza.
-          </p>
-          <div className="mt-3 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-            <p className="text-xs text-indigo-300 leading-relaxed font-medium">
-              <span className="mr-1">💡</span> <strong>Consiglio d'oro:</strong> I nomi che scrivi nel file Excel devono essere identici a quelli su NeatX. Se scrivi un nome nuovo, il sistema lo creerà automaticamente in basso a destra (con 0 servizi). Ricordati sempre di <strong>cliccare sul suo nome per assegnargli i servizi e le sedi</strong>, altrimenti i clienti non potranno prenotarlo!
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] min-h-0 flex-1">
-          {/* Lista Staff */}
-          <div className="flex flex-col border-r border-[#1e2b4a]">
-            <div className="p-4 border-b border-[#1e2b4a] bg-[#0b1221]">
-              <form onSubmit={handleAddStaff} className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Nome collaboratore"
-                  value={newStaffName}
-                  onChange={(e) => setNewStaffName(e.target.value)}
-                  disabled={!isPremium && staffList.length >= 1}
-                  className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500 text-sm disabled:opacity-50"
-                />
-                <button
-                  type="submit"
-                  disabled={adding || (!isPremium && staffList.length >= 1)}
-                  className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold px-3 py-2 rounded-xl text-sm transition disabled:opacity-50 shrink-0"
-                >
-                  +
-                </button>
-              </form>
-            </div>
-
-            <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar flex-1">
-              {loading ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                  <span className="text-2xl mb-2 animate-spin">...</span>
-                </div>
-              ) : staffList.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                  <p className="text-sm">Nessun collaboratore.</p>
-                </div>
-              ) : (
-                staffList.map((staff) => (
-                  <div
-                    key={staff.id}
-                    className={`w-full bg-[#131c31] border rounded-xl p-3 flex items-center justify-between transition group ${
-                      selectedStaff?.id === staff.id
-                        ? "border-indigo-500/70 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
-                        : "border-[#1e2b4a] hover:border-indigo-500/50"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => openStaff(staff)}
-                      className="flex-1 text-left min-w-0 pr-2"
-                    >
-                      <div className="text-white font-bold text-sm capitalize group-hover:text-indigo-400 transition-colors truncate">
-                        {staff.name}
-                      </div>
-                      <div className="text-slate-500 text-xs mt-1">
-                        {staff.services.length} {staff.services.length === 1 ? 'servizio' : 'servizi'}
-                        {allLocations.length > 0 && staff.locations && staff.locations.length > 0 && (
-                          <span> · {staff.locations.length} {staff.locations.length === 1 ? 'sede' : 'sedi'}</span>
-                        )}
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => setScheduleEditorStaff(staff)}
-                      className="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center hover:bg-cyan-500 hover:text-white transition shrink-0 mr-1"
-                      title="Turni"
-                    >
-                      🕐
-                    </button>
-                    <button
-                      onClick={() => handleDeleteStaff(staff.id)}
-                      className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition shrink-0"
-                      title="Elimina"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Dettagli e Servizi */}
-          <div className="p-5 overflow-y-auto custom-scrollbar bg-[#070b14]">
-            {!selectedStaff ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-slate-500">
-                <span className="text-4xl mb-3">👥</span>
-                <p className="text-sm font-bold">Seleziona collaboratore</p>
-                <p className="text-xs mt-1">
-                  Scegli chi fa cosa nel tuo salone.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-white text-2xl font-extrabold capitalize mb-1">
-                    {selectedStaff.name}
-                  </h3>
-                  <p className="text-slate-400 text-sm">
-                    Abilita i servizi che questo operatore può svolgere.
-                  </p>
-                </div>
-
-                {/* SERVIZI */}
-                <div className="space-y-2 relative">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Servizi</h4>
-                  {savingServices && (
-                    <div className="absolute inset-0 bg-[#070b14]/50 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-xl">
-                      <span className="text-indigo-400 font-bold animate-pulse">Salvataggio...</span>
-                    </div>
-                  )}
-
-                  {allServices.length === 0 ? (
-                    <p className="text-slate-500 text-sm italic">Nessun servizio creato nel salone.</p>
-                  ) : (
-                    allServices.map((service) => {
-                      const hasService = selectedStaff.services.some((s) => s.id === service.id);
-
-                      return (
-                        <label
-                          key={service.id}
-                          className={`flex items-center justify-between p-4 rounded-xl cursor-pointer transition border ${
-                            hasService
-                              ? "bg-indigo-500/10 border-indigo-500/30"
-                              : "bg-[#131c31] border-[#1e2b4a] hover:border-indigo-500/30 opacity-70 hover:opacity-100"
-                          }`}
-                        >
-                          <span className={`font-bold text-sm ${hasService ? "text-indigo-300" : "text-slate-300"}`}>
-                            {service.name}
-                          </span>
-
-                          <div className={`w-12 h-6 rounded-full relative transition-colors ${hasService ? "bg-indigo-500" : "bg-[#1e2b4a]"}`}>
-                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${hasService ? "left-7" : "left-1"}`} />
-                          </div>
-
-                          <input
-                            type="checkbox"
-                            className="hidden"
-                            checked={hasService}
-                            onChange={() => {
-                              handleToggleService(service.id, hasService)
-                            }}
-                          />
-                        </label>
-                      );
-                    })
-                  )}
-                </div>
-
-                {/* SEDI (multi-location) */}
-                {allLocations.length > 1 && (
-                  <div className="space-y-2 relative">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                      Sedi <span className="text-slate-600 font-normal normal-case">(seleziona dove lavora)</span>
-                    </h4>
-                    {savingLocations && (
-                      <div className="absolute inset-0 bg-[#070b14]/50 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-xl">
-                        <span className="text-cyan-400 font-bold animate-pulse">Salvataggio...</span>
-                      </div>
-                    )}
-                    <p className="text-xs text-slate-600 mb-2 -mt-1">
-                      Se nessuna sede selezionata, lavora in <strong className="text-slate-400">tutte</strong> le sedi.
-                    </p>
-                    {allLocations.map((loc) => {
-                      const hasLocation = selectedLocationIds.includes(loc.id);
-                      return (
-                        <label
-                          key={loc.id}
-                          className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition border ${
-                            hasLocation
-                              ? "bg-cyan-500/10 border-cyan-500/30"
-                              : "bg-[#131c31] border-[#1e2b4a] hover:border-cyan-500/30 opacity-70 hover:opacity-100"
-                          }`}
-                        >
-                          <span className={`font-bold text-sm ${hasLocation ? "text-cyan-300" : "text-slate-300"}`}>
-                            {loc.name}
-                          </span>
-
-                          <div className={`w-12 h-6 rounded-full relative transition-colors ${hasLocation ? "bg-cyan-500" : "bg-[#1e2b4a]"}`}>
-                            <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${hasLocation ? "left-7" : "left-1"}`} />
-                          </div>
-
-                          <input
-                            type="checkbox"
-                            className="hidden"
-                            checked={hasLocation}
-                            onChange={() => handleToggleLocation(loc.id)}
-                          />
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+      <div id="tour-team-schedule" className="border-b border-[#1e2b4a] bg-gradient-to-r from-cyan-500/10 via-transparent to-indigo-500/10 px-5 py-4">
+        <p className="text-sm font-bold text-cyan-200">Turni nativi NeatX</p>
+        <p className="mt-1 text-xs leading-relaxed text-slate-400">Orari fissi, ferie e permessi vivono nel calendario del collaboratore. Niente fogli esterni da sincronizzare.</p>
       </div>
 
-      {scheduleEditorStaff && (
-        <ScheduleEditor
-          staffId={scheduleEditorStaff.id}
-          staffName={scheduleEditorStaff.name}
-          onClose={() => setScheduleEditorStaff(null)}
-        />
-      )}
-    </>
-  );
+      <StaffRequestsPanel tenantId={tenantId} enabled={isOpen} />
+
+      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[1fr_1.1fr]">
+        <div className="flex min-h-0 flex-col border-r border-[#1e2b4a]">
+          <form onSubmit={handleAddStaff} className="flex gap-2 border-b border-[#1e2b4a] p-4">
+            <input value={newStaffName} onChange={(event) => setNewStaffName(event.target.value)} disabled={!isPremium && staffList.length >= 1} placeholder="Nome collaboratore" className="w-full rounded-xl border border-[#1e2b4a] bg-[#131c31] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 disabled:opacity-50" />
+            <button type="submit" disabled={adding || (!isPremium && staffList.length >= 1)} className="rounded-xl bg-indigo-500 px-3 py-2 text-sm font-bold text-white transition hover:bg-indigo-400 disabled:opacity-50">+</button>
+          </form>
+          <div className="custom-scrollbar flex-1 space-y-3 overflow-y-auto p-4">
+            {loading ? <p className="py-8 text-center text-sm text-slate-500">Caricamento...</p> : staffList.length === 0 ? <p className="py-8 text-center text-sm text-slate-500">Nessun collaboratore.</p> : staffList.map((staff, index) => <div key={staff.id} className={`group flex items-center justify-between rounded-xl border bg-[#131c31] p-3 transition ${selectedStaff?.id === staff.id ? "border-indigo-500/70" : "border-[#1e2b4a] hover:border-indigo-500/50"}`}>
+              <button id={index === 0 ? "tour-first-staff" : undefined} type="button" onClick={() => setSelectedStaff(staff)} className="min-w-0 flex-1 pr-2 text-left"><div className="truncate text-sm font-bold capitalize text-white group-hover:text-indigo-300">{staff.name}</div><div className="mt-1 text-xs text-slate-500">{staff.services.length} {staff.services.length === 1 ? "servizio" : "servizi"}{staff.locations.length > 0 && ` · ${staff.locations.length} ${staff.locations.length === 1 ? "sede" : "sedi"}`}</div></button>
+              <button id={index === 0 ? "tour-first-staff-schedule" : undefined} type="button" onClick={() => setScheduleEditorStaff(staff)} className="mr-1 flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400 transition hover:bg-cyan-500 hover:text-white" title="Gestisci turni"><CalendarClock size={16} /></button>
+              <button type="button" onClick={() => void handleDeleteStaff(staff.id)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400 transition hover:bg-red-500 hover:text-white" title="Elimina"><Trash2 size={15} /></button>
+            </div>)}
+          </div>
+        </div>
+
+        <div className="custom-scrollbar overflow-y-auto bg-[#070b14] p-5">
+          {!selectedStaff ? <div className="flex h-full flex-col items-center justify-center text-center text-slate-500"><Users size={32} className="mb-3 opacity-40" /><p className="text-sm font-bold">Seleziona collaboratore</p><p className="mt-1 text-xs">Scegli servizi, sedi e turni.</p></div> : <div className="space-y-6">
+            <div><h3 className="text-2xl font-extrabold capitalize text-white">{selectedStaff.name}</h3><p className="text-sm text-slate-400">Abilita ciò che può svolgere e dove lavora.</p></div>
+            <StaffAccessControls staffId={selectedStaff.id} />
+            <section><h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Servizi {savingServices && <span className="text-indigo-300">· salvataggio</span>}</h4><div className="space-y-2">{allServices.map((service) => { const active = selectedStaff.services.some((item) => item.id === service.id); return <button type="button" key={service.id} onClick={() => toggleService(service.id)} className={`flex w-full items-center justify-between rounded-xl border p-3 text-left transition ${active ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-200" : "border-[#1e2b4a] bg-[#131c31] text-slate-300 hover:border-indigo-500/30"}`}><span className="text-sm font-bold">{service.name}</span><span className={`h-5 w-10 rounded-full p-1 ${active ? "bg-indigo-500" : "bg-[#1e2b4a]"}`}><span className={`block h-3 w-3 rounded-full bg-white transition-transform ${active ? "translate-x-5" : ""}`} /></span></button>; })}</div></section>
+            {allLocations.length > 1 && <section><h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Sedi {savingLocations && <span className="text-cyan-300">· salvataggio</span>}</h4><p className="mb-2 text-xs text-slate-600">Se nessuna sede è selezionata, il collaboratore lavora in tutte.</p><div className="space-y-2">{allLocations.map((location) => { const active = selectedLocationIds.includes(location.id); return <button type="button" key={location.id} onClick={() => toggleLocation(location.id)} className={`flex w-full items-center justify-between rounded-xl border p-3 text-left transition ${active ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-200" : "border-[#1e2b4a] bg-[#131c31] text-slate-300 hover:border-cyan-500/30"}`}><span className="text-sm font-bold">{location.name}</span><span className={`h-5 w-10 rounded-full p-1 ${active ? "bg-cyan-500" : "bg-[#1e2b4a]"}`}><span className={`block h-3 w-3 rounded-full bg-white transition-transform ${active ? "translate-x-5" : ""}`} /></span></button>; })}</div></section>}
+          </div>}
+        </div>
+      </div>
+    </aside>
+
+    {scheduleEditorStaff && <ScheduleEditor staffId={scheduleEditorStaff.id} staffName={scheduleEditorStaff.name} onClose={() => setScheduleEditorStaff(null)} />}
+  </>;
 }

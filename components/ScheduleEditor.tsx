@@ -1,383 +1,157 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Calendar, Clock, Plus, Save, Trash2, X, Ban, Umbrella, Coffee } from "lucide-react";
-import type { WeeklySchedule, ShiftException, ScheduleBlock } from "@/lib/schedule";
-import { DAY_NAMES } from "@/lib/schedule";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Ban, Calendar, ChevronLeft, ChevronRight, Clock, Coffee, Plus, Save, Trash2, Umbrella, X } from "lucide-react";
+import type { ScheduleBlock, ShiftException, WeeklySchedule } from "@/lib/schedule";
+import { DAY_NAMES, getDayScheduleForDate, timeToMins } from "@/lib/schedule";
 
-type Props = {
-  staffId: string;
-  staffName: string;
-  onClose: () => void;
-};
+type Props = { staffId: string; staffName: string; onClose: () => void };
+type ExceptionType = ShiftException["type"];
 
 const EMPTY_DAY: ScheduleBlock[] = [];
+const pad = (value: number) => String(value).padStart(2, "0");
+const TIME_OPTIONS = Array.from({ length: 72 }, (_, index) => {
+  const minutes = 6 * 60 + index * 15;
+  return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+});
+const toIsoDate = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+const todayIso = () => toIsoDate(new Date());
+const fromIsoDate = (value: string) => { const [year, month, day] = value.split("-").map(Number); return new Date(year, month - 1, day); };
+const formatDate = (value: string) => fromIsoDate(value).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
+const minsToTime = (minutes: number) => `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+
+function TimeSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return <select value={value} onChange={(event) => onChange(event.target.value)} className="rounded-lg border border-[#1e2b4a] bg-[#131c31] px-2 py-1.5 text-sm text-white outline-none focus:border-indigo-400">{TIME_OPTIONS.map((time) => <option key={time} value={time}>{time}</option>)}</select>;
+}
 
 export default function ScheduleEditor({ staffId, staffName, onClose }: Props) {
-  const [tab, setTab] = useState<"orari" | "eccezioni">("orari");
+  const router = useRouter();
+  const [tab, setTab] = useState<"orari" | "eccezioni">("eccezioni");
   const [schedule, setSchedule] = useState<WeeklySchedule>({});
+  const [shopSchedule, setShopSchedule] = useState<WeeklySchedule>({});
+  const [inheritsStoreHours, setInheritsStoreHours] = useState(true);
   const [exceptions, setExceptions] = useState<ShiftException[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [month, setMonth] = useState(() => { const now = new Date(); return new Date(now.getFullYear(), now.getMonth(), 1); });
+  const [selectedDate, setSelectedDate] = useState(todayIso());
 
-  // Nuova eccezione form
-  const [newEx, setNewEx] = useState<ShiftException>({
-    date: "",
-    type: "ferie",
-    start: null,
-    end: null,
-  });
-
-  useEffect(() => {
-    loadSchedule();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const loadSchedule = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/staff/schedule?staffId=${encodeURIComponent(staffId)}`);
+      if (!response.ok) throw new Error("load");
+      const data = await response.json() as { baseSchedule?: WeeklySchedule; shiftExceptions?: ShiftException[]; shopSchedule?: WeeklySchedule };
+      const baseSchedule = data.baseSchedule || {};
+      const inherited = Object.keys(baseSchedule).length === 0;
+      const storeSchedule = data.shopSchedule || {};
+      setShopSchedule(storeSchedule);
+      setInheritsStoreHours(inherited);
+      setSchedule(inherited ? storeSchedule : baseSchedule);
+      setExceptions(data.shiftExceptions || []);
+    } catch { setFeedback("Impossibile caricare il calendario."); }
+    finally { setLoading(false); }
   }, [staffId]);
 
-  const loadSchedule = async () => {
-    setLoading(true);
-    const res = await fetch(`/api/staff/schedule?staffId=${staffId}`);
-    const data = await res.json();
-    setSchedule(data.baseSchedule || {});
-    setExceptions(data.shiftExceptions || []);
-    setLoading(false);
+  useEffect(() => { void loadSchedule(); }, [loadSchedule]);
+
+  const saveExceptions = async (next: ShiftException[]) => {
+    setSaving(true);
+    try {
+      const response = await fetch("/api/staff/schedule", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffId, exceptions: next }) });
+      const data = await response.json().catch(() => ({})) as { error?: string };
+      if (!response.ok) throw new Error(data.error || "Salvataggio non riuscito");
+      setExceptions(next);
+      router.refresh();
+      setFeedback("Calendario aggiornato anche in agenda");
+      window.setTimeout(() => setFeedback(null), 2200);
+    } catch (error) { setFeedback(error instanceof Error ? error.message : "Salvataggio non riuscito"); }
+    finally { setSaving(false); }
   };
 
-  const toggleDay = (day: string) => {
-    setSchedule((prev) => {
-      const current = prev[day];
-      if (current?.active) {
-        return { ...prev, [day]: { active: false, blocks: [] } };
-      }
-      return { ...prev, [day]: { active: true, blocks: [{ start: "09:00", end: "13:00" }] } };
-    });
-  };
-
-  const addBlock = (day: string) => {
-    setSchedule((prev) => {
-      const blocks = prev[day]?.blocks || [];
-      const lastEnd = blocks.length > 0 ? blocks[blocks.length - 1].end : "09:00";
-      const [h, m] = lastEnd.split(":").map(Number);
-      const next = `${(h + 4).toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
-      return {
-        ...prev,
-        [day]: { active: true, blocks: [...blocks, { start: lastEnd, end: next }] },
-      };
-    });
-  };
-
-  const updateBlock = (day: string, index: number, field: "start" | "end", value: string) => {
-    setSchedule((prev) => {
-      const blocks = [...(prev[day]?.blocks || [])];
-      blocks[index] = { ...blocks[index], [field]: value };
-      return { ...prev, [day]: { active: prev[day]?.active ?? true, blocks } };
-    });
-  };
-
-  const removeBlock = (day: string, index: number) => {
-    setSchedule((prev) => {
-      const blocks = (prev[day]?.blocks || []).filter((_, i) => i !== index);
-      return { ...prev, [day]: { active: blocks.length > 0, blocks } };
-    });
+  const addException = (type: ExceptionType, start: string | null, end: string | null) => {
+    if (type !== "ferie" && (!start || !end || start >= end)) { setFeedback("L'orario di fine deve essere dopo l'inizio."); return; }
+    const withoutConflict = type === "ferie" ? exceptions.filter((item) => item.date !== selectedDate) : exceptions.filter((item) => !(item.date === selectedDate && item.type === "ferie"));
+    void saveExceptions([...withoutConflict, { date: selectedDate, type, start, end }].sort((a, b) => a.date.localeCompare(b.date)));
   };
 
   const saveSchedule = async () => {
     setSaving(true);
-    await fetch("/api/staff/schedule", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ staffId, baseSchedule: schedule }),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => onClose(), 600);
+    try {
+      const response = await fetch("/api/staff/schedule", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffId, baseSchedule: inheritsStoreHours ? {} : schedule }) });
+      const data = await response.json().catch(() => ({})) as { error?: string };
+      if (!response.ok) throw new Error(data.error || "Salvataggio non riuscito");
+      router.refresh();
+      setFeedback(inheritsStoreHours ? "Orari del negozio collegati" : "Orari fissi salvati"); window.setTimeout(() => onClose(), 600);
+    } catch (error) { setFeedback(error instanceof Error ? error.message : "Salvataggio non riuscito"); }
+    finally { setSaving(false); }
   };
 
-  const addException = () => {
-    if (!newEx.date) return;
-    setExceptions((prev) => [...prev, { ...newEx }]);
-    setNewEx({ date: "", type: "ferie", start: null, end: null });
-  };
+  const toggleDay = (day: string) => { setInheritsStoreHours(false); setSchedule((current) => current[day]?.active ? { ...current, [day]: { active: false, blocks: [] } } : { ...current, [day]: { active: true, blocks: [{ start: "09:00", end: "13:00" }] } }); };
+  const updateBlock = (day: string, index: number, field: keyof ScheduleBlock, value: string) => { setInheritsStoreHours(false); setSchedule((current) => { const blocks = [...(current[day]?.blocks || [])]; blocks[index] = { ...blocks[index], [field]: value }; return { ...current, [day]: { active: true, blocks } }; }); };
+  const addBlock = (day: string) => { setInheritsStoreHours(false); setSchedule((current) => { const blocks = current[day]?.blocks || []; const start = blocks[blocks.length - 1]?.end || "09:00"; const startIndex = TIME_OPTIONS.indexOf(start); const endIndex = Math.min(TIME_OPTIONS.length - 1, Math.max(0, startIndex) + 16); if (startIndex < 0 || endIndex <= startIndex) return current; const end = TIME_OPTIONS[endIndex]; return { ...current, [day]: { active: true, blocks: [...blocks, { start, end }] } }; }); };
+  const removeBlock = (day: string, index: number) => { setInheritsStoreHours(false); setSchedule((current) => { const blocks = (current[day]?.blocks || []).filter((_, itemIndex) => itemIndex !== index); return { ...current, [day]: { active: blocks.length > 0, blocks } }; }); };
+  const restoreStoreHours = () => { setSchedule(shopSchedule); setInheritsStoreHours(true); };
 
-  const removeException = (index: number) => {
-    setExceptions((prev) => prev.filter((_, i) => i !== index));
-  };
+  const monthCells = useMemo(() => { const firstDay = new Date(month.getFullYear(), month.getMonth(), 1).getDay(); const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(); return Array.from({ length: Math.ceil((firstDay + days) / 7) * 7 }, (_, index) => { const day = index - firstDay + 1; return day > 0 && day <= days ? toIsoDate(new Date(month.getFullYear(), month.getMonth(), day)) : null; }); }, [month]);
+  const selectedExceptions = exceptions.filter((item) => item.date === selectedDate);
+  const monthLabel = month.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
+  const breakPresets = useMemo(() => {
+    const day = getDayScheduleForDate(schedule, [], selectedDate);
+    const presets: { start: string; end: string; label: string }[] = [];
+    for (const block of day.blocks) {
+      const start = timeToMins(block.start);
+      const end = timeToMins(block.end);
+      if (end - start < 60) continue;
+      const middle = start + Math.round(((end - start - 60) / 2) / 15) * 15;
+      for (const candidate of [start, middle, end - 60]) {
+        const preset = { start: minsToTime(candidate), end: minsToTime(candidate + 60), label: `${minsToTime(candidate)} – ${minsToTime(candidate + 60)}` };
+        if (!presets.some((item) => item.start === preset.start && item.end === preset.end)) presets.push(preset);
+      }
+    }
+    return presets.slice(0, 3);
+  }, [schedule, selectedDate]);
+  const permissionPresets = useMemo(() => {
+    const day = getDayScheduleForDate(schedule, [], selectedDate);
+    const presets: { start: string; end: string; label: string }[] = [];
+    for (const block of day.blocks) {
+      const start = timeToMins(block.start);
+      const end = timeToMins(block.end);
+      if (end - start < 120) continue;
+      const middle = start + Math.floor((end - start - 120) / 30) * 15;
+      for (const candidate of [start, middle, end - 120]) {
+        const preset = { start: minsToTime(candidate), end: minsToTime(candidate + 120), label: `${minsToTime(candidate)} – ${minsToTime(candidate + 120)}` };
+        if (!presets.some((item) => item.start === preset.start && item.end === preset.end)) presets.push(preset);
+      }
+    }
+    return presets.slice(0, 3);
+  }, [schedule, selectedDate]);
 
-  const saveExceptions = async () => {
-    setSaving(true);
-    await fetch("/api/staff/schedule", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ staffId, exceptions }),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => onClose(), 600);
-  };
+  if (loading) return <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm"><div className="rounded-2xl border border-[#1e2b4a] bg-[#0b1221] px-6 py-4 text-sm font-bold text-slate-300">Caricamento calendario...</div></div>;
 
-  if (loading) {
-    return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-        <div className="text-slate-400 text-lg font-bold">Caricamento...</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div
-        className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-[#1e2b4a] bg-[#0b1221] shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#1e2b4a] bg-[#131c31] px-6 py-4 rounded-t-3xl">
-          <div>
-            <h2 className="text-xl font-extrabold text-white capitalize">{staffName}</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Gestione turni e orari</p>
-          </div>
-          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1e2b4a] text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition">
-            <X size={18} />
-          </button>
+  return <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}><div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-[#1e2b4a] bg-[#0b1221] shadow-2xl" onClick={(event) => event.stopPropagation()}>
+    <header className="sticky top-0 z-10 flex items-center justify-between rounded-t-3xl border-b border-[#1e2b4a] bg-[#131c31] px-6 py-4"><div><h2 className="text-xl font-extrabold capitalize text-white">{staffName}</h2><p className="mt-0.5 text-xs text-slate-500">Turni e assenze · Europe/Rome</p></div><button onClick={onClose} aria-label="Chiudi" className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1e2b4a] text-slate-400 hover:bg-red-500/20 hover:text-red-300"><X size={18} /></button></header>
+    <div className="flex border-b border-[#1e2b4a]"><button onClick={() => setTab("eccezioni")} className={`flex items-center gap-2 px-6 py-3 text-sm font-bold ${tab === "eccezioni" ? "border-b-2 border-amber-400 bg-amber-500/5 text-amber-300" : "text-slate-500"}`}><Calendar size={15} /> Calendario assenze</button><button onClick={() => setTab("orari")} className={`flex items-center gap-2 px-6 py-3 text-sm font-bold ${tab === "orari" ? "border-b-2 border-indigo-400 bg-indigo-500/5 text-indigo-300" : "text-slate-500"}`}><Clock size={15} /> Orari fissi</button></div>
+    {tab === "orari" && <div className="mx-6 mt-5 flex flex-col gap-3 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-extrabold text-cyan-200">{inheritsStoreHours ? "Allineato agli orari del negozio" : "Turno personalizzato"}</p><p className="mt-1 text-xs leading-relaxed text-slate-400">{inheritsStoreHours ? "Le modifiche agli orari del negozio si applicano automaticamente anche a Pietro." : "Le prenotazioni restano comunque limitate agli orari e alle pause del negozio."}</p></div><button type="button" onClick={restoreStoreHours} className="shrink-0 rounded-xl border border-cyan-500/25 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 transition hover:bg-cyan-500/20">{inheritsStoreHours ? "Orari negozio attivi" : "Ripristina orari negozio"}</button></div>}
+    <div className="p-6">{tab === "eccezioni" ? <div className="grid gap-6 lg:grid-cols-[1.05fr_.95fr]">
+      <section><div className="mb-3 flex items-center justify-between"><button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white"><ChevronLeft size={17} /></button><h3 className="text-sm font-extrabold capitalize text-white">{monthLabel}</h3><button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} className="rounded-lg p-2 text-slate-400 hover:bg-white/5 hover:text-white"><ChevronRight size={17} /></button></div><div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold uppercase tracking-wider text-slate-600">{["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"].map((day) => <span key={day} className="py-2">{day}</span>)}</div><div className="grid grid-cols-7 gap-1">{monthCells.map((date, index) => { const dayExceptions = date ? exceptions.filter((item) => item.date === date) : []; const selected = date === selectedDate; return <button type="button" key={`${date || "empty"}-${index}`} disabled={!date} onClick={() => date && setSelectedDate(date)} className={`min-h-14 rounded-xl border p-1 text-left transition ${!date ? "border-transparent" : selected ? "border-indigo-400 bg-indigo-500/15" : "border-[#1e2b4a] bg-[#131c31] hover:border-indigo-400/50"}`}><span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${selected ? "bg-indigo-500 text-white" : "text-slate-300"}`}>{date ? Number(date.slice(-2)) : ""}</span>{dayExceptions.length > 0 && <span className="mt-1 flex flex-wrap gap-1">{dayExceptions.map((item, itemIndex) => <span key={`${item.type}-${itemIndex}`} className={`h-1.5 w-1.5 rounded-full ${item.type === "ferie" ? "bg-amber-400" : "bg-blue-400"}`} />)}</span>}</button>; })}</div><p className="mt-4 text-xs leading-relaxed text-slate-500">Seleziona una data e usa una delle azioni rapide: il salvataggio è immediato.</p></section>
+      <section className="rounded-2xl border border-[#1e2b4a] bg-[#131c31] p-5">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Giorno selezionato</p>
+        <h3 className="mt-1 text-lg font-extrabold capitalize text-white">{formatDate(selectedDate)}</h3>
+        <button disabled={saving} onClick={() => addException("ferie", null, null)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-3 text-sm font-extrabold text-amber-300 hover:bg-amber-500/20 disabled:opacity-50"><Umbrella size={16} /> Ferie · giornata intera</button>
+        <div className="mt-4 rounded-xl border border-[#1e2b4a] bg-[#0b1221] p-3">
+          <p className="text-xs font-bold text-slate-400">Permesso rapido · 2 ore</p>
+          {permissionPresets.length > 0 ? <div className="mt-2 grid gap-2">{permissionPresets.map((preset) => <button key={`permesso-${preset.start}-${preset.end}`} disabled={saving} onClick={() => addException("permesso", preset.start, preset.end)} className="flex items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2.5 text-sm font-extrabold text-blue-300 hover:bg-blue-500/20 disabled:opacity-50"><Ban size={15} /> {preset.label}</button>)}</div> : <p className="mt-2 text-xs leading-relaxed text-slate-500">Imposta prima un turno attivo per questa data: i permessi vengono proposti solo dentro l'orario di lavoro.</p>}
         </div>
-
-        {/* Tab bar */}
-        <div className="flex border-b border-[#1e2b4a]">
-          <button
-            onClick={() => setTab("orari")}
-            className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition ${
-              tab === "orari" ? "border-b-2 border-indigo-400 text-indigo-300 bg-indigo-500/5" : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <Calendar size={15} />
-            Orari Fissi Settimanali
-          </button>
-          <button
-            onClick={() => setTab("eccezioni")}
-            className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition ${
-              tab === "eccezioni" ? "border-b-2 border-amber-400 text-amber-300 bg-amber-500/5" : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <Umbrella size={15} />
-            Ferie, Permessi e Pause
-          </button>
+        <div className="mt-3 rounded-xl border border-[#1e2b4a] bg-[#0b1221] p-3">
+          <p className="text-xs font-bold text-slate-400">Pausa rapida · 1 ora</p>
+          {breakPresets.length > 0 ? <div className="mt-2 grid gap-2">{breakPresets.map((preset) => <button key={`pausa-${preset.start}-${preset.end}`} disabled={saving} onClick={() => addException("pausa", preset.start, preset.end)} className="flex items-center justify-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-2.5 text-sm font-extrabold text-violet-300 hover:bg-violet-500/20 disabled:opacity-50"><Coffee size={15} /> {preset.label}</button>)}</div> : <p className="mt-2 text-xs leading-relaxed text-slate-500">Le pause vengono proposte solo dentro un turno attivo.</p>}
         </div>
-
-        <div className="p-6">
-          {tab === "orari" && (
-            <div className="space-y-4">
-              <p className="text-sm text-slate-400 mb-4">
-                Imposta gli orari fissi per ogni giorno della settimana. I giorni senza orari (Riposo) bloccano l&apos;agenda.
-              </p>
-              {DAY_NAMES.map((day) => {
-                const dayData = schedule[day];
-                const blocks = dayData?.active ? dayData.blocks : EMPTY_DAY;
-                const isActive = dayData?.active ?? false;
-                return (
-                  <div key={day} className={`rounded-2xl border p-4 transition ${
-                    isActive ? "border-emerald-500/20 bg-emerald-500/5" : "border-white/5 bg-white/[0.02] opacity-60"
-                  }`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-extrabold text-white capitalize min-w-[90px]">{day}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          isActive ? "bg-emerald-500/15 text-emerald-300" : "bg-slate-500/15 text-slate-500"
-                        }`}>
-                          {isActive ? "In servizio" : "Riposo"}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => toggleDay(day)}
-                        className={`text-xs font-extrabold px-3 py-1.5 rounded-xl border transition ${
-                          isActive
-                            ? "border-red-500/20 text-red-400 hover:bg-red-500/10"
-                            : "border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
-                        }`}
-                      >
-                        {isActive ? "Metti Riposo" : "Attiva turno"}
-                      </button>
-                    </div>
-                    {isActive && (
-                      <div className="space-y-2 ml-1">
-                        {blocks.map((block, bi) => (
-                          <div key={bi} className="flex items-center gap-2">
-                            <Clock size={14} className="shrink-0 text-slate-500" />
-                            <input
-                              type="time"
-                              value={block.start}
-                              onChange={(e) => updateBlock(day, bi, "start", e.target.value)}
-                              className="w-28 rounded-lg border border-[#1e2b4a] bg-[#131c31] px-3 py-1.5 text-sm text-white focus:border-indigo-400 focus:outline-none"
-                            />
-                            <span className="text-slate-600 text-xs">—</span>
-                            <input
-                              type="time"
-                              value={block.end}
-                              onChange={(e) => updateBlock(day, bi, "end", e.target.value)}
-                              className="w-28 rounded-lg border border-[#1e2b4a] bg-[#131c31] px-3 py-1.5 text-sm text-white focus:border-indigo-400 focus:outline-none"
-                            />
-                            <button
-                              onClick={() => removeBlock(day, bi)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </div>
-                        ))}
-                        <button
-                          onClick={() => addBlock(day)}
-                          className="flex items-center gap-1.5 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition mt-2"
-                        >
-                          <Plus size={13} />
-                          Aggiungi turno
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-
-              <div className="flex justify-end pt-4">
-                {saved ? (
-                  <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/15 px-6 py-3 text-sm font-extrabold text-emerald-300">
-                    ✓ Salvataggio completato
-                  </div>
-                ) : (
-                <button
-                  onClick={saveSchedule}
-                  disabled={saving}
-                  className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-3 text-sm font-extrabold text-[#03111f] transition hover:scale-105 disabled:opacity-50"
-                >
-                  <Save size={16} />
-                  {saving ? "Salvataggio..." : "Salva orari fissi"}
-                </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {tab === "eccezioni" && (
-            <div className="space-y-6">
-              <p className="text-sm text-slate-400">
-                Aggiungi ferie, permessi o pause per giornate specifiche. Queste eccezioni hanno priorità sugli orari fissi.
-              </p>
-
-              {/* Existing exceptions */}
-              {exceptions.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-[#1e2b4a] bg-[#0b1221] p-8 text-center">
-                  <Umbrella size={28} className="mx-auto text-slate-600 mb-2" />
-                  <p className="text-sm font-bold text-slate-500">Nessuna eccezione</p>
-                  <p className="text-xs text-slate-600 mt-1">Aggiungi ferie, permessi o pause qui sotto</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {exceptions.map((ex, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-2xl border border-[#1e2b4a] bg-[#0b1221] px-5 py-3">
-                      <div className="flex items-center gap-4">
-                        {ex.type === "ferie" && <Umbrella size={16} className="text-amber-400" />}
-                        {ex.type === "permesso" && <Ban size={16} className="text-blue-400" />}
-                        {ex.type === "pausa" && <Coffee size={16} className="text-cyan-400" />}
-                        <span className={`text-xs font-extrabold uppercase min-w-[70px] ${
-                          ex.type === "ferie" ? "text-amber-400" : ex.type === "permesso" ? "text-blue-400" : "text-cyan-400"
-                        }`}>
-                          {ex.type}
-                        </span>
-                        <span className="text-sm font-bold text-white">{ex.date}</span>
-                        {ex.start && ex.end && (
-                          <span className="text-xs text-slate-400">{ex.start} - {ex.end}</span>
-                        )}
-                        {ex.type === "ferie" && <span className="text-xs text-slate-500">Giornata intera</span>}
-                      </div>
-                      <button
-                        onClick={() => removeException(i)}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Add exception form */}
-              <div className="rounded-2xl border border-[#1e2b4a] bg-[#0b1221] p-5">
-                <h4 className="text-sm font-extrabold text-white mb-4">Aggiungi eccezione</h4>
-                <div className="flex flex-wrap items-end gap-3">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">Data</label>
-                    <input
-                      type="date"
-                      value={newEx.date}
-                      onChange={(e) => setNewEx({ ...newEx, date: e.target.value })}
-                      className="rounded-xl border border-[#1e2b4a] bg-[#131c31] px-3 py-2.5 text-sm text-white focus:border-indigo-400 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">Tipo</label>
-                    <select
-                      value={newEx.type}
-                      onChange={(e) => {
-                        const t = e.target.value as "ferie" | "permesso" | "pausa";
-                        setNewEx({ ...newEx, type: t, start: t === "ferie" ? null : "09:00", end: t === "ferie" ? null : "13:00" });
-                      }}
-                      className="rounded-xl border border-[#1e2b4a] bg-[#131c31] px-3 py-2.5 text-sm text-white focus:border-indigo-400 focus:outline-none"
-                    >
-                      <option value="ferie">Ferie</option>
-                      <option value="permesso">Permesso</option>
-                      <option value="pausa">Pausa</option>
-                    </select>
-                  </div>
-                  {newEx.type !== "ferie" && (
-                    <>
-                      <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">Da</label>
-                        <input
-                          type="time"
-                          value={newEx.start || ""}
-                          onChange={(e) => setNewEx({ ...newEx, start: e.target.value })}
-                          className="rounded-xl border border-[#1e2b4a] bg-[#131c31] px-3 py-2.5 text-sm text-white focus:border-indigo-400 focus:outline-none w-24"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">A</label>
-                        <input
-                          type="time"
-                          value={newEx.end || ""}
-                          onChange={(e) => setNewEx({ ...newEx, end: e.target.value })}
-                          className="rounded-xl border border-[#1e2b4a] bg-[#131c31] px-3 py-2.5 text-sm text-white focus:border-indigo-400 focus:outline-none w-24"
-                        />
-                      </div>
-                    </>
-                  )}
-                  <button
-                    onClick={addException}
-                    disabled={!newEx.date}
-                    className="flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-indigo-400 disabled:opacity-40"
-                  >
-                    <Plus size={15} />
-                    Aggiungi
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-2">
-                {saved ? (
-                  <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/15 px-6 py-3 text-sm font-extrabold text-emerald-300">
-                    ✓ Salvataggio completato
-                  </div>
-                ) : (
-                <button
-                  onClick={saveExceptions}
-                  disabled={saving}
-                  className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 text-sm font-extrabold text-white transition hover:scale-105 disabled:opacity-50"
-                >
-                  <Save size={16} />
-                  {saving ? "Salvataggio..." : "Salva eccezioni"}
-                </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+        <div className="mt-5 space-y-2">{selectedExceptions.length === 0 ? <p className="rounded-xl border border-dashed border-[#1e2b4a] px-3 py-4 text-center text-xs text-slate-600">Nessuna assenza in questo giorno</p> : selectedExceptions.map((item, index) => <div key={`${item.type}-${item.start}-${index}`} className="flex items-center justify-between rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-3 py-2.5"><div className="flex items-center gap-2 text-sm font-bold text-white"><span className={item.type === "ferie" ? "text-amber-400" : item.type === "pausa" ? "text-violet-400" : "text-blue-400"}>{item.type === "ferie" ? <Umbrella size={15} /> : item.type === "pausa" ? <Coffee size={15} /> : <Ban size={15} />}</span><span className="capitalize">{item.type}</span><span className="text-xs font-normal text-slate-400">{item.start && item.end ? `${item.start} – ${item.end}` : "Giornata intera"}</span></div><button onClick={() => void saveExceptions(exceptions.filter((candidate) => candidate !== item))} className="rounded-lg p-2 text-red-400 hover:bg-red-500/10" title="Rimuovi"><Trash2 size={14} /></button></div>)}</div>
+        {feedback && <p className={`mt-4 text-center text-xs font-bold ${feedback.includes("non") || feedback.includes("fine") ? "text-red-300" : "text-emerald-300"}`}>{feedback}</p>}
+      </section>
+    </div> : <section className="space-y-4"><p className="text-sm text-slate-400">Scegli i giorni attivi e gli orari dai menu a intervalli di 15 minuti. Le ferie e i permessi hanno priorità.</p>{DAY_NAMES.map((day) => { const dayData = schedule[day]; const blocks = dayData?.active ? dayData.blocks : EMPTY_DAY; const active = dayData?.active ?? false; return <div key={day} className={`rounded-2xl border p-4 ${active ? "border-emerald-500/20 bg-emerald-500/5" : "border-white/5 bg-white/[0.02] opacity-60"}`}><div className="flex items-center justify-between"><div><span className="text-sm font-extrabold capitalize text-white">{day}</span><span className="ml-2 rounded-full bg-white/5 px-2 py-1 text-[10px] font-bold text-slate-500">{active ? "In servizio" : "Riposo"}</span></div><button onClick={() => toggleDay(day)} className="rounded-lg border border-[#1e2b4a] px-3 py-1.5 text-xs font-bold text-slate-300">{active ? "Metti riposo" : "Attiva turno"}</button></div>{active && <div className="mt-3 space-y-2">{blocks.map((block, index) => <div className="flex items-center gap-2" key={`${day}-${index}`}><TimeSelect value={block.start} onChange={(value) => updateBlock(day, index, "start", value)} /><span className="text-slate-600">—</span><TimeSelect value={block.end} onChange={(value) => updateBlock(day, index, "end", value)} /><button onClick={() => removeBlock(day, index)} className="rounded-lg p-2 text-red-400 hover:bg-red-500/10"><Trash2 size={14} /></button></div>)}<button onClick={() => addBlock(day)} className="flex items-center gap-1 text-xs font-bold text-indigo-400"><Plus size={13} /> Aggiungi turno</button></div>}</div>; })}<div className="flex justify-end pt-2"><button onClick={() => void saveSchedule()} disabled={saving} className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-3 text-sm font-extrabold text-[#03111f] disabled:opacity-50"><Save size={16} /> {saving ? "Salvataggio..." : "Salva orari fissi"}</button></div></section>}</div>
+  </div></div>;
 }

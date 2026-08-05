@@ -8,6 +8,7 @@ import {
   parseClosedDays,
   parseDaySchedule,
 } from "@/lib/opening-hours";
+import { parseShiftExceptions } from "@/lib/schedule";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,29 @@ import AdminDropdownMenu from "./AdminDropdownMenu";
 import TutorialButton from "./TutorialButton";
 import ActivityLogPanel from "./ActivityLogPanel";
 import InstallAppButton from "./InstallAppButton";
+
+function timeToMinutes(value: string) {
+  const [hours, minutes] = value.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+function subtractTimeIntervals(
+  start: number,
+  end: number,
+  exclusions: { start: number; end: number }[],
+) {
+  let ranges = [{ start, end }];
+  for (const exclusion of exclusions) {
+    ranges = ranges.flatMap((range) => {
+      if (exclusion.end <= range.start || exclusion.start >= range.end) return [range];
+      const remaining: { start: number; end: number }[] = [];
+      if (exclusion.start > range.start) remaining.push({ start: range.start, end: Math.min(exclusion.start, range.end) });
+      if (exclusion.end < range.end) remaining.push({ start: Math.max(exclusion.end, range.start), end: range.end });
+      return remaining;
+    });
+  }
+  return ranges.filter((range) => range.end > range.start);
+}
 
 export default async function Dashboard(props: { searchParams: Promise<{ [key: string]: string | undefined }>; params: Promise<{ slug: string }> }) {
   noStore();
@@ -83,7 +107,22 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   // C1 — Primo gruppo di query parallele: tutte dipendono solo da tenantId
   // e sono indipendenti tra loro, quindi partono insieme.
   const [staffList, locationsRaw] = await Promise.all([
-    prisma.staff.findMany({ where: { tenantId }, include: { locations: true } }),
+    // Select only dashboard fields. It also keeps scheduling usable before the
+    // optional Magic Link workflow columns are migrated on a tenant database.
+    prisma.staff.findMany({
+      where: { tenantId },
+      select: {
+        id: true,
+        name: true,
+        tenantId: true,
+        baseSchedule: true,
+        shiftExceptions: true,
+        commissionRate: true,
+        locationId: true,
+        services: true,
+        locations: { select: { locationId: true } },
+      },
+    }),
     prisma.location.findMany({
       where: { tenantId, isActive: true },
       include: { settings: true },
@@ -152,11 +191,6 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const urlDate = searchParams?.date;
   const targetDate = urlDate || todayItaly;
   const weekOffset = parseInt(searchParams?.weekOffset || "0", 10);
-
-  const timeToMinutes = (value: string) => {
-    const [hours, minutes] = value.split(":").map(Number);
-    return hours * 60 + minutes;
-  };
 
   const minutesToTime = (value: number) => {
     const hours = Math.floor(value / 60).toString().padStart(2, "0");
@@ -253,6 +287,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const currentMonthPrefix = todayItaly.substring(0, 7);
   const [
     rawAppointments,
+    rawShopClosures,
     radarAppointmentsRaw,
     recentActivities,
     waitlistItems,
@@ -267,6 +302,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       },
       orderBy: [{ date: "asc" }, { time: "asc" }],
       include: { service: true, staff: true },
+    }),
+    prisma.blockedSlot.findMany({
+      where: { tenantId, date: { gte: todayItaly } },
+      orderBy: [{ date: "asc" }, { time: "asc" }],
+      select: { id: true, date: true, time: true, endTime: true },
     }),
     // Appuntamenti per il radar (griglia settimanale) — solo se tab agenda
     isAgendaTab
@@ -425,6 +465,94 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           }
         }
       });
+
+      // Le assenze native dello staff non sono appuntamenti fittizi: vengono
+      // sovrapposte alla griglia per rendere visibile la stessa indisponibilità
+      // che il motore usa già per le prenotazioni online.
+      rawShopClosures
+        .filter((closure) => weekDays.some((dayInfo) => dayInfo.date === closure.date))
+        .forEach((closure) => {
+          const startSlot = closure.time || allSlots[0];
+          if (!startSlot) return;
+          const startIndex = allSlots.indexOf(startSlot);
+          if (startIndex < 0) return;
+          const slotsToCover = closure.time
+            ? Math.max(1, Math.ceil((timeToMinutes(closure.endTime || closure.time) - timeToMinutes(startSlot)) / 15))
+            : allSlots.length;
+
+          for (const columnId of cols) {
+            const column = map[closure.date]?.[columnId];
+            if (!column) continue;
+            const shopClosure = {
+              id: `shop-closure-${closure.id}-${columnId}`,
+              date: closure.date,
+              time: closure.time || "ALL_DAY",
+              endTime: closure.endTime,
+              customerName: "CHIUSURA",
+              staffId: columnId === "unassigned" ? null : columnId,
+              _rowSpan: slotsToCover,
+              _shopClosure: true,
+            };
+            if (!Array.isArray(column[startSlot])) column[startSlot] = [];
+            column[startSlot].push(shopClosure);
+            for (let index = 1; index < slotsToCover; index += 1) {
+              const coveredSlot = allSlots[startIndex + index];
+              if (coveredSlot && !column[coveredSlot]) column[coveredSlot] = "COVERED";
+            }
+          }
+        });
+
+      filteredStaff.forEach((staff) => {
+        const staffExceptions = parseShiftExceptions(staff.shiftExceptions);
+
+        staffExceptions.forEach((exception, exceptionIndex) => {
+          if (!weekDays.some((dayInfo) => dayInfo.date === exception.date)) return;
+          if (!map[exception.date]?.[staff.id]) return;
+
+          const isAllDay = exception.type === "ferie";
+          const sourceStart = isAllDay ? timeToMinutes(allSlots[0] || "00:00") : timeToMinutes(exception.start || "00:00");
+          const sourceEnd = isAllDay
+            ? timeToMinutes(allSlots[allSlots.length - 1] || "24:00") + 15
+            : timeToMinutes(exception.end || "00:00");
+          if (sourceEnd <= sourceStart) return;
+
+          const shopClosureIntervals = rawShopClosures
+            .filter((closure) => closure.date === exception.date)
+            .map((closure) => ({
+              start: closure.time ? timeToMinutes(closure.time) : 0,
+              end: closure.time ? timeToMinutes(closure.endTime || closure.time) : 24 * 60,
+            }));
+          const visibleRanges = subtractTimeIntervals(sourceStart, sourceEnd, shopClosureIntervals);
+
+          for (const [rangeIndex, range] of visibleRanges.entries()) {
+            const startSlot = minutesToTime(range.start);
+            const endSlot = minutesToTime(range.end);
+            const startIndex = allSlots.indexOf(startSlot);
+            if (startIndex < 0) continue;
+            const slotsToCover = Math.max(1, Math.ceil((range.end - range.start) / 15));
+            const isUninterruptedAllDay = isAllDay && visibleRanges.length === 1 && range.start === sourceStart && range.end === sourceEnd;
+            const nativeBlock = {
+              id: `native-${staff.id}-${exception.date}-${exception.type}-${exception.start || "all"}-${exceptionIndex}-${rangeIndex}`,
+              date: exception.date,
+              time: isUninterruptedAllDay ? "ALL_DAY" : startSlot,
+              endTime: isUninterruptedAllDay ? null : endSlot,
+              customerName: exception.type === "ferie" ? "FERIE" : exception.type === "pausa" ? "PAUSA" : "PERMESSO",
+              staffId: staff.id,
+              _rowSpan: slotsToCover,
+              _nativeException: exception.type,
+            };
+
+            const column = map[exception.date][staff.id];
+            if (!Array.isArray(column[startSlot])) column[startSlot] = [];
+            column[startSlot].push(nativeBlock);
+
+            for (let index = 1; index < slotsToCover; index += 1) {
+              const coveredSlot = allSlots[startIndex + index];
+              if (coveredSlot && !column[coveredSlot]) column[coveredSlot] = "COVERED";
+            }
+          }
+        });
+      });
     }
 
     const gaps = viewWeekDays.flatMap((dayInfo) => {
@@ -512,7 +640,26 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     app.customerName.includes("FERIE");
 
   const nextAppointment = appointments.find((app) => !isClosure(app)) || null;
-  const currentClosures = appointments.filter((app) => isClosure(app));
+  // Vecchie chiusure restano leggibili e sbloccabili; quelle nuove vivono nel
+  // registro dedicato e non vengono mai trattate come appuntamenti cliente.
+  const legacyClosures = Array.from(
+    new Map(
+      appointments
+        .filter((app) => isClosure(app))
+        .map((app) => [`${app.date}-${app.time}-${app.endTime || ""}-${app.customerName}`, app]),
+    ).values(),
+  );
+  const currentClosures = [
+    ...legacyClosures.map((app) => ({ ...app, source: "legacy" as const })),
+    ...rawShopClosures.map((closure) => ({
+      id: closure.id,
+      date: closure.date,
+      time: closure.time || "ALL_DAY",
+      endTime: closure.endTime,
+      customerName: "CHIUSURA",
+      source: "shop" as const,
+    })),
+  ].sort((first, second) => `${first.date}-${first.time}`.localeCompare(`${second.date}-${second.time}`));
 
 
   // 🌟 CALCOLO INCASSI DINAMICI PREMIUM (usa monthlyAppointments già caricato nel Promise.all)
@@ -584,7 +731,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           // Determina staff + location UNA volta fuori dalla transazione
           const staffWithLocs = await prisma.staff.findMany({
             where: { tenantId, ...(staffIdParam && staffIdParam !== "all" ? { id: staffIdParam } : {}) },
-            include: { locations: { select: { locationId: true } } },
+            select: { id: true, locations: { select: { locationId: true } } },
           });
           const activeLocIds = (await prisma.location.findMany({
             where: { tenantId, isActive: true },
@@ -688,7 +835,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
       // Determina staff + location UNA volta
       const staffWithLocs = await prisma.staff.findMany({
         where: { tenantId, ...(staffIdParam && staffIdParam !== "all" ? { id: staffIdParam } : {}) },
-        include: { locations: { select: { locationId: true } } },
+        select: { id: true, locations: { select: { locationId: true } } },
       });
       const activeLocIds = (await prisma.location.findMany({
         where: { tenantId, isActive: true },
@@ -758,6 +905,116 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
     redirect(redirectUrl);
   }
 
+  async function createShopClosure(formData: FormData) {
+    "use server";
+
+    const date = formData.get("date") as string;
+    const startTime = formData.get("startTime") as string;
+    const endTime = formData.get("endTime") as string;
+    let redirectUrl = `/t/${slug}/admin`;
+    const start = timeToMinutes(startTime || "00:00");
+    const end = timeToMinutes(endTime || "00:00");
+
+    if (!date || !startTime || !endTime || end <= start) {
+      redirect(`/t/${slug}/admin?error=INTERVALLO_NON_VALIDO`);
+    }
+
+    const appointmentsOnDate = await prisma.appointment.findMany({
+      where: {
+        tenantId,
+        date,
+        NOT: [
+          { time: "ALL_DAY" },
+          { customerName: { contains: "PAUSA" } },
+          { customerName: { contains: "FERIE" } },
+          { customerName: { contains: "PERMESSO" } },
+        ],
+      },
+      select: { time: true, endTime: true, service: { select: { duration: true } } },
+    });
+    const hasConflict = appointmentsOnDate.some((appointment) => {
+      const appointmentStart = timeToMinutes(appointment.time);
+      const appointmentEnd = appointment.endTime
+        ? timeToMinutes(appointment.endTime)
+        : appointmentStart + (appointment.service?.duration || 15);
+      return Math.max(start, appointmentStart) < Math.min(end, appointmentEnd);
+    });
+
+    if (hasConflict) {
+      redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
+    } else {
+      const existing = await prisma.blockedSlot.findFirst({
+        where: { tenantId, date, time: startTime, endTime },
+        select: { id: true },
+      });
+      if (!existing) {
+        await prisma.blockedSlot.create({ data: { tenantId, date, time: startTime, endTime } });
+      }
+    }
+
+    revalidatePath(`/t/${slug}/admin`);
+    redirect(redirectUrl);
+  }
+
+  async function createShopHoliday(formData: FormData) {
+    "use server";
+
+    const startDate = formData.get("startDate") as string;
+    const endDate = formData.get("endDate") as string;
+    let redirectUrl = `/t/${slug}/admin`;
+    if (!startDate || !endDate || endDate < startDate) {
+      redirect(`/t/${slug}/admin?error=DATE_NON_VALIDE`);
+    }
+
+    const dates: string[] = [];
+    const cursor = new Date(`${startDate}T12:00:00Z`);
+    const last = new Date(`${endDate}T12:00:00Z`);
+    while (cursor <= last) {
+      dates.push(cursor.toISOString().slice(0, 10));
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+
+    const existingAppointments = await prisma.appointment.count({
+      where: {
+        tenantId,
+        date: { in: dates },
+        NOT: [
+          { time: "ALL_DAY" },
+          { customerName: { contains: "PAUSA" } },
+          { customerName: { contains: "FERIE" } },
+          { customerName: { contains: "PERMESSO" } },
+        ],
+      },
+    });
+    if (existingAppointments > 0) {
+      redirectUrl = `/t/${slug}/admin?error=MULTIPLE_CONFLICTS`;
+    } else {
+      await prisma.$transaction(async (tx) => {
+        for (const date of dates) {
+          const existing = await tx.blockedSlot.findFirst({
+            where: { tenantId, date, time: null, endTime: null },
+            select: { id: true },
+          });
+          if (!existing) await tx.blockedSlot.create({ data: { tenantId, date } });
+        }
+      });
+    }
+
+    revalidatePath(`/t/${slug}/admin`);
+    redirect(redirectUrl);
+  }
+
+  async function unblockShopClosure(formData: FormData) {
+    "use server";
+
+    const closureId = formData.get("closureId") as string;
+    if (closureId) {
+      await prisma.blockedSlot.deleteMany({ where: { id: closureId, tenantId } });
+    }
+    revalidatePath(`/t/${slug}/admin`);
+    redirect(`/t/${slug}/admin`);
+  }
+
   const tabConfig = [
     { id: "agenda", label: "📅 Agenda" },
     { id: "gestione", label: "⚙️ Gestione" },
@@ -779,7 +1036,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </h1>
 
           <div id="tour-header-actions" className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} initialStaffSheetUrl={tenant.staffSheetUrl} locations={locations.map(l => ({ id: l.id, name: l.name }))} slug={slug} />
+            <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} locations={locations.map(l => ({ id: l.id, name: l.name }))} slug={slug} />
             <CustomerDrawer tenantId={tenantId} />
             <AdminDropdownMenu slug={slug} tenantId={tenantId} hasStripe={!!tenant.stripeCustomerId} />
             <TutorialButton showInstallStep />
@@ -794,7 +1051,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
               <div>
                 <p className="font-bold text-sm">
                   {searchParams.error === "MULTIPLE_CONFLICTS"
-                    ? "Conflitto orari: Esistono già appuntamenti programmati nella fascia oraria o periodo selezionato."
+                    ? "Ci sono già clienti prenotati in questo periodo: spostali prima di chiudere il salone."
+                    : searchParams.error === "INTERVALLO_NON_VALIDO"
+                      ? "Scegli un orario di fine successivo all'orario di inizio."
+                      : searchParams.error === "DATE_NON_VALIDE"
+                        ? "Controlla le date della chiusura."
                     : `Errore: ${searchParams.error}`}
                 </p>
               </div>
@@ -985,6 +1246,14 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                   Pausa
                 </span>
                 <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-blue-400/70" />
+                  Permesso
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-orange-400/70" />
+                  Ferie
+                </span>
+                <span className="inline-flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-rose-400/60" />
                   Chiuso
                 </span>
@@ -1079,14 +1348,43 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                                   }}
                                   className="h-full min-h-[32px] sm:min-h-[38px] py-px relative z-10 flex flex-col gap-1"
                                 >
-                                  {appts.map((item: any, itemIdx: number) => (
-                                    <AppointmentBlock
-                                      key={item.id || itemIdx}
-                                      appt={item}
-                                      italianDate={`${dStr}/${m}/${y}`}
-                                      durationInMinutes={(item._rowSpan || 1) * 15}
-                                    />
-                                  ))}
+                                  {appts.map((item: any, itemIdx: number) => {
+                                    if (item._nativeException) {
+                                      const nativeStyle = item._nativeException === "ferie"
+                                        ? "border-orange-500/30 bg-orange-500/10 text-orange-300"
+                                        : item._nativeException === "pausa"
+                                          ? "border-violet-500/30 bg-violet-500/10 text-violet-300"
+                                          : "border-blue-500/30 bg-blue-500/10 text-blue-300";
+                                      const nativeLabel = item._nativeException === "ferie"
+                                        ? "FERIE"
+                                        : item._nativeException === "pausa"
+                                          ? "PAUSA"
+                                          : "PERMESSO";
+                                      const nativeTime = item._nativeException === "ferie" && item.time === "ALL_DAY"
+                                        ? "Tutto il giorno"
+                                        : `${item.time}–${item.endTime}`;
+
+                                      return (
+                                        <div
+                                          key={item.id || itemIdx}
+                                          title={`${nativeLabel} · ${nativeTime}`}
+                                          className={`flex h-full min-h-[44px] w-full flex-col items-center justify-center rounded-xl border p-1 text-center font-bold ${nativeStyle}`}
+                                        >
+                                          <span className="text-xs leading-tight">{nativeLabel}</span>
+                                          <span className="mt-0.5 text-[9px] font-medium opacity-75">{nativeTime}</span>
+                                        </div>
+                                      );
+                                    }
+
+                                    return (
+                                      <AppointmentBlock
+                                        key={item.id || itemIdx}
+                                        appt={item}
+                                        italianDate={`${dStr}/${m}/${y}`}
+                                        durationInMinutes={(item._rowSpan || 1) * 15}
+                                      />
+                                    );
+                                  })}
                                 </div>
                               );
                               return;
@@ -1164,7 +1462,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
                   <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
                     <span>🧭</span>
-                    Chiusure attive
+                    Chiusure generali attive
                   </h2>
 
                   <div className="overflow-y-auto max-h-[220px] custom-scrollbar space-y-2 pr-1">
@@ -1173,6 +1471,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                         const isFerie =
                           app.time === "ALL_DAY" ||
                           app.customerName.includes("FERIE");
+                        const isShopClosure = app.source === "shop";
 
                         return (
                           <div
@@ -1185,7 +1484,9 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                                   isFerie ? "text-orange-400" : "text-slate-300"
                                 }`}
                               >
-                                {isFerie ? "🌴 FERIE" : "☕ PAUSA"}
+                                {isShopClosure
+                                  ? app.time === "ALL_DAY" ? "CHIUSURA GENERALE" : "CHIUSURA TEMPORANEA"
+                                  : isFerie ? "🌴 FERIE" : "☕ PAUSA"}
                               </p>
                               <p className="text-slate-400 text-[10px] uppercase mt-0.5">
                                 {app.date.split("-").reverse().join("/")} •{" "}
@@ -1195,22 +1496,29 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                               </p>
                             </div>
 
-                            <div className="scale-75 origin-right shrink-0">
-                              <DeleteButton
-                                appointmentId={app.id}
-                                customerName={app.customerName}
-                                phone="0000000000"
-                                date={app.date}
-                                time={app.time}
-                                isSpecial={true}
-                              />
-                            </div>
+                            {isShopClosure ? (
+                              <form action={unblockShopClosure} className="shrink-0">
+                                <input type="hidden" name="closureId" value={app.id} />
+                                <button type="submit" className="rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-red-700">Sblocca</button>
+                              </form>
+                            ) : (
+                              <div className="scale-75 origin-right shrink-0">
+                                <DeleteButton
+                                  appointmentId={app.id}
+                                  customerName={app.customerName}
+                                  phone="0000000000"
+                                  date={app.date}
+                                  time={app.time}
+                                  isSpecial={true}
+                                />
+                              </div>
+                            )}
                           </div>
                         );
                       })
                     ) : (
                       <p className="text-slate-500 text-sm italic">
-                        Nessuna pausa o ferie attiva nella settimana visibile.
+                        Nessuna chiusura generale attiva nella settimana visibile.
                       </p>
                     )}
                   </div>
@@ -1219,30 +1527,25 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                 <div>
                   <h2 className="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
                     <span>⚙️</span>
-                    Aggiungi Chiusura / Pausa
+                    Chiusura generale del salone
                   </h2>
+
+                  <div className="mb-5 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3">
+                    <p className="text-xs font-bold text-indigo-200">Ferie, permessi e pause di un collaboratore</p>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-400">Gestiscili da Team → icona dell&apos;orologio accanto al nome. Lì sono salvati sul singolo dipendente e bloccano automaticamente le prenotazioni.</p>
+                  </div>
 
                   <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
                     <h3 className="text-[10px] text-slate-400 font-bold uppercase mb-3">
-                      ☕ Blocca Orari (Pausa)
+                      ☕ Chiusura temporanea (tutto il salone)
                     </h3>
 
                     <form
-                      action={blockTimeRange}
-                      className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
+                      action={createShopClosure}
+                      className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full"
                     >
                       <input type="hidden" name="blockType" value="PAUSA" />
-                      {staffList.length > 0 && (
-                        <select
-                          name="staffId"
-                          className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
-                        >
-                          <option value="all">Tutto lo staff</option>
-                          {staffList.map((s) => (
-                            <option key={s.id} value={s.id}>{s.name}</option>
-                          ))}
-                        </select>
-                      )}
+                      <input type="hidden" name="staffId" value="all" />
                       <input
                         type="date"
                         name="date"
@@ -1275,89 +1578,21 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
                         type="submit"
                         className="col-span-2 sm:col-span-1 bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl text-sm"
                       >
-                        Blocca
-                      </button>
-                    </form>
-                  </div>
-
-                  <div className="mb-6 pb-6 border-b border-[#1e2b4a]">
-                    <h3 className="text-[10px] text-blue-400 font-bold uppercase mb-3">
-                      📋 Permesso Retribuito
-                    </h3>
-
-                    <form
-                      action={blockTimeRange}
-                      className="grid grid-cols-2 sm:grid-cols-6 gap-2 w-full"
-                    >
-                      <input type="hidden" name="blockType" value="PERMESSO" />
-                      {staffList.length > 0 && (
-                        <select
-                          name="staffId"
-                          className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none text-sm"
-                        >
-                          <option value="all">Tutto lo staff</option>
-                          {staffList.map((s) => (
-                            <option key={`p-${s.id}`} value={s.id}>{s.name}</option>
-                          ))}
-                        </select>
-                      )}
-                      <input
-                        type="date"
-                        name="date"
-                        required
-                        defaultValue={todayItaly}
-                        className="col-span-2 sm:col-span-1 bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-3 py-2 focus:outline-none text-sm"
-                        style={{ colorScheme: "dark" }}
-                      />
-                      <select
-                        name="startTime"
-                        required
-                        className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
-                      >
-                        <option value="">Dalle</option>
-                        {allSlots.map((s) => (
-                          <option key={`ps-${s}`} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      <select
-                        name="endTime"
-                        required
-                        className="bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 text-sm"
-                      >
-                        <option value="">Alle</option>
-                        {allSlots.map((s) => (
-                          <option key={`pe-${s}`} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      <button
-                        type="submit"
-                        className="col-span-2 sm:col-span-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold px-4 py-2 rounded-xl text-sm"
-                      >
-                        Registra
+                        Chiudi salone
                       </button>
                     </form>
                   </div>
 
                   <div>
                     <h3 className="text-[10px] text-orange-400 font-bold uppercase mb-2">
-                      🌴 Ferie (Dal - Al)
+                      🌴 Chiusura intera (dal - al)
                     </h3>
 
                     <form
-                      action={blockHoliday}
+                      action={createShopHoliday}
                       className="flex flex-wrap sm:flex-nowrap gap-2 w-full"
                     >
-                      {staffList.length > 0 && (
-                        <select
-                          name="staffId"
-                          className="w-full bg-[#131c31] border border-[#1e2b4a] text-white rounded-xl px-2 py-2 focus:outline-none focus:border-orange-500/50 text-sm"
-                        >
-                          <option value="all">Tutto lo staff</option>
-                          {staffList.map((s) => (
-                            <option key={s.id} value={s.id}>{s.name}</option>
-                          ))}
-                        </select>
-                      )}
+                      <input type="hidden" name="staffId" value="all" />
                       <input
                         type="date"
                         name="startDate"

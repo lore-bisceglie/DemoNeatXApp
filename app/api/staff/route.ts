@@ -33,7 +33,16 @@ export async function GET(req: Request) {
 
     const staff = await prisma.staff.findMany({
       where,
-      include: {
+      // Keep the response compatible with databases that have not received the
+      // optional Magic Link workflow columns yet.
+      select: {
+        id: true,
+        name: true,
+        tenantId: true,
+        baseSchedule: true,
+        shiftExceptions: true,
+        commissionRate: true,
+        locationId: true,
         services: true,
         locations: { select: { locationId: true } },
       },
@@ -107,10 +116,17 @@ export async function POST(req: Request) {
           ? { connect: selectedServices.map((sid: string) => ({ id: sid })) }
           : undefined,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        tenantId: true,
+        baseSchedule: true,
+        shiftExceptions: true,
+        commissionRate: true,
+        locationId: true,
         services: true,
         locations: { select: { locationId: true } },
-      }
+      },
     });
 
     return NextResponse.json(newStaff);
@@ -179,10 +195,17 @@ export async function PUT(req: Request) {
     const updatedStaff = await prisma.staff.update({
       where: { id: staffId },
       data,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        tenantId: true,
+        baseSchedule: true,
+        shiftExceptions: true,
+        commissionRate: true,
+        locationId: true,
         services: true,
         locations: { select: { locationId: true } },
-      }
+      },
     });
 
     return NextResponse.json(updatedStaff);

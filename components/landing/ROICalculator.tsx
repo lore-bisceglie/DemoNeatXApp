@@ -35,7 +35,7 @@ export default function ROICalculator({ show, onClose }: ROICalculatorProps) {
             <LineChart size={27} />
           </div>
           <h3 className="text-2xl font-extrabold text-white mb-2">Quanti soldi perdi per i No-Show?</h3>
-          <p className="text-slate-400 text-sm">Scopri quanto incasso extra genererai attivando i promemoria automatici NeatX.</p>
+          <p className="text-slate-400 text-sm">Stima quanto valore puoi proteggere riducendo i no-show con acconti online e prenotazioni più ordinate.</p>
         </div>
 
         <div className="space-y-6 mb-8">

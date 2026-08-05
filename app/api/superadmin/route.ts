@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const { 
       name, slug, template, password, ownerEmail,
       phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
-      logoUrl, themeColor, staffSheetUrl
+      logoUrl, themeColor
     } = body;
 
     if (!name || !slug || !template) {
@@ -169,7 +169,6 @@ export async function POST(req: Request) {
         logoUrl: logoUrl || null,
         themeColor: themeColor || 'cyan',
         ownerEmail: ownerEmail || null,
-        staffSheetUrl: staffSheetUrl || null,
         trialStatus: "trial_active",
         isDemoData: false,
         template: template || 'barbiere',
@@ -272,7 +271,7 @@ export async function PATCH(req: Request) {
 
     const allowedFields = [
       'name', 'ownerEmail', 'phone', 'address', 'instagramUrl', 'mapsLink',
-      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor', 'staffSheetUrl',
+      'description', 'openTime', 'closeTime', 'logoUrl', 'themeColor',
     ];
 
     const updateData: Record<string, any> = {};

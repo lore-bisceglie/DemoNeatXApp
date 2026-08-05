@@ -21,7 +21,7 @@ export default function PricingSection() {
 
         <ScrollReveal direction="up">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Scegli il piano per il tuo Salone</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Scegli la formula giusta per il tuo Salone</h2>
             <p className="text-slate-400 font-medium">L&apos;investimento più intelligente per la tua attività.</p>
           </div>
         </ScrollReveal>
@@ -82,7 +82,7 @@ export default function PricingSection() {
           <ScrollReveal direction="right">
           <div className="glow-card bg-gradient-to-b from-amber-500/10 to-[#0b1221] p-8 rounded-3xl border border-amber-500/30 flex flex-col transform transition-transform hover:scale-105 z-10 mt-0 md:mt-4 relative overflow-hidden h-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/20 blur-[50px] pointer-events-none animate-pulse-slow"></div>
-            <h3 className="text-xl font-bold text-amber-500 mb-2 flex items-center gap-2">Senza Pensieri <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] uppercase tracking-wider border border-amber-500/30">VIP</span></h3>
+            <h3 className="text-xl font-bold text-amber-500 mb-2 flex items-center gap-2">Servizio Senza Pensieri <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] uppercase tracking-wider border border-amber-500/30">VIP</span></h3>
             <div className="text-4xl font-extrabold text-white mb-1">149€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
             <div className="text-amber-500 font-bold text-sm mb-6">1490€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 298€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-300 font-medium relative z-10">

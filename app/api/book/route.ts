@@ -8,6 +8,8 @@ import { isTenantAdminCookieValid } from "@/lib/auth";
 import { appointmentConflictsWithSlot } from "@/lib/booking-conflict";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 import { parseDaySchedule } from "@/lib/opening-hours";
+import { staffCanCoverBookingSlot } from "@/lib/staff-booking";
+import { shopClosureBlocksSlot } from "@/lib/shop-closures";
 
 const timeToMins = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const minsToTime = (m: number) => { const h = Math.floor(m / 60).toString().padStart(2, '0'); const min = (m % 60).toString().padStart(2, '0'); return `${h}:${min}`; };
@@ -182,13 +184,62 @@ export async function POST(request: Request) {
       }
     }
 
+    // The store hours are a hard constraint. We evaluate them before staff
+    // availability so legacy collaborators can safely inherit them.
+    const bookingLocation = targetLocationId ? await prisma.location.findUnique({
+      where: { id: targetLocationId },
+      select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true },
+    }) : bookingTenant;
+    if (!bookingLocation) {
+      return NextResponse.json({ error: "Sede non trovata" }, { status: 404 });
+    }
+
+    const startMins = timeToMins(time);
+    const safeDuration = service.duration;
+    const endMins = startMins + safeDuration;
+    const endTime = minsToTime(endMins);
+    const dayOfWeek = new Date(`${date}T12:00:00Z`).getUTCDay();
+    const storeDaySchedule = parseDaySchedule(
+      bookingLocation.closedDays,
+      dayOfWeek,
+      bookingLocation.openTime,
+      bookingLocation.closeTime,
+      bookingLocation.breakStart,
+      bookingLocation.breakEnd,
+    );
+    if (storeDaySchedule.isClosed) {
+      return NextResponse.json({ error: "Sede chiusa in questo giorno" }, { status: 400 });
+    }
+    const storeOpenMins = timeToMins(storeDaySchedule.open);
+    const storeCloseMins = timeToMins(storeDaySchedule.close);
+    if (startMins < storeOpenMins || endMins > storeCloseMins) {
+      return NextResponse.json({ error: "Orario fuori dagli orari di apertura della sede" }, { status: 400 });
+    }
+    if (storeDaySchedule.breakStart && storeDaySchedule.breakEnd) {
+      const breakStartMins = timeToMins(storeDaySchedule.breakStart);
+      const breakEndMins = timeToMins(storeDaySchedule.breakEnd);
+      if (startMins < breakEndMins && endMins > breakStartMins) {
+        return NextResponse.json({ error: "Orario in pausa della sede" }, { status: 400 });
+      }
+    }
+
+    const shopClosures = await prisma.blockedSlot.findMany({
+      where: { tenantId, date },
+      select: { time: true, endTime: true },
+    });
+    if (shopClosures.some((closure) => shopClosureBlocksSlot(closure, startMins, endMins))) {
+      return NextResponse.json({ error: "Il salone non è disponibile in questo orario." }, { status: 409 });
+    }
+    const fallbackStaffBlocks = [{ start: storeDaySchedule.open, end: storeDaySchedule.close }];
+
     // 🌟 VALIDAZIONE STAFF IN SEDE
     let chosenStaffId = explicitStaffId;
     let candidateStaffIds: string[] = [];
+    let candidateStaff: Array<{ id: string; baseSchedule: string | null; shiftExceptions: string | null }> = [];
     if (explicitStaffId) {
       const staff = await prisma.staff.findUnique({
         where: { id: explicitStaffId },
-        select: { id: true, tenantId: true, locationId: true, services: { select: { id: true } }, locations: { select: { locationId: true } } },
+        select: { id: true, tenantId: true, locationId: true, baseSchedule: true, shiftExceptions: true, services: { select: { id: true } }, locations: { select: { locationId: true } } },
       });
       if (!staff || staff.tenantId !== tenantId || !staff.services.some(s => s.id === serviceId)) {
         return NextResponse.json({ error: "Staff non valido per questo servizio" }, { status: 400 });
@@ -200,6 +251,16 @@ export async function POST(request: Request) {
       if (!worksHere) {
         return NextResponse.json({ error: "Staff non opera in questa sede" }, { status: 400 });
       }
+      if (!staffCanCoverBookingSlot({
+        staff,
+        date,
+        startMinutes: startMins,
+        endMinutes: endMins,
+        fallbackBlocks: fallbackStaffBlocks,
+      })) {
+        return NextResponse.json({ error: "L'operatore non è disponibile in questo orario." }, { status: 409 });
+      }
+      candidateStaff = [staff];
       chosenStaffId = explicitStaffId;
     } else {
       // Auto-assegna staff disponibile in questa sede per questo servizio
@@ -216,18 +277,13 @@ export async function POST(request: Request) {
       }
       const capableStaff = await prisma.staff.findMany({
         where: staffWhere,
-        select: { id: true },
+        select: { id: true, baseSchedule: true, shiftExceptions: true },
       });
       if (capableStaff.length > 0) {
         candidateStaffIds = capableStaff.map((member) => member.id);
+        candidateStaff = capableStaff;
       }
     }
-
-    // 🌟 CALCOLO FINE SERVIZIO
-    const startMins = timeToMins(time);
-    const safeDuration = service.duration;
-    const endMins = startMins + safeDuration;
-    const endTime = minsToTime(endMins);
 
     // 🌟 VERIFICA SOVRAPPOSIZIONE SOLO PER QUESTA SEDE
     const overlappingApps = await prisma.appointment.findMany({
@@ -242,17 +298,23 @@ export async function POST(request: Request) {
     });
 
     if (!explicitStaffId && candidateStaffIds.length > 0) {
-      chosenStaffId = candidateStaffIds.find((candidateId) =>
-        !overlappingApps.some((app) =>
+      chosenStaffId = candidateStaff.find((candidate) =>
+        staffCanCoverBookingSlot({
+          staff: candidate,
+          date,
+          startMinutes: startMins,
+          endMinutes: endMins,
+          fallbackBlocks: fallbackStaffBlocks,
+        }) && !overlappingApps.some((app) =>
           appointmentConflictsWithSlot(
             app,
             startMins,
             endMins,
-            candidateId,
+            candidate.id,
             targetLocationId,
           ),
         ),
-      );
+      )?.id;
       if (!chosenStaffId) {
         return NextResponse.json({ error: "Nessun operatore disponibile in questo orario." }, { status: 409 });
       }
@@ -272,38 +334,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Spiacenti, qualcuno ha appena prenotato questo orario!" }, { status: 400 });
     }
 
-    // 🌟 VERIFICA ORARI SEDE
-    const location = targetLocationId ? await prisma.location.findUnique({
-      where: { id: targetLocationId },
-      select: { openTime: true, closeTime: true, breakStart: true, breakEnd: true, closedDays: true },
-    }) : bookingTenant;
-    if (location) {
-      const dayOfWeek = new Date(date + 'T12:00:00Z').getUTCDay();
-      const daySchedule = parseDaySchedule(
-        location.closedDays,
-        dayOfWeek,
-        location.openTime,
-        location.closeTime,
-        location.breakStart,
-        location.breakEnd,
-      );
-      if (daySchedule.isClosed) {
-        return NextResponse.json({ error: "Sede chiusa in questo giorno" }, { status: 400 });
-      }
-      const openMins = timeToMins(daySchedule.open);
-      const closeMins = timeToMins(daySchedule.close);
-      if (startMins < openMins || endMins > closeMins) {
-        return NextResponse.json({ error: "Orario fuori dagli orari di apertura della sede" }, { status: 400 });
-      }
-      if (daySchedule.breakStart && daySchedule.breakEnd) {
-        const breakStartMins = timeToMins(daySchedule.breakStart);
-        const breakEndMins = timeToMins(daySchedule.breakEnd);
-        if (startMins < breakEndMins && endMins > breakStartMins) {
-          return NextResponse.json({ error: "Orario in pausa della sede" }, { status: 400 });
-        }
-      }
-    }
-
     const cleanPhone = customerPhone ? customerPhone.replace(/\D/g, '') : "0000000000";
     const phoneRegex = /^[0-9]{8,15}$/;
 
@@ -320,30 +350,74 @@ export async function POST(request: Request) {
 
     const newCancelToken = crypto.randomUUID();
 
-    const newAppointment = await prisma.$transaction(
+    const bookingResult = await prisma.$transaction(
       async (tx) => {
-        const currentAppointments = await tx.appointment.findMany({
-          where: { date, tenantId },
-          select: {
-            time: true,
-            endTime: true,
-            customerName: true,
-            staffId: true,
-            locationId: true,
-          },
-        });
+        const [currentAppointments, currentShopClosures] = await Promise.all([
+          tx.appointment.findMany({
+            where: { date, tenantId },
+            select: {
+              time: true,
+              endTime: true,
+              customerName: true,
+              staffId: true,
+              locationId: true,
+            },
+          }),
+          tx.blockedSlot.findMany({
+            where: { tenantId, date },
+            select: { time: true, endTime: true },
+          }),
+        ]);
+        if (currentShopClosures.some((closure) => shopClosureBlocksSlot(closure, startMins, endMins))) {
+          return { status: "shop-closed" as const };
+        }
+        let finalStaffId = chosenStaffId;
+
+        if (explicitStaffId) {
+          const currentStaff = await tx.staff.findUnique({
+            where: { id: explicitStaffId },
+            select: { baseSchedule: true, shiftExceptions: true },
+          });
+          if (!currentStaff || !staffCanCoverBookingSlot({
+            staff: currentStaff,
+            date,
+            startMinutes: startMins,
+            endMinutes: endMins,
+            fallbackBlocks: fallbackStaffBlocks,
+          })) {
+            return { status: "staff-unavailable" as const };
+          }
+        } else if (candidateStaffIds.length > 0) {
+          const currentStaff = await tx.staff.findMany({
+            where: { id: { in: candidateStaffIds } },
+            select: { id: true, baseSchedule: true, shiftExceptions: true },
+          });
+          finalStaffId = currentStaff.find((candidate) =>
+            staffCanCoverBookingSlot({
+              staff: candidate,
+              date,
+              startMinutes: startMins,
+              endMinutes: endMins,
+              fallbackBlocks: fallbackStaffBlocks,
+            }) && !currentAppointments.some((app) =>
+              appointmentConflictsWithSlot(app, startMins, endMins, candidate.id, targetLocationId),
+            ),
+          )?.id;
+          if (!finalStaffId) return { status: "staff-unavailable" as const };
+        }
+
         const slotTaken = currentAppointments.some((app) =>
           appointmentConflictsWithSlot(
             app,
             startMins,
             endMins,
-            chosenStaffId,
+            finalStaffId,
             targetLocationId,
           ),
         );
-        if (slotTaken) throw new Error("SLOT_TAKEN");
+        if (slotTaken) return { status: "slot-taken" as const };
 
-        return tx.appointment.create({
+        const appointment = await tx.appointment.create({
           data: {
             customerName: customerName.trim(),
             customerPhone: cleanPhone,
@@ -357,26 +431,39 @@ export async function POST(request: Request) {
             isPaid: isPlaygroundDemo && paymentMethod === "online",
             paymentStatus:
               isPlaygroundDemo && paymentMethod === "online" ? "PAID" : "NONE",
-            staffId: chosenStaffId || undefined,
+            staffId: finalStaffId || undefined,
             locationId: targetLocationId,
           },
         });
+        return { status: "created" as const, appointment };
       },
       { isolationLevel: "Serializable" }
     ).catch((error) => {
-      if (
-        (error instanceof Error && error.message === "SLOT_TAKEN") ||
-        (typeof error === "object" && error !== null && "code" in error && error.code === "P2034")
-      ) return null;
+      if (typeof error === "object" && error !== null && "code" in error && error.code === "P2034") {
+        return { status: "slot-taken" as const };
+      }
       throw error;
     });
 
-    if (!newAppointment) {
+    if (bookingResult.status === "staff-unavailable") {
+      return NextResponse.json(
+        { error: "L'operatore non è più disponibile in questo orario. Scegli un altro appuntamento." },
+        { status: 409 },
+      );
+    }
+    if (bookingResult.status === "shop-closed") {
+      return NextResponse.json(
+        { error: "Il salone non è più disponibile in questo orario. Scegli un altro appuntamento." },
+        { status: 409 },
+      );
+    }
+    if (bookingResult.status === "slot-taken") {
       return NextResponse.json(
         { error: "Spiacenti, qualcuno ha appena prenotato questo orario!" },
         { status: 409 }
       );
     }
+    const newAppointment = bookingResult.appointment;
 
     await logActivity({
       action: "CREATE_APPOINTMENT",

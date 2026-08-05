@@ -1,15 +1,16 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
-import { fetchStaffSchedule } from "@/lib/sheets";
 import {
   parseBaseSchedule,
   parseShiftExceptions,
   getDayScheduleForDate,
+  dayIndexToName,
   timeToMins,
   minsToTime,
 } from "@/lib/schedule";
 import { parseDaySchedule } from "@/lib/opening-hours";
+import { shopClosureBlocksSlot } from "@/lib/shop-closures";
 
 export type StaffDaySchedule = {
   isOff: boolean;
@@ -28,6 +29,7 @@ export type AvailabilityResult = {
   slots: string[];
   isHoliday: boolean;
   isClosedDay?: boolean;
+  isShopClosed?: boolean;
   locationId: string | null;
 };
 
@@ -97,47 +99,10 @@ export async function getAvailabilityForDate({
     throw new AvailabilityError("Data oltre il limite prenotabile", 400);
   }
 
-  const service = await prisma.service.findFirst({
-    where: { id: serviceId, tenantId },
-    select: { duration: true },
-  });
-  if (!service || service.duration < 5 || service.duration > 720) {
-    throw new AvailabilityError("Servizio non valido", 400);
-  }
-  const duration = service.duration;
-
-  const activeLocations = await prisma.location.findMany({
-    where: { tenantId, isActive: true },
-    select: { id: true },
-    take: 2,
-  });
-
-  if (activeLocations.length > 1 && !locationId) {
-    throw new AvailabilityError("Parametro locationId obbligatorio per tenant multi-sede", 400);
-  }
-
-  const effectiveLocationId = locationId || activeLocations[0]?.id || null;
-
-  let location: any = null;
-  if (effectiveLocationId) {
-    location = await prisma.location.findFirst({
-      where: { id: effectiveLocationId, tenantId },
-      select: {
-        id: true,
-        openTime: true,
-        closeTime: true,
-        breakStart: true,
-        breakEnd: true,
-        closedDays: true,
-        staffSheetUrl: true,
-        isActive: true,
-      },
-    });
-    if (!location || !location.isActive) {
-      throw new AvailabilityError("Sede non trovata o inattiva", 404);
-    }
-  } else {
-    const tenant = await prisma.tenant.findUnique({
+  // These reads are independent. Running them together removes two database
+  // round trips from the hot availability path without changing its rules.
+  const [tenant, appointments, serviceWithStaff, shopClosures] = await Promise.all([
+    prisma.tenant.findUnique({
       where: { id: tenantId },
       select: {
         openTime: true,
@@ -145,11 +110,70 @@ export async function getAvailabilityForDate({
         breakStart: true,
         breakEnd: true,
         closedDays: true,
-        staffSheetUrl: true,
+        locations: {
+          where: { isActive: true },
+          select: {
+            id: true,
+            openTime: true,
+            closeTime: true,
+            breakStart: true,
+            breakEnd: true,
+            closedDays: true,
+          },
+        },
       },
-    });
-    if (!tenant) throw new AvailabilityError("Tenant non trovato", 404);
-    location = { ...tenant, isActive: true };
+    }),
+    prisma.appointment.findMany({
+      where: { date, tenantId },
+      select: {
+        time: true,
+        endTime: true,
+        customerName: true,
+        staffId: true,
+        locationId: true,
+      },
+    }),
+    prisma.service.findFirst({
+      where: { id: serviceId, tenantId },
+      select: {
+        duration: true,
+        staff: {
+          select: {
+            id: true,
+            name: true,
+            baseSchedule: true,
+            shiftExceptions: true,
+            locationId: true,
+            locations: { select: { locationId: true } },
+          },
+        },
+      },
+    }),
+    prisma.blockedSlot.findMany({
+      where: { tenantId, date },
+      select: { time: true, endTime: true },
+    }),
+  ]);
+
+  if (!tenant) throw new AvailabilityError("Tenant non trovato", 404);
+  const activeLocations = tenant.locations;
+
+  if (activeLocations.length > 1 && !locationId) {
+    throw new AvailabilityError("Parametro locationId obbligatorio per tenant multi-sede", 400);
+  }
+
+  const effectiveLocationId = locationId || activeLocations[0]?.id || null;
+
+  let location: Pick<
+    NonNullable<typeof tenant>,
+    "openTime" | "closeTime" | "breakStart" | "breakEnd" | "closedDays"
+  > = tenant;
+  if (effectiveLocationId) {
+    const selectedLocation = activeLocations.find((item) => item.id === effectiveLocationId);
+    if (!selectedLocation) {
+      throw new AvailabilityError("Sede non trovata o inattiva", 404);
+    }
+    location = selectedLocation;
   }
 
   const dayOfWeek = requestedDate.getUTCDay();
@@ -173,17 +197,6 @@ export async function getAvailabilityForDate({
 
   const openTime = timeToMins(daySchedule.open);
   const closeTime = timeToMins(daySchedule.close);
-
-  const appointments = await prisma.appointment.findMany({
-    where: { date, tenantId },
-    select: {
-      time: true,
-      endTime: true,
-      customerName: true,
-      staffId: true,
-      locationId: true,
-    },
-  });
 
   const holidayAppointments = appointments.filter(
     (appointment) =>
@@ -231,21 +244,19 @@ export async function getAvailabilityForDate({
     shiftExceptions: string | null;
   }[] = [];
 
-  const serviceWithStaff = await prisma.service.findFirst({
-    where: { id: serviceId, tenantId },
-    include: {
-      staff: {
-        select: {
-          id: true,
-          name: true,
-          baseSchedule: true,
-          shiftExceptions: true,
-          locationId: true,
-          locations: { select: { locationId: true } },
-        },
-      },
-    },
-  });
+  if (!serviceWithStaff || serviceWithStaff.duration < 5 || serviceWithStaff.duration > 720) {
+    throw new AvailabilityError("Servizio non valido", 400);
+  }
+
+  if (shopClosures.some((closure) => closure.time === null)) {
+    return {
+      slots: [],
+      isHoliday: false,
+      isShopClosed: true,
+      locationId: effectiveLocationId,
+    };
+  }
+  const duration = serviceWithStaff.duration;
 
   if (serviceWithStaff && serviceWithStaff.staff.length > 0) {
     const filteredStaff = serviceWithStaff.staff.filter((staff) => {
@@ -292,21 +303,29 @@ export async function getAvailabilityForDate({
   }
 
   const staffSchedules: Record<string, StaffDaySchedule> = {};
+  const staffOnNativeHoliday = new Set<string>();
   for (const staff of allStaff) {
     const baseSchedule = parseBaseSchedule(staff.baseSchedule);
     const exceptions = parseShiftExceptions(staff.shiftExceptions);
-    const exception = exceptions.find((item) => item.date === date);
-
+    if (exceptions.some((item) => item.date === date && item.type === "ferie")) {
+      staffOnNativeHoliday.add(staff.id);
+    }
     if (Object.keys(baseSchedule).length > 0) {
       const dayResult = getDayScheduleForDate(baseSchedule, exceptions, date);
       staffSchedules[staff.id] = dayResult.active
         ? { isOff: false, shifts: dayResult.blocks }
         : { isOff: true, shifts: [] };
-    } else if (location.staffSheetUrl) {
-      const sheetSchedule = await fetchStaffSchedule(location.staffSheetUrl, staff.name, date);
-      if (sheetSchedule) staffSchedules[staff.id] = sheetSchedule;
-    } else if (exception && exception.type === "ferie") {
-      staffSchedules[staff.id] = { isOff: true, shifts: [] };
+    } else if (exceptions.some((item) => item.date === date)) {
+      // Compatibilità per collaboratori creati prima degli orari nativi:
+      // usa l'orario della sede come base e applica comunque l'eccezione.
+      const fallbackDay = dayIndexToName(requestedDate.getUTCDay());
+      const fallbackSchedule = {
+        [fallbackDay]: { active: true, blocks: [{ start: daySchedule.open, end: daySchedule.close }] },
+      };
+      const dayResult = getDayScheduleForDate(fallbackSchedule, exceptions, date);
+      staffSchedules[staff.id] = dayResult.active
+        ? { isOff: false, shifts: dayResult.blocks }
+        : { isOff: true, shifts: [] };
     }
   }
 
@@ -321,10 +340,13 @@ export async function getAvailabilityForDate({
   ) {
     const potentialStart = currentSlotMins;
     const potentialEnd = potentialStart + duration;
+    if (shopClosures.some((closure) => shopClosureBlocksSlot(closure, potentialStart, potentialEnd))) {
+      continue;
+    }
     let availableStaffCount = 0;
 
     for (const staffId of capableStaffIds) {
-      if (staffOnHoliday.has(staffId)) continue;
+      if (staffOnHoliday.has(staffId) || staffOnNativeHoliday.has(staffId)) continue;
 
       if (staffSchedules[staffId]) {
         const schedule = staffSchedules[staffId];
@@ -336,7 +358,11 @@ export async function getAvailabilityForDate({
           return potentialStart >= shiftStart && potentialEnd <= shiftEnd;
         });
         if (!withinShift) continue;
-      } else if (breakStartMins !== null && breakEndMins !== null) {
+      }
+
+      // The shop break is an absolute constraint. It must apply whether the
+      // staff member inherits store hours or has a custom weekly schedule.
+      if (breakStartMins !== null && breakEndMins !== null) {
         if (Math.max(potentialStart, breakStartMins) < Math.min(potentialEnd, breakEndMins)) {
           continue;
         }
@@ -388,7 +414,9 @@ export async function getAvailabilityForDate({
     );
   }
 
-  const isHoliday = capableStaffIds.length > 0 && capableStaffIds.every((id) => staffOnHoliday.has(id));
+  const isHoliday = capableStaffIds.length > 0 && capableStaffIds.every(
+    (id) => staffOnHoliday.has(id) || staffOnNativeHoliday.has(id),
+  );
 
   return {
     slots: availableSlots,

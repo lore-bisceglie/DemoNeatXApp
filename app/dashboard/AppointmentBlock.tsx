@@ -34,7 +34,8 @@ export default function AppointmentBlock({
   const isWalkIn = appt.source === "WALK_IN";
   const isPausa = appt.customerName.includes("PAUSA");
   const isFerie = appt.customerName.includes("FERIE");
-  const isSpecial = isPausa || isFerie;
+  const isShopClosure = Boolean(appt._shopClosure);
+  const isSpecial = isPausa || isFerie || isShopClosure;
 
   const rowSpan = Math.ceil(durationInMinutes / 15);
   const textClass = rowSpan > 1 ? "text-sm" : "text-xs";
@@ -52,6 +53,10 @@ export default function AppointmentBlock({
   if (isFerie) {
     blockClass =
       "bg-orange-500/10 border-orange-500/30 text-orange-400 hover:bg-orange-500/20";
+  }
+  if (isShopClosure) {
+    blockClass =
+      "bg-rose-500/10 border-rose-500/30 text-rose-300 hover:bg-rose-500/20";
   }
   if (isPaid && !isSpecial) {
     blockClass =
@@ -152,7 +157,14 @@ export default function AppointmentBlock({
         className={`w-full flex flex-col items-center justify-center rounded-xl font-bold border p-1 text-center truncate transition-all relative z-10 ${blockClass} ${textClass} h-full min-h-[44px]`}
         title={`${appt.customerName}`}
       >
-        {isFerie ? (
+        {isShopClosure ? (
+          <>
+            <span className="text-sm mb-1">CHIUSURA</span>
+            <span className="truncate w-full whitespace-normal leading-tight">
+              {appt.time === "ALL_DAY" ? "Tutto il giorno" : `${appt.time} – ${appt.endTime}`}
+            </span>
+          </>
+        ) : isFerie ? (
           <>
             <span className="text-sm mb-1">FERIE</span>
             <span className="truncate w-full whitespace-normal leading-tight">
@@ -196,7 +208,7 @@ export default function AppointmentBlock({
             </button>
 
             <h3 className="text-white font-extrabold text-2xl mb-1">
-              {appt.customerName}
+              {isShopClosure ? "Chiusura del salone" : appt.customerName}
             </h3>
             <p className="text-slate-400 text-sm mb-2">
               <span className="text-[#00b4ff] font-bold">
@@ -336,16 +348,22 @@ export default function AppointmentBlock({
                   />
                 </div>
               )}
-              <div className="w-full [&>button]:w-full [&>button]:flex [&>button]:justify-center">
-                <DeleteButton
-                  appointmentId={appt.id}
-                  customerName={appt.customerName}
-                  phone={appt.customerPhone}
-                  date={italianDate}
-                  time={appt.time}
-                  isSpecial={isSpecial}
-                />
-              </div>
+              {isShopClosure ? (
+                <p className="rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-center text-xs font-bold text-rose-200">
+                  Per riaprire il salone usa “Sblocca” nel riquadro delle chiusure.
+                </p>
+              ) : (
+                <div className="w-full [&>button]:w-full [&>button]:flex [&>button]:justify-center">
+                  <DeleteButton
+                    appointmentId={appt.id}
+                    customerName={appt.customerName}
+                    phone={appt.customerPhone}
+                    date={italianDate}
+                    time={appt.time}
+                    isSpecial={isSpecial}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>,

@@ -76,7 +76,6 @@ export async function PUT(
       breakStart,
       breakEnd,
       closedDays,
-      staffSheetUrl,
       weekSchedule,
     } = body;
 
@@ -154,7 +153,6 @@ export async function PUT(
               ? serializeWeekSchedule(weekSchedule as WeekSchedule)
               : serializeClosedDays(resolvedClosedDays))
           : location.closedDays,
-        staffSheetUrl: staffSheetUrl ?? location.staffSheetUrl,
       },
       include: { settings: true },
     });

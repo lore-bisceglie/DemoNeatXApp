@@ -61,7 +61,6 @@ export async function GET(request: Request) {
         breakStart: loc.breakStart,
         breakEnd: loc.breakEnd,
         closedDays: loc.closedDays,
-        staffSheetUrl: loc.staffSheetUrl,
         tenantId: loc.tenantId,
         settings: loc.settings,
         _count: {
@@ -126,7 +125,6 @@ export async function POST(request: Request) {
       breakStart,
       breakEnd,
       closedDays,
-      staffSheetUrl,
       weekSchedule,
     } = body;
 
@@ -196,7 +194,6 @@ export async function POST(request: Request) {
         breakStart: resolvedBreakStart,
         breakEnd: resolvedBreakEnd,
         closedDays: resolvedClosedDays,
-        staffSheetUrl,
         tenantId: tenant.id,
       },
     });
@@ -227,7 +224,7 @@ export async function POST(request: Request) {
             isActive: true,
           })),
         });
-      } catch (_e) {
+      } catch {
         // Ignore duplicates
       }
     }

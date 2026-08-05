@@ -29,9 +29,9 @@ const FEATURE_CARDS = [
   },
   {
     icon: CalendarSync,
-    title: "Gestione Staff 360°",
+    title: "Un'app per ogni dipendente",
     description:
-      "Sincronizza i turni da Google Sheets o imposta ferie e pause pranzo direttamente nel pannello. L'agenda mostrerà solo gli slot realmente liberi.",
+      "Imposti i turni. Ogni collaboratore apre il suo link dal telefono, vede solo la propria agenda e richiede ferie o permessi. Tu approvi e gli slot si aggiornano subito.",
     accent: "text-blue-400",
     border: "hover:border-blue-400/50",
   },
@@ -45,7 +45,7 @@ const FEATURE_CARDS = [
   },
   {
     icon: FileSpreadsheet,
-    title: "Foglio presenze per il commercialista",
+    title: "CSV presenze per il commercialista",
     description:
       "Un click e NeatX genera un CSV con lo spaccato giornaliero di ogni dipendente: ore teoriche, ferie, permessi e totale mensile.",
     accent: "text-rose-400",
@@ -63,7 +63,7 @@ export default function FeaturesSection() {
             Il sistema operativo dell&apos;agenda
           </div>
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">Meno messaggi. Più slot pieni.</h2>
-          <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX non è solo una pagina di prenotazione: è un gestionale completo che copre dal primo click del cliente fino alla busta paga dei dipendenti.</p>
+          <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX non è solo una pagina di prenotazione: è un gestionale completo che copre dal primo click del cliente fino al report presenze pronto per il commercialista.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -12,7 +12,7 @@ const HERO_METRICS = [
 
 const TRUST_POINTS = [
   "Pagina prenotazioni generata in automatico",
-  "Turni staff sincronizzati da Google Sheet",
+  "Ogni dipendente ha la sua agenda personale",
   "Ore scaricabili per il commercialista",
 ];
 
@@ -47,7 +47,7 @@ export default function HeroSection() {
       </h1>
 
       <p className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed font-medium ">
-        NeatX è la tua agenda online brandizzata: i clienti prenotano in totale autonomia, pagano l&apos;acconto se serve e ricevono promemoria senza farti perdere tempo al telefono.
+        NeatX è la tua agenda online brandizzata: i clienti prenotano in totale autonomia e pagano l&apos;acconto se serve. Tu controlli appuntamenti, incassi e agenda senza perdere tempo al telefono.
       </p>
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl ">
@@ -64,7 +64,7 @@ export default function HeroSection() {
           href="/registrazione"
           className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
         >
-          Registrati gratis in 60 secondi
+          Crea la tua agenda gratis
           <ArrowRight size={20} />
         </Link>
         <Link

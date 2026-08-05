@@ -162,25 +162,25 @@ export default function TimesheetFeatureSection() {
         <div className="mb-16 text-center">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-emerald-300">
             <Sparkles size={13} />
-            Solo su NeatX
+            Agenda team nativa
           </div>
           <h2 className="mx-auto max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
-            I turni su Google Sheet.{" "}
+            Non solo prenotazioni.{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-              Il commercialista ringrazia.
+              Il tuo team ha la sua app.
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-medium leading-relaxed text-slate-400">
-            Aggiorni il foglio che già usi. NeatX legge gli orari reali, blocca
-            ferie e riposi nell'agenda, poi ti dà il file pronto da mandare al
-            commercialista — senza riscrivere nulla a mano.
+            Imposti i turni una volta. Ogni dipendente vede dal telefono la propria
+            agenda e i clienti assegnati, poi richiede ferie o permessi. Tu approvi:
+            NeatX blocca subito gli orari per i clienti e prepara anche il CSV per il commercialista.
           </p>
 
           {/* Stat bar */}
           <div className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3">
-            <Stat value="0 min" label="per aggiornare" />
-            <Stat value="1 click" label="per esportare" />
-            <Stat value="0 errori" label="da correggere" />
+            <Stat value="0 fogli" label="da aggiornare" />
+            <Stat value="1 app" label="per dipendente" />
+            <Stat value="1 click" label="per approvare" />
           </div>
         </div>
 
@@ -207,7 +207,7 @@ export default function TimesheetFeatureSection() {
                   {p === "sheet" && <FileSpreadsheet size={13} />}
                   {p === "agenda" && <CalendarCheck2 size={13} />}
                   {p === "csv" && <FileDown size={13} />}
-                  {p === "sheet" ? "Foglio" : p === "agenda" ? "Agenda" : "Export"}
+                  {p === "sheet" ? "Presenze" : p === "agenda" ? "Agenda" : "Export"}
                 </button>
               ))}
               {isAutoPlaying ? (
@@ -227,7 +227,7 @@ export default function TimesheetFeatureSection() {
               )}
             </div>
 
-            {/* FASE: Google Sheet */}
+            {/* FASE: calendario staff */}
             {phase === "sheet" && (
               <div className="animate-fade-in overflow-hidden rounded-2xl border border-[#1a2642]">
                 <div className="grid grid-cols-6 border-b border-[#1a2642] bg-[#0b1221]">
@@ -277,7 +277,7 @@ export default function TimesheetFeatureSection() {
                   </div>
                 ))}
                 <div className="border-t border-[#1a2642] bg-[#0b1221] px-4 py-2 text-[10px] font-bold text-slate-600">
-                  Google Sheets — orari-team-luglio-2026
+                  NeatX — calendario staff luglio 2026
                 </div>
               </div>
             )}
@@ -401,8 +401,8 @@ export default function TimesheetFeatureSection() {
               {
                 icon: FileSpreadsheet,
                 color: "emerald",
-                title: "Usi già Google Sheet?",
-                body: "Incolla il link. NeatX legge i turni in automatico — nessun doppio inserimento, nessun gestionale nuovo da imparare.",
+                title: "Turni e app per il team",
+                body: "Imposta il calendario nativo. Ogni dipendente riceve il suo link personale per vedere turni e clienti, poi richiedere ferie o permessi dal telefono.",
               },
               {
                 icon: CalendarCheck2,
@@ -446,11 +446,11 @@ export default function TimesheetFeatureSection() {
               href="/registrazione"
               className="mt-2 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-4 text-sm font-extrabold text-[#03111f] shadow-[0_0_40px_rgba(16,185,129,0.2)] transition hover:scale-[1.02] hover:from-emerald-400 hover:to-cyan-400"
             >
-              Prova gratis — turni e commercialista inclusi
+              Prova gratis — agenda clienti + app team
               <ArrowRight size={17} />
             </Link>
             <p className="text-center text-xs font-bold text-slate-600">
-              Nessuna carta di credito · Attivo in 2 minuti
+              Nessuna carta di credito · Configurazione guidata
             </p>
           </div>
         </div>

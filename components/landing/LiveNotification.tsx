@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const FAKE_NOTIFICATIONS = [
   "Marco R. ha appena prenotato Taglio + Barba",
   "Giulia ha versato 50 euro di anticipo",
-  "Promemoria inviato: appuntamento confermato",
+  "Agenda aggiornata: appuntamento confermato",
   "Nuovo cliente arrivato da Instagram",
   "Slot delle 15:30 riempito in automatico",
 ];

@@ -8,10 +8,10 @@ const ROWS = [
   { label: "Promemoria automatici", neatx: <span className="text-amber-300">In manutenzione</span>, booksy: <span className="text-slate-400">Solo in-app</span>, treatwell: <span className="text-slate-400">Solo in-app</span> },
   { label: "Acconti / Caparre online", neatx: <Check size={18} className="text-emerald-400" />, booksy: <Check size={18} className="text-emerald-400" />, treatwell: <X size={18} className="text-red-400" /> },
   { label: "Prova gratuita", neatx: <span className="text-emerald-400">14 giorni</span>, booksy: <X size={18} className="text-red-400" />, treatwell: <X size={18} className="text-red-400" /> },
-  { label: "Prezzo mensile fisso", neatx: <span className="text-emerald-400 font-bold">29€</span>, booksy: <span className="text-red-400">Variabile</span>, treatwell: <span className="text-red-400">Variabile</span> },
+  { label: "Piani mensili trasparenti", neatx: <span className="text-emerald-400 font-bold">Pro 29€ · Elite 59€ · VIP 149€</span>, booksy: <span className="text-red-400">Variabile</span>, treatwell: <span className="text-red-400">Variabile</span> },
   { label: "Multi-staff", neatx: <Check size={18} className="text-emerald-400" />, booksy: <Check size={18} className="text-emerald-400" />, treatwell: <Check size={18} className="text-emerald-400" /> },
   { label: "Recensioni automatiche", neatx: <span className="text-emerald-400">Smart routing</span>, booksy: <X size={18} className="text-red-400" />, treatwell: <X size={18} className="text-red-400" /> },
-  { label: "Sincronizzazione Google Calendar", neatx: <Check size={18} className="text-emerald-400" />, booksy: <span className="text-slate-400">A pagamento</span>, treatwell: <X size={18} className="text-red-400" /> },
+  { label: "Aggiunta appuntamento a Google Calendar", neatx: <Check size={18} className="text-emerald-400" />, booksy: <span className="text-slate-400">A pagamento</span>, treatwell: <X size={18} className="text-red-400" /> },
   { label: "Assistenza prioritaria", neatx: <Check size={18} className="text-emerald-400" />, booksy: <X size={18} className="text-red-400" />, treatwell: <X size={18} className="text-red-400" /> },
 ];
 

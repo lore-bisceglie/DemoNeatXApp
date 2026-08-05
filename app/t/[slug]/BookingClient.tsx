@@ -92,6 +92,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   });
   const [showCancelBanner, setShowCancelBanner] = useState(false);
   const [isHoliday, setIsHoliday] = useState(false);
+  const [isShopClosed, setIsShopClosed] = useState(false);
   const [initialLoad, setInitialLoad] = useState(false);
   const [availabilityRefreshKey, setAvailabilityRefreshKey] = useState(0);
   const [romeClock, setRomeClock] = useState<{ date: string; minutes: number } | null>(null);
@@ -406,6 +407,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
       })
       .then((data) => {
         setIsHoliday(Boolean(data.isHoliday));
+        setIsShopClosed(Boolean(data.isShopClosed));
         if (data.isHoliday) {
           setSlots([]);
         } else {
@@ -652,6 +654,14 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
           "bg-cyan-500/10 text-cyan-300 border border-cyan-500/20",
         title: "Abbiamo terminato la giornata lavorativa.",
         text: "Seleziona una nuova data sul calendario per trovare il momento perfetto per il tuo relax.",
+      }
+    : isShopClosed
+    ? {
+        icon: "🔒",
+        badge: "SALONE CHIUSO",
+        badgeClass: "bg-red-500/10 text-red-300 border border-red-500/20",
+        title: "Il salone non è disponibile in questa data.",
+        text: "Scegli un altro giorno per trovare gli orari disponibili.",
       }
     : isHoliday
     ? {
@@ -935,12 +945,9 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
             <span className="mx-2 text-slate-600">·</span>
             <span>© 2026</span>
           </p>
-          <Link
-            href={getTenantAdminUrl(slug)}
-            className="mt-1 inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#131c31] hover:bg-[#1a2642] text-slate-300 hover:text-white border border-[#1e2b4a] hover:border-[#00b4ff]/50 rounded-xl transition-all font-bold uppercase tracking-widest shadow-lg shadow-black/20"
-          >
-            ⚙️ Accesso Staff
-          </Link>
+          <p className="mt-1 max-w-sm rounded-xl border border-[#1e2b4a] bg-[#131c31] px-4 py-3 text-center text-[11px] leading-relaxed text-slate-400">
+            Sei un collaboratore? Apri il tuo link personale inviato dal titolare per vedere la tua agenda e richiedere ferie o permessi.
+          </p>
         </div>
       </div>
     </div>

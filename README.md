@@ -28,7 +28,7 @@
 
 - 🌐 **Architettura Multi-Tenant nativa con Sottodomini**: Ogni salone ottiene un portale personalizzato (`salone.neatx.store`) con branding, colori e orari dedicati.
 - 📅 **Prenotazioni Online per i Clienti**: Interfaccia fluida e responsive senza l'obbligo per il cliente di registrare un account.
-- 📊 **Sincronizzazione Turni con Google Sheets**: Possibilità di definire e aggiornare i turni del personale da un semplice foglio Google Sheets.
+- 📊 **Schedule Engine nativo**: Turni settimanali, ferie, pause e permessi sono gestiti internamente e bloccano subito gli slot non prenotabili.
 - 💳 **Stripe Connect Integrato**: Incasso diretto di acconti (fissi o in percentuale) e pagamenti completi sul conto del salone.
 - 💬 **Promemoria ed Email Automatiche**: Notifiche WhatsApp via Green-API ed email transazionali per conferme e promemoria appuntamenti.
 - 🚫 **Gestione No-Show & Liste d'Attesa**: Tracciamento dei clienti recidivi che non si presentano e lista d'attesa automatizzata.
@@ -51,7 +51,7 @@
 
 ### Integrations & Services
 - **Stripe & Stripe Connect** - Gestione abbonamenti della piattaforma SaaS e onboarding esercenti per pagamenti acconti.
-- **Google Sheets API** - Importazione e sincronizzazione bidirezionale dei turni dello staff.
+- **Prisma + PostgreSQL** - Persistenza nativa degli orari fissi, delle eccezioni e delle richieste di assenza dello staff.
 - **Green-API** - Gateway per l'invio automatizzato di notifiche e promemoria WhatsApp.
 - **Resend & Nodemailer** - Invio email transazionali, verifiche account e reset password.
 - **Google Gemini / Vercel AI SDK** - Integrazione intelligenza artificiale per il marketing e la generazione di post.
@@ -202,7 +202,7 @@ TELEGRAM_CHAT_ID=
 Lo schema Prisma (`prisma/schema.prisma`) definisce la struttura multi-tenant di NeatX. Di seguito i modelli principali:
 
 - **`Tenant`**: Entità radice del salone. Contiene lo `slug` del sottodominio, i dati di branding (logo, colori, contatti), il piano di abbonamento (`basic`, `pro`, `elite`), credenziali di login ed orari generali di apertura.
-- **`Location`**: Rappresenta le sedi fisiche del salone per i business multi-store, ciascuna con indirizzo, orari e link ai fogli Google Sheets.
+- **`Location`**: Rappresenta le sedi fisiche del salone per i business multi-store, ciascuna con indirizzo e orari indipendenti.
 - **`StoreSettings` / `LocationSettings`**: Configurazione delle politiche di incasso acconti (`OFF`, `FIXED`, `PERCENTAGE`), onboarding Stripe Connect e crediti SMS/WhatsApp residui.
 - **`Staff` & `StaffLocation`**: I dipendenti/barbieri del salone. Salva i turni settimanali in formato JSON (`baseSchedule`) e le eccezioni ai turni (`shiftExceptions`).
 - **`Service` & `ServiceLocation`**: Catalogo dei servizi offerti (es. Taglio, Barba, Colore), con durata in minuti e prezzi personalizzabili per sede.
@@ -248,7 +248,7 @@ Le rotte API si trovano in `app/api/` e sono suddivise logicamente nelle seguent
 - `GET/POST /api/staff` - Gestione anagrafica del personale.
 - `POST /api/staff/schedule` - Aggiornamento orari lavorativi e turni dello staff.
 - `GET/POST /api/locations` - Gestione sedi aziendali.
-- `POST /api/locations/[id]/sync-sheets` - Sincronizzazione forzata turni da Google Sheets.
+- `GET/POST/PATCH /api/staff/requests` - Richieste di ferie e permessi dello staff, con approvazione del titolare.
 
 ### 📢 Marketing & Automazioni
 - `POST /api/marketing/dormant` - Identificazione e invio campagne di riattivazione clienti dormienti.
@@ -288,8 +288,8 @@ NeatX è ottimizzato per essere distribuito su **Vercel** sfruttando le sue funz
 
 ## 📐 Scelte di Architettura & Design
 
-### 1. Sincronizzazione Turni tramite Google Sheets
-Molti barbieri e parrucchieri utilizzano già fogli di calcolo condivisi per organizzare i turni dei dipendenti. Sviluppare da zero una UI complessa per turni ruotanti avrebbe aumentato la curva d'apprendimento. NeatX permette di incollare il link di un foglio Google Sheets pubblicamente accessibile, eseguendo il parsing automatico dei turni e mappandoli sul calendario.
+### 1. Schedule Engine nativo
+Ogni collaboratore ha un turno settimanale (`baseSchedule`) e un calendario di eccezioni (`shiftExceptions`). Ferie, pause e permessi approvati sottraggono gli intervalli direttamente al motore di disponibilità; le chiusure del salone vivono in un registro dedicato. Il dipendente accede dal proprio link personale e il titolare approva le richieste senza usare fogli esterni.
 
 ### 2. Stripe Connect per gli Acconti Saloni
 Per eliminare i problemi di gestione fiscale e l'onere delle fatturazioni per conto terzi, NeatX utilizza **Stripe Connect Express/Custom**. I pagamenti effettuati dai clienti sui saloni vanno direttamente al conto bancario del salone, lasciando a Stripe le verifiche KYC e la conformità finanziaria.

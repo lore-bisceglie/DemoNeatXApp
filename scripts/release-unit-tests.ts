@@ -23,6 +23,7 @@ import {
 } from "../lib/email-verification";
 import { createTenantSessionToken, verifyTenantSessionToken } from "../lib/auth";
 import { appointmentManagementSelect, canManageAppointment } from "../lib/appointment-management";
+import { getDayScheduleForDate, type WeeklySchedule } from "../lib/schedule";
 import {
   buildPaymentFailedEmail,
   buildSubscriptionActivatedEmail,
@@ -91,6 +92,22 @@ async function run() {
   assert.equal(getDayScheduleSlotStatus(saturdaySchedule, "11:45", 30), "closed");
   assert.equal(getDayScheduleSlotStatus(sundaySchedule, "10:00"), "closed");
 
+  const staffWeek: WeeklySchedule = {
+    "venerdì": { active: true, blocks: [{ start: "07:00", end: "21:00" }] },
+  };
+  assert.deepEqual(
+    getDayScheduleForDate(staffWeek, [{ date: "2026-08-14", type: "ferie", start: null, end: null }], "2026-08-14"),
+    { active: false, blocks: [], exceptionNote: "Ferie" },
+  );
+  assert.deepEqual(
+    getDayScheduleForDate(staffWeek, [{ date: "2026-08-14", type: "permesso", start: "14:00", end: "16:00" }], "2026-08-14"),
+    { active: true, blocks: [{ start: "07:00", end: "14:00" }, { start: "16:00", end: "21:00" }], exceptionNote: "Permesso 14:00-16:00" },
+  );
+  assert.deepEqual(
+    getDayScheduleForDate(staffWeek, [{ date: "2026-08-14", type: "pausa", start: "12:00", end: "13:00" }], "2026-08-14"),
+    { active: true, blocks: [{ start: "07:00", end: "12:00" }, { start: "13:00", end: "21:00" }], exceptionNote: "Pausa 12:00-13:00" },
+  );
+
   assert.deepEqual(validateTenantLogo("https://cdn.example.com/negozio.jpg"), {
     ok: true,
     value: "https://cdn.example.com/negozio.jpg",
@@ -103,12 +120,12 @@ async function run() {
 
   const rotationLength = getMarketingRotationLength();
   const rotatedImages = Array.from({ length: rotationLength }, (_, offset) =>
-    selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20 + offset, 12))).image,
+    selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20, 12 + offset * 12))).image,
   );
-  assert.equal(rotationLength, 16);
+  assert.equal(rotationLength, 20);
   assert.equal(new Set(rotatedImages).size, rotationLength);
   assert.notEqual(rotatedImages[0], rotatedImages[1]);
-  assert.equal(
+  assert.notEqual(
     selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20, 8))).image,
     selectDailyMarketingAsset(new Date(Date.UTC(2026, 6, 20, 20))).image,
   );
@@ -160,6 +177,7 @@ async function run() {
   assert.equal(validateInstagramProfile("nomeutente.").valid, false);
   assert.equal(validateInstagramProfile("nome..utente").valid, false);
 
+  process.env.REMINDERS_ENABLED = "false";
   const disabled = await sendTenantMessage("does-not-exist", "+393330000000", "test");
   assert.equal(disabled.success, false);
   assert.equal("disabled" in disabled && disabled.disabled, true);

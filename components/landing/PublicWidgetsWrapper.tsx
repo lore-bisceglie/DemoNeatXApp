@@ -19,6 +19,6 @@ export default function PublicWidgetsWrapper({ children }: { children: React.Rea
     setShow(isMainDomain && !isSuperAdmin);
   }, []);
 
-  if (pathname?.startsWith("/t/") || pathname?.startsWith("/godmode") || !show) return null;
+  if (pathname?.startsWith("/t/") || pathname?.startsWith("/staff/") || pathname?.startsWith("/godmode") || !show) return null;
   return <>{children}</>;
 }

@@ -10,11 +10,11 @@ export default function TutorialButton({ showInstallStep = false }: { showInstal
     setMounted(true);
     
     // Auto-start on very first visit
-    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v3");
+    const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v4");
     if (!hasSeenTutorial) {
       setTimeout(() => {
         startTour();
-        localStorage.setItem("neatx_tutorial_seen_v3", "true");
+        localStorage.setItem("neatx_tutorial_seen_v4", "true");
       }, 1000);
     }
   }, []);
@@ -37,6 +37,7 @@ export default function TutorialButton({ showInstallStep = false }: { showInstal
       allowClose: true, // Allow user to skip if they want
       animate: true,
       stagePadding: 8,
+      popoverOffset: 32,
       doneBtnText: "Finito ✨",
       nextBtnText: "Avanti →",
       prevBtnText: "← Prec.",
@@ -48,14 +49,43 @@ export default function TutorialButton({ showInstallStep = false }: { showInstal
           }
         },
         {
-          element: "#tour-header-actions",
+          element: "#tour-team-button",
           popover: {
             title: "👥 Team e Rubrica",
-            description: "Aggiungi collaboratori al tuo Team e visualizza la rubrica completa dei tuoi clienti. Puoi assegnare permessi specifici a ogni membro.",
+            description: "Qui gestisci i collaboratori. Il pannello si apre ora: vedrai dove impostare i turni e come consegnare la loro agenda personale.",
             align: "start",
             side: "bottom"
           },
-          onHighlightStarted: () => { document.getElementById('tour-tab-agenda')?.click(); }
+          onDeselected: () => { document.getElementById("tour-team-button")?.click(); }
+        },
+        {
+          element: "#tour-team-schedule",
+          waitForElement: 1000,
+          popover: {
+            title: "Un solo calendario, sempre aggiornato",
+            description: "Turni fissi, ferie, pause e permessi sono nativi. Quando approvi un'assenza, NeatX nasconde quegli orari ai clienti: non devi aggiornare fogli o tabelle a mano.",
+            align: "center",
+            side: "left"
+          }
+        },
+        {
+          element: "#tour-first-staff-schedule",
+          popover: {
+            title: "Imposta i turni di ogni persona",
+            description: "L'icona dell'orologio apre il calendario del collaboratore. Da qui imposti orari settimanali, ferie, pause e permessi parziali.",
+            align: "end",
+            side: "left"
+          }
+        },
+        {
+          element: "#tour-staff-link",
+          popover: {
+            title: "Invia la sua agenda personale",
+            description: "Genera il link e invialo al dipendente una sola volta. Senza password, lui vede solo i suoi turni e clienti, chiede ferie o permessi dal telefono e puo ritirare una richiesta in attesa. Tu approvi o rifiuti da qui.",
+            align: "center",
+            side: "left"
+          },
+          onDeselected: () => { document.querySelector<HTMLButtonElement>('[aria-label="Chiudi Team"]')?.click(); }
         },
         ...installStep,
         {
@@ -65,7 +95,8 @@ export default function TutorialButton({ showInstallStep = false }: { showInstal
             description: "Tieni sempre d'occhio chi è il prossimo cliente in arrivo e il fatturato stimato del mese calcolato dinamicamente.",
             align: "center",
             side: "bottom"
-          }
+          },
+          onHighlightStarted: () => { document.querySelector<HTMLButtonElement>('[aria-label="Chiudi Team"]')?.click(); }
         },
         {
           element: "#tour-waitlist",

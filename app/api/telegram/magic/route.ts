@@ -18,8 +18,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Link di accesso magico scaduto o non valido." }, { status: 403 });
     }
 
-    // Creiamo il redirect alla dashboard
-    const adminUrl = getTenantAdminUrl(slug);
+    // In sviluppo il SuperAdmin deve restare sullo stesso host locale. In
+    // produzione il magic link continua a usare il dominio pubblico del tenant.
+    const adminUrl =
+      process.env.NODE_ENV === "production"
+        ? getTenantAdminUrl(slug)
+        : new URL(`/t/${encodeURIComponent(slug)}/admin`, req.url);
     const response = NextResponse.redirect(adminUrl);
 
     // Iniettiamo un cookie di sessione firmato (24 ore)

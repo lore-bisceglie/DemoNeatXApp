@@ -47,7 +47,6 @@ export async function GET(req: Request) {
         convertedAt: true,
         plan: true,
         createdAt: true,
-        staffSheetUrl: true,
         // NO: ownerPasswordHash, stripeCustomerId, stripeSubscriptionId,
         //     referralCode, referredByCode, emailVerifyToken
         services: {
