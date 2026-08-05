@@ -47,7 +47,7 @@ function toTenantInfo(data: BookingInitialData): TenantInfoType {
   };
 }
 
-export function BookingClient({ slug, initialData }: { slug: string; initialData: BookingInitialData }) {
+export function BookingClient({ slug, initialData, initialLocationId = "" }: { slug: string; initialData: BookingInitialData; initialLocationId?: string }) {
   const [calendarBounds] = useState(() => {
     const now = new Date();
     return {
@@ -103,7 +103,7 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
   const [selectedActivityId, setSelectedActivityId] = useState("all");
   const [showActivityModal, setShowActivityModal] = useState(true);
   const [selectedLocationId, setSelectedLocationId] = useState(
-    locations.length === 1 ? locations[0].id : ""
+    initialLocationId || (locations.length === 1 ? locations[0].id : "")
   );
 
   const _router = useRouter();
@@ -935,21 +935,22 @@ export function BookingClient({ slug, initialData }: { slug: string; initialData
         </Link>
       </div>
 
-      <div className="bg-[#0b1221] max-w-md md:max-w-lg lg:max-w-xl w-full rounded-3xl p-6 mt-4 text-center flex flex-col items-center gap-4 relative z-10 border border-[#1a2642] shadow-lg">
-        <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-3">
+      <footer className="bg-[#0b1221] max-w-md md:max-w-lg lg:max-w-xl w-full rounded-3xl shadow-2xl border border-[#1a2642] p-6 sm:p-8 mt-4 text-center relative z-10">
+        <div className="text-[11px] text-slate-400 tracking-wide leading-relaxed flex flex-col items-center gap-2">
           <p>
             Powered by <span className="font-bold text-white">Neat<span className="text-[#007aff]">X</span></span>
           </p>
+          <p className="text-xs font-semibold text-slate-300">Agenda online per professionisti</p>
+          <Link href="/login" className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-4 py-2 text-xs font-extrabold text-slate-200 transition hover:border-cyan-400/50 hover:text-cyan-300">
+            Accedi
+          </Link>
           <p className="text-[10px]">
             <button onClick={() => { navigator.clipboard.writeText('neatx.info@gmail.com').then(() => { setEmailCopied(true); setTimeout(() => setEmailCopied(false), 2000); }); }} className="hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer font-inherit text-inherit text-[10px]">{emailCopied ? 'Copiato! ✓' : 'neatx.info@gmail.com'}</button>
             <span className="mx-2 text-slate-600">·</span>
             <span>© 2026</span>
           </p>
-          <p className="mt-1 max-w-sm rounded-xl border border-[#1e2b4a] bg-[#131c31] px-4 py-3 text-center text-[11px] leading-relaxed text-slate-400">
-            Sei un collaboratore? Apri il tuo link personale inviato dal titolare per vedere la tua agenda e richiedere ferie o permessi.
-          </p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
