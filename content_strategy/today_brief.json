@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-03",
-  "niche": "Parrucchieri",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "BASTA NO SHOW",
-  "hook_hint": "Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Parrucchieri: Zero No-Show con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "date": "2026-08-05",
+  "niche": "Coach e Consulenti",
+  "feature": "conferme",
+  "feature_label": "Conferme appuntamento",
+  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
+  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
+  "cover_title": "COACH E CONSULENTI: AGENDA PIÙ ORDINATA",
+  "hook_hint": "Se sei tra i coach e consulenti e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
+  "blog_topic": "Coach e Consulenti: Conferme appuntamento con NeatX",
+  "gameplay_style": "neon_racer",
+  "image_prompt": "photorealistic cinematic scene inside a modern office workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "agenda consulente",
+    "prenotazioni coach",
+    "booking consulenze"
   ]
 }

@@ -1,24 +1,58 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-03T13:21:29.678310+02:00
+Generato: 2026-08-04T12:37:23.806755+02:00
 
-## Idea 1: Sei tra i tatuatori e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Tatuatori
-- hook: Sei tra i tatuatori e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero acconti automatici che filtrano i clienti che non si presentano.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Quante ore perdi ogni mese a rincorrere i tuoi fisioterapisti per farti dare i fogli presenza compilati a mano?
+- title: ADDIO ORE
+- hook: Quante ore perdi ogni mese a rincorrere i tuoi fisioterapisti per farti dare i fogli presenza compilati a mano?
+- niche: Fisioterapisti
+- pain: ore dei dipendenti segnate a mano su fogli Excel persi
+- promise: turni, ferie e permessi in un click, CSV pronto per il commercialista
+- blog_topic: Fisioterapisti: Timesheet Commercialista con NeatX
+- gameplay_style: block_miner
+- image_prompt: photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting
+- keywords: ['agenda fisioterapista', 'prenotazioni fisioterapia', 'gestionale fisioterapisti']
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Tatuatori
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Se gestisci uno studio di fisioterapia e passi l'ultimo giorno del mese a decifrare gli Excel dei turni dei collaboratori, stai sprecando tempo prezioso.
+- title: FINE MESE SENZA CAOS
+- hook: Se gestisci uno studio di fisioterapia e passi l'ultimo giorno del mese a decifrare gli Excel dei turni dei collaboratori, stai sprecando tempo prezioso.
+- niche: Fisioterapisti
+- pain: ore dei collaboratori perse tra chat e fogli Excel incompleti
+- promise: esporta il riepilogo ore in CSV per il commercialista in un secondo con NeatX
+- blog_topic: Come semplificare la contabilità dello studio di fisioterapia: addio Excel
+- gameplay_style: block_miner
+- image_prompt: cinematic photorealistic office of a physiotherapy clinic manager, clean desk with a laptop displaying a generated payroll CSV, modern medical decorations in the background, warm natural light
+- keywords: ['gestione personale fisioterapia', 'gestionale fisioterapisti', 'agenda fisioterapista']
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Tatuatori
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: I tuoi fisioterapisti segnano ancora le ore di lavoro su fogli volanti che puntualmente spariscono prima di andare dal commercialista?
+- title: TURNI FISIOTERAPISTI
+- hook: I tuoi fisioterapisti segnano ancora le ore di lavoro su fogli volanti che puntualmente spariscono prima di andare dal commercialista?
+- niche: Fisioterapisti
+- pain: dimenticanze e fogli cartacei smarriti dallo staff della clinica
+- promise: gestione presenze e permessi digitale per tutto lo staff in un'unica schermata
+- blog_topic: Gestione collaboratori fisioterapisti: stop ai fogli ore cartacei
+- gameplay_style: block_miner
+- image_prompt: photorealistic workspace of a modern rehabilitation center, tablet showing staff timesheets and digital signatures, physiotherapy equipment in soft focus in the background
+- keywords: ['gestionale fisioterapisti', 'agenda fisioterapista', 'turni studio fisioterapia']
+
+## Idea 4: Ogni volta che un tuo fisioterapista sbaglia a segnare le ore su Excel o dimentica un permesso, il tuo studio sta perdendo soldi.
+- title: ERRORI NEI TURNI
+- hook: Ogni volta che un tuo fisioterapista sbaglia a segnare le ore su Excel o dimentica un permesso, il tuo studio sta perdendo soldi.
+- niche: Fisioterapisti
+- pain: calcolo errato delle ore dei dipendenti e discrepanze nei fogli presenza
+- promise: un sistema automatico che traccia i turni e genera il file pronto per la busta paga
+- blog_topic: Ottimizzare i costi del personale in uno studio di fisioterapia
+- gameplay_style: block_miner
+- image_prompt: high quality realistic shot of a physical therapist holding a tablet showing perfect green shift matches, bright clinic interior with treatment tables
+- keywords: ['prenotazioni fisioterapia', 'gestionale fisioterapisti', 'costi studio fisioterapia']
+
+## Idea 5: Excel è ottimo per i bilanci, ma se lo usi ancora per segnare i turni e le ferie dei tuoi fisioterapisti stai rallentando il tuo studio.
+- title: BASTA EXCEL TURNI
+- hook: Excel è ottimo per i bilanci, ma se lo usi ancora per segnare i turni e le ferie dei tuoi fisioterapisti stai rallentando il tuo studio.
+- niche: Fisioterapisti
+- pain: rigidità e perdite di tempo causate da tabelle Excel manuali per lo staff
+- promise: timesheet digitale integrato nell'agenda con report immediati per il commercialista
+- blog_topic: Perché i fogli Excel stanno rallentando la crescita del tuo centro di fisioterapia
+- gameplay_style: block_miner
+- image_prompt: cinematic high detail image, split screen concept, on one side a messy pile of handwritten paper, on the other a clean modern monitor with NeatX timesheet software
+- keywords: ['agenda fisioterapista', 'gestionale fisioterapisti', 'ottimizzazione studio fisioterapia']
