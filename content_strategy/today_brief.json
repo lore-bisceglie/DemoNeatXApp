@@ -1,18 +1,18 @@
 {
   "date": "2026-08-06",
-  "niche": "Barbieri",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "RECENSIONI AUTO ORA",
-  "hook_hint": "Se sei tra i barbieri e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Recensioni Automatiche con NeatX",
+  "niche": "Personal Trainer",
+  "feature": "conferme",
+  "feature_label": "Conferme appuntamento",
+  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
+  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
+  "cover_title": "CONFERME APPUNT ORA",
+  "hook_hint": "Se sei tra i personal trainer e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: Conferme appuntamento con NeatX",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
