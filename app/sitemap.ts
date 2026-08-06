@@ -2,6 +2,11 @@ import { MetadataRoute } from 'next';
 import fs from 'fs';
 import path from 'path';
 
+// Local SEO landing pages — keep in sync with app/(seo)/[localSlug]/page.tsx generateStaticParams
+const localSeoCities = [
+  'milano', 'roma', 'napoli', 'torino', 'palermo', 'genova', 'bologna', 'firenze', 'bari', 'catania',
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogDir = path.join(process.cwd(), 'content', 'blog');
   const blogPages: MetadataRoute.Sitemap = fs.existsSync(blogDir)
@@ -53,5 +58,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     ...blogPages,
+    ...localSeoCities.map((city) => ({
+      url: `https://www.neatx.store/gestionale-parrucchieri-${city}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
   ];
 }

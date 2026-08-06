@@ -142,8 +142,12 @@ export async function POST(req: Request) {
           };
           if (stripeCustomerId) updateData.stripeCustomerId = stripeCustomerId;
           if (stripeSubscriptionId) updateData.stripeSubscriptionId = stripeSubscriptionId;
+          // Apply regardless of current trial status so tenants that are already
+          // paying (trialStatus 'converted') can also change/cancel plan or billing
+          // cycle. Idempotency is guaranteed by processedStripeEvent (event.id), so
+          // the former trialStatus gate was redundant and blocked plan changes.
           const activated = await prisma.tenant.updateMany({
-            where: { id: tenantId, trialStatus: { not: 'converted' } },
+            where: { id: tenantId },
             data: updateData,
           });
           if (activated.count === 0) break;

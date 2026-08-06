@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "applicationCategory": "BusinessApplication",
               "offers": {
                 "@type": "Offer",
-                "price": "0",
+                "price": "29",
                 "priceCurrency": "EUR"
               },
               "description": "Software gestionale e agenda appuntamenti online zero commissioni per saloni, barbieri e centri estetici in Italia."

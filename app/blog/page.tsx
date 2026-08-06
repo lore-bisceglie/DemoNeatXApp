@@ -2,6 +2,12 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Blog NeatX — Guide, Consigli e Strumenti per Barbieri e Saloni',
+  description: 'Consigli pratici, guide e strategie per barbieri, saloni e centri estetici: prenotazioni online, fidelizzazione clienti, marketing e crescita del business.',
+};
 
 function parseDate(dateString: string) {
   if (!dateString || dateString === 'Recente') return 0;
