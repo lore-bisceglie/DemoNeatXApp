@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-06",
-  "niche": "Personal Trainer",
-  "feature": "conferme",
-  "feature_label": "Conferme appuntamento",
-  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
-  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
-  "cover_title": "CONFERME APPUNT ORA",
-  "hook_hint": "Se sei tra i personal trainer e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Conferme appuntamento con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "date": "2026-08-07",
+  "niche": "Tatuatori",
+  "feature": "analytics",
+  "feature_label": "Statistiche e Dati",
+  "pain": "non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti",
+  "promise": "dashboard con incassi, trend e performance in tempo reale",
+  "cover_title": "GUADAGNI IN TEMPO REALE",
+  "hook_hint": "Se sei tra i tatuatori e non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Statistiche e Dati con NeatX",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
