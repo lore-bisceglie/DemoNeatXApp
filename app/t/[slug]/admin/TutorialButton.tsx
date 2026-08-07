@@ -3,19 +3,57 @@ import { HelpCircle } from "lucide-react";
 import { driver } from "driver.js";
 import { useEffect, useState } from "react";
 
-export default function TutorialButton({ showInstallStep = false }: { showInstallStep?: boolean }) {
+export default function TutorialButton({
+  showInstallStep = false,
+  slug,
+  tutorialSeen,
+}: {
+  showInstallStep?: boolean;
+  slug?: string;
+  tutorialSeen?: boolean;
+}) {
   const [mounted, setMounted] = useState(false);
+
+  // Marca "tutorial visto" nel database del negozio (una sola volta per negozio)
+  const markSeen = () => {
+    if (!slug) return;
+    try {
+      fetch("/api/tenant/tutorial-seen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug }),
+      });
+    } catch {
+      // Se la rete fallisce, il localStorage resta come backup per non ripetere
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
-    
-    // Auto-start on very first visit
+
+    const isDemo = slug === "demo-neatx";
+
+    // Demo: mai da sola (aperta a tutti). Solo dal tasto.
+    if (isDemo) return;
+
+    // Negozio vero: decide il database. tutorialSeen è `false` solo se mai visto.
+    if (slug && tutorialSeen !== undefined) {
+      if (tutorialSeen) return; // già visto → mai più da sola
+      const t = setTimeout(() => {
+        startTour();
+        markSeen();
+      }, 1000);
+      return () => clearTimeout(t);
+    }
+
+    // Fallback (componente usato altrove senza props): vecchio comportamento con localStorage
     const hasSeenTutorial = localStorage.getItem("neatx_tutorial_seen_v4");
     if (!hasSeenTutorial) {
-      setTimeout(() => {
+      const t = setTimeout(() => {
         startTour();
         localStorage.setItem("neatx_tutorial_seen_v4", "true");
       }, 1000);
+      return () => clearTimeout(t);
     }
   }, []);
 

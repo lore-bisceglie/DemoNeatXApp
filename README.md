@@ -314,6 +314,25 @@ Gli endpoint critici (prenotazione appuntamenti, invio OTP, reset password) sono
 
 ## 📝 Changelog
 
+### 2026-08-08
+
+#### 🎓 Tutorial agende: parte da solo **una sola volta per negozio** (salvato nel database) (`app/t/[slug]/admin/TutorialButton.tsx`, `app/t/[slug]/admin/page.tsx`, `app/api/tenant/tutorial-seen/route.ts`, `prisma/schema.prisma`)
+
+Prima il tutorial della dashboard si auto-avviava basandosi su un marcatore salvato **nel browser** (`localStorage`): se il proprietario accedeva da un altro dispositivo o cancellava i dati del browser, il tutorial **ripartiva da solo**. Ora il "già visto" è salvato **nel database del negozio**, quindi vale per ogni dispositivo e non si ripete mai più in automatico.
+
+- **Nuovo campo `tutorialSeenAt`** sul modello `Tenant` (aggiunto a `schema.prisma`, `schema.local.prisma` e `schema.test.prisma`, poi applicato al database con `prisma db push`). `null` = tutorial mai visto (parte da solo), valorizzato = già visto (mai più da solo).
+- **`TutorialButton`** ora riceve `slug` e `tutorialSeen` (dallo stato del negozio): decide l'auto-avvio dal **database**, non solo dal browser.
+- **Demo (`demo-neatx`)**: il tutorial **non parte mai da solo** (è aperta a tutti, ogni visitatore vedrebbe il tour). Si apre solo dal tasto "Tutorial".
+- **Negozio vero**: al **primo accesso** il tutorial parte da solo (dopo 1 secondo) e subito marca `tutorialSeenAt`; **ricaricando la pagina o tornando dopo non riparte mai più** da solo. Dal tasto "Tutorial" si apre sempre.
+- **Nuova route `POST /api/tenant/tutorial-seen`**: marca "tutorial visto" nel database, protetta dal cookie di login del negozio (401 se non autenticato) e rifiuta la demo (400).
+- **Nessuna modifica** ad agende, prenotazioni, pagamenti o al funzionamento del tasto Tutorial.
+
+#### 🎪 Demo: tasto "Pubblica negozio reale" spiegato + bottone "Torna alla prenotazione" (`app/t/[slug]/admin/TrialLaunchPanel.tsx`, `app/t/[slug]/admin/page.tsx`)
+
+- **Tasto "Pubblica negozio reale"** nella demo: prima non faceva nulla (la richiesta al server falliva perché richiede il login). Ora, nella demo, al click si apre un **pop-up di spiegazione**: spiega che nei negozi veri questo tasto trasforma i dati demo in dati reali, mentre qui nella demo i dati sono finti e si ripristinano ogni giorno, quindi il pulsante non è attivo. Nei negozi veri il tasto funziona **esattamente come prima**.
+- **Bottone "← Torna alla prenotazione"** in alto nella dashboard, visibile **solo nella demo** (`slug === "demo-neatx"`): riporta alla pagina di prenotazione del negozio demo. Negli altri negozi non compare.
+- **Nessuna modifica** alla logica di agende, prenotazioni, pagamenti o alla route di pubblicazione.
+
 ### 2026-08-07
 
 #### 💓 Fix: Effetto "onda" sulla foto del negozio → "batticuore" contenuto (`components/tenant/TenantHeader.tsx`)

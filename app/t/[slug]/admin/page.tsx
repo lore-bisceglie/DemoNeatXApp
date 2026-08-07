@@ -39,6 +39,7 @@ import LocationTabs from "@/components/admin/LocationTabs";
 import LoginScreen from "./LoginScreen";
 import TrialLaunchPanel from "./TrialLaunchPanel";
 import SupportWidget from "./SupportWidget";
+import { getTenantPublicUrl } from "@/lib/domains";
 import LogoutButton from "./LogoutButton";
 import AdminDropdownMenu from "./AdminDropdownMenu";
 import TutorialButton from "./TutorialButton";
@@ -1040,10 +1041,18 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
           </h1>
 
           <div id="tour-header-actions" className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            {isDemoFreeAccess && (
+              <a
+                href={getTenantPublicUrl(slug)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-xs font-extrabold text-cyan-300 transition hover:border-cyan-300 hover:text-cyan-200"
+              >
+                ← Torna alla prenotazione
+              </a>
+            )}
             <TeamDrawer tenantId={tenantId} isPremium={isPremium} plan={tenant.plan} allServices={tenantServices} locations={locations.map(l => ({ id: l.id, name: l.name }))} slug={slug} />
             <CustomerDrawer tenantId={tenantId} />
             <AdminDropdownMenu slug={slug} tenantId={tenantId} hasStripe={!!tenant.stripeCustomerId} />
-            <TutorialButton showInstallStep />
+            <TutorialButton showInstallStep slug={slug} tutorialSeen={tenant.tutorialSeenAt != null} />
             <InstallAppButton />
           </div>
         </div>

@@ -111,6 +111,7 @@ export default function TrialLaunchPanel({
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [showPublishInfo, setShowPublishInfo] = useState(false);
   const [serviceDrafts, setServiceDrafts] = useState<ServiceDraft[]>(
     initialServices.map((service) => ({ ...service, price: service.price ?? "" }))
   );
@@ -389,7 +390,7 @@ export default function TrialLaunchPanel({
           ) : (
             <button
               type="button"
-              onClick={publishShop}
+              onClick={isDemoData ? () => setShowPublishInfo(true) : publishShop}
               disabled={saving === "publish"}
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-extrabold text-[#03110a] transition hover:bg-emerald-400 disabled:opacity-60"
             >
@@ -576,6 +577,38 @@ export default function TrialLaunchPanel({
       {message && (
         <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm font-bold text-cyan-200">
           {message}
+        </div>
+      )}
+
+      {showPublishInfo && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          onClick={() => setShowPublishInfo(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl border border-cyan-500/30 bg-[#0b1221] p-6 shadow-2xl animate-in fade-in zoom-in duration-200"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">ℹ️</span>
+              <h3 className="text-lg font-extrabold text-white">Solo dimostrativo nella demo</h3>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-slate-300">
+              Nei negozi veri, <strong>&quot;Pubblica negozio reale&quot;</strong> trasforma i dati demo
+              in dati reali e rende il negozio visibile a tutti.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-400">
+              Qui nella demo i dati sono finti e si ripristinano da soli ogni giorno, quindi
+              questo pulsante non è attivo.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowPublishInfo(false)}
+              className="mt-5 w-full rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-extrabold text-[#03111f] transition hover:bg-cyan-400"
+            >
+              Ho capito
+            </button>
+          </div>
         </div>
       )}
     </section>

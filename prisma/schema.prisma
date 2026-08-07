@@ -48,6 +48,7 @@ model Tenant {
   activationRequested Boolean @default(false)
   publishedAt   DateTime?
   convertedAt   DateTime?
+  tutorialSeenAt DateTime?
   plan          Plan          @default(basic)
   stripeCustomerId String?
   stripeSubscriptionId String?
