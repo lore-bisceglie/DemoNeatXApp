@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import ActivityLogPanel from "@/app/t/[slug]/admin/ActivityLogPanel";
 
-type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never";
+type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never" | "demo";
 
 const generateSecurePassword = () => {
   const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
@@ -48,7 +48,7 @@ export default function SuperAdminPage() {
   const [editTarget, setEditTarget] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
   const [editing, setEditing] = useState(false);
-  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, proCount: 0, eliteCount: 0, trialCount: 0 });
+  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, proCount: 0, eliteCount: 0, trialCount: 0, demoCount: 0 });
   const [sortBy, setSortBy] = useState<"date" | "name" | "plan">("date");
   const [detailTenant, setDetailTenant] = useState<any>(null);
   const [password, setPassword] = useState("");
@@ -162,6 +162,16 @@ export default function SuperAdminPage() {
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
+  const handlePublish = async (tenantId: string, tenantName: string) => {
+    if (!confirm(`Pubblicare "${tenantName}" come negozio reale? (toglie l'etichetta Demo)`)) return;
+    try {
+      const res = await fetch("/api/superadmin/publish", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Errore");
+      fetchTenants();
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
+  };
+
   const handleAddSms = async (tenant: any) => {
     const amountStr = prompt(`Crediti SMS attuali: ${tenant.storeSettings?.smsCredits || 0}\nQuanti crediti vuoi aggiungere? (es. 100 per aggiungere, -50 per rimuovere)`);
     if (!amountStr) return;
@@ -238,6 +248,7 @@ export default function SuperAdminPage() {
       if (filterPlan === "all") return true;
       if (filterPlan === "pro") return t.plan === "pro";
       if (filterPlan === "elite") return t.plan === "elite";
+      if (filterPlan === "demo") return Boolean(t.isDemoData);
       const exp = t.trialEndsAt ? new Date(t.trialEndsAt) : null;
       if (filterPlan === "trial") return exp && exp > now && t.plan !== "pro" && t.plan !== "elite";
       if (filterPlan === "expired") return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
@@ -281,6 +292,7 @@ export default function SuperAdminPage() {
     { key: "trial",   label: `Trial (${stats.trialCount || 0})`,   active: "bg-amber-500/30 text-amber-200 border border-amber-400/50" },
     { key: "expired", label: `Scaduti (${expiredCount})`,          active: "bg-red-500/30 text-red-200 border border-red-400/50" },
     { key: "never",   label: `Mai attivati (${neverActivated})`,   active: "bg-slate-700 text-slate-300 border border-slate-600" },
+    { key: "demo",    label: `Demo (${stats.demoCount || 0})`,     active: "bg-slate-600 text-white" },
   ];
 
   return (
@@ -505,6 +517,9 @@ export default function SuperAdminPage() {
                           <div className="flex gap-1 w-full">
                             <a href={`https://${tenant.slug}.neatx.store`} target="_blank" rel="noopener noreferrer" title="Sito pubblico" className="flex-1 text-center text-[11px] text-indigo-400 hover:text-indigo-300 font-medium bg-indigo-500/10 py-1.5 rounded-lg transition flex items-center justify-center">🌐</a>
                             <button onClick={() => handleImpersonate(tenant.slug)} title="Entra come Admin" className="flex-1 text-[11px] text-amber-400 font-medium bg-amber-500/10 py-1.5 rounded-lg border border-amber-500/20 flex items-center justify-center hover:bg-amber-500/20 transition">🕵️</button>
+                            {tenant.isDemoData && (
+                              <button onClick={() => handlePublish(tenant.id, tenant.name)} title="Pubblica come negozio reale (toglie Demo)" className="flex-1 text-[11px] text-emerald-400 font-medium bg-emerald-500/10 py-1.5 rounded-lg border border-emerald-500/20 flex items-center justify-center hover:bg-emerald-500/20 transition">🚀</button>
+                            )}
                             <button onClick={() => handleCopyCredentials(tenant)} title="Copia credenziali per il cliente" className={`flex-1 text-[11px] font-medium py-1.5 rounded-lg transition flex items-center justify-center ${copied ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"}`}>{copied ? "✅" : "📋"}</button>
                             <button onClick={() => openEdit(tenant)} title="Modifica" className="text-[11px] font-medium flex items-center justify-center bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-1.5 rounded-lg transition">✏️</button>
                             {tenant.slug === 'demo-vetrina' || tenant.slug === 'demo-neatx' ? (

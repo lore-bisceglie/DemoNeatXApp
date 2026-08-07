@@ -307,6 +307,19 @@ Gli endpoint critici (prenotazione appuntamenti, invio OTP, reset password) sono
 
 ## 📝 Changelog
 
+### 2026-08-07
+
+#### 🔗 Fix: Link Instagram / TikTok / Google Maps nel pannello admin (`app/t/[slug]/admin/page.tsx`, `app/api/tenant/[slug]/route.ts`)
+- **Problema**: Nella scheda "Gestione" → "Impostazioni negozio", i campi Instagram e Google Maps si caricavano vuoti anche se i link erano salvati. Inoltre, salvando un nuovo link Maps, il link Instagram precedentemente salvato spariva (veniva azzerato nel database).
+- **Causa**: La pagina admin non passava al pannello i valori `instagramUrl`, `tiktokUrl` e `mapsLink`, quindi i campi partivano vuoti. Al salvataggio, il pannello inviava i campi vuoti come stringa `""` e la route PATCH li normalizzava a `null`, cancellando i dati veri.
+- **Fix**: (1) I tre link ora vengono passati al pannello, quindi i campi si riempiono con i dati esistenti. (2) Instagram e TikTok sono protetti: se il campo viene inviato vuoto, il sistema mantiene il valore già presente nel database invece di cancellarlo.
+- **Nessuna modifica** ad agende, prenotazioni, pagamenti, sedi o database.
+
+#### 🛠 Migliorie Pannello Super Admin (`app/superadmin/page.tsx`, `app/api/superadmin/list/route.ts`, `app/api/superadmin/publish/route.ts`)
+- **Contatore "Demo"**: Aggiunto un filtro/conteggio `Demo (n)` nella lista clienti, così i negozi demo (esclusi dai conteggi Pro/Elite/Trial) si vedono separatamente e non sembra che manchino clienti.
+- **Pulsante "Pubblica negozio" (🚀)**: Sulla scheda di ogni negozio ancora demo compare un nuovo pulsante che rimuove l'etichetta "Demo" e pubblica il negozio come reale (imposta `isDemoData: false` e `trialStatus: published`) senza dover entrare nel pannello del negozio. Disponibile solo da superadmin.
+- **Verifica email automatica su cambio piano**: Assegnare il piano Pro o Elite da superadmin verifica automaticamente l'email del proprietario, sbloccando l'accesso al pannello senza passaggi extra.
+
 ### 2026-07-30
 
 #### 🔧 Fix: ScrollReveal SSR-Friendly (`components/landing/ScrollReveal.tsx`)

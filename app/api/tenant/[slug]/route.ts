@@ -185,8 +185,8 @@ export async function PATCH(req: Request, context: { params: Promise<{ slug: str
         description: cleanString(body.description, tenant.description),
         phone: cleanPhone || null,
         address: nextAddress,
-        instagramUrl: typeof body.instagramUrl === "string" ? normalizeInstagramUrl(body.instagramUrl) : tenant.instagramUrl,
-        tiktokUrl: typeof body.tiktokUrl === "string" ? normalizeTikTokUrl(body.tiktokUrl) : tenant.tiktokUrl,
+        instagramUrl: typeof body.instagramUrl === "string" && body.instagramUrl.trim() !== "" ? normalizeInstagramUrl(body.instagramUrl) : tenant.instagramUrl,
+        tiktokUrl: typeof body.tiktokUrl === "string" && body.tiktokUrl.trim() !== "" ? normalizeTikTokUrl(body.tiktokUrl) : tenant.tiktokUrl,
         websiteUrl: cleanUrl(body.websiteUrl, tenant.websiteUrl),
         mapsLink: typeof body.mapsLink === "string" && body.mapsLink.trim() !== "" && !/^https?:\/\//i.test(body.mapsLink.trim())
           ? buildMapsLink(body.mapsLink)
