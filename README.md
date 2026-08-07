@@ -69,10 +69,11 @@ DemoNeatXApp/
 │   ├── blog/                     # Sezione blog e content marketing
 │   ├── calcolatore/              # Calcolatore ROI per i saloni
 │   ├── dashboard/                # Dashboard globale e redirection tenant
-│   ├── demo/                     # Ambiente sandbox e demo interattiva
+│   ├── demo/                     # Redirect alla pagina di prenotazione del negozio demo
 │   ├── login/                    # Autenticazione e login gestori
 │   ├── onboarding/               # Wizard di registrazione e attivazione nuovo salone
 │   ├── paywall/                  # Gestione abbonamenti e upgrade piano
+│   ├── staff/[token]/            # Portale dipendente (agenda, ferie, permessi)
 │   ├── superadmin/               # Portale di amministrazione globale piattaforma
 │   └── t/[slug]/                 # Dynamic routes multi-tenant per i singoli saloni
 │       ├── admin/                # Pannello di controllo riservato al salone
@@ -86,6 +87,8 @@ DemoNeatXApp/
 │   ├── activity.ts               # Tracciamento log di attività (ActivityLog)
 │   ├── auth.ts                   # Gestione autenticazione HMAC, cookie e sessioni
 │   ├── booking-conflict.ts       # Algoritmo di rilevamento sovrapposizioni appuntamenti
+│   ├── demo-access.ts            # Accesso libero (con rate limit) per il negozio demo
+│   ├── demo-seed.ts              # Logica di ripristino dati finti della demo (reset + cron)
 │   ├── domains.ts                # Gestione subdomini e risoluzione URL
 │   ├── email.ts                  # Client invio email con template HTML
 │   ├── opening-hours.ts          # Calcolo slot di disponibilità e orari salone
@@ -97,7 +100,9 @@ DemoNeatXApp/
 │   └── stripe.ts                 # Inizializzazione Stripe SDK
 ├── prisma/                       # Definizione database e seeding
 │   ├── schema.prisma             # Schema PostgreSQL (modelli Tenant, Appointment, ecc.)
-│   └── seed.ts                   # Script per popolare il DB con dati demo
+│   ├── seed.ts                   # Script per popolare il DB con dati demo
+│   ├── seed-demo-shop.ts         # Script che riempie il negozio demo (sedi, staff, orari)
+│   └── seed-demo-staff-links.ts  # Genera i link di accesso dipendente per la demo
 ├── public/                       # Asset statici (loghi, icone, PWA manifest)
 ├── proxy.ts                      # Next.js Proxy/Middleware per il rewriting dei subdomini
 ├── package.json                  # Dipendenze e script di build/test
@@ -255,6 +260,8 @@ Le rotte API si trovano in `app/api/` e sono suddivise logicamente nelle seguent
 - `POST /api/social/generate` - Generazione automatica di post social tramite intelligenza artificiale.
 - `GET /api/cron/reminders` - Cron job per l'invio automatizzato dei promemoria WhatsApp/Email.
 - `GET /api/cron/trials` - Cron job per la gestione delle scadenze dei periodi di prova.
+- `GET /api/cron/demo-reset` - Cron job giornaliero che ripristina i dati finti del negozio demo.
+- `POST /api/demo/reset` - Pulsante "Reset demo": ripristino manuale dei dati finti (rate-limited).
 
 ---
 
@@ -308,6 +315,27 @@ Gli endpoint critici (prenotazione appuntamenti, invio OTP, reset password) sono
 ## 📝 Changelog
 
 ### 2026-08-07
+
+#### 💓 Fix: Effetto "onda" sulla foto del negozio → "batticuore" contenuto (`components/tenant/TenantHeader.tsx`)
+
+Quando si cliccava la foto/logo in cima alla pagina di prenotazione (`/t/[slug]`, condivisa da tutti i negozi), due anelli colorati si allargavano fino a 1.8× la foto ed **uscivano dal riquadro**. L'effetto è stato sostituito con un **batticuore**: la foto fa due piccole pulsazioni contenute (si gonfia solo dell'8%), tutto dentro il cerchio.
+
+- **Keyframe nuovo** `demoHeartbeat` al posto di `demoRipple` (rimosso): la foto pulsa 2 volte in 1.4s invece di emettere anelli.
+- **Niente più anelli**: il blocco `{logoClicked && (<> … )}` con i due `<span>` è stato rimosso. La pulsazione ora si applica al bottone-foto stesso, quindi non può mai uscire dal cerchio.
+- Il resto al click è invariato: il logo ruota, brilla e mostra il messaggio "online".
+- **Nessuna modifica** ad agende, prenotazioni, pagamenti o funzionamento della pagina.
+
+#### 🎪 Demo pubblica ricostruita come negozio demo completo
+
+Il pulsante "Esplora la demo" della home ora apre la **pagina di prenotazione moderna** del negozio demo (`/t/demo-neatx`), con lo scheletro completo di un'attività reale:
+
+- **Dati finti completi** (`prisma/seed-demo-shop.ts`): 2 sedi con orari, 5 professionisti collegati ai servizi, indirizzo, descrizione, orari 9–19 con pausa, chiuso domenica e lunedì, Instagram e Maps finti.
+- **Dashboard a libero accesso**: il tasto "Dashboard demo" in fondo alla pagina apre la dashboard admin completa (come quella dei negozi veri) **senza login e senza paywall, solo per `demo-neatx`** (`app/t/[slug]/admin/page.tsx`). Tutti gli altri negozi restano protetti come prima.
+- **Prenotazione simulata**: nella pagina demo le prenotazioni sono simulate e non toccano i sistemi reali.
+- **Auto-ripristino giornaliero** (`/api/cron/demo-reset`, alle 5:00): ricrea appuntamenti, waitlist, no-show e note clienti demo. Logica condivisa in `lib/demo-seed.ts` usata anche dal pulsante "Reset demo".
+- **`/demo`** ora fa redirect alla pagina moderna (nessun link rotto).
+- **Team & link dipendenti**: nella demo il pannello "Team" è attivo a libero accesso. Ogni collaboratore ha un link personale (`/staff/{token}`) per vedere la propria agenda e chiedere ferie o permessi (esempio: Marco ha una ferie in attesa, Giulia un permesso). I link si generano/revocano dal pannello Team come nei negozi veri. Le route admin staff (`/api/staff`, `/api/staff/requests`, `/api/staff/access`) usano `requireTenantAdminOrDemo`, quindi per la demo funzionano senza login ma con rate limit.
+- **Nessuna modifica** ad agende, prenotazioni, pagamenti o login dei negozi reali.
 
 #### 🔗 Fix: Link Instagram / TikTok / Google Maps nel pannello admin (`app/t/[slug]/admin/page.tsx`, `app/api/tenant/[slug]/route.ts`)
 - **Problema**: Nella scheda "Gestione" → "Impostazioni negozio", i campi Instagram e Google Maps si caricavano vuoti anche se i link erano salvati. Inoltre, salvando un nuovo link Maps, il link Instagram precedentemente salvato spariva (veniva azzerato nel database).

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireTenantAdmin } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   if (!tenantId) {
     return NextResponse.json({ error: "tenantId mancante" }, { status: 400 });
   }
-  const authError = await requireTenantAdmin(tenantId);
+  const authError = await requireTenantAdminOrDemo(req, tenantId, "staff-read", 120);
   if (authError) return authError;
 
   try {
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Dati mancanti" }, { status: 400 });
     }
 
-    const authError = await requireTenantAdmin(tenantId);
+    const authError = await requireTenantAdminOrDemo(req, tenantId, "staff-create", 60);
     if (authError) return authError;
 
     // Piano check: verifica subito il piano del tenant
@@ -151,7 +151,7 @@ export async function PUT(req: Request) {
     if (!existingStaff) {
       return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
     }
-    const authError = await requireTenantAdmin(existingStaff.tenantId);
+    const authError = await requireTenantAdminOrDemo(req, existingStaff.tenantId, "staff-update", 60);
     if (authError) return authError;
 
     const selectedLocations = Array.isArray(locationIds)
@@ -231,7 +231,7 @@ export async function DELETE(req: Request) {
     if (!existingStaff) {
       return NextResponse.json({ error: "Staff non trovato" }, { status: 404 });
     }
-    const authError = await requireTenantAdmin(existingStaff.tenantId);
+    const authError = await requireTenantAdminOrDemo(req, existingStaff.tenantId, "staff-delete", 60);
     if (authError) return authError;
 
     await prisma.appointment.updateMany({

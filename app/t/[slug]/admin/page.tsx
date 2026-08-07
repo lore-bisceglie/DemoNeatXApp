@@ -88,7 +88,11 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
 
   if (!tenant) return <div className="p-10 text-white">Attività non trovata.</div>;
 
-  if (!isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
+  // La demo è a libero accesso: chiunque può provare la dashboard completa
+  // del negozio demo senza login né paywall. Solo per slug === "demo-neatx".
+  const isDemoFreeAccess = slug === "demo-neatx";
+
+  if (!isDemoFreeAccess && !isTenantAdminCookieValid(authCookie, slug, tenant.sessionVersion)) {
     return (
       <LoginScreen
         slug={slug}
@@ -149,7 +153,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ [key: s
   const hasActivePaidPlan = tenant.plan === "pro" || tenant.plan === "elite";
   const hasActiveTrial = trialEndsAt && todayDate <= trialEndsAt;
   const hasNoActivePlanNorTrial = !hasActivePaidPlan && !hasActiveTrial && tenant.trialStatus !== "converted";
-  if (hasNoActivePlanNorTrial && !searchParams?.payment) {
+  if (!isDemoFreeAccess && hasNoActivePlanNorTrial && !searchParams?.payment) {
     redirect(`/paywall/${slug}`);
   }
 

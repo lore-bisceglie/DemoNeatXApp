@@ -941,9 +941,18 @@ export function BookingClient({ slug, initialData, initialLocationId = "" }: { s
             Powered by <span className="font-bold text-white">Neat<span className="text-[#007aff]">X</span></span>
           </p>
           <p className="text-xs font-semibold text-slate-300">Agenda online per professionisti</p>
-          <Link href="/login" className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-4 py-2 text-xs font-extrabold text-slate-200 transition hover:border-cyan-400/50 hover:text-cyan-300">
-            Accedi
-          </Link>
+          {isPlaygroundDemo ? (
+            <Link
+              href={getTenantAdminUrl(slug)}
+              className="rounded-xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-xs font-extrabold text-cyan-300 transition hover:border-cyan-300 hover:text-cyan-200"
+            >
+              ⚙️ Dashboard demo
+            </Link>
+          ) : (
+            <Link href="/login" className="rounded-xl border border-[#1e2b4a] bg-[#0b1221] px-4 py-2 text-xs font-extrabold text-slate-200 transition hover:border-cyan-400/50 hover:text-cyan-300">
+              Accedi
+            </Link>
+          )}
           <p className="text-[10px]">
             <button onClick={() => { navigator.clipboard.writeText('neatx.info@gmail.com').then(() => { setEmailCopied(true); setTimeout(() => setEmailCopied(false), 2000); }); }} className="hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer font-inherit text-inherit text-[10px]">{emailCopied ? 'Copiato! ✓' : 'neatx.info@gmail.com'}</button>
             <span className="mx-2 text-slate-600">·</span>

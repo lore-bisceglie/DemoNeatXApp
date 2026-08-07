@@ -46,9 +46,13 @@ export function TenantHeader({
             35% { opacity: .85; }
             100% { transform: translateX(140%) rotate(22deg); opacity: 0; }
           }
-          @keyframes demoRipple {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.8); opacity: 0; }
+          @keyframes demoHeartbeat {
+            0%   { transform: scale(1); }
+            14%  { transform: scale(1.08); }
+            28%  { transform: scale(1); }
+            42%  { transform: scale(1.08); }
+            70%  { transform: scale(1); }
+            100% { transform: scale(1); }
           }
         `}</style>
 
@@ -60,6 +64,7 @@ export function TenantHeader({
           style={{
             transition: "transform 1000ms cubic-bezier(0.16, 1, 0.3, 1)",
             transform: logoClicked ? "rotate(360deg) scale(1.06)" : "rotate(0deg) scale(1)",
+            animation: logoClicked ? "demoHeartbeat 1.4s ease-out 0.1s" : undefined,
             zIndex: 51,
           }}
         >
@@ -123,24 +128,6 @@ export function TenantHeader({
             />
           </span>
 
-          {logoClicked && (
-            <>
-              <span
-                className="absolute inset-0 rounded-full"
-                style={{
-                  border: `2px solid #${th.mainHex}`,
-                  animation: `demoRipple 1.2s cubic-bezier(0.16, 1, 0.3, 1) both`,
-                }}
-              />
-              <span
-                className="absolute inset-0 rounded-full"
-                style={{
-                  border: `1px solid #${th.mainHex}`,
-                  animation: `demoRipple 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both`,
-                }}
-              />
-            </>
-          )}
         </button>
 
         {logoClicked && (

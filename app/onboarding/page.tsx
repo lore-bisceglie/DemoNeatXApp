@@ -331,7 +331,7 @@ export default function Onboarding() {
           <Link href="/login" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
             Accedi
           </Link>
-          <Link href="/demo" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
+          <Link href="/t/demo-neatx" className="rounded-full border border-[#1e2b4a] px-4 py-2 text-xs font-extrabold text-slate-300">
             Esplora demo
           </Link>
         </div>

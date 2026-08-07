@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getRomeClock, getRomeDate } from "@/lib/rome-time";
 import { DAY_NAMES, getDayScheduleForDate, parseBaseSchedule, parseShiftExceptions, timeToMins, type WeeklySchedule } from "@/lib/schedule";
-import { requireTenantAdmin } from "@/lib/auth";
+import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 import { prisma } from "@/lib/prisma";
 import { findStaffByAccessToken } from "@/lib/staff-access";
 import { parseDaySchedule } from "@/lib/opening-hours";
@@ -263,7 +263,7 @@ export async function GET(request: Request) {
   }
 
   if (!tenantId) return NextResponse.json({ error: "Manca token o tenantId" }, { status: 400 });
-  const authError = await requireTenantAdmin(tenantId);
+  const authError = await requireTenantAdminOrDemo(request, tenantId, "requests-read", 120);
   if (authError) return authError;
   if (!REQUEST_STATUSES.has(status)) return NextResponse.json({ error: "Stato non valido" }, { status: 400 });
   const requests = await prisma.staffLeaveRequest.findMany({ where: { tenantId, status: status === "pending" ? { in: ["pending", "cancellation_requested"] } : status }, orderBy: [{ date: "asc" }, { createdAt: "asc" }], select: { id: true, date: true, type: true, start: true, end: true, status: true, createdAt: true, staff: { select: { id: true, name: true } } } });
@@ -327,7 +327,7 @@ export async function PATCH(request: Request) {
   if (!body.requestId || !body.status || !["approved", "rejected"].includes(body.status)) return NextResponse.json({ error: "Azione non valida" }, { status: 400 });
   const requestRow = await prisma.staffLeaveRequest.findUnique({ where: { id: body.requestId }, select: { id: true, tenantId: true, staffId: true, date: true, type: true, start: true, end: true, status: true } });
   if (!requestRow) return NextResponse.json({ error: "Richiesta non trovata" }, { status: 404 });
-  const authError = await requireTenantAdmin(requestRow.tenantId);
+  const authError = await requireTenantAdminOrDemo(request, requestRow.tenantId, "requests-review", 60);
   if (authError) return authError;
 
   try {
