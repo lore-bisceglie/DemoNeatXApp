@@ -68,7 +68,7 @@ export default function HeroSection() {
           <ArrowRight size={20} />
         </Link>
         <Link
-          href="/demo"
+          href="/t/demo-neatx"
           className="glow-card w-full sm:w-auto px-8 py-4 bg-[#131c31]/80  hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
         >
           Esplora la demo

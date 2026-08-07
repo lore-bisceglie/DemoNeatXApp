@@ -21,8 +21,8 @@ export default function FinalCTA() {
            Prova Gratis 14 Giorni
           <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
         </Link>
-        <Link 
-          href="/demo"
+        <Link
+          href="/t/demo-neatx"
           className="px-8 py-4 bg-[#131c31]/80 hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50"
         >
           Esplora la demo

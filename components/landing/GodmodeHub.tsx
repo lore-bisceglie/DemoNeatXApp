@@ -52,8 +52,8 @@ export default function GodmodeHub() {
               <Bot size={16} className="text-blue-400" />
               Cervello AI (Chatbot)
             </Link>
-            <Link 
-              href="/demo" 
+            <Link
+              href="/t/demo-neatx"
               className="px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-3 transition-colors"
               onClick={() => setIsOpen(false)}
             >
