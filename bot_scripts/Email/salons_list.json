@@ -1,0 +1,16 @@
+[
+  {
+    "nome": "Barberia Il Rasoio",
+    "citta": "Milano",
+    "email_destinatario": "test.barberia@example.com",
+    "instagram": "@ilrasoiomilano",
+    "nota": "agenda cartacea, perdono chiamate"
+  },
+  {
+    "nome": "Glamour Beauty Center",
+    "citta": "Roma",
+    "email_destinatario": "test.glamour@example.com",
+    "instagram": "@glamourbeauty",
+    "nota": "tanti no-show"
+  }
+]
