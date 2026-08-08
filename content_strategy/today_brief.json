@@ -1,18 +1,18 @@
 {
   "date": "2026-08-08",
-  "niche": "Barbieri",
-  "feature": "conferme",
-  "feature_label": "Conferme appuntamento",
-  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
-  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
-  "cover_title": "CLIENTI IN MENTE",
-  "hook_hint": "Se sei tra i barbieri e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Conferme appuntamento con NeatX",
+  "niche": "Centri Estetici",
+  "feature": "multi_staff",
+  "feature_label": "Gestione Staff",
+  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
+  "cover_title": "ORGANIZZA IL TEAM",
+  "hook_hint": "Se sei tra i centri estetici e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Gestione Staff con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
