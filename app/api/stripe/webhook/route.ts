@@ -295,16 +295,22 @@ export async function POST(req: Request) {
           if (Object.keys(updateData).length > 0) {
             await prisma.tenant.update({ where: { id: subUpdateTenantId }, data: updateData });
           }
+          // Recupera il nome del negozio per notifiche leggibili (non ID grezzi)
+          const subUpdateTenant = await prisma.tenant.findUnique({
+            where: { id: subUpdateTenantId },
+            select: { name: true },
+          }).catch(() => null);
+          const subUpdateTenantName = subUpdateTenant?.name || subUpdateTenantId;
           if (subUpdate.status === 'past_due') {
             await sendTelegramMessage(
               `⚠️ <b>PAGAMENTO IN RITARDO</b>\n\n` +
-              `🏪 ID: <b>${subUpdateTenantId}</b>\n` +
+              `🏪 <b>${subUpdateTenantName}</b>\n` +
               `⏳ Lo Stripe subscription è in stato <b>past_due</b>. Il cliente deve aggiornare la carta.`
             );
           } else if (subUpdate.status === 'active' && subUpdate.previous_attributes?.status === 'past_due') {
             await sendTelegramMessage(
               `✅ <b>PAGAMENTO RIPRISTINATO</b>\n\n` +
-              `🏪 ID: <b>${subUpdateTenantId}</b>\n` +
+              `🏪 <b>${subUpdateTenantName}</b>\n` +
               `🔄 Il pagamento è stato risolto. L'abbonamento è di nuovo attivo.`
             );
           }

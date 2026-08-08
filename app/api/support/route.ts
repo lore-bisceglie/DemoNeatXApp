@@ -3,6 +3,15 @@ import { prisma } from '@/lib/prisma';
 import { sendTelegramMessage } from '@/lib/telegram';
 import { requireTenantAdmin } from '@/lib/auth';
 
+// Escape HTML per evitare che testo utente rompa la formattazione del messaggio
+function escapeTelegramHtml(value: unknown) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function POST(req: Request) {
   try {
     const { tenantId, message } = await req.json();
@@ -25,7 +34,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
     }
 
-    const text = `⚠️ <b>SEGNALAZIONE SUPPORTO / BUG</b> ⚠️\n\n<b>Da:</b> ${tenant.name}\n<b>Slug:</b> ${tenant.slug}.neatx.store\n<b>Telefono:</b> ${tenant.phone || 'Non specificato'}\n\n<b>Messaggio:</b>\n<i>"${message}"</i>`;
+    const text = `⚠️ <b>SEGNALAZIONE SUPPORTO / BUG</b> ⚠️\n\n👤 Da: <b>${escapeTelegramHtml(tenant.name)}</b>\n🔗 Slug: <b>${escapeTelegramHtml(tenant.slug)}.neatx.store</b>\n📱 Telefono: <b>${escapeTelegramHtml(tenant.phone || 'Non specificato')}</b>\n\n📝 Messaggio:\n<i>"${escapeTelegramHtml(message)}"</i>`;
 
     await sendTelegramMessage(text);
 

@@ -23,7 +23,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npx prisma db push --schema=prisma/schema.prisma --force-reset --accept-data-loss && npx next dev -p 3001",
+    command: "npx prisma db push --schema=prisma/schema.test.prisma --force-reset --accept-data-loss && npx tsx prisma/seed-test-shop.ts && npx next dev -p 3001",
     url: "http://localhost:3001",
     reuseExistingServer: false,
     timeout: 120000,

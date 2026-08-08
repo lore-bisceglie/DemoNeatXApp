@@ -8,6 +8,7 @@ import { isTenantAdminCookieValid } from "@/lib/auth";
 import { appointmentConflictsWithSlot } from "@/lib/booking-conflict";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
 import { parseDaySchedule } from "@/lib/opening-hours";
+import { notifyError } from "@/lib/monitor";
 import { staffCanCoverBookingSlot } from "@/lib/staff-booking";
 import { shopClosureBlocksSlot } from "@/lib/shop-closures";
 
@@ -493,6 +494,7 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error("Errore Database:", error);
+    await notifyError("book", "Prenotazione appuntamento", error);
     return NextResponse.json({ error: "Errore durante il salvataggio." }, { status: 500 });
   }
 }

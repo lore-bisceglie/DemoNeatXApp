@@ -104,12 +104,12 @@ export async function GET(request: Request) {
     const total = appointments.length;
     if (total > 0) {
       const msg =
-        `Promemoria giornalieri NeatX\n\n` +
-        `Data: ${formatDate(tomorrowString)}\n` +
-        `Inviati: ${successCount}\n` +
-        `Falliti: ${failedCount}\n` +
-        `Saltati (crediti esauriti): ${skippedCredits}\n` +
-        `Totale appuntamenti: ${total}`;
+        `⏰ <b>PROMEMORIA GIORNALIERI</b>\n\n` +
+        `📅 Data: <b>${formatDate(tomorrowString)}</b>\n` +
+        `✅ Inviati: <b>${successCount}</b>\n` +
+        `❌ Falliti: <b>${failedCount}</b>\n` +
+        `⏭️ Saltati (crediti esauriti): <b>${skippedCredits}</b>\n` +
+        `📊 Totale appuntamenti: <b>${total}</b>`;
       await sendTelegramMessage(msg).catch((e) => console.error("[Cron Reminders] Errore Telegram:", e));
     }
 

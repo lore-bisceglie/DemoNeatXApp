@@ -87,12 +87,28 @@ def workflow_status(name, status, log_file=None):
     
     emoji = "❌" if status == "failure" else "⚠️"
     label = "FALLITO" if status == "failure" else "ANNULLATO"
-    
+
+    # Spiegazione chiara quando il fallimento è dovuto al blocco Meta
+    # (Instagram/Facebook API): evita di mostrare solo un log criptico.
+    meta_hint = ""
+    if status == "failure" and log_tail:
+        lower = log_tail.lower()
+        if any(keyword in lower for keyword in [
+            "error_code", "oauthexception", "session has expired",
+            "access token", "permission", "meta", "instagram", "graph.facebook",
+            "unauthorized", "invalid token", "app not setup", "rate limit",
+        ]):
+            meta_hint = (
+                "\n\n⚠️ <b>Causa probabile: problema con l'API Meta (Instagram/Facebook).</b>\n"
+                "Il token è scaduto o l'account è bloccato da Meta. "
+                "Verifica il token in Vercel/GitHub Secrets o contatta il supporto Meta."
+            )
+
     if log_tail:
-        message = f"{label}\n\n--- Log Errore ---\n{log_tail}"
+        message = f"{label}\n\n--- Log Errore ---\n{log_tail}{meta_hint}"
     else:
-        message = f"{label} — Controlla i log su GitHub Actions."
-    
+        message = f"{label} — Controlla i log su GitHub Actions.{meta_hint}"
+
     return send(name, message, emoji)
 
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendTenantSms } from "@/lib/sms";
+import { notifyError } from "@/lib/monitor";
 import { appointmentManagementSelect, canManageAppointment } from "@/lib/appointment-management";
 
 // Recupera i dati dell'appuntamento dal token segreto
@@ -32,6 +33,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("Errore recupero appuntamento:", error);
+    await notifyError("cancel.get", "Recupero appuntamento per annullamento", error);
     return NextResponse.json({ appointment: null });
   }
 }
@@ -142,6 +144,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, tenantPhone: result.tenantPhone });
   } catch (error) {
     console.error("Errore eliminazione appuntamento:", error);
+    await notifyError("cancel", "Annullamento appuntamento", error);
     return NextResponse.json({ success: false });
   }
 }

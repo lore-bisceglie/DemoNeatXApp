@@ -50,6 +50,14 @@ model Tenant {
   staffSheetUrl String?
   emailVerified Boolean       @default(false)
   emailVerifyToken String?   @unique
+  emailVerifyExpiresAt DateTime?
+  emailVerifyRequestCount Int @default(0)
+  emailVerifyRequestWindowAt DateTime?
+  passwordResetTokenHash String? @unique
+  passwordResetExpiresAt DateTime?
+  passwordResetRequestCount Int @default(0)
+  passwordResetRequestWindowAt DateTime?
+  sessionVersion Int          @default(0)
   failedLoginAttempts Int     @default(0)
   lockoutUntil  DateTime?
   referralCode  String?       @unique

@@ -156,6 +156,36 @@ Assicurati di avere installato sul tuo sistema:
 
 ---
 
+## 🛡️ Regole di lavoro (LEGGERE SEMPRE)
+
+> Queste regole proteggono le agende dei clienti reali. Il progetto è **in produzione**: ogni modifica deve essere testata e approvata prima di essere pubblicata.
+
+### Sequenza obbligatoria prima di committare/pushare
+1. **A lavoro concluso** si esegue il type-check (`npx tsc --noEmit`) — deve dare **0 errori**.
+2. **Si apre localhost** (`npm run dev` → http://localhost:3000) e si verifica che il sito giri e che le pagine toccate funzionino.
+3. Solo **con l'ok esplicito dell'utente/proprietario** si committa e si pusha. **Mai** committare senza consenso.
+
+### Cosa NON toccare MAI (senza motivo)
+- La **logica delle agende**: prenotazione (`/api/book`), disponibilità (`/api/availability`), spostamento (`/api/appointment/[id]/move`), annullamento (`/api/cancel`), pagamenti.
+- Il **database di produzione** (PostgreSQL). I test automatici usano un **DB isolato** (`prisma/test.db`), mai il DB reale.
+- Il **flusso di prenotazione pubblica** (`app/t/[slug]/BookingClient.tsx`, `components/tenant/BookingForm.tsx`): se non si modifica, resta com'è.
+
+### Test automatici (Playwright)
+- Configurazione: `playwright.config.ts` — usa **`prisma/schema.test.prisma`** (SQLite isolato) e la porta **3001**.
+- Prima di ogni run, il DB di test viene resettato (`--force-reset`) e il client Prisma rigenerato dallo schema test.
+- **Dopo ogni run**, rigenerare il client con lo schema di **produzione**: `npx prisma generate --schema=prisma/schema.prisma` — altrimenti il sito locale punta al DB sbagliato.
+- I test girano su `prisma/test.db`: **non toccano** il DB di produzione né le agende reali.
+
+### Modifiche "invisibili" (SEO, metadati) vs "funzionali" (agende)
+- **SEO / metadati** (sitemap, robots, JSON-LD, title, OG image) → vivono in file separati (`lib/seo.ts`, `components/seo/`, `app/api/og/`, `app/sitemap.ts`, `app/robots.ts`). Non toccano il funzionamento delle agende.
+- **Funzionali** (agende, prenotazioni, pagamenti) → richiedono ancora più attenzione e test manuali su localhost.
+
+### Chi lavora qui
+- **Proprietario**: fa i test manuali di TUTTE le feature (prenotazione, spostamento, annullamento, calendario, "trova il primo posto", dashboard...). Sono tante: non romperle.
+- **Operatore di codice / IA**: segue la sequenza sopra, non committa senza ok, non tocca le agende senza motivo, aggiorna il README/AGENTS.md quando cambia qualcosa di importante.
+
+---
+
 ## 🔑 Variabili d'Ambiente
 
 Per il corretto funzionamento di NeatX in ambiente locale o in produzione, sono necessarie le seguenti variabili d'ambiente nel file `.env`:
@@ -315,6 +345,49 @@ Gli endpoint critici (prenotazione appuntamenti, invio OTP, reset password) sono
 ## 📝 Changelog
 
 ### 2026-08-08
+
+#### 📣 Notifiche Telegram uniformi e veritiere (audit complete)
+
+**Uniformità**: tutte le notifiche ora seguono lo stesso stile (emoji + titolo in `<b>` + righe etichettate), coerenti tra loro.
+- Riepilogo promemoria (`cron/reminders`) → ora con emoji e formato (era testo puro).
+- "Nuovo negozio registrato" (`onboarding`) → titolo ALL-CAPS + emoji ai lati, etichette emoji per riga (era mixed-case).
+- "NUOVO LEAD" (`marketing/lead`) → emoji `🆕` invece di `🚨` (la sirena è ora riservata agli errori/crash).
+- "LEAD MAGNET COMPLETATO" (`public-bot`) → ALL-CAPS coerente con le altre notifiche al proprietario.
+- Notifiche Stripe "PAGAMENTO IN RITARDO/RIPRISTINATO" → mostrano il **nome del negozio** invece dell'ID grezzo.
+- Supporto e syslog → **escape HTML** dei messaggi utente (evita formattazione rotta) + guardia `NODE_ENV=test` (niente notifiche reali dai test).
+
+**Veridicità pubblicazione contenuti**: il preflight di pubblicazione IG (`publish_reel.py`) ora **verifica davvero** il token Meta (chiama l'API debug) invece di controllare solo che sia presente. Così, se Meta è bloccato/scaduto, la notifica dice "Instagram non pubblicato" e NON "video online" a torto. Stessa logica di fallimento esplicito già presente in `auto_post_bot.py`.
+
+#### 🧪 Test automatici: negozio di test fisso + prenotazione pubblica (`e2e/public-booking.spec.ts`, `prisma/seed-test-shop.ts`, `playwright.config.ts`, `prisma/schema.test.prisma`)
+
+I test E2E ora coprono anche la **prenotazione pubblica** (il cliente che prenota online — prima mancava). In più, usano **un solo negozio di test fisso** invece di registrarne uno nuovo a ogni run (che creava decine di negozi e innescava il rate limit).
+
+- **`prisma/seed-test-shop.ts`**: seed che crea `negozio-test`, un negozio fisso completo e pubblicato (servizi, sede, staff). Eseguito dal webServer Playwright dopo il reset del DB di test.
+- **`e2e/public-booking.spec.ts`**: 2 test — (1) il cliente sceglie servizio, orario, nome/telefono, accetta la privacy e prenota (arriva alla pagina di successo); (2) senza servizio il bottone è disabilitato.
+- **`playwright.config.ts`**: webServer ora esegue `db push` (schema test) + `seed-test-shop` + `next dev`. `DATABASE_URL=file:./test.db` (path relativo allo schema → `prisma/test.db`).
+- **`prisma/schema.test.prisma`**: aggiunti gli 8 campi di sicurezza mancanti rispetto a produzione (emailVerify*, passwordReset*, sessionVersion) — senza, la registrazione nei test falliva.
+- **Tutti i test passano**: 7/7 (dashboard: crea/sposta/elimina/paga + onboarding + prenotazione pubblica).
+- **Il DB di test è isolato** (`prisma/test.db`): i test non toccano il DB di produzione. **Dopo un run**, rigenerare il client prod: `npx prisma generate --schema=prisma/schema.prisma`.
+
+#### 🚨 Monitoraggio errori server → notifica Telegram (`lib/monitor.ts`, `app/api/book/route.ts`, `app/api/availability/route.ts`, `app/api/appointment/[id]/move/route.ts`, `app/api/cancel/route.ts`)
+
+Il sistema di alert Telegram copriva solo gli errori di **rendering frontend** (via `/api/syslog`). Ora copre anche gli **errori imprevisti delle API server** (le route delle agende), così se una prenotazione/spostamento/annullamento fallisce lato server, il proprietario lo vede subito su Telegram.
+
+- **`lib/monitor.ts`**: helper `notifyError(route, operation, error)` — invia un messaggio Telegram strutturato (route, operazione, errore, stack) usando `sendTelegramMessage`. Non blocca mai la risposta API.
+- **Agganciato ai catch finali** delle 4 route critiche: `book` (prenotazione), `availability` (disponibilità), `appointment/[id]/move` (spostamento), `cancel` (annullamento).
+- **Nessuna modifica** alla logica di funzionamento: solo aggiunta di notifica negli errori già gestiti (`catch`). Gli errori previsti (validazione, negozio non trovato) non notificano.
+
+#### 🔍 SEO negozi: visibilità su Google + dati strutturati + vendita (`app/sitemap.ts`, `app/robots.ts`, `lib/seo.ts`, `components/seo/JsonLd.tsx`, `app/api/og/tenant/[slug]/route.tsx`, pagine `app/t/[slug]/`, `app/paywall/[slug]/PaywallContent.tsx`, `components/landing/ComparisonTable.tsx`)
+
+Obiettivo: far trovare i negozi su Google quando qualcuno cerca un professionista nella loro città. Tutto su file separati, **nessuna modifica** alle agende/prenotazioni/pagamenti.
+
+- **Sitemap dinamica con i negozi**: ora elenca anche i negozi pubblicati (`{slug}.neatx.store`) e le loro sedi, oltre alle pagine marketing. Fix: il modello `Tenant` non ha `updatedAt`, usati `createdAt`/`publishedAt`.
+- **`robots.txt`**: nasconde admin, api, success, paywall, onboarding, superadmin. Pubblica il path della sitemap.
+- **`lib/seo.ts`**: helper condivisi — JSON-LD `LocalBusiness` (nome, indirizzo, telefono, orari, mappa, social), titoli ottimizzati "Categoria a Città — Nome", mappa categoria→tipo Schema.org.
+- **JSON-LD integrato** nelle 3 pagine tenant: negozio, sedi, sede singola (con dati della sede). Uso sicuro via `<JsonLd>` (escape di `<`/`>`) + `suppressHydrationWarning`.
+- **OG image dinamica** `/api/og/tenant/[slug]`: genera una card 1200×630 con nome, categoria e città del negozio per la condivisione su WhatsApp/social. Runtime **Node** (non Edge — Prisma non gira su Edge).
+- **Meta tag**: title ottimizzato, canonical e OG image su tutte e 3 le pagine tenant.
+- **Vendita**: banner "i clienti ti trovano su Google, zero commissioni" nel paywall; riga "Visibile su Google" nel confronto home; **card VIP 149€** aggiunta al paywall (ora i 3 piani Pro/Elite/VIP sono coerenti ovunque: home, paywall, FAQ).
 
 #### 🎓 Tutorial agende: parte da solo **una sola volta per negozio** (salvato nel database) (`app/t/[slug]/admin/TutorialButton.tsx`, `app/t/[slug]/admin/page.tsx`, `app/api/tenant/tutorial-seen/route.ts`, `prisma/schema.prisma`)
 

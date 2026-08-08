@@ -1,4 +1,11 @@
 export async function sendTelegramMessage(message: string, reply_markup?: any) {
+  // Nei test automatici (NODE_ENV=test) le notifiche Telegram reali NON
+  // devono partire: i test creano negozi/registrazioni finte che altrimenti
+  // inonderebbero il canale del proprietario.
+  if (process.env.NODE_ENV === "test") {
+    return;
+  }
+
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 

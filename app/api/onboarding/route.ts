@@ -75,18 +75,21 @@ async function uniqueSlug(base: string, cityFallback: string = "") {
 }
 
 async function sendTelegramNotification(tenant: any, ownerName: string, category: string) {
+  // Nei test (NODE_ENV=test) non inviare notifiche reali.
+  if (process.env.NODE_ENV === "test") return;
+
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return;
 
   const phoneDigits = String(tenant.phone || "").replace(/[^0-9]/g, "");
   const text =
-    "🚨 <b>Nuovo negozio registrato</b>\n\n" +
-    `Titolare: <b>${escapeTelegramHtml(ownerName)}</b>\n` +
-    `Negozio: <b>${escapeTelegramHtml(tenant.name)}</b>\n` +
-    `Città/categoria: ${escapeTelegramHtml(tenant.city)} | ${escapeTelegramHtml(category)}\n` +
-    `Telefono: ${escapeTelegramHtml(tenant.phone || "-")}\n` +
-    "Piano iniziale: Elite (prova gratuita 14 giorni)\n\n" +
+    "🆕 <b>NUOVO NEGOZIO REGISTRATO</b> 🆕\n\n" +
+    `👤 Titolare: <b>${escapeTelegramHtml(ownerName)}</b>\n` +
+    `🏪 Negozio: <b>${escapeTelegramHtml(tenant.name)}</b>\n` +
+    `📍 Città/categoria: ${escapeTelegramHtml(tenant.city)} | ${escapeTelegramHtml(category)}\n` +
+    `📱 Telefono: ${escapeTelegramHtml(tenant.phone || "-")}\n` +
+    "🎯 Piano iniziale: Elite (prova gratuita 14 giorni)\n\n" +
     (phoneDigits ? `<a href="https://wa.me/${phoneDigits}">Apri chat WhatsApp del titolare</a>` : "Numero WhatsApp non disponibile");
 
   try {

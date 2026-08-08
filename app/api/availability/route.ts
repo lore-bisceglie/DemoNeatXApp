@@ -3,6 +3,7 @@ import {
   AvailabilityError,
   getAvailabilityForDate,
 } from "@/lib/availability";
+import { notifyError } from "@/lib/monitor";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -23,6 +24,7 @@ export async function GET(request: Request) {
     }
 
     console.error("Errore Availability:", error);
+    await notifyError("availability", "Disponibilità orari", error);
     return NextResponse.json({ error: "Errore di connessione" }, { status: 500 });
   }
 }

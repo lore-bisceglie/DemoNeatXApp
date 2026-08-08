@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
+import { notifyError } from "@/lib/monitor";
 import { requireTenantAdminOrDemo } from "@/lib/demo-access";
 import {
   appointmentConflictsWithSlot,
@@ -240,6 +241,7 @@ export async function POST(
     return NextResponse.json({ appointment: updatedAppointment });
   } catch (error) {
     console.error("Errore spostamento da dashboard:", error);
+    await notifyError("appointment.move", "Spostamento appuntamento", error);
     return NextResponse.json({ error: "Errore durante lo spostamento" }, { status: 500 });
   }
 }

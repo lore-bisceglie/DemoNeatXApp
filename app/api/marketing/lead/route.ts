@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     });
 
     await sendTelegramMessage(
-      `🚨 <b>NUOVO LEAD!</b> 🚨\n\n` +
+      `🆕 <b>NUOVO LEAD</b> 🆕\n\n` +
       `👤 <b>${name}</b>\n` +
       `📧 ${email || 'non fornita'}\n` +
       `📱 ${phone || 'non fornito'}\n` +

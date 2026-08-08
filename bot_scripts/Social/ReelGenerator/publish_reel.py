@@ -87,6 +87,31 @@ def youtube_auth_check():
 
     return platform_result(False, "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido.")
 
+def instagram_auth_check():
+    """Verifica DAVVERO che il token Meta sia valido chiamando l'API di debug.
+
+    Il semplice controllo 'token presente e non placeholder' è insufficiente:
+    se il token è scaduto o bloccato da Meta, la pubblicazione fallirebbe ma
+    la notifica direbbe comunque 'online'. Qui verifichiamo il token reale.
+    """
+    if not META_ACCESS_TOKEN or not IG_ACCOUNT_ID:
+        return platform_result(False, "Richiede META_ACCESS_TOKEN e IG_ACCOUNT_ID.")
+    if META_ACCESS_TOKEN.startswith("EAxxxx"):
+        return platform_result(False, "META_ACCESS_TOKEN è un placeholder non valido.")
+
+    try:
+        import requests as _requests
+        url = f"https://graph.facebook.com/debug_token?input_token={META_ACCESS_TOKEN}&access_token={META_ACCESS_TOKEN}"
+        res = _requests.get(url, timeout=10)
+        data = res.json()
+        valid = bool(data.get("data", {}).get("is_valid"))
+        if not valid:
+            error = data.get("data", {}).get("error", {}).get("message", "token non valido")
+            return platform_result(False, f"Token Meta non valido o scaduto: {error}.")
+        return platform_result(True, "Token Meta valido e verificato.")
+    except Exception as exc:
+        return platform_result(False, f"Impossibile verificare il token Meta: {exc}.")
+
 def tiktok_preflight_check():
     if os.environ.get("TIKTOK_MAKE_WEBHOOK_URL"):
         return platform_result(True, "Webhook Make.com configurato.")
@@ -101,10 +126,7 @@ def tiktok_preflight_check():
 def run_preflight():
     checks = {
         "video_file": platform_result(os.path.exists(VIDEO_FILE), f"File video richiesto: {VIDEO_FILE}"),
-        "instagram": platform_result(
-            bool(META_ACCESS_TOKEN and IG_ACCOUNT_ID and not META_ACCESS_TOKEN.startswith("EAxxxx")),
-            "Richiede META_ACCESS_TOKEN valido e IG_ACCOUNT_ID.",
-        ),
+        "instagram": instagram_auth_check(),
         "tiktok": tiktok_preflight_check(),
         "youtube": youtube_auth_check(),
     }

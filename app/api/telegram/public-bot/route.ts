@@ -132,9 +132,9 @@ export async function POST(req: Request) {
         const userUsername = cb.from?.username ? `@${escapeHtml(cb.from.username)}` : "(senza username Telegram)";
 
         await sendTelegramMessage(
-          "🧲 <b>Lead magnet completato</b>\n\n" +
-          `<b>${userFirstName}</b> ${userUsername} ha completato il calcolatore pubblico.\n` +
-          `Perdita stimata: <b>${monthlyLoss.toFixed(0)}€ al mese</b>.\n\n` +
+          "🧲 <b>LEAD MAGNET COMPLETATO</b> 🧲\n\n" +
+          `👤 <b>${userFirstName}</b> ${userUsername} ha completato il calcolatore pubblico.\n` +
+          `💰 Perdita stimata: <b>${monthlyLoss.toFixed(0)}€ al mese</b>.\n\n` +
           "Azione consigliata: controlla se si registra. Se non entra entro 10 minuti, puoi contattarlo manualmente dal suo username se disponibile."
         );
       }
