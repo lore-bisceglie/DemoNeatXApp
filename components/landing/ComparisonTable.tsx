@@ -4,6 +4,7 @@ import { Check, X } from "lucide-react";
 
 const ROWS = [
   { label: "Commissioni sugli incassi", neatx: "0%", booksy: "20-30%", treatwell: "~25%" },
+  { label: "Visibile su Google", neatx: <Check size={18} className="text-emerald-400" />, booksy: <X size={18} className="text-red-400" />, treatwell: <span className="text-slate-400">Solo nella loro app</span> },
   { label: "Link prenotazione brandizzato", neatx: <Check size={18} className="text-emerald-400" />, booksy: <X size={18} className="text-red-400" />, treatwell: <X size={18} className="text-red-400" /> },
   { label: "Promemoria automatici", neatx: <span className="text-amber-300">In manutenzione</span>, booksy: <span className="text-slate-400">Solo in-app</span>, treatwell: <span className="text-slate-400">Solo in-app</span> },
   { label: "Acconti / Caparre online", neatx: <Check size={18} className="text-emerald-400" />, booksy: <Check size={18} className="text-emerald-400" />, treatwell: <X size={18} className="text-red-400" /> },

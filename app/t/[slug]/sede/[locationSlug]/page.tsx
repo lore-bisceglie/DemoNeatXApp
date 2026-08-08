@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getMarketingUrl, getTenantPublicUrl } from "@/lib/domains";
+import { buildBusinessJsonLd, formatLocalTitle } from "@/lib/seo";
 import type { BookingInitialData } from "@/components/tenant/types";
+import JsonLd from "@/components/seo/JsonLd";
 import { BookingClient } from "../../BookingClient";
 
 interface Props {
@@ -61,9 +64,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const location = tenant?.locations.find((item) => item.slug === locationSlug);
   if (!tenant || !location) return { title: "Sede non trovata" };
 
+  const canonical = getMarketingUrl(`/t/${slug}/sede/${locationSlug}`);
+  const title = formatLocalTitle(tenant.name, tenant.category, tenant.city, location.name);
+  const description = `Prenota il tuo appuntamento presso ${location.name} (${location.address || tenant.city || ""})`;
+  const ogImageUrl = getMarketingUrl(`/api/og/tenant/${slug}`);
+
   return {
-    title: `Prenota da ${tenant.name} - ${location.name}`,
-    description: `Prenota il tuo appuntamento presso ${location.name} (${location.address || tenant.city || ""})`,
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "website",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
+    },
   };
 }
 
@@ -121,5 +137,30 @@ export default async function SedeBookingPage({ params }: Props) {
     storeSettings: tenant.storeSettings,
   };
 
-  return <BookingClient slug={slug} initialData={initialData} initialLocationId={location.id} />;
+  const jsonLd = buildBusinessJsonLd({
+    name: tenant.name,
+    category: tenant.category,
+    city: tenant.city,
+    description: tenant.description,
+    phone: location.phone || tenant.phone,
+    address: location.address || tenant.address,
+    logoUrl: tenant.logoUrl,
+    instagramUrl: tenant.instagramUrl,
+    tiktokUrl: tenant.tiktokUrl,
+    mapsLink: location.mapsLink || tenant.mapsLink,
+    openTime: location.openTime || tenant.openTime,
+    closeTime: location.closeTime || tenant.closeTime,
+    breakStart: location.breakStart || tenant.breakStart,
+    breakEnd: location.breakEnd || tenant.breakEnd,
+    closedDays: location.closedDays || tenant.closedDays,
+    url: getMarketingUrl(`/t/${slug}/sede/${locationSlug}`),
+    locationName: location.name,
+  });
+
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <BookingClient slug={slug} initialData={initialData} initialLocationId={location.id} />
+    </>
+  );
 }

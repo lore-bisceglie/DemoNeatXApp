@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getTenantPublicUrl } from "@/lib/domains";
+import { getMarketingUrl, getTenantPublicUrl } from "@/lib/domains";
+import { buildBusinessJsonLd, formatLocalTitle } from "@/lib/seo";
 import type { BookingInitialData } from "@/components/tenant/types";
+import JsonLd from "@/components/seo/JsonLd";
 import { BookingClient } from "./BookingClient";
 
 export const dynamic = "force-dynamic";
@@ -111,17 +113,26 @@ export async function generateMetadata({
   const description = tenant.description ||
     `Prenota online il tuo appuntamento da ${tenant.name}${tenant.city ? ` a ${tenant.city}` : ""}.`;
   const canonical = getTenantPublicUrl(tenant.slug);
+  const title = formatLocalTitle(tenant.name, tenant.category, tenant.city);
+  const ogImageUrl = getMarketingUrl(`/api/og/tenant/${tenant.slug}`);
 
   return {
-    title: `Prenota da ${tenant.name}`,
+    title,
     description,
     alternates: { canonical },
     openGraph: {
-      title: `Prenota da ${tenant.name}`,
+      title,
       description,
       url: canonical,
       type: "website",
-      images: tenant.logoUrl ? [{ url: tenant.logoUrl, alt: tenant.name }] : undefined,
+      siteName: tenant.name,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
     },
   };
 }
@@ -134,6 +145,25 @@ export default async function TenantPage({
   const { slug } = await params;
   const tenant = await getPublicTenant(slug);
   if (!tenant) notFound();
+
+  const jsonLd = buildBusinessJsonLd({
+    name: tenant.name,
+    category: tenant.category,
+    city: tenant.city,
+    description: tenant.description,
+    phone: tenant.phone,
+    address: tenant.address,
+    logoUrl: tenant.logoUrl,
+    instagramUrl: tenant.instagramUrl,
+    tiktokUrl: tenant.tiktokUrl,
+    mapsLink: tenant.mapsLink,
+    openTime: tenant.openTime,
+    closeTime: tenant.closeTime,
+    breakStart: tenant.breakStart,
+    breakEnd: tenant.breakEnd,
+    closedDays: tenant.closedDays,
+    url: getTenantPublicUrl(tenant.slug),
+  });
 
   // SECURITY: Block bookings on unpublished salons
   const isPublished = Boolean(tenant.publishedAt);
@@ -220,5 +250,10 @@ export default async function TenantPage({
     storeSettings: tenant.storeSettings,
   };
 
-  return <BookingClient slug={slug} initialData={initialData} />;
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <BookingClient slug={slug} initialData={initialData} />
+    </>
+  );
 }
