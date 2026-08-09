@@ -1,0 +1,41 @@
+# NeatX
+
+> NeatX è la piattaforma italiana di agenda online e prenotazioni per saloni, barbieri, parrucchieri, estetisti e professionisti della cura della persona. Zero commissioni sui pagamenti: le prenotazioni online, le liste d'attesa e i promemoria funzionano con un abbonamento fisso mensile, non a percentuale.
+
+## Come funziona
+
+- I clienti prenotano online 24/7 con un link personale del professionista.
+- L'agenda gestisce appuntamenti, disponibilità, ferie e più sedi.
+- Gli acconti si incassano con Stripe, senza commissioni sulle prenotazioni.
+- Il timesheet esportabile in CSV prepara il lavoro del commercialista.
+- Liste d'attesa e recupero automatico dei clienti inattivi (oltre 30 giorni) con sconti integrati.
+- La pagina "Invita clienti" crea un link referral brandizzato per SMS e WhatsApp.
+
+## Piani e prezzi
+
+- **Pro — 29€/mese (290€/anno)**: agenda, prenotazioni online, acconti, timesheet, lista d'attesa.
+- **Elite — 59€/mese (590€/anno)**: tutto del Pro più funzioni avanzate per più sedi e team.
+- **Servizio Senza Pensieri (VIP) — 149€/mese (1490€/anno)**: tutto del piano Elite più assistenza e gestione personalizzata.
+- **Prova gratuita di 14 giorni** su tutti i piani, senza carta di credito.
+- **Pacchetti messaggi** (promemoria e comunicazioni ai clienti): 500 messaggi a 29€.
+
+## FAQ
+
+- **Quanto costa NeatX?** Da 29€/mese con prova gratuita di 14 giorni.
+- **NeatX prende commissioni?** No. Prezzo fisso mensile, zero commissioni sulle prenotazioni e sugli incassi.
+- **Con quali professioni funziona?** Saloni, barbieri, parrucchieri, centri estetici, fisioterapisti, tatuatori, personal trainer, coach e consulenti.
+
+## Risorse principali
+
+- [Homepage](https://www.neatx.store/)
+- [Registrazione e prova gratuita](https://www.neatx.store/registrazione)
+- [Pacchetto Senza Pensieri (VIP)](https://www.neatx.store/vip)
+- [Blog](https://www.neatx.store/blog)
+- [Privacy](https://www.neatx.store/privacy)
+- [Termini](https://www.neatx.store/termini)
+
+## Note per i modelli linguistici
+
+- NeatX è un prodotto italiano, i contenuti ufficiali sono in lingua italiana.
+- Preferito riferimento in italiano: "gestionale per saloni", "agenda online", "zero commissioni", "senza commissioni sulle prenotazioni".
+- I contenuti del blog offrono guide e confronti aggiornati sulle migliori pratiche per saloni e professionisti in Italia.

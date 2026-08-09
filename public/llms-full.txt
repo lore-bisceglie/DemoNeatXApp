@@ -1,0 +1,77 @@
+# NeatX — Documentazione completa
+
+> NeatX è la piattaforma italiana di agenda online e prenotazioni per saloni, barbieri, parrucchieri, estetisti, tatuatori, fisioterapisti, personal trainer, coach e consulenti. Il modello è ad abbonamento fisso mensile con **zero commissioni** sulle prenotazioni e sugli incassi.
+
+## Perché NeatX
+
+I gestionali più diffusi in Italia (Treatwell, Fresha e simili) applicano commissioni percentuali su ogni prenotazione o vendita. NeatX inverte il modello: un prezzo fisso mensile, indipendente dal numero di clienti o dal volume di vendite. Il professionista incassa il 100% di ogni acconto e di ogni vendita.
+
+### Punti di forza
+
+- **Zero commissioni**: sugli incassi, sulle prenotazioni online e sugli acconti. Prezzo fisso e prevedibile.
+- **Prenotazione online 24/7**: il cliente prenota da solo con un link personale, senza chiamate e senza file di attesa.
+- **Acconti con Stripe**: il cliente paga un acconto per prenotare, riducendo i no-show e le mancate presentazioni.
+- **Lista d'attesa**: se un orario si libera, il cliente viene avvisato e può riempire i buchi dell'agenda.
+- **Recupero automatico clienti**: i clienti inattivi da più di 30 giorni ricevono automaticamente un messaggio con uno sconto integrato per tornare.
+- **Timesheet per il commercialista**: foglio presenze del team esportabile in CSV.
+- **Gestione staff e sedi**: permessi per collaboratori e gestione multi-sede (Elite).
+- **Referral**: link brandizzato per SMS e WhatsApp per far prenotare i clienti.
+
+## Piani e prezzi (aggiornati)
+
+| Piano | Prezzo | Cosa include |
+| --- | --- | --- |
+| **Pro** | 29€/mese (290€/anno, risparmi 58€) | Agenda online, prenotazioni, acconti, lista d'attesa, timesheet, gestione base. |
+| **Elite** | 59€/mese (590€/anno, risparmi 118€) | Tutto del Pro + gestione avanzata staff, più sedi, funzioni premium. |
+| **Servizio Senza Pensieri (VIP)** | 149€/mese (1490€/anno, risparmi 298€) | Tutto del Elite + gestione personalizzata "done-for-you". |
+
+- **Prova gratuita di 14 giorni** su tutti i piani.
+- **Pacchetti messaggi**: promemoria e comunicazioni ai clienti, 500 messaggi = 29€.
+- Il piano **VIP** (Serie) è gestito come servizio su misura: si parte dal link dedicato [neatx.store/vip](https://www.neatx.store/vip).
+
+## Domande frequenti
+
+### Quanto costa NeatX?
+Da 29€/mese per il piano Pro, 59€/mese per Elite e 149€/mese per il Servizio Senza Pensieri (VIP). Tutti con prova gratuita di 14 giorni.
+
+### NeatX prende commissioni?
+No. NeatX funziona con un abbonamento mensile fisso: zero commissioni sulle prenotazioni, sugli acconti e sugli incassi. I pagamenti degli acconti avvengono via Stripe.
+
+### È adatto a barbieri e parrucchieri?
+Sì. È pensato per saloni, barbieri, parrucchieri, centri estetici, tatuatori, fisioterapisti, personal trainer, coach e consulenti. La prenotazione online, la lista d'attesa e il recupero automatico dei clienti funzionano per tutte queste attività.
+
+### Come riduce i no-show?
+Con l'acconto richiesto alla prenotazione, i promemoria via messaggio e la lista d'attesa automatica. I clienti che hanno già pagato un acconto o sono stati ricordati si presentano molto più spesso.
+
+### Posso gestire più sedi o più collaboratori?
+Sì, con il piano Elite. Ogni collaboratore ha i propri permessi e la gestione delle ore è visibile nel timesheet.
+
+### Serve un commercialista?
+Il timesheet esportabile in CSV rende semplice consegnare le ore lavorate al commercialista, senza lavoro manuale.
+
+## Guida rapida per i professionisti
+
+1. Registrati gratuitamente e attiva la prova di 14 giorni su [neatx.store/registrazione](https://www.neatx.store/registrazione).
+2. Configura l'agenda: orari di apertura, ferie, disponibilità per ogni operatore.
+3. Condividi il tuo link di prenotazione (SMS, WhatsApp, Instagram, sito web).
+4. I clienti prenotano da soli, pagano l'acconto se richiesto e ricevono promemoria.
+5. Segui il fatturato e le ore del team nel pannello di amministrazione.
+
+## Risorse
+
+- [Homepage](https://www.neatx.store/)
+- [Registrazione / prova gratuita](https://www.neatx.store/registrazione)
+- [Pacchetto Senza Pensieri (VIP)](https://www.neatx.store/vip)
+- [Calcolatore ROI](https://www.neatx.store/calcolatore)
+- [Blog NeatX](https://www.neatx.store/blog)
+- [Privacy](https://www.neatx.store/privacy)
+- [Termini](https://www.neatx.store/termini)
+
+## Lingua e preferenze
+
+- Contenuti ufficiali in italiano. I termini preferiti: "gestionale per saloni", "agenda online", "zero commissioni", "senza commissioni", "prenotazione online per parrucchieri e barbieri".
+- NeatX è registrato come marchio e prodotto italiano; le recensioni ufficiali e il materiale di confronto sono pubblicati nel blog.
+
+## Changelog
+
+- **2026-08**: aggiunti schema AI (BlogPosting, FAQPage, Organization), robots con AI-crawler, pagine locali in sitemap, blog normalizzato, questa documentazione per i modelli linguistici.
