@@ -9,7 +9,7 @@ const FALLBACK_REVIEWS = [
     role: "Barber Shop",
     content: "Ragazzi, NeatX mi ha cambiato la vita in barberia. I miei clienti mi scrivono su WhatsApp, io butto un occhio sullo smartwatch, aspetto 20 secondi e mi arriva da solo il messaggio con la prenotazione chiusa. Zero stress per me che continuo a tagliare, comodità top per loro. Geniale! 💈🔥⌚",
     stars: 5,
-    highlight: "Recensione reale"
+    highlight: "Prenotazioni con un tocco"
   },
   {
     name: "Marco D.",
