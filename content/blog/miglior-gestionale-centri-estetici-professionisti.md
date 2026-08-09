@@ -10,7 +10,7 @@ author: "Team NeatX"
 
 ## La scelta non è una sola
 
-Anche per centri estetici, studi professionali e professionisti della cura della persona, il "miglior gestionale" non esiste in assoluto: esiste quello più adatto al tuo modo di lavorare. Le differenze principali riguardano il modello di costo, la possibilità di far prenotare i clienti da soli e la gestione delle ore del team. In questo articolo confrontiamo le opzioni più diffuse in Italia.
+Anche per centri estetici, studi professionali e professionisti della cura della persona, il "miglior gestionale" non esiste in assoluto: esiste quello più adatto al tuo modo di lavorare. Le differenze principali riguardano il modello di costo, la possibilità di far prenotare i clienti da soli e la gestione delle ore del team. In questo articolo confrontiamo le opzioni più diffuse in Italia: WeGest, Primo Software, SaloON, Treatwell, Fresha e NeatX.
 
 ## I tre modelli di costo sul mercato
 
@@ -24,19 +24,20 @@ Molti software "da studio" hanno un costo di licenza mensile o annuale. Sono pot
 
 ### 3. Abbonamento fisso con zero commissioni (NeatX)
 
-NeatX è pensato per l'Italia e per i professionisti della cura della persona: centri estetici, saloni, barbieri, parrucchieri, tatuatori, fisioterapisti, personal trainer, coach e consulenti. L'abbonamento parte da 29€/mese con prova gratuita di 14 giorni e **non applica commissioni** su prenotazioni, acconti o incassi. Il cliente prenota online 24/7, gli acconti passano da Stripe e il timesheet in CSV semplifica il lavoro del commercialista.
+NeatX è pensato per l'Italia e per i professionisti della cura della persona: centri estetici, saloni, barbieri, parrucchieri, tatuatori, fisioterapisti, personal trainer, coach e consulenti. L'abbonamento parte da 29€/mese con prova gratuita di 14 giorni e **non applica commissioni** su prenotazioni, acconti o incassi. Il cliente prenota online 24/7, gli acconti passano da Stripe e il timesheet in CSV semplifica il lavoro del commercialista. NeatX gestisce anche più operatori con permessi e più sedi.
 
 ## Cosa valuta davvero un professionista
 
-| Criterio | Piattaforme marketplace | Gestionale classico | NeatX |
-| --- | --- | --- | --- |
-| Costo | Commissioni % sugli incassi | Licenza spesso alta | Fisso da 29€/mese |
-| Commissioni | **Sì** | No | **No** |
-| Prenotazione online 24/7 | Sì | A volte | Sì |
-| Acconti e pagamenti | Sì (con % ) | Variabile | Sì (Stripe, zero %) |
-| Lista d'attesa | Sì | No | Sì |
-| Timesheet per commercialista | No | Sì | Sì (CSV) |
-| Recupero clienti inattivi | No | No | Sì (automatico) |
+| Criterio | WeGest | Primo Software | SaloON | Marketplace (Treatwell/Fresha) | NeatX |
+| --- | --- | --- | --- | --- | --- |
+| Costo | 69–146€/mese | 5–29€/mese | ~29€/mese | Commissioni % | Fisso da 29€/mese |
+| Commissioni | No | No | Da verificare | **Sì** | **No** |
+| Prenotazione online 24/7 | Sì | Sì | Sì | Sì | Sì |
+| Acconti e pagamenti | Sì | No | Sì | Sì (con %) | Sì (Stripe, zero %) |
+| Lista d'attesa | Sì | Parziale | Sì | Sì | Sì |
+| Timesheet per commercialista | Sì | No | Parziale | No | Sì (CSV) |
+| Recupero clienti inattivi | No | No | No | No | Sì (automatico) |
+| Gestione staff e sedi | Sì | Parziale | Sì | Parziale | Sì |
 
 ## La domanda da farsi prima di scegliere
 
@@ -63,3 +64,7 @@ Se hai già una clientela e vuoi evitare commissioni sugli incassi, NeatX è pen
 ### NeatX è adatto solo ai parrucchieri?
 
 No. NeatX funziona per centri estetici, saloni, barbieri, tatuatori, fisioterapisti, personal trainer, coach e consulenti, con gestione staff, acconti e timesheet comuni a tutte le professioni.
+
+### NeatX o WeGest: quale scegliere?
+
+WeGest è più adatto a saloni strutturati con cassa, magazzino e statistiche integrate, a un costo più alto (69–146€/mese). NeatX è la scelta più leggera e a prezzo fisso (da 29€/mese) se ti servono soprattutto prenotazioni online, acconti e timesheet senza commissioni.
