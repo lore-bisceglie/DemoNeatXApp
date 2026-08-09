@@ -1,8 +1,9 @@
 ---
 title: "Barbieri: Timesheet Commercialista con NeatX"
 date: "2026-07-22"
-description: "Barbieri: Timesheet Commercialista con NeatX"
+description: "Barbieri: timesheet e fogli presenze esportabili in CSV per il commercialista. Gestione orari, pacchetti messaggi e invito clienti con NeatX."
 slug: "barbieri-timesheet-commercialista-con-neatx"
+author: "Team NeatX"
 ---
 
 # Barbieri: Timesheet Commercialista con NeatX
@@ -26,3 +27,15 @@ NeatX offre anche funzioni di marketing innovative. Puoi invitare nuovi clienti 
 
 ## Call to Action
 In conclusione, se sei un barbiere e desideri semplificare la gestione del tuo salone, NeatX è la soluzione definitiva. Con una serie di funzionalità pensate per ottimizzare il tuo lavoro e migliorare la comunicazione con i clienti, non puoi permetterti di perderti questa opportunità. Prova NeatX oggi stesso e trasforma la tua attività!
+
+---
+
+## Domande frequenti
+
+### Come preparo i fogli presenze per il commercialista?
+
+NeatX registra le ore di ogni collaboratore e ti permette di esportare i fogli presenze in CSV con un click. Il tuo commercialista riceve tutto pronto, senza ricostruzioni a mano.
+
+### Posso gestire gli orari dei miei collaboratori?
+
+Sì, ogni collaboratore ha la sua agenda e le sue disponibilità. Tu vedi le ore lavorate e blocchi turni, ferie e permessi da un'unica dashboard.

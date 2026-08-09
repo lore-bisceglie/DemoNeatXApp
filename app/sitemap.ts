@@ -64,6 +64,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogPages,
   ];
 
+  // Pagine locali SEO (gestionale parrucchieri per città)
+  const localCitySlugs = [
+    "milano", "roma", "napoli", "torino", "palermo", "genova",
+    "bologna", "firenze", "bari", "catania",
+  ];
+  const localPages: MetadataRoute.Sitemap = localCitySlugs.map((citta) => ({
+    url: `${marketingBase}/gestionale-parrucchieri-${citta}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   // Pagine dei negozi pubblicati
   let shopPages: MetadataRoute.Sitemap = [];
   try {
@@ -121,5 +133,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("[sitemap] Impossibile leggere i tenant dal DB:", error);
   }
 
-  return [...marketingPages, ...shopPages];
+  return [...marketingPages, ...localPages, ...shopPages];
 }

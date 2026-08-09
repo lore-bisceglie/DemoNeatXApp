@@ -51,6 +51,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <IubendaWrapper />
         
         {/* SEO Schema.org (JSON-LD) */}
+        {/* Organization — il publisher di NeatX, citato dalle AI e dalle pagine articolo */}
+        <Script id="schema-organization" type="application/ld+json" strategy="beforeInteractive">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "@id": "https://www.neatx.store/#organization",
+              "name": "NeatX",
+              "url": "https://www.neatx.store",
+              "logo": "https://www.neatx.store/preview.png",
+              "sameAs": [
+                "https://www.neatx.store"
+              ],
+              "description": "NeatX è la piattaforma di agenda online e prenotazioni per saloni, barbieri, parrucchieri e centri estetici in Italia. Zero commissioni sui tuoi incassi."
+            }
+          `}
+        </Script>
         <Script id="schema-software" type="application/ld+json" strategy="beforeInteractive">
           {`
             {
@@ -59,12 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "name": "NeatX",
               "operatingSystem": "Web",
               "applicationCategory": "BusinessApplication",
+              "applicationSubCategory": "Agenda appuntamenti e prenotazioni online",
               "offers": {
                 "@type": "Offer",
-                "price": "0",
+                "price": "29",
                 "priceCurrency": "EUR"
               },
-              "description": "Software gestionale e agenda appuntamenti online zero commissioni per saloni, barbieri e centri estetici in Italia."
+              "description": "Software gestionale e agenda appuntamenti online zero commissioni per saloni, barbieri e centri estetici in Italia. I clienti prenotano da soli 24/7, gli acconti si incassano con Stripe, zero commissioni sulle prenotazioni."
             }
           `}
         </Script>

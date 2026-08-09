@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import JsonLd from '@/components/seo/JsonLd'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -52,7 +53,34 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   const contentWithoutH1 = content.replace(/^#\s+.+\n/, '');
 
   return (
-    <article className="min-h-screen bg-[#050814]">
+    <>
+      {/* Schema.org Article/BlogPosting per la citazione da parte delle AI */}
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          headline: String(data.title || "NeatX Blog"),
+          description: String(data.description || content.replace(/[#*_`\n]/g, " ").trim().slice(0, 155)),
+          datePublished: data.date ? String(data.date) : undefined,
+          dateModified: data.date ? String(data.date) : undefined,
+          author: {
+            "@type": "Organization",
+            name: "NeatX",
+            url: "https://www.neatx.store",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "NeatX",
+            url: "https://www.neatx.store",
+          },
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `https://www.neatx.store/blog/${slug}`,
+          },
+          inLanguage: "it-IT",
+        }}
+      />
+      <article className="min-h-screen bg-[#050814]">
       {/* Header Articolo */}
       <header className="bg-[#0b1221] text-white py-24 px-4 text-center border-b border-[#1a2642]">
         <div className="max-w-4xl mx-auto">
@@ -100,6 +128,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
           </Link>
         </div>
       </main>
-    </article>
+      </article>
+    </>
   )
 }

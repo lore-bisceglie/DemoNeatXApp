@@ -1,8 +1,9 @@
 ---
 title: "Centri Estetici: Gestione Staff con NeatX"
 date: "2026-07-18"
-description: "Centri Estetici: Gestione Staff con NeatX"
+description: "Centri estetici: gestisci il tuo staff con NeatX. Ogni estetista ha la sua agenda, fogli presenze esportabili e pacchetti messaggi per comunicare con i clienti."
 slug: "centri-estetici-gestione-staff-con-neatx"
+author: "Team NeatX"
 ---
 
 # Centri Estetici: Gestione Staff con NeatX
@@ -28,3 +29,15 @@ Un'altra caratteristica interessante di NeatX è la possibilità di invitare nuo
 In conclusione, la gestione del personale in un centro estetico non deve essere un compito complicato. Con NeatX, hai a disposizione strumenti avanzati per ottimizzare ogni aspetto della gestione dello staff, dalla programmazione degli orari al monitoraggio delle presenze. Non perdere l'occasione di trasformare la tua attività, prova NeatX e scopri come può fare la differenza nel tuo centro estetico. 
 
 💡 TIP: Non dimenticare di esplorare le funzionalità di NeatX e vedere come può semplificare la gestione del tuo centro estetico. Visita il sito ufficiale e inizia la tua prova gratuita!
+
+---
+
+## Domande frequenti
+
+### Come gestisco più estetiste nel mio centro?
+
+Ogni collaboratore ha la sua agenda separata e i clienti scelgono con chi prenotare. Tu gestisci turni, ferie e permessi da un'unica dashboard.
+
+### Come monitoro le ore del mio team?
+
+I fogli presenze di NeatX registrano le ore lavorate di ogni estetista e sono esportabili in CSV per il commercialista, con trasparenza totale.
