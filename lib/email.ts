@@ -124,8 +124,17 @@ export async function sendVerificationEmail(tenantEmail: string, ownerName: stri
   return sendEmail({ to: tenantEmail, ...buildVerificationEmail(ownerName, verifyUrl, referralBonusPending) });
 }
 
-export function buildWelcomeEmail(ownerName: string, tenantUrl: string): EmailTemplate {
+export function buildWelcomeEmail(ownerName: string, tenantUrl: string, referralCode?: string | null): EmailTemplate {
   const safeUrl = esc(tenantUrl);
+  const referralBlock = referralCode
+    ? `<div style="background:#0b1221;border:1px solid #1e2b4a;border-radius:12px;padding:20px;margin:20px 0;">
+         <p style="margin:0 0 8px 0;font-weight:bold;color:#00b4ff;">🎁 Invita un collega e guadagna messaggi gratis</p>
+         <p style="margin:0 0 12px 0;font-size:14px;color:#334155;">Porta un collega su NeatX con il tuo link personale: lui parte con <strong>100 crediti</strong>, e tu ricevi <strong>100 crediti</strong> appena attiva il suo primo abbonamento. Nessun limite.</p>
+         <p style="margin:0;font-size:14px;color:#334155;">Il tuo link personale:<br>
+           <a href="https://neatx.store/registrazione?ref=${esc(referralCode)}" style="color:#0284c7;font-weight:bold;word-break:break-all;">https://neatx.store/registrazione?ref=${esc(referralCode)}</a>
+         </p>
+       </div>`
+    : "";
   return {
     subject: `Benvenuto in NeatX, ${ownerName}! Il tuo gestionale è pronto`,
     html: emailShell(
@@ -136,6 +145,7 @@ export function buildWelcomeEmail(ownerName: string, tenantUrl: string): EmailTe
        <div style="background:#f4f4f5;padding:20px;border-radius:10px;margin:20px 0;">
          <p style="margin:0;"><strong>Link del tuo negozio:</strong><br><a href="${safeUrl}" style="color:#0284c7;">${safeUrl}</a></p>
        </div>
+       ${referralBlock}
        <p>Hai 14 giorni di prova gratuita. Per accedere alla dashboard usa il link qui sopra e la password scelta durante la registrazione.</p>
        <p>A presto,<br><strong>Lorenzo — NeatX</strong></p>`,
       "Il tuo spazio NeatX è pronto: controlla servizi, staff e pagina di prenotazione.",
@@ -143,8 +153,8 @@ export function buildWelcomeEmail(ownerName: string, tenantUrl: string): EmailTe
   };
 }
 
-export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, tenantUrl: string) {
-  return sendEmail({ to: tenantEmail, ...buildWelcomeEmail(ownerName, tenantUrl) });
+export async function sendWelcomeEmail(tenantEmail: string, ownerName: string, tenantUrl: string, referralCode?: string | null) {
+  return sendEmail({ to: tenantEmail, ...buildWelcomeEmail(ownerName, tenantUrl, referralCode) });
 }
 
 export function buildTrialReminder3DaysEmail(tenantName: string, ownerName: string, adminUrl: string): EmailTemplate {

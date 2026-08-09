@@ -12,6 +12,7 @@ import smtplib
 from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.header import Header
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -93,11 +94,11 @@ def send_email_smtp(to_email, subject, body):
         msg = MIMEMultipart()
         msg['From'] = GMAIL_USER
         msg['To'] = to_email
-        msg['Subject'] = subject
-        
+        msg['Subject'] = Header(subject, 'utf-8')
+
         # Sostituisci i \n con <br> per l'HTML
         body_html = body.replace('\\n', '<br>').replace('\n', '<br>')
-        msg.attach(MIMEText(body_html, 'html'))
+        msg.attach(MIMEText(body_html, _subtype='html', _charset='utf-8'))
         
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()

@@ -19,6 +19,7 @@ Uso:
     python bot_scripts/Email/auto_outreach.py --limit 5   # invia solo 5 oggi
 """
 
+import html
 import json
 import os
 import smtplib
@@ -27,6 +28,7 @@ from datetime import date
 from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.header import Header
 from dotenv import load_dotenv
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -67,47 +69,196 @@ def load_salons() -> list:
 
 # --- Generazione email calda (senza AI: template pronto, sicuro e personale) ---
 
+# Brand NeatX (ripreso esattamente dal sito: Navbar/Footer e palette di globals.css)
+BRAND_CYAN = "#00b4ff"      # X e CTA del sito
+BRAND_NAVY = "#0b1221"      # pannelli/colonna
+BRAND_DARK = "#050814"      # sfondo pagina email
+BRAND_BORDER = "#1e2b4a"    # bordi sottili
+TEXT_LIGHT = "#f1f5f9"      # testo principale su navy
+TEXT_MUTED = "#94a3b8"      # testo secondario
+BRAND_URL = "https://neatx.store"
+
+
+def _a(text: str) -> str:
+    """HTML-escape sicuro (apici compresi) per ogni dato che viene dal salone."""
+    return html.escape(text, quote=True)
+
+
+def _wordmark_html() -> str:
+    """Wordmark NeatX esattamente come in Navbar: 'Neat' bianco + 'X' ciano."""
+    return ('<span style="font-family:Arial,Helvetica,sans-serif;'
+            'font-weight:bold;font-size:30px;line-height:1;'
+            'color:#ffffff;letter-spacing:-0.5px;">Neat</span>'
+            '<span style="font-family:Arial,Helvetica,sans-serif;'
+            'font-weight:bold;font-size:30px;line-height:1;'
+            f'color:{BRAND_CYAN};">X</span>')
+
+
 def build_email(salon: dict) -> dict:
     nome = salon.get("nome", "il tuo salone")
-    citta = salon.get("citta", "")
     nota = salon.get("nota", "")
-    complimento = f"ho visto il tuo lavoro a {citta} — bello davvero!" if citta else "ho visto il tuo lavoro — bello davvero!"
 
-    corpo = (
+    # --- Versione testo puro (per client vecchi e per il punteggio spam) ---
+    testo = (
         f"Ciao,\n\n"
-        f"mi chiamo [Il tuo nome] e ho creato NeatX, uno strumento pensato proprio per saloni come {nome}. "
-        f"{complimento}\n\n"
+        f"ti scrivo da NeatX, il software di prenotazioni online per chi lavora su appuntamento "
+        f"— come {nome}.\n\n"
+        f"NeatX non è nato a tavolino: è nato dai problemi veri di chi sta dietro la poltrona "
+        f"o alla cassa di un salone. Il telefono che squilla mentre hai le mani occupate, "
+        f"la cliente che prenota e poi non si presenta, l'agenda piena di buchi.\n\n"
         f"Immagina i tuoi clienti che prenotano online (24/7), versano un acconto all'appuntamento "
-        f"e ricevono un promemoria automatico. Il risultato? Meno telefonate, meno no-show, più tempo per lavorare."
+        f"e ricevono un promemoria automatico. Il risultato? Meno telefonate, meno clienti che non "
+        f"si presentano, più tempo per lavorare."
     )
     if nota:
-        corpo += f"\n\nA giudicare da {nota}, potrebbe fare proprio al caso tuo."
-    corpo += (
+        testo += f"\n\nA giudicare da {nota}, potrebbe fare proprio al caso tuo."
+    testo += (
         f"\n\nZero commissioni sulle prenotazioni: paghi solo un fisso mensile.\n\n"
         f"Ti va di provarlo gratis per 14 giorni? Senza carta di credito. "
         f"Se ti va, ti faccio vedere come funziona in 5 minuti.\n\n"
-        f"A presto,\n[Il tuo nome]\nNeatX — neatx.store"
+        f"A presto,\nLorenzo Bisceglie\nNeatX — {BRAND_URL}\n"
+        f"\nQuesto è un messaggio commerciale da {BRAND_URL}. Puoi disiscriverti in qualsiasi momento."
     )
 
-    oggetto = f"{nome} — prenotazioni online senza no-show?"
+    # --- HTML professionale (inline styles, single column, email-safe) ---
+    if nota:
+        nota_para = f"""
+            <p style="margin:0 0 20px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">
+              A giudicare da {_a(nota)}, potrebbe fare proprio al caso tuo.
+            </p>"""
+    else:
+        nota_para = ""
+    html_body = f"""
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+  NeatX per {nome} · meno telefonate, meno clienti che non si presentano — ti mostro come funziona in 5 minuti.&nbsp;&zwnj;
+</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+       style="background-color:{BRAND_DARK};">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <!-- Colonna principale -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+             class="col" style="width:600px;max-width:600px;background-color:{BRAND_NAVY};
+             border:1px solid {BRAND_BORDER};border-radius:16px;overflow:hidden;
+             box-shadow:0 20px 60px rgba(0,0,0,.55);">
 
-    return {"oggetto": oggetto, "corpo": corpo}
+        <!-- BANNER: sfondo scuro + wordmark -->
+        <tr>
+          <td align="center" style="padding:34px 24px 28px 24px;background-color:{BRAND_DARK};">
+            <a href="{BRAND_URL}" style="text-decoration:none;">{_wordmark_html()}</a>
+            <div style="height:8px;font-size:0;">&nbsp;</div>
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;
+                      line-height:1.5;color:{TEXT_MUTED};">Prenotazioni online per saloni di bellezza</p>
+          </td>
+        </tr>
+
+        <!-- CORPO -->
+        <tr>
+          <td style="padding:32px 40px 16px 40px;background-color:{BRAND_NAVY};">
+            <p style="margin:0 0 20px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">Ciao,</p>
+            <p style="margin:0 0 20px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">
+              ti scrivo da <strong>NeatX</strong>, il software di prenotazioni online per chi lavora
+              su appuntamento — come <strong>{_a(nome)}</strong>.
+            </p>
+            <p style="margin:0 0 20px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">
+              NeatX non è nato a tavolino: è nato dai <strong>problemi veri</strong> di chi sta dietro
+              la poltrona o alla cassa di un salone. Il telefono che squilla mentre hai le mani
+              occupate, la cliente che prenota e poi non si presenta, l&apos;agenda piena di buchi.
+            </p>
+            <p style="margin:0 0 20px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">
+              Immagina i tuoi clienti che prenotano <strong>online (24/7)</strong>, versano un
+              <strong>acconto all&apos;appuntamento</strong> e ricevono un <strong>promemoria automatico</strong>.
+              Il risultato? Meno telefonate, meno clienti che non si presentano, più tempo per lavorare.
+            </p>
+            {nota_para}
+            <p style="margin:0 0 28px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">
+              <strong>Zero commissioni</strong> sulle prenotazioni: paghi solo un fisso mensile.
+            </p>
+            <p style="margin:0 0 28px 0;font-family:Arial,Helvetica,sans-serif;
+                      font-size:17px;line-height:1.65;color:{TEXT_LIGHT};">
+              Ti va di <strong>provarlo gratis per 14 giorni</strong>? Senza carta di credito.
+            </p>
+
+            <!-- CTA (button pill ciano come sul sito) -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+              <tr>
+                <td align="center" style="border-radius:999px;background-color:{BRAND_CYAN};">
+                  <a href="{BRAND_URL}"
+                     style="display:inline-block;padding:14px 32px;font-family:Arial,Helvetica,sans-serif;
+                            font-size:16px;font-weight:bold;color:#03111f;text-decoration:none;
+                            border-radius:999px;">Prova NeatX gratis per 14 giorni</a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:14px 0 0 0;text-align:center;font-family:Arial,Helvetica,sans-serif;
+                      font-size:13px;color:{TEXT_MUTED};">Se ti va, ti faccio vedere come funziona in 5 minuti.</p>
+          </td>
+        </tr>
+
+        <!-- FIRMA -->
+        <tr>
+          <td style="padding:6px 40px 32px 40px;background-color:{BRAND_NAVY};">
+            <div style="height:1px;background-color:{BRAND_BORDER};margin:0 0 22px 0;"></div>
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+                      line-height:1.5;color:{TEXT_LIGHT};font-weight:bold;">A presto,</p>
+            <p style="margin:2px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;
+                      line-height:1.5;color:{TEXT_LIGHT};">Lorenzo Bisceglie</p>
+            <p style="margin:0 0 4px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;
+                      color:{BRAND_CYAN};font-weight:bold;">NeatX — {BRAND_URL}</p>
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;
+                      color:{TEXT_MUTED};">Prenotazioni online per saloni di bellezza</p>
+          </td>
+        </tr>
+
+        <!-- FOOTER / UNSUBSCRIBE (GDPR + anti-spam) -->
+        <tr>
+          <td align="center" style="padding:16px 24px 22px 24px;background-color:{BRAND_DARK};">
+            <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;
+                      line-height:1.6;color:{TEXT_MUTED};">
+              Questo è un messaggio commerciale da <a href="{BRAND_URL}" style="color:{BRAND_CYAN};text-decoration:none;">NeatX</a>.
+              Puoi disiscriverti in qualsiasi momento con un click, direttamente da Gmail.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+      <p style="margin:16px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;
+                color:#64748b;text-align:center;">© {BRAND_URL} · NeatX Software. Tutti i diritti riservati.</p>
+    </td>
+  </tr>
+</table>
+"""
+
+    oggetto = f"{nome} — meno telefonate, più prenotazioni?"
+
+    return {"oggetto": oggetto, "testo": testo, "html": html_body}
 
 
 # --- Invio via Gmail SMTP ---
 
-def send_email(to_email: str, subject: str, body: str) -> bool:
+def send_email(to_email: str, subject: str, body_text: str, body_html: str) -> bool:
     if not GMAIL_USER or not GMAIL_PASS:
         print(f"[!] Credenziali Gmail mancanti. L'email per {to_email} NON inviata.")
         print("[!] Imposta GMAIL_USER e GMAIL_PASS nel file .env")
         return False
     try:
-        msg = MIMEMultipart()
+        msg = MIMEMultipart("alternative")
         msg["From"] = GMAIL_USER
         msg["To"] = to_email
-        msg["Subject"] = subject
-        body_html = body.replace("\n", "<br>")
-        msg.attach(MIMEText(body_html, "html"))
+        msg["Subject"] = Header(subject, "utf-8")
+        # Header di disiscrizione: fa comparire in Gmail il bottone "Annulla iscrizione"
+        # (RFC 2369, richiesto anche dall'anti-spam di Gmail/Yahoo).
+        msg["List-Unsubscribe"] = f"<mailto:{GMAIL_USER}?subject=Annulla%20iscrizione>"
+        msg["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
+        # Prima il testo puro, poi l'HTML: i client lo usano come fallback (e aiuta l'anti-spam).
+        msg.attach(MIMEText(body_text, _subtype="plain", _charset="utf-8"))
+        msg.attach(MIMEText(body_html, _subtype="html", _charset="utf-8"))
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(GMAIL_USER, GMAIL_PASS)
@@ -150,10 +301,11 @@ def main():
         print(f"OGGETTO: {email['oggetto']}")
 
         if args.dry_run:
-            print(email["corpo"])
+            # Mostra la versione testo (leggibile); l'HTML è pronto e verrà inviato davvero.
+            print(email["testo"])
             continue
 
-        ok = send_email(salon["email_destinatario"], email["oggetto"], email["corpo"])
+        ok = send_email(salon["email_destinatario"], email["oggetto"], email["testo"], email["html"])
         if ok:
             log[salon.get("nome", "")] = today
             print(f"[✅] Inviata a {salon.get('email_destinatario')}")

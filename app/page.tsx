@@ -18,6 +18,7 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 import ScrollReveal from "@/components/landing/ScrollReveal";
+import ReferralSection from "@/components/landing/ReferralSection";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
@@ -81,6 +82,7 @@ export default function Home() {
       <PricingSection />
       <ScrollReveal direction="left"><ComparisonTable /></ScrollReveal>
       <ScrollReveal direction="right"><IntegrationsSection /></ScrollReveal>
+      <ScrollReveal direction="up"><ReferralSection /></ScrollReveal>
       <ScrollReveal direction="up"><FAQSection /></ScrollReveal>
       <ScrollReveal><FinalCTA /></ScrollReveal>
       

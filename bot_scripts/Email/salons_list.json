@@ -1,16 +1,149 @@
 [
   {
-    "nome": "Barberia Il Rasoio",
+    "nome": "Barba Milano",
     "citta": "Milano",
-    "email_destinatario": "test.barberia@example.com",
-    "instagram": "@ilrasoiomilano",
-    "nota": "agenda cartacea, perdono chiamate"
+    "email_destinatario": "info@barbamilano.it",
+    "instagram": "barba_milano",
+    "nota": "barbiere con più sedi a Milano, clientela maschile"
   },
   {
-    "nome": "Glamour Beauty Center",
-    "citta": "Roma",
-    "email_destinatario": "test.glamour@example.com",
-    "instagram": "@glamourbeauty",
-    "nota": "tanti no-show"
+    "nome": "Il Barbiere",
+    "citta": "Milano",
+    "email_destinatario": "info@ilbarbiere.it",
+    "instagram": "ilbarbiere_official",
+    "nota": "barbieria diffusa a Milano (store in City Life), alta affluenza"
+  },
+  {
+    "nome": "JB Men's Club",
+    "citta": "Milano",
+    "email_destinatario": "jbmensclub@gmail.com",
+    "instagram": "johnbarbermilano",
+    "nota": "barbieria per uomo stile old school"
+  },
+  {
+    "nome": "Signor San Milano Donizetti",
+    "citta": "Milano",
+    "email_destinatario": "milano.donizetti@signorsan.it",
+    "instagram": "signorsan",
+    "nota": "barbieria premium in zona Donizetti, prenotazioni fitte"
+  },
+  {
+    "nome": "Urban Barber",
+    "citta": "Milano",
+    "email_destinatario": "info@urban-barber.it",
+    "instagram": "",
+    "nota": "barbieria urbana a Milano"
+  },
+  {
+    "nome": "Barberinos World Milano",
+    "citta": "Milano",
+    "email_destinatario": "booking@barberinosworld.com",
+    "instagram": "",
+    "nota": "barbieria di fascia alta, più store Milano (Tortona, Crocetta)"
+  },
+  {
+    "nome": "Milano Estetica",
+    "citta": "Milano",
+    "email_destinatario": "info@milanoestetica.it",
+    "instagram": "milano_estetica",
+    "nota": "centro estetico nel cuore di Milano"
+  },
+  {
+    "nome": "Beauty Key Milano",
+    "citta": "Milano",
+    "email_destinatario": "info@beautykey.it",
+    "instagram": "beautykeymilano",
+    "nota": "centro estetico con trattamenti viso e corpo"
+  },
+  {
+    "nome": "Mirta Estetica",
+    "citta": "Milano",
+    "email_destinatario": "mirtaestetica@gmail.com",
+    "instagram": "",
+    "nota": "estetista a Milano, appuntamenti su richiesta"
+  },
+  {
+    "nome": "Zesté Beauty Spa",
+    "citta": "Milano",
+    "email_destinatario": "prenotazioni@zestebeautyspa.it",
+    "instagram": "zestebeautyspa",
+    "nota": "beauty spa, gestione prenotazioni fondamentale"
+  },
+  {
+    "nome": "Estetica Ciclamini",
+    "citta": "Milano",
+    "email_destinatario": "esteticaciclamini@gmail.com",
+    "instagram": "estetica_ciclamini",
+    "nota": "centro estetico a Milano"
+  },
+  {
+    "nome": "Arya Beauty Sun Milano",
+    "citta": "Milano",
+    "email_destinatario": "arya.artists@gmail.com",
+    "instagram": "aryabeautysunmilano",
+    "nota": "centro estetico e solarium a Milano"
+  },
+  {
+    "nome": "Rilu Parrucchieri",
+    "citta": "Milano",
+    "email_destinatario": "info@riluparrucchieri.com",
+    "instagram": "rilu_parrucchieri",
+    "nota": "parrucchiere a Milano, prenotazioni per tagli e colore"
+  },
+  {
+    "nome": "Jeune Ange",
+    "citta": "Milano",
+    "email_destinatario": "jeuneangesalon@gmail.com",
+    "instagram": "jeuneangemilano",
+    "nota": "salone di parrucchiere, cliente ampiamente femminile"
+  },
+  {
+    "nome": "Parrucchiere Dionea",
+    "citta": "Milano",
+    "email_destinatario": "parrucchiere.dionea@gmail.com",
+    "instagram": "parrucchiere.dionea",
+    "nota": "parrucchiere a Milano"
+  },
+  {
+    "nome": "Donna In Head Spa",
+    "citta": "Milano",
+    "email_destinatario": "donnain.milano@gmail.com",
+    "instagram": "donnain.headspa",
+    "nota": "head spa e benessere, alta richiesta di prenotazioni"
+  },
+  {
+    "nome": "Lorenzo Belardi Hairstylist",
+    "citta": "Milano",
+    "email_destinatario": "info@lorenzobelardi.it",
+    "instagram": "_lorenzobelardi_hairstylist",
+    "nota": "hair stylist di fascia alta a Milano"
+  },
+  {
+    "nome": "Franco e Mimma",
+    "citta": "Milano",
+    "email_destinatario": "francoemimma@gmail.com",
+    "instagram": "francoemimma_coiffeurs",
+    "nota": "salone di parrucchiere storico a Milano"
+  },
+  {
+    "nome": "Enzo Massini Parrucchiere",
+    "citta": "Milano",
+    "email_destinatario": "info@enzomassiniparrucchiere.it",
+    "instagram": "enzomassiniparrucchiere",
+    "nota": "parrucchiere con clientela affezionata"
+  },
+  {
+    "nome": "Imer Team",
+    "citta": "Milano",
+    "email_destinatario": "info@imerteam.it",
+    "instagram": "",
+    "nota": "parrucchieri a Milano"
+  },
+  {
+    "nome": "Spy Hair",
+    "citta": "Milano",
+    "email_destinatario": "info@spyhair.com",
+    "instagram": "spyhair",
+    "nota": "salone di parrucchiere a Milano"
   }
 ]

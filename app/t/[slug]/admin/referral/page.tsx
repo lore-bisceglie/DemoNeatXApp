@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { isTenantAdminCookieValid } from "@/lib/auth";
 import { ArrowLeft, Share2, Users, Gift } from "lucide-react";
+import ReferralCopyButton from "../ReferralCopyButton";
 
 export default async function ReferralPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -95,7 +96,7 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
           <div className="md:col-span-2 bg-gradient-to-br from-[#0b1221] to-[#0f192b] border border-white/5 rounded-3xl p-8 shadow-2xl">
             <h2 className="text-xl font-bold text-white mb-2">Il tuo link esclusivo</h2>
             <p className="text-sm text-slate-400 mb-6">
-              Invia questo link ad altri professionisti. Quando si iscriveranno e attiveranno il primo abbonamento pagato, tu riceverai <strong>100 crediti messaggio</strong>. L&apos;invitato parte con 50 crediti e riceve altri 50 crediti dopo la verifica email.
+              Invia questo link ad altri professionisti. L&apos;invitato parte con <strong>50 crediti</strong> e ne riceve altri <strong>50</strong> dopo la verifica email (100 in totale). Quando l&apos;invitato attiva il primo abbonamento pagato, tu ricevi <strong>100 crediti messaggio</strong>. Nessun limite al numero di inviti.
             </p>
 
             <div className="bg-[#050814] border border-[#1a2642] rounded-xl p-4 flex items-center justify-between gap-4">
@@ -103,8 +104,9 @@ export default async function ReferralPage({ params }: { params: Promise<{ slug:
                 {referralUrl}
               </code>
             </div>
-            
+
             <div className="mt-6 flex flex-wrap gap-4">
+              <ReferralCopyButton link={referralUrl} />
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(`Ehi! Sto usando questo nuovo gestionale zero commissioni per il mio salone. Provalo gratis da questo link: parti con 50 crediti e ne ricevi altri 50 dopo la verifica email. ${referralUrl}`)}`}
                 target="_blank"

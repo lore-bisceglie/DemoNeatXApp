@@ -3,6 +3,7 @@
 import os, smtplib, sys
 from pathlib import Path
 from email.mime.text import MIMEText
+from email.header import Header
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
@@ -19,10 +20,10 @@ if not DEST:
     sys.exit(1)
 
 try:
-    msg = MIMEText("Questa è una email di TEST da NeatX. Se la vedi, l'invio funziona! 🎉")
+    msg = MIMEText("Questa è una email di TEST da NeatX. Se la vedi, l'invio funziona! 🎉", _subtype="plain", _charset="utf-8")
     msg["From"] = USER
     msg["To"] = DEST
-    msg["Subject"] = "[TEST] NeatX - verifica invio email"
+    msg["Subject"] = Header("[TEST] NeatX - verifica invio email", "utf-8")
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
     server.login(USER, PASS)

@@ -1,4 +1,4 @@
-import { verifyTenantAndGrantReferralBonus } from "@/lib/referral";
+import { ensureReferralCode, verifyTenantAndGrantReferralBonus } from "@/lib/referral";
 import { getTenantAdminUrl } from "@/lib/domains";
 import { sendWelcomeEmail } from "@/lib/email";
 
@@ -25,10 +25,17 @@ export async function GET(request: Request) {
     }
 
     if (verification.shouldSendWelcomeEmail && verification.ownerEmail) {
+      let referralCode: string | null = null;
+      try {
+        referralCode = await ensureReferralCode(verification.tenantId);
+      } catch (error) {
+        console.error("[Email] Errore recupero codice invito:", error);
+      }
       await sendWelcomeEmail(
         verification.ownerEmail,
         verification.ownerName || "",
         getTenantAdminUrl(verification.slug),
+        referralCode,
       ).catch((error) => {
         console.error("[Email] Errore invio benvenuto dopo verifica:", error);
       });
