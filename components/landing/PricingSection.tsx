@@ -34,7 +34,7 @@ export default function PricingSection() {
             <div className="text-4xl font-extrabold text-white mb-1">29€ <span className="text-sm text-slate-500 font-medium">/ mese</span></div>
             <div className="text-emerald-400 font-bold text-sm mb-6">290€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 58€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti Illimitati</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti illimitati</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-slate-500" /> <strong className="text-slate-500">Promemoria WhatsApp: temporaneamente disattivati*</strong></li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione turni, orari e ferie</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Export presenze per commercialista</li>
@@ -61,7 +61,7 @@ export default function PricingSection() {
             <div className="text-purple-400 font-bold text-sm mb-6">590€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 118€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-200 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Tutto del piano Pro</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-purple-300">Mini-Marketing (Recupero Clienti)</strong></li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> <strong className="text-purple-300">Mini-marketing (recupero clienti)</strong></li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Autopilota Recensioni Google</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Multi-Staff illimitato</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Statistiche e analytics avanzati</li>

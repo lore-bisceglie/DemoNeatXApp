@@ -17,7 +17,7 @@ const FAQ_GROUPS = [
       },
       {
         q: "Chi può usare NeatX?",
-        a: "NeatX è pensato per chi lavora su appuntamento: barbieri, parrucchieri, estetiste, tattoo studio, psicologi, personal trainer e studi medici.",
+        a: "NeatX è pensato per chi lavora su appuntamento: barbieri, parrucchieri, estetiste, Tattoo Studio, psicologi, personal trainer e studi medici.",
       },
     ],
   },

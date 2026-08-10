@@ -180,7 +180,7 @@ export default function TimesheetFeatureSection() {
           <div className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3">
             <Stat value="0 fogli" label="da aggiornare" />
             <Stat value="1 area" label="per persona" />
-            <Stat value="1 click" label="per approvare" />
+            <Stat value="1 clic" label="per approvare" />
           </div>
         </div>
 
@@ -413,7 +413,7 @@ export default function TimesheetFeatureSection() {
               {
                 icon: Download,
                 color: "blue",
-                title: "Un click al commercialista",
+                title: "Un clic al commercialista",
                 body: "Export mensile con ore teoriche, ferie, pause e ore effettive lavorate. Formato CSV italiano, subito leggibile in Excel.",
               },
             ].map((card) => {

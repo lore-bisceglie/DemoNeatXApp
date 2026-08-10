@@ -29,23 +29,26 @@ export default function BrandMeaningSection() {
 
         <div className="rounded-[2rem] border border-white/10 bg-[#0b1221]/90 p-7 shadow-2xl shadow-black/20 sm:p-8">
           <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
-            Prima mettere ordine.<br />
+            Se il digitale complica il lavoro,<br />
             <span className="text-[#00b4ff]">
-              Poi fare il passo successivo.
+              sta facendo il lavoro sbagliato.
             </span>
           </h2>
 
           <div className="mt-8 space-y-5 text-base font-medium leading-relaxed text-slate-300 sm:text-lg">
             <p>
-              Ho scelto il nome NeatX perché racchiude esattamente ciò che volevo costruire.
+              NeatX nasce da questa convinzione. Volevo costruire un prodotto che
+              portasse ordine, non altra complessità. Per questo ho scelto due parole precise.
             </p>
             <p>
-              <strong className="text-cyan-300">NEAT</strong> è l&apos;ordine che manca quando
+              <strong className="text-cyan-300">NEAT</strong>{" "}
+              è l&apos;ordine che manca quando
               servizi, orari, messaggi e prenotazioni vivono in posti diversi. Significa
               pulito, ordinato, preciso: non per estetica, ma per lavorare con più tranquillità.
             </p>
             <p>
-              La <strong className="text-[#00b4ff]">X viene da Next</strong>. È il passo dopo
+              La <strong className="text-[#00b4ff]">X viene da Next</strong>.{" "}
+              È il passo dopo
               telefonate, chat da rincorrere e agende da riscrivere. Non un futuro lontano:
               semplicemente un modo più naturale di farsi prenotare, oggi.
             </p>

@@ -7,7 +7,7 @@ import FloatingPhone from "./FloatingPhone";
 const HERO_METRICS = [
   { value: "24/7", label: "prenotazioni aperte" },
   { value: "0%", label: "commissioni NeatX" },
-  { value: "1 click", label: "report presenze" },
+  { value: "1 clic", label: "report presenze" },
 ];
 
 const TRUST_POINTS = [

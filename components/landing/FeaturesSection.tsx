@@ -47,7 +47,7 @@ const FEATURE_CARDS = [
     icon: FileSpreadsheet,
     title: "Ore pronte per il commercialista",
     description:
-      "Un click e NeatX genera un CSV con lo spaccato giornaliero di ogni dipendente: ore teoriche, ferie, permessi e totale mensile.",
+      "Un clic e NeatX genera un CSV con lo spaccato giornaliero di ogni dipendente: ore teoriche, ferie, permessi e totale mensile.",
     accent: "text-rose-400",
     border: "hover:border-rose-400/50",
   },
