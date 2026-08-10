@@ -77,16 +77,16 @@ export default function TestimonialsSection() {
         <div className="mb-16 text-center">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-emerald-300">
             <MessageSquareQuote size={13} />
-            Cosa dicono di noi
+            NeatX nel lavoro di ogni giorno
           </div>
           <h2 className="mx-auto max-w-3xl text-3xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
-            Sviluppato con chi{" "}
+            Pensato intorno a chi{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-              lavora sul campo.
+              lavora su appuntamento.
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-medium leading-relaxed text-slate-400">
-            Dimentica le app fatte da corporazioni che non hanno mai messo piede nel tuo locale. NeatX è costruito attorno alle reali esigenze dei professionisti italiani.
+            Le funzioni di NeatX partono da situazioni reali: clienti da servire, orari da rispettare e meno interruzioni durante il lavoro.
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export default function TestimonialsSection() {
         {/* Call to action fiduciaria */}
         <div className="mt-12 text-center">
           <p className="text-sm font-medium text-slate-500">
-            Entra anche tu a far parte dei professionisti che hanno scelto l'indipendenza.
+            Professionisti diversi. Un modo più semplice di ricevere prenotazioni.
           </p>
         </div>
       </div>

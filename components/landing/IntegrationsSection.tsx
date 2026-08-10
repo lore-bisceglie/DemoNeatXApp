@@ -8,9 +8,9 @@ export default function IntegrationsSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-[#00b4ff]/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 text-center">
-        <h2 className="text-2xl font-bold text-white mb-3">Si integra con gli strumenti che già ami</h2>
+        <h2 className="text-2xl font-bold text-white mb-3">Continua a usare gli strumenti che conosci.</h2>
         <p className="text-slate-400 max-w-2xl mx-auto mb-10 text-sm">
-          NeatX non ti chiude in un recinto. Lavoriamo in perfetta sinergia con i migliori servizi al mondo per offrirti un'esperienza senza attriti.
+          Usa Stripe per ricevere i pagamenti e WhatsApp per condividere il tuo link. NeatX mantiene le prenotazioni al centro.
         </p>
 
         <div className="flex flex-wrap justify-center gap-6 md:gap-8">

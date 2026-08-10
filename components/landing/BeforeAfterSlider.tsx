@@ -74,10 +74,10 @@ export default function BeforeAfterSlider() {
 
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
-          Scegli come lavorare
+          Dal disordine a tutto al suo posto.
         </h2>
         <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto">
-          Continua a impazzire con fogli volanti, oppure passa a un sistema che lavora per te anche mentre dormi.
+          Fogli, chat e cambi scritti a mano moltiplicano i passaggi. NeatX li riunisce in un&apos;unica agenda.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export default function BeforeAfterSlider() {
           <div className="self-end mb-8 text-right">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur-md">
               <SparklesIcon className="text-blue-400 w-4 h-4" />
-              <span className="text-blue-400 font-bold text-sm tracking-wide">IL METODO NEATX</span>
+              <span className="text-blue-400 font-bold text-sm tracking-wide">TUTTO AL POSTO GIUSTO</span>
             </div>
           </div>
           

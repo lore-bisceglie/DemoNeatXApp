@@ -5,30 +5,30 @@ import { Sparkles, CalendarCheck2, LineChart, LockKeyhole, Clock3, ShieldCheck, 
 const OPERATING_STEPS = [
   {
     icon: Sparkles,
-    title: "Crea profilo, servizi e turni",
+    title: "Metti in ordine servizi e orari",
     text: "Inserisci servizi e orari base. Se hai uno staff, gestisci turni, riposi e ferie direttamente nel calendario nativo: NeatX costruisce l'agenda reale.",
   },
   {
     icon: UsersRound,
-    title: "Ogni dipendente ha la sua app",
+    title: "Dai a ciascuno la sua agenda",
     text: "Dal suo link personale vede turni e clienti assegnati, poi chiede ferie o permessi dal telefono. Tu approvi con un tocco: gli orari si bloccano subito per i clienti.",
   },
   {
     icon: CalendarCheck2,
-    title: "Condividi il tuo nuovo link",
+    title: "Condividi il tuo link",
     text: "Mettilo nella bio di Instagram, su Google o mandalo su WhatsApp. I clienti vedranno solo gli orari che tu decidi di lasciare liberi.",
   },
   {
     icon: LineChart,
-    title: "L'agenda si riempie da sola",
+    title: "Le prenotazioni arrivano in agenda",
     text: "I clienti scelgono servizio e orario, poi pagano l'acconto quando serve. Tu ritrovi l'agenda piena senza aver mai risposto al telefono.",
   },
 ];
 
 const PROOF_ITEMS = [
-  { icon: Clock3, title: "Basta squilli a vuoto", text: "Il telefono smette di suonare di continuo. Le richieste diventano appuntamenti in automatico." },
-  { icon: ShieldCheck, title: "Zero accavallamenti", text: "Nessun errore umano. NeatX incastra gli appuntamenti al posto tuo seguendo le tue regole." },
-  { icon: Star, title: "Meno no-show", text: "Con gli acconti online proteggi il tuo tempo e riduci il rischio di appuntamenti saltati." },
+  { icon: Clock3, title: "Meno interruzioni", text: "Le richieste diventano appuntamenti senza obbligarti a rispondere mentre lavori." },
+  { icon: ShieldCheck, title: "Orari sempre coerenti", text: "NeatX mostra ai clienti soltanto le disponibilità compatibili con le tue regole." },
+  { icon: Star, title: "Acconti quando servono", text: "Per i servizi che lo richiedono, puoi proteggere il tuo tempo con un acconto online." },
 ];
 
 export default function OperatingSteps() {
@@ -39,13 +39,13 @@ export default function OperatingSteps() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-purple-300 mb-6">
               <LockKeyhole size={14} />
-              LA TUA AGENDA IN AUTOPILOTA
+              LE TUE REGOLE, GIÀ APPLICATE
             </div>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
-              Zero telefonate. Più appuntamenti.
+              I clienti prenotano. Tu resti sul lavoro.
             </h2>
             <p className="text-slate-400 leading-relaxed text-lg mb-8">
-              NeatX trasforma il tuo link in una vera e propria segretaria virtuale attiva 24/7. I clienti prenotano in totale autonomia e tu ti concentri solo sul tuo lavoro.
+              Il tuo link mostra servizi e orari disponibili, raccoglie la scelta del cliente e aggiorna l&apos;agenda. Tu continui a occuparti del tuo lavoro.
             </p>
             <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-4">
               {PROOF_ITEMS.map((item) => {

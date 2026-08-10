@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 
 const FAKE_NOTIFICATIONS = [
-  "Marco R. ha appena prenotato Taglio + Barba",
-  "Giulia ha versato 50 euro di anticipo",
-  "Agenda aggiornata: appuntamento confermato",
-  "Nuovo cliente arrivato da Instagram",
-  "Slot delle 15:30 riempito in automatico",
+  "Esempio: un cliente completa una prenotazione",
+  "Esempio: acconto ricevuto",
+  "Esempio: agenda aggiornata",
+  "Esempio: nuovo cliente dal link in bio",
+  "Esempio: nuovo appuntamento alle 15:30",
 ];
 
 export default function LiveNotification() {
@@ -53,7 +53,7 @@ export default function LiveNotification() {
           {notification}
         </p>
         <span className="text-cyan-400 text-[10px] font-bold tracking-widest uppercase mt-0.5">
-          Appena successo
+          Esempio di attività
         </span>
       </div>
     </div>

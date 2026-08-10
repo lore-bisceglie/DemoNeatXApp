@@ -18,7 +18,7 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 import ScrollReveal from "@/components/landing/ScrollReveal";
-import ReferralSection from "@/components/landing/ReferralSection";
+import BrandMeaningSection from "@/components/landing/BrandMeaningSection";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
@@ -70,23 +70,26 @@ export default function Home() {
         }}
       />
 
-      <Navbar onOpenRoi={() => setShowRoiModal(true)} />
+      <Navbar onOpenRoi={() => setShowRoiModal(true)} ctaLabel="Crea la tua pagina" />
       <HeroSection />
       
       <ScrollReveal><TrustMarquee /></ScrollReveal>
       <ScrollReveal direction="right"><TimesheetFeatureSection /></ScrollReveal>
       <ScrollReveal direction="left"><BeforeAfterSlider /></ScrollReveal>
+      <ScrollReveal direction="up"><BrandMeaningSection /></ScrollReveal>
       <ScrollReveal direction="up"><TestimonialsSection /></ScrollReveal>
       <ScrollReveal direction="left"><FeaturesSection /></ScrollReveal>
       <ScrollReveal direction="right"><OperatingSteps /></ScrollReveal>
       <PricingSection />
       <ScrollReveal direction="left"><ComparisonTable /></ScrollReveal>
       <ScrollReveal direction="right"><IntegrationsSection /></ScrollReveal>
-      <ScrollReveal direction="up"><ReferralSection /></ScrollReveal>
       <ScrollReveal direction="up"><FAQSection /></ScrollReveal>
       <ScrollReveal><FinalCTA /></ScrollReveal>
       
-      <Footer />
+      <Footer
+        tagline="Ordine. Semplicità. Il prossimo passo."
+        statusLabel="NeatX operativo"
+      />
       <LiveNotification />
       <ROICalculator show={showRoiModal} onClose={() => setShowRoiModal(false)} />
     </div>

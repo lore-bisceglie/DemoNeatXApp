@@ -22,10 +22,10 @@ export default function ComparisonTable() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-            NeatX vs gli altri
+            Più controllo. Meno trattenute.
           </h2>
           <p className="text-slate-400 font-medium max-w-2xl mx-auto">
-            Mentre gli altri si tengono una fetta dei tuoi incassi, NeatX ti dà tutti gli strumenti a un prezzo fisso.
+            Con NeatX paghi un prezzo definito e non cediamo percentuali sulle tue prenotazioni.
           </p>
         </div>
 

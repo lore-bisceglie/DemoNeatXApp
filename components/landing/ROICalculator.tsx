@@ -34,8 +34,8 @@ export default function ROICalculator({ show, onClose }: ROICalculatorProps) {
           <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center mb-4">
             <LineChart size={27} />
           </div>
-          <h3 className="text-2xl font-extrabold text-white mb-2">Quanti soldi perdi per i No-Show?</h3>
-          <p className="text-slate-400 text-sm">Stima quanto valore puoi proteggere riducendo i no-show con acconti online e prenotazioni più ordinate.</p>
+          <h3 className="text-2xl font-extrabold text-white mb-2">Quanto valgono gli appuntamenti saltati?</h3>
+          <p className="text-slate-400 text-sm">Fai una stima del valore che potresti proteggere con acconti online e prenotazioni più ordinate.</p>
         </div>
 
         <div className="space-y-6 mb-8">
@@ -72,7 +72,7 @@ export default function ROICalculator({ show, onClose }: ROICalculatorProps) {
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[40px] pointer-events-none"></div>
           
           <div className="flex justify-between items-center mb-3">
-            <span className="text-slate-400 text-sm font-medium">Perdita attuale stimata (15% assenze):</span>
+            <span className="text-slate-400 text-sm font-medium">Stima basata sul 15% di assenze:</span>
             <span className="text-red-400 font-bold line-through">-{lostRevenue} €/mese</span>
           </div>
           
@@ -80,8 +80,8 @@ export default function ROICalculator({ show, onClose }: ROICalculatorProps) {
           
           <div className="flex justify-between items-end">
             <div>
-              <div className="text-[10px] uppercase font-extrabold tracking-widest text-emerald-500 mb-1">IL TUO RECUPERO CON NEATX</div>
-              <div className="text-slate-300 text-xs">Ricavi extra stimati</div>
+              <div className="text-[10px] uppercase font-extrabold tracking-widest text-emerald-500 mb-1">VALORE POTENZIALMENTE PROTETTO</div>
+              <div className="text-slate-300 text-xs">Stima mensile</div>
             </div>
             <div className="text-3xl font-extrabold text-white">
               +{recoveredRevenue} <span className="text-lg text-slate-500">€/m</span>
@@ -94,7 +94,7 @@ export default function ROICalculator({ show, onClose }: ROICalculatorProps) {
           onClick={onClose}
           className="w-full block text-center py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-xl transition-all shadow-lg shadow-emerald-900/40 hover:scale-105"
         >
-          Voglio questi {recoveredRevenue}€ in più
+          Guarda i piani
         </Link>
       </div>
     </div>

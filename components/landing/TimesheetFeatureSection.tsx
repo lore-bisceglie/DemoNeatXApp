@@ -162,24 +162,24 @@ export default function TimesheetFeatureSection() {
         <div className="mb-16 text-center">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-emerald-300">
             <Sparkles size={13} />
-            Agenda team nativa
+            Tutto il team, in ordine
           </div>
           <h2 className="mx-auto max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white md:text-5xl">
-            Non solo prenotazioni.{" "}
+            Un&apos;agenda per tutti.{" "}
             <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-              Il tuo team ha la sua app.
+              Ognuno vede la sua.
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-medium leading-relaxed text-slate-400">
-            Imposti i turni una volta. Ogni dipendente vede dal telefono la propria
-            agenda e i clienti assegnati, poi richiede ferie o permessi. Tu approvi:
-            NeatX blocca subito gli orari per i clienti e prepara anche il CSV per il commercialista.
+            Imposti turni e disponibilità una volta. Ogni persona vede la propria agenda,
+            richiede ferie o permessi e resta aggiornata dal telefono. Tu approvi: NeatX
+            aggiorna gli orari disponibili e prepara le ore per il commercialista.
           </p>
 
           {/* Stat bar */}
           <div className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3">
             <Stat value="0 fogli" label="da aggiornare" />
-            <Stat value="1 app" label="per dipendente" />
+            <Stat value="1 area" label="per persona" />
             <Stat value="1 click" label="per approvare" />
           </div>
         </div>

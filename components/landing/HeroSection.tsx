@@ -5,15 +5,15 @@ import { ArrowRight, BadgeCheck } from "lucide-react";
 import FloatingPhone from "./FloatingPhone";
 
 const HERO_METRICS = [
-  { value: "24/7", label: "prenotazioni attive" },
-  { value: "0%", label: "commissioni sui clienti" },
-  { value: "1 click", label: "export commercialista" },
+  { value: "24/7", label: "prenotazioni aperte" },
+  { value: "0%", label: "commissioni NeatX" },
+  { value: "1 click", label: "report presenze" },
 ];
 
 const TRUST_POINTS = [
-  "Pagina prenotazioni generata in automatico",
-  "Ogni dipendente ha la sua agenda personale",
-  "Ore scaricabili per il commercialista",
+  "La tua pagina, già pronta",
+  "Un'agenda per ogni persona del team",
+  "Ore già in ordine per il commercialista",
 ];
 
 export default function HeroSection() {
@@ -25,7 +25,7 @@ export default function HeroSection() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
         </span>
-        Prova gratis con negozio demo funzionante
+        14 giorni gratis. La tua pagina è già pronta da provare.
       </div>
 
       <style>{`
@@ -40,14 +40,14 @@ export default function HeroSection() {
       `}</style>
 
       <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl  relative z-20">
-        Vedi il tuo negozio online <br className="hidden md:block" />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] via-purple-400 to-[#00b4ff] animate-shimmer-text drop-shadow-[0_0_15px_rgba(0,180,255,0.4)]">
-          già funzionante
+        La tua pagina che <br className="hidden md:block" />
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] via-cyan-300 to-blue-500 animate-shimmer-text drop-shadow-[0_0_15px_rgba(0,180,255,0.4)]">
+          prenota.
         </span>
       </h1>
 
       <p className="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl leading-relaxed font-medium ">
-        NeatX è la tua agenda online brandizzata: i clienti prenotano in totale autonomia e pagano l&apos;acconto se serve. Tu controlli appuntamenti, incassi e agenda senza perdere tempo al telefono.
+        I clienti scelgono servizio e orario dalla tua pagina. La prenotazione arriva direttamente in agenda, senza messaggi avanti e indietro.
       </p>
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl ">
@@ -64,14 +64,14 @@ export default function HeroSection() {
           href="/registrazione"
           className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-extrabold rounded-2xl shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all text-lg flex items-center justify-center gap-2 hover:scale-105 hover:-translate-y-1"
         >
-          Crea la tua agenda gratis
+          Crea la tua pagina gratis
           <ArrowRight size={20} />
         </Link>
         <Link
           href="/t/demo-neatx"
           className="glow-card w-full sm:w-auto px-8 py-4 bg-[#131c31]/80  hover:bg-[#1a2642] border border-[#1e2b4a] text-white font-extrabold rounded-2xl transition-all text-lg flex items-center justify-center gap-2 hover:border-[#00b4ff]/50 shadow-lg shadow-cyan-900/10"
         >
-          Esplora la demo
+          Prova una prenotazione
           <ArrowRight size={20} />
         </Link>
       </div>

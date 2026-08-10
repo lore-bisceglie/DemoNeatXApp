@@ -6,9 +6,10 @@ import { useState, useEffect } from "react";
 
 type NavbarProps = {
   onOpenRoi?: () => void;
+  ctaLabel?: string;
 };
 
-export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
+export default function Navbar({ onOpenRoi, ctaLabel = "Prova gratis" }: NavbarProps = {}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -34,7 +35,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
             href="/registrazione"
             className="rounded-full border border-[#00b4ff]/30 bg-[#00b4ff]/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-cyan-300"
           >
-            Prova
+            {ctaLabel}
           </Link>
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -62,7 +63,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
           Accedi
         </Link>
         <Link href="/registrazione" className="rounded-full bg-[#00b4ff] px-5 py-2 text-xs font-extrabold uppercase tracking-widest text-[#03111f] hover:bg-cyan-300 transition-colors">
-          Prova gratis
+          {ctaLabel}
         </Link>
       </div>
 
@@ -94,7 +95,7 @@ export default function Navbar({ onOpenRoi }: NavbarProps = {}) {
             Accedi
           </Link>
           <Link href="/registrazione" onClick={() => setIsMobileMenuOpen(false)} className="rounded-2xl border border-[#00b4ff]/25 bg-[#00b4ff]/10 px-4 py-3 text-center text-cyan-300">
-            Prova gratis
+            {ctaLabel}
           </Link>
         </div>
       )}

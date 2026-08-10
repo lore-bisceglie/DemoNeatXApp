@@ -1,6 +1,14 @@
 "use client";
 
-export default function Footer() {
+type FooterProps = {
+  tagline?: string;
+  statusLabel?: string;
+};
+
+export default function Footer({
+  tagline = "Progettato per elevare il settore del benessere.",
+  statusLabel = "Sistemi Operativi",
+}: FooterProps) {
   return (
     <footer className="relative z-10 w-full bg-[#050814] border-t border-[#1a2642]">
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -19,11 +27,11 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium text-center md:text-left">
           <div>
             © {new Date().getFullYear()} NeatX Software. Tutti i diritti riservati.<br/>
-            <span className="text-slate-600">Progettato per elevare il settore del benessere.</span>
+            <span className="text-slate-600">{tagline}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Sistemi Operativi
+            {statusLabel}
           </div>
         </div>
       </div>
