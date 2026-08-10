@@ -41,7 +41,7 @@ export default function HeroSection() {
 
       <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight max-w-5xl  relative z-20">
         La tua pagina che <br className="hidden md:block" />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] via-cyan-300 to-blue-500 animate-shimmer-text drop-shadow-[0_0_15px_rgba(0,180,255,0.4)]">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00b4ff] via-purple-400 to-[#00b4ff] animate-shimmer-text drop-shadow-[0_0_15px_rgba(0,180,255,0.4)]">
           prenota.
         </span>
       </h1>
