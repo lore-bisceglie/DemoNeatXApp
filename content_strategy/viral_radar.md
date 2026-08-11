@@ -1,33 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-10T11:18:34.569253+02:00
+Generato: 2026-08-11T10:54:01.365231+02:00
 
-## Idea 1: Se gestisci ancora le ore dei tuoi dipendenti con fogli Excel, stai sprecando tempo e denaro.
-- title: Basta Excel: La Rivoluzione del Timesheet per Barbieri
-- hook: Se gestisci ancora le ore dei tuoi dipendenti con fogli Excel, stai sprecando tempo e denaro.
-- format: Video breve
-- description: Mostra come il timesheet digitale di NeatX semplifica la gestione dei turni e il calcolo delle ore lavorate.
+## Idea 1: Se sei un tatuatore e i tuoi clienti soddisfatti non lasciano mai recensioni mentre quelli arrabbiati corrono subito su Google, stai perdendo migliaia di euro.
+- title: BASTA RECENSIONI PERSE
+- hook: Se sei un tatuatore e i tuoi clienti soddisfatti non lasciano mai recensioni mentre quelli arrabbiati corrono subito su Google, stai perdendo migliaia di euro.
+- blog_title: Tatuatori: Recensioni Automatiche con NeatX per proteggere la tua reputazione
+- video_concept: Mostra un tatuatore stressato che riceve una notifica di recensione negativa da 1 stella per un ritardo minimo, mentre i clienti che hanno fatto lavori enormi si dimenticano di recensire. Presenta la soluzione del filtro automatico NeatX.
+- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
 
-## Idea 2: Scopri come risolvere il caos dei turni con un semplice click.
-- title: Turni e Permessi in un Click
-- hook: Scopri come risolvere il caos dei turni con un semplice click.
-- format: Blog
-- description: Discussione su come NeatX può eliminare le complicazioni nella gestione dei turni per barbieri.
+## Idea 2: Quante ore di lavoro hai perso questo mese per clienti che non si presentano all'appuntamento del tatuaggio senza preavviso?
+- title: STOP NO-SHOW NEI TATUAGGI
+- hook: Quante ore di lavoro hai perso questo mese per clienti che non si presentano all'appuntamento del tatuaggio senza preavviso?
+- blog_title: Caparra tatuaggio: come eliminare i clienti che non si presentano con il sistema NeatX
+- video_concept: Inquadratura sul lettino vuoto dello studio. Spiega come l'obbligo di caparra integrato nell'agenda digitale blocca sul nascere i perditempo.
+- keywords: ['caparra tatuaggio', 'prenotazioni tatuatore']
 
-## Idea 3: Preparare un CSV per il commercialista non è mai stato così facile.
-- title: Il Tuo Commercialista Ti Ringrazierà
-- hook: Preparare un CSV per il commercialista non è mai stato così facile.
-- format: Video breve
-- description: Dimostrazione pratica del processo di creazione di un CSV con NeatX.
+## Idea 3: Esiste un modo per intercettare i clienti scontenti del loro tatuaggio prima che scrivano una recensione distruttiva su Google.
+- title: FILTRA I CLIENTI ARRABBIATI
+- hook: Esiste un modo per intercettare i clienti scontenti del loro tatuaggio prima che scrivano una recensione distruttiva su Google.
+- blog_title: Come gestire i feedback negativi dei clienti dello studio di tatuaggi in privato
+- video_concept: Spiega il funzionamento del doppio canale: se il feedback post-tatuaggio è negativo va a un modulo privato, se è positivo va direttamente su Google.
+- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
 
-## Idea 4: Scopri come un software gestionale può migliorare la tua attività.
-- title: Perché Ogni Barbiere Ha Bisogno di NeatX
-- hook: Scopri come un software gestionale può migliorare la tua attività.
-- format: Blog
-- description: Analisi dei vantaggi di utilizzare un gestionale per barbieri e come NeatX si distingue.
+## Idea 4: Se rispondi ancora ai messaggi su Instagram alle undici di sera per fissare un tatuaggio, stai gestendo il tuo studio nel modo sbagliato.
+- title: AGENDA TATUATORI INTELLIGENTE
+- hook: Se rispondi ancora ai messaggi su Instagram alle undici di sera per fissare un tatuaggio, stai gestendo il tuo studio nel modo sbagliato.
+- blog_title: Agenda tatuatori: ottimizzare i tempi e automatizzare le prenotazioni dei clienti
+- video_concept: Mostra la differenza tra un tatuatore sommerso da note vocali su WhatsApp e uno che riceve notifiche di prenotazioni e caparre già pagate mentre sta tatuando.
+- keywords: ['agenda tatuatori', 'prenotazioni tatuatore', 'caparra tatuaggio']
 
-## Idea 5: Con NeatX, ogni minuto è contabilizzato e valorizzato.
-- title: Dimentica le Ore Persi
-- hook: Con NeatX, ogni minuto è contabilizzato e valorizzato.
-- format: Video breve
-- description: Storia di un barbiere che ha trasformato la sua attività grazie all'automazione dei turni.
+## Idea 5: Il motivo per cui i tuoi concorrenti meno bravi di te hanno il triplo dei clienti è che appaiono per primi su Google grazie alle recensioni.
+- title: DOMINA GOOGLE MAPS
+- hook: Il motivo per cui i tuoi concorrenti meno bravi di te hanno il triplo dei clienti è che appaiono per primi su Google grazie alle recensioni.
+- blog_title: Come scalare le ricerche locali per tatuatori grazie alle recensioni automatiche
+- video_concept: Inquadra uno smartphone con una notifica di recensione a 5 stelle ricevuta subito dopo la sessione di tatuaggio. Spiega l'impatto del posizionamento locale.
+- keywords: ['prenotazioni tatuatore', 'caparra tatuaggio']

@@ -1,18 +1,18 @@
 {
   "date": "2026-08-11",
-  "niche": "Personal Trainer",
-  "feature": "analytics",
-  "feature_label": "Statistiche e Dati",
-  "pain": "non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti",
-  "promise": "dashboard con incassi, trend e performance in tempo reale",
-  "cover_title": "GUADAGNI SOTTO CONTROLLO",
-  "hook_hint": "Se sei tra i personal trainer e non sai quanto guadagni davvero, quali servizi rendono di più, quali orari sono vuoti, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Statistiche e Dati con NeatX",
+  "niche": "Tatuatori",
+  "feature": "recensioni",
+  "feature_label": "Recensioni Automatiche",
+  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+  "cover_title": "BASTA RECENSIONI",
+  "hook_hint": "Se sei tra i tatuatori e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Recensioni Automatiche con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a real-time analytics dashboard on a screen with revenue charts and performance metrics, a professional reading the numbers, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
