@@ -1,38 +1,48 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-11T10:54:01.365231+02:00
+Generato: 2026-08-12T11:10:35.983723+02:00
 
-## Idea 1: Se sei un tatuatore e i tuoi clienti soddisfatti non lasciano mai recensioni mentre quelli arrabbiati corrono subito su Google, stai perdendo migliaia di euro.
-- title: BASTA RECENSIONI PERSE
-- hook: Se sei un tatuatore e i tuoi clienti soddisfatti non lasciano mai recensioni mentre quelli arrabbiati corrono subito su Google, stai perdendo migliaia di euro.
-- blog_title: Tatuatori: Recensioni Automatiche con NeatX per proteggere la tua reputazione
-- video_concept: Mostra un tatuatore stressato che riceve una notifica di recensione negativa da 1 stella per un ritardo minimo, mentre i clienti che hanno fatto lavori enormi si dimenticano di recensire. Presenta la soluzione del filtro automatico NeatX.
-- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
+## Idea 1: Fisioterapista: quante ore di terapia hai perso questa settimana perché il paziente non si è presentato all'ultimo minuto?
+- cover_title: STOP PERDITE CLIENTI
+- hook: Fisioterapista: quante ore di terapia hai perso questa settimana perché il paziente non si è presentato all'ultimo minuto?
+- description: Mostra come gli acconti automatici filtrano i pazienti non seri, garantendo che ogni slot orario sia coperto da un pagamento sicuro prima ancora che entrino in studio.
+- blog_topic: Fisioterapisti: Zero No-Show con NeatX
+- gameplay_style: runner
+- keywords: ['agenda fisioterapista', 'prenotazioni fisioterapia', 'gestionale fisioterapisti']
+- image_prompt: photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting
 
-## Idea 2: Quante ore di lavoro hai perso questo mese per clienti che non si presentano all'appuntamento del tatuaggio senza preavviso?
-- title: STOP NO-SHOW NEI TATUAGGI
-- hook: Quante ore di lavoro hai perso questo mese per clienti che non si presentano all'appuntamento del tatuaggio senza preavviso?
-- blog_title: Caparra tatuaggio: come eliminare i clienti che non si presentano con il sistema NeatX
-- video_concept: Inquadratura sul lettino vuoto dello studio. Spiega come l'obbligo di caparra integrato nell'agenda digitale blocca sul nascere i perditempo.
-- keywords: ['caparra tatuaggio', 'prenotazioni tatuatore']
+## Idea 2: Sei un fisioterapista e ti trovi spesso con ore buche non pagate in agenda? Ecco la soluzione che blinda la tua giornata lavorativa.
+- cover_title: SLOT SEMPRE PAGATI
+- hook: Sei un fisioterapista e ti trovi spesso con ore buche non pagate in agenda? Ecco la soluzione che blinda la tua giornata lavorativa.
+- description: Spiega il funzionamento del sistema NeatX che permette di ricevere una caparra obbligatoria alla prenotazione, eliminando definitivamente le perdite di tempo.
+- blog_topic: Gestione prenotazioni fisioterapia: come ottimizzare ogni ora di lavoro
+- gameplay_style: runner
+- keywords: ['prenotazioni fisioterapia', 'gestionale fisioterapisti', 'agenda fisioterapista']
+- image_prompt: photorealistic detailed interior of a sleek physiotherapy center, a tablet showing a fully booked scheduler with green paid badges, soft ambient lighting, high-end professional atmosphere
 
-## Idea 3: Esiste un modo per intercettare i clienti scontenti del loro tatuaggio prima che scrivano una recensione distruttiva su Google.
-- title: FILTRA I CLIENTI ARRABBIATI
-- hook: Esiste un modo per intercettare i clienti scontenti del loro tatuaggio prima che scrivano una recensione distruttiva su Google.
-- blog_title: Come gestire i feedback negativi dei clienti dello studio di tatuaggi in privato
-- video_concept: Spiega il funzionamento del doppio canale: se il feedback post-tatuaggio è negativo va a un modulo privato, se è positivo va direttamente su Google.
-- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
+## Idea 3: Chiedere un acconto per una seduta di fisioterapia ti sembra imbarazzante? Ti spiego come farlo fare in automatico dal tuo gestionale.
+- cover_title: ACCONTI SENZA IMBARAZZO
+- hook: Chiedere un acconto per una seduta di fisioterapia ti sembra imbarazzante? Ti spiego come farlo fare in automatico dal tuo gestionale.
+- description: Presenta la funzionalità di NeatX che automatizza la richiesta di acconto senza che il professionista debba richiederlo a voce, educando il paziente al rispetto del tempo.
+- blog_topic: Fisioterapia e acconti automatici: come tutelare il tuo tempo e il tuo guadagno
+- gameplay_style: runner
+- keywords: ['gestionale fisioterapisti', 'agenda fisioterapista', 'prenotazioni fisioterapia']
+- image_prompt: photorealistic minimal design concept: a smartphone showing a secure payment confirmation interface for a physical therapy session, professional clean background, modern clinics aesthetic
 
-## Idea 4: Se rispondi ancora ai messaggi su Instagram alle undici di sera per fissare un tatuaggio, stai gestendo il tuo studio nel modo sbagliato.
-- title: AGENDA TATUATORI INTELLIGENTE
-- hook: Se rispondi ancora ai messaggi su Instagram alle undici di sera per fissare un tatuaggio, stai gestendo il tuo studio nel modo sbagliato.
-- blog_title: Agenda tatuatori: ottimizzare i tempi e automatizzare le prenotazioni dei clienti
-- video_concept: Mostra la differenza tra un tatuatore sommerso da note vocali su WhatsApp e uno che riceve notifiche di prenotazioni e caparre già pagate mentre sta tatuando.
-- keywords: ['agenda tatuatori', 'prenotazioni tatuatore', 'caparra tatuaggio']
+## Idea 4: Passi la domenica a scambiare messaggi con i pazienti per fissare i cicli di riabilitazione? C'è un modo migliore per gestire il tuo studio.
+- cover_title: AGENDA IN AUTOPILOTA
+- hook: Passi la domenica a scambiare messaggi con i pazienti per fissare i cicli di riabilitazione? C'è un modo migliore per gestire il tuo studio.
+- description: Descrive come configurare l'agenda online per permettere ai pazienti di prenotare in autonomia le sedute di fisioterapia successive solo dopo aver versato l'acconto.
+- blog_topic: Come gestire l'agenda di uno studio di fisioterapia senza impazzire tra i messaggi
+- gameplay_style: runner
+- keywords: ['agenda fisioterapista', 'gestionale fisioterapisti', 'prenotazioni fisioterapia']
+- image_prompt: cinematic lifestyle shot of a relaxed physiotherapist holding a coffee, looking at a laptop showing a perfectly organized digital agenda with automated booking entries, warm morning light
 
-## Idea 5: Il motivo per cui i tuoi concorrenti meno bravi di te hanno il triplo dei clienti è che appaiono per primi su Google grazie alle recensioni.
-- title: DOMINA GOOGLE MAPS
-- hook: Il motivo per cui i tuoi concorrenti meno bravi di te hanno il triplo dei clienti è che appaiono per primi su Google grazie alle recensioni.
-- blog_title: Come scalare le ricerche locali per tatuatori grazie alle recensioni automatiche
-- video_concept: Inquadra uno smartphone con una notifica di recensione a 5 stelle ricevuta subito dopo la sessione di tatuaggio. Spiega l'impatto del posizionamento locale.
-- keywords: ['prenotazioni tatuatore', 'caparra tatuaggio']
+## Idea 5: Usi ancora l'agenda cartacea per segnare le visite fisioterapiche? Ecco perché stai regalando soldi a chi dimentica gli appuntamenti.
+- cover_title: ADDIO DIARIO CARTACEO
+- hook: Usi ancora l'agenda cartacea per segnare le visite fisioterapiche? Ecco perché stai regalando soldi a chi dimentica gli appuntamenti.
+- description: Mette a confronto il caos dell'agenda di carta con la precisione di NeatX, che invia promemoria e richiede pagamenti anticipati per azzerare i no-show.
+- blog_topic: Perché un gestionale per fisioterapisti trasforma il tuo studio professionale
+- gameplay_style: runner
+- keywords: ['gestionale fisioterapisti', 'prenotazioni fisioterapia', 'agenda fisioterapista']
+- image_prompt: split screen style concept, on one side a messy paper planner with scribbles, on the other side a clean digital tablet with NeatX interface showing zero empty slots, cinematic professional lighting
