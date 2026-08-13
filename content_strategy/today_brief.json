@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-12",
-  "niche": "Fisioterapisti",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "STOP PERDITE CLIENTI",
-  "hook_hint": "Se sei tra i fisioterapisti e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Zero No-Show con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "date": "2026-08-13",
+  "niche": "Centri Estetici",
+  "feature": "timesheet",
+  "feature_label": "Timesheet Commercialista",
+  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+  "cover_title": "CENTRI ESTETICI: TURNI E PERM",
+  "hook_hint": "Se sei tra i centri estetici e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Timesheet Commercialista con NeatX",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
