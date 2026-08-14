@@ -138,9 +138,10 @@ export default function CinematicHero() {
         .to(`.${styles.bookingTicket}`, { left: isMobile ? "50%" : "31%", top: isMobile ? "74%" : "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
         .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.06 }, 2.72)
         .to(`.${styles.dashboard}`, {
+          top: isMobile ? "72%" : "51%",
           xPercent: isMobile ? -50 : -70,
-          yPercent: isMobile ? 0 : -6,
-          scale: isMobile ? 0.64 : 0.72,
+          yPercent: isMobile ? -50 : -6,
+          scale: isMobile ? 0.68 : 0.72,
           duration: 0.86,
         }, 3.08)
         .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 4.4, ease: "none" }, 0);
