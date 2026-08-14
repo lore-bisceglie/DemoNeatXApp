@@ -9,7 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./CinematicHero.module.css";
 
 const REQUESTS = [
-  { label: "22:47 · Pagina attiva", left: "60%", top: "24%" },
+  { label: "Pagina online · 24/7", left: "60%", top: "24%" },
   { label: "Giulia sceglie Colore", left: "72%", top: "39%" },
   { label: "Domani · 10:30", left: "62%", top: "57%" },
   { label: "Pagamento online", left: "75%", top: "72%" },
@@ -24,7 +24,7 @@ const APPOINTMENTS = [
   ["17:30", "Matteo C.", "Taglio + barba", "false"],
 ];
 
-const JOURNEY = ["Tu hai chiuso", "Lei ti sceglie", "Prenota", "Tu trovi tutto pronto"];
+const JOURNEY = ["La tua pagina", "Il cliente sceglie", "Prenota", "Agenda pronta"];
 
 export default function CinematicHero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -70,10 +70,10 @@ export default function CinematicHero() {
         if (!element) return;
         const lines = element.querySelectorAll<HTMLElement>(`.${styles.beatLine}`);
         const supporting = element.querySelectorAll<HTMLElement>(`.${styles.eyebrow}, p, .${styles.actions}`);
-        gsap.set(element, { autoAlpha: alpha, y: (1 - alpha) * 42, scale: 0.97 + alpha * 0.03 });
+        gsap.set(element, { autoAlpha: alpha, y: (1 - alpha) * 28, scale: 0.985 + alpha * 0.015 });
         lines.forEach((line, index) => {
           const lineAlpha = Math.max(0, Math.min(1, (alpha - index * 0.12) / 0.76));
-          gsap.set(line, { opacity: lineAlpha, y: (1 - lineAlpha) * 34, rotateX: (1 - lineAlpha) * -16 });
+          gsap.set(line, { opacity: lineAlpha, y: (1 - lineAlpha) * 24, rotateX: (1 - lineAlpha) * -6 });
         });
         const supportAlpha = Math.max(0, Math.min(1, (alpha - 0.3) / 0.7));
         gsap.set(supporting, { opacity: supportAlpha, y: (1 - supportAlpha) * 16 });
@@ -175,7 +175,7 @@ export default function CinematicHero() {
             sizes="100vw"
             className={styles.cinematicBackdropImage}
           />
-          <div className={styles.closedBadge}><span /> Chiuso · 22:47</div>
+          <div className={styles.closedBadge}><span /> Online · 24/7</div>
         </div>
 
         <div className={styles.requests} aria-hidden="true">
@@ -235,9 +235,9 @@ export default function CinematicHero() {
         </div>
 
         <div className={`${styles.beat} ${styles.beatHero}`}>
-          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · La tua attività, sempre aperta</div>
-          <h1><span className={styles.beatLine}>Tu hai chiuso.</span><span className={`${styles.beatLine} ${styles.accent}`}>Le prenotazioni no.</span></h1>
-          <p>La tua pagina lavora 24 ore su 24. Il cliente sceglie e prenota; tu non interrompi più il lavoro per rispondere.</p>
+          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · Più tempo per ciò che conta</div>
+          <h1><span className={styles.beatLine}>Più tempo per</span><span className={`${styles.beatLine} ${styles.accent}`}>il tuo lavoro.</span></h1>
+          <p>I clienti prenotano in autonomia, mentre tu resti concentrato sulle persone che hai davanti.</p>
           <div className={styles.actions}>
             <Link href="/registrazione" className={styles.primary}>Crea la tua pagina <ArrowRight size={17} /></Link>
             <Link href="/t/demo-neatx" className={styles.secondary}>Guardala dal vivo</Link>
@@ -245,21 +245,21 @@ export default function CinematicHero() {
         </div>
 
         <div className={`${styles.beat} ${styles.beatRequests}`}>
-          <div className={styles.eyebrow}>22:47 · Tu non sei al telefono</div>
-          <h2><span className={styles.beatLine}>Qualcuno ti sta</span><span className={`${styles.beatLine} ${styles.accent}`}>scegliendo.</span></h2>
-          <p>Vede servizi, disponibilità e prezzi. Prenota senza chiamare e senza aspettare una risposta.</p>
+          <div className={styles.eyebrow}>Quando è comodo per il cliente</div>
+          <h2><span className={styles.beatLine}>Trova il momento</span><span className={`${styles.beatLine} ${styles.accent}`}>giusto per sé.</span></h2>
+          <p>Consulta servizi, disponibilità e prezzi. Sceglie senza chiamare e senza dover aspettare.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatOrder}`}>
-          <div className={styles.eyebrow}>Prenotazione completata</div>
-          <h2><span className={styles.beatLine}>Prenotato.</span><span className={`${styles.beatLine} ${styles.accent}`}>Già in agenda.</span></h2>
+          <div className={styles.eyebrow}>Tutto al posto giusto</div>
+          <h2><span className={styles.beatLine}>Il cliente prenota.</span><span className={`${styles.beatLine} ${styles.accent}`}>NeatX fa ordine.</span></h2>
           <p>Il cliente può inviarti i dettagli o salvarli nel suo calendario. Tu trovi subito lo slot in dashboard.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatFinal}`}>
-          <div className={styles.eyebrow}>La mattina dopo</div>
-          <h2><span className={styles.beatLine}>Apri.</span><span className={`${styles.beatLine} ${styles.accent}`}>È già tutto in ordine.</span></h2>
-          <p>Orari, clienti, servizi e pagamenti visibili in un colpo d’occhio. Senza rincorrere messaggi o trascrivere appuntamenti.</p>
+          <div className={styles.eyebrow}>La tua giornata, più semplice</div>
+          <h2><span className={styles.beatLine}>Tu inizi.</span><span className={`${styles.beatLine} ${styles.accent}`}>L’agenda è già pronta.</span></h2>
+          <p>Orari, clienti, servizi e pagamenti visibili in un colpo d’occhio. Più chiarezza, fin dal primo appuntamento.</p>
           <div className={styles.actions}>
             <Link href="/registrazione" className={styles.primary}>Prova gratis 14 giorni <ArrowRight size={17} /></Link>
           </div>

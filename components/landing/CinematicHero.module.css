@@ -18,8 +18,8 @@
   height: 100svh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 64%, rgba(0, 180, 255, 0.2), transparent 34%),
-    linear-gradient(180deg, #02050c 0%, #071426 58%, #02050c 100%);
+    radial-gradient(circle at 55% 60%, rgba(0, 180, 255, 0.28), transparent 38%),
+    linear-gradient(180deg, #07111e 0%, #0a2238 58%, #06101d 100%);
 }
 
 .stage::before {
@@ -29,8 +29,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(2, 4, 11, 0.34), transparent 20%, transparent 76%, rgba(2, 4, 11, 0.46)),
-    radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.28) 100%);
+    linear-gradient(180deg, rgba(2, 8, 18, 0.18), transparent 24%, transparent 78%, rgba(2, 8, 18, 0.3)),
+    radial-gradient(circle at center, transparent 54%, rgba(0, 0, 0, 0.18) 100%);
 }
 
 .stage::after {
@@ -103,13 +103,14 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(2, 5, 12, .78) 0%, rgba(2, 5, 12, .38) 38%, rgba(2, 5, 12, .06) 72%),
-    linear-gradient(180deg, rgba(2, 5, 12, .18), transparent 50%, rgba(2, 5, 12, .48));
+    linear-gradient(90deg, rgba(4, 12, 24, .62) 0%, rgba(4, 14, 28, .25) 40%, rgba(2, 8, 18, .02) 72%),
+    linear-gradient(180deg, rgba(2, 8, 18, .08), transparent 52%, rgba(2, 8, 18, .32));
 }
 
 .cinematicBackdropImage {
   object-fit: cover;
   object-position: center;
+  filter: brightness(1.14) saturate(1.04) contrast(.96);
 }
 
 .closedBadge {
@@ -135,8 +136,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #fb7185;
-  box-shadow: 0 0 14px #fb7185;
+  background: #67e8f9;
+  box-shadow: 0 0 14px #67e8f9;
 }
 
 .shop {
@@ -739,7 +740,7 @@
   margin: 0;
   max-width: 700px;
   color: white;
-  font-size: clamp(3.25rem, 6.5vw, 7.2rem);
+  font-size: clamp(3rem, 5.8vw, 6.45rem);
   font-weight: 950;
   letter-spacing: -.055em;
   line-height: .9;
@@ -747,7 +748,7 @@
   text-shadow: 0 4px 24px rgba(0,0,0,.72);
 }
 
-.beat h2 { font-size: clamp(3.1rem, 5.8vw, 6.5rem); }
+.beat h2 { font-size: clamp(2.9rem, 5.2vw, 5.85rem); }
 .beatLine { display: block; transform-origin: left center; }
 .accent {
   color: #67e8f9;
