@@ -142,8 +142,8 @@ export default function CinematicHero() {
           xPercent: isMobile ? -50 : -70,
           yPercent: isMobile ? -50 : -6,
           scale: isMobile ? 0.68 : 0.72,
-          duration: 0.86,
-        }, 3.08)
+          duration: 0.45,
+        }, 2.75)
         .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 4.4, ease: "none" }, 0);
 
       requests.forEach((request, index) => {
