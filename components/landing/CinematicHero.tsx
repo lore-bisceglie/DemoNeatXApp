@@ -9,12 +9,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./CinematicHero.module.css";
 
 const REQUESTS = [
-  { label: "Sede Centrale", left: "9%", top: "25%" },
-  { label: "Taglio uomo · 30 min", left: "73%", top: "28%" },
-  { label: "Martedì 18 agosto", left: "5%", top: "67%" },
-  { label: "Orario · 09:00", left: "77%", top: "71%" },
-  { label: "Pagamento in sede", left: "68%", top: "49%" },
-  { label: "Marco · opzionale", left: "16%", top: "47%" },
+  { label: "22:47 · Pagina attiva", left: "60%", top: "24%" },
+  { label: "Giulia sceglie Colore", left: "72%", top: "39%" },
+  { label: "Domani · 10:30", left: "62%", top: "57%" },
+  { label: "Pagamento online", left: "75%", top: "72%" },
 ];
 
 const APPOINTMENTS = [
@@ -26,16 +24,7 @@ const APPOINTMENTS = [
   ["17:30", "Matteo C.", "Taglio + barba", "false"],
 ];
 
-const JOURNEY = ["Attività chiusa", "Il cliente prenota", "Prenotazione salvata", "Dashboard aggiornata", "Pagamento visibile"];
-
-const SLOTS = [
-  ["09:00", "Marco R.", "Taglio uomo", "false"],
-  ["10:30", "Giulia M.", "Colore", "true"],
-  ["12:00", "Andrea F.", "Trattamento", "false"],
-  ["14:30", "Luca B.", "Barba", "false"],
-  ["16:00", "Sara P.", "Piega", "true"],
-  ["17:30", "Matteo C.", "Taglio + barba", "false"],
-];
+const JOURNEY = ["Tu hai chiuso", "Lei ti sceglie", "Prenota", "Tu trovi tutto pronto"];
 
 export default function CinematicHero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -64,7 +53,6 @@ export default function CinematicHero() {
 
     const context = gsap.context(() => {
       const requests = gsap.utils.toArray<HTMLElement>(`.${styles.request}`);
-      const slots = gsap.utils.toArray<HTMLElement>(`.${styles.slot}`);
       const appointments = gsap.utils.toArray<HTMLElement>(`.${styles.appointment}`);
       const beatHero = root.querySelector<HTMLElement>(`.${styles.beatHero}`);
       const beatRequests = root.querySelector<HTMLElement>(`.${styles.beatRequests}`);
@@ -80,16 +68,24 @@ export default function CinematicHero() {
 
       const placeBeat = (element: HTMLElement | null, alpha: number) => {
         if (!element) return;
-        gsap.set(element, { autoAlpha: alpha, y: (1 - alpha) * 28 });
+        const lines = element.querySelectorAll<HTMLElement>(`.${styles.beatLine}`);
+        const supporting = element.querySelectorAll<HTMLElement>(`.${styles.eyebrow}, p, .${styles.actions}`);
+        gsap.set(element, { autoAlpha: alpha, y: (1 - alpha) * 42, scale: 0.97 + alpha * 0.03 });
+        lines.forEach((line, index) => {
+          const lineAlpha = Math.max(0, Math.min(1, (alpha - index * 0.12) / 0.76));
+          gsap.set(line, { opacity: lineAlpha, y: (1 - lineAlpha) * 34, rotateX: (1 - lineAlpha) * -16 });
+        });
+        const supportAlpha = Math.max(0, Math.min(1, (alpha - 0.3) / 0.7));
+        gsap.set(supporting, { opacity: supportAlpha, y: (1 - supportAlpha) * 16 });
       };
 
       gsap.set(requests, { opacity: 0, scale: 0.7 });
-      gsap.set(slots, { opacity: 0, scale: 0.72 });
       gsap.set(appointments, { opacity: 0, y: 18 });
       gsap.set(`.${styles.phoneSuccess}`, { opacity: 0, y: 18 });
+      gsap.set(`.${styles.bookingTicket}`, { opacity: 0, scale: 0.84, y: 18 });
 
       const timeline = gsap.timeline({
-        defaults: { ease: "none" },
+        defaults: { ease: "power2.inOut" },
         scrollTrigger: {
           trigger: root,
           start: "top top",
@@ -97,47 +93,42 @@ export default function CinematicHero() {
           scrub: 0.72,
           invalidateOnRefresh: true,
           onUpdate: ({ progress }) => {
-            root.dataset.chapter = String(progress < .13 ? 0 : progress < .26 ? 1 : progress < .44 ? 2 : progress < .78 ? 3 : 4);
-            placeBeat(beatHero, envelope(progress, 0, 0, 0.075, 0.145));
-            placeBeat(beatRequests, envelope(progress, 0.13, 0.18, 0.29, 0.35));
-            placeBeat(beatOrder, envelope(progress, 0.38, 0.43, 0.56, 0.62));
-            placeBeat(beatFinal, envelope(progress, 0.78, 0.84, 1.08, 1.18));
+            root.dataset.chapter = String(progress < .16 ? 0 : progress < .38 ? 1 : progress < .72 ? 2 : 3);
+            placeBeat(beatHero, envelope(progress, 0, 0, 0.085, 0.16));
+            placeBeat(beatRequests, envelope(progress, 0.14, 0.2, 0.31, 0.37));
+            placeBeat(beatOrder, envelope(progress, 0.36, 0.42, 0.6, 0.67));
+            placeBeat(beatFinal, envelope(progress, 0.71, 0.78, 1.08, 1.18));
           },
         },
       });
 
       timeline
         .to(`.${styles.scrollCue}`, { opacity: 0, duration: 0.25 }, 0.03)
-        .to(`.${styles.cinematicBackdrop}`, { scale: 1.09, yPercent: -1.5, duration: 0.9 }, 0.1)
+        .to(`.${styles.cinematicBackdrop}`, { scale: 1.08, yPercent: -1.5, duration: 1.15 }, 0.08)
         .to(`.${styles.aurora}`, { scale: 1.4, opacity: 0.82, duration: 1.1 }, 0)
-        .to(requests, { opacity: 1, scale: 1, duration: 0.45, stagger: 0.07 }, 0.35)
+        .to(requests, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.08 }, 0.38)
         .to(requests, {
-          left: "50%",
-          top: "58%",
+          left: "69%",
+          top: "55%",
           xPercent: -50,
           yPercent: -50,
-          scale: 0.16,
+          scale: 0.12,
           opacity: 0,
-          duration: 0.9,
+          duration: 0.72,
           stagger: 0.025,
-        }, 1.05)
-        .to(`.${styles.phone}`, { opacity: 1, scale: 1, rotateX: 0, rotateY: 0, duration: 0.7 }, 1.08)
-        .to(`.${styles.phoneForm}`, { opacity: 0, y: -16, duration: 0.16 }, 1.5)
-        .to(`.${styles.phoneSuccess}`, { opacity: 1, y: 0, duration: 0.28 }, 1.64)
-        .to(`.${styles.cinematicBackdrop}`, { opacity: 0.16, scale: 1.22, duration: 0.65 }, 1.55)
-        .to(`.${styles.phonePulse}`, { scale: 2.1, duration: 0.65 }, 1.82)
-        .to(`.${styles.phone}`, { scale: 1.48, y: -26, opacity: 0, duration: 0.75 }, 2.1)
-        .to(`.${styles.tunnel}`, { opacity: 1, duration: 0.3 }, 2.32)
-        .to(`.${styles.tunnelCore}`, { rotateX: 7, scale: 1, duration: 0.8 }, 2.32)
-        .to(slots, { opacity: 1, scale: 1, duration: 0.45, stagger: 0.05 }, 2.38)
-        .to(slots, { y: -18, duration: 1.15, stagger: 0.035 }, 2.62)
-        .to(`.${styles.tunnelCore}`, { scale: 1.08, duration: 1.35 }, 2.4)
-        .to(`.${styles.agendaConfirmed}`, { opacity: 1, scale: 1, duration: 0.38 }, 3.18)
-        .to(`.${styles.tunnel}`, { opacity: 0, scale: 1.16, duration: 0.55 }, 3.64)
-        .to(`.${styles.dashboard}`, { opacity: 1, scale: 1, rotateX: 0, yPercent: -6, duration: 0.85 }, 3.58)
-        .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.055 }, 3.78)
-        .to(`.${styles.dashboard}`, { xPercent: -62, scale: 0.76, duration: 0.85 }, 4.21)
-        .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 5.28 }, 0);
+        }, 1.02)
+        .to(`.${styles.phone}`, { opacity: 1, scale: 1, rotateX: 0, rotateY: 0, duration: 0.68 }, 1.02)
+        .to(`.${styles.phoneForm}`, { opacity: 0, y: -18, scale: 0.98, duration: 0.22 }, 1.58)
+        .to(`.${styles.phoneSuccess}`, { opacity: 1, y: 0, scale: 1, duration: 0.32 }, 1.52)
+        .to(`.${styles.phonePulse}`, { scale: 1.55, duration: 0.5 }, 1.62)
+        .to(`.${styles.bookingTicket}`, { opacity: 1, scale: 1, y: 0, duration: 0.34 }, 2.04)
+        .to(`.${styles.phone}`, { scale: 0.88, xPercent: 38, opacity: 0, duration: 0.68 }, 2.12)
+        .to(`.${styles.cinematicBackdrop}`, { opacity: 0.13, scale: 1.16, duration: 0.7 }, 2.08)
+        .to(`.${styles.dashboard}`, { opacity: 1, scale: 1, rotateX: 0, yPercent: -6, duration: 0.72 }, 2.52)
+        .to(`.${styles.bookingTicket}`, { left: "31%", top: "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
+        .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.06 }, 2.72)
+        .to(`.${styles.dashboard}`, { xPercent: -70, scale: 0.72, duration: 0.86 }, 3.08)
+        .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 4.4, ease: "none" }, 0);
 
       requests.forEach((request, index) => {
         gsap.to(request, {
@@ -202,9 +193,9 @@ export default function CinematicHero() {
             <div className={`${styles.phoneBooking} ${styles.phoneForm}`}>
               <span className={styles.phoneBrand}>Neat<span>X</span></span>
               <strong>La tua prenotazione</strong>
-              <div><b>1</b><span>Taglio uomo · Marco</span></div>
-              <div><b>2</b><span>Mar 18 ago · 09:00</span></div>
-              <div><b>3</b><span>Pagamento in sede</span></div>
+              <div><b>1</b><span>Colore · Giulia</span></div>
+              <div><b>2</b><span>Domani · 10:30</span></div>
+              <div><b>3</b><span>Pagamento online</span></div>
               <button>Prenota ora</button>
             </div>
             <div className={`${styles.phoneBooking} ${styles.phoneSuccess}`}>
@@ -216,16 +207,10 @@ export default function CinematicHero() {
           </div>
         </div>
 
-        <div className={styles.tunnel} aria-hidden="true">
-          <div className={styles.tunnelCore}>
-            <div className={styles.agendaHead}><span>Dashboard · Martedì 18</span><strong>Agenda di Marco</strong></div>
-            {SLOTS.map(([time, customer, service, paid]) => (
-              <div key={time} className={`${styles.slot} ${paid === "true" ? styles.slotPaid : ""}`}>
-                <time>{time} {paid === "true" ? "✓" : ""}</time><strong>{customer}</strong><span>{service}{paid === "true" ? " · Già pagato" : " · In sede"}</span>
-              </div>
-            ))}
-            <div className={styles.agendaConfirmed}><span>✓</span> Dashboard aggiornata</div>
-          </div>
+        <div className={styles.bookingTicket} aria-hidden="true">
+          <span>Nuova prenotazione</span>
+          <strong>10:30 · Giulia M.</strong>
+          <small>Colore · Già pagato</small>
         </div>
 
         <div className={styles.dashboard} aria-hidden="true">
@@ -250,33 +235,33 @@ export default function CinematicHero() {
         </div>
 
         <div className={`${styles.beat} ${styles.beatHero}`}>
-          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · Sempre operativo</div>
-          <h1>Quando stacchi,<br /><span className={styles.brandWord}>Neat<span>X</span></span> <span className={styles.accent}>continua.</span></h1>
-          <p>La tua pagina prende appuntamenti anche a serranda abbassata. Tu ritrovi tutto già in agenda.</p>
+          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · La tua attività, sempre aperta</div>
+          <h1><span className={styles.beatLine}>Tu hai chiuso.</span><span className={`${styles.beatLine} ${styles.accent}`}>Le prenotazioni no.</span></h1>
+          <p>La tua pagina lavora 24 ore su 24. Il cliente sceglie e prenota; tu non interrompi più il lavoro per rispondere.</p>
           <div className={styles.actions}>
             <Link href="/registrazione" className={styles.primary}>Crea la tua pagina <ArrowRight size={17} /></Link>
-            <Link href="/t/demo-neatx" className={styles.secondary}>Prova una prenotazione</Link>
+            <Link href="/t/demo-neatx" className={styles.secondary}>Guardala dal vivo</Link>
           </div>
         </div>
 
         <div className={`${styles.beat} ${styles.beatRequests}`}>
-          <div className={styles.eyebrow}>Prenotazione online</div>
-          <h2>Il cliente prenota.<br /><span className={styles.accent}>In autonomia.</span></h2>
-          <p>Sceglie sede, servizio, professionista, giorno, orario e modalità di pagamento.</p>
+          <div className={styles.eyebrow}>22:47 · Tu non sei al telefono</div>
+          <h2><span className={styles.beatLine}>Qualcuno ti sta</span><span className={`${styles.beatLine} ${styles.accent}`}>scegliendo.</span></h2>
+          <p>Vede servizi, disponibilità e prezzi. Prenota senza chiamare e senza aspettare una risposta.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatOrder}`}>
-          <div className={styles.eyebrow}>Prenotazione salvata</div>
-          <h2>Un tap. È già<br /><span className={styles.accent}>in dashboard.</span></h2>
-          <p>Lo slot appare con orario, cliente e servizio. Verde e spunta soltanto se è già pagato.</p>
+          <div className={styles.eyebrow}>Prenotazione completata</div>
+          <h2><span className={styles.beatLine}>Prenotato.</span><span className={`${styles.beatLine} ${styles.accent}`}>Già in agenda.</span></h2>
+          <p>Il cliente può inviarti i dettagli o salvarli nel suo calendario. Tu trovi subito lo slot in dashboard.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatFinal}`}>
-          <div className={styles.eyebrow}>Sempre sotto controllo</div>
-          <h2>Agenda e pagamenti.<br /><span className={styles.accent}>Tutto visibile.</span></h2>
-          <p>Chi arriva, a che ora e chi ha già pagato. Senza dover inserire nulla a mano.</p>
+          <div className={styles.eyebrow}>La mattina dopo</div>
+          <h2><span className={styles.beatLine}>Apri.</span><span className={`${styles.beatLine} ${styles.accent}`}>È già tutto in ordine.</span></h2>
+          <p>Orari, clienti, servizi e pagamenti visibili in un colpo d’occhio. Senza rincorrere messaggi o trascrivere appuntamenti.</p>
           <div className={styles.actions}>
-            <Link href="/registrazione" className={styles.primary}>Inizia gratis <ArrowRight size={17} /></Link>
+            <Link href="/registrazione" className={styles.primary}>Prova gratis 14 giorni <ArrowRight size={17} /></Link>
           </div>
         </div>
 
