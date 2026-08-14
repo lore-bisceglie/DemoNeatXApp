@@ -27,7 +27,7 @@ const APPOINTMENTS = [
   ["17:30", "Matteo C.", "Taglio + barba", "false"],
 ];
 
-const JOURNEY = ["Attività chiusa", "Il cliente sceglie", "Prenota ora", "Entra in dashboard", "Pagamento visibile"];
+const JOURNEY = ["Attività chiusa", "Il cliente prenota", "Prenotazione salvata", "Dashboard aggiornata", "Pagamento visibile"];
 
 const SLOTS = [
   ["09:00", "Marco R.", "Taglio uomo", "false"],
@@ -222,7 +222,7 @@ export default function CinematicHero() {
             <div className={`${styles.phoneBooking} ${styles.phoneSuccess}`}>
               <span className={styles.phoneBrand}>Prenotazione salvata ✓</span>
               <strong>È già nella dashboard.</strong>
-              <div><b><MessageCircle size={12} /></b><span>Avvisa il gestore</span></div>
+              <div><b><MessageCircle size={12} /></b><span>Invia i dettagli al gestore</span></div>
               <div><b><CalendarPlus size={12} /></b><span>Aggiungi al calendario</span></div>
             </div>
           </div>
@@ -262,8 +262,8 @@ export default function CinematicHero() {
         </div>
 
         <div className={`${styles.beat} ${styles.beatHero}`}>
-          <div className={styles.eyebrow}>NeatX · Sempre operativo</div>
-          <h1>Quando stacchi,<br /><span className={styles.accent}>NeatX continua.</span></h1>
+          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · Sempre operativo</div>
+          <h1>Quando stacchi,<br /><span className={styles.brandWord}>Neat<span>X</span></span> <span className={styles.accent}>continua.</span></h1>
           <p>La tua pagina prende appuntamenti anche a serranda abbassata. Tu ritrovi tutto già in agenda.</p>
           <div className={styles.actions}>
             <Link href="/registrazione" className={styles.primary}>Crea la tua pagina <ArrowRight size={17} /></Link>
@@ -272,20 +272,20 @@ export default function CinematicHero() {
         </div>
 
         <div className={`${styles.beat} ${styles.beatRequests}`}>
-          <div className={styles.eyebrow}>24 ore su 24</div>
-          <h2>Il cliente sceglie<br /><span className={styles.accent}>tutto.</span></h2>
-          <p>Sede, servizio, professionista, giorno, orario e modalità di pagamento.</p>
+          <div className={styles.eyebrow}>Prenotazione online</div>
+          <h2>Il cliente prenota.<br /><span className={styles.accent}>In autonomia.</span></h2>
+          <p>Sceglie sede, servizio, professionista, giorno, orario e modalità di pagamento.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatOrder}`}>
-          <div className={styles.eyebrow}>Tutto al suo posto</div>
-          <h2>Prenota. Compare<br /><span className={styles.accent}>subito.</span></h2>
-          <p>Lo slot entra direttamente in dashboard. Verde e spunta soltanto se è già pagato.</p>
+          <div className={styles.eyebrow}>Prenotazione salvata</div>
+          <h2>Un tap. È già<br /><span className={styles.accent}>in dashboard.</span></h2>
+          <p>Lo slot appare con orario, cliente e servizio. Verde e spunta soltanto se è già pagato.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatFinal}`}>
-          <div className={styles.eyebrow}>La dashboard si aggiorna</div>
-          <h2>Tu vedi già<br /><span className={styles.accent}>tutto.</span></h2>
+          <div className={styles.eyebrow}>Sempre sotto controllo</div>
+          <h2>Agenda e pagamenti.<br /><span className={styles.accent}>Tutto visibile.</span></h2>
           <p>Chi arriva, a che ora e chi ha già pagato. Senza dover inserire nulla a mano.</p>
           <div className={styles.actions}>
             <Link href="/registrazione" className={styles.primary}>Inizia gratis <ArrowRight size={17} /></Link>

@@ -321,7 +321,7 @@
   font-weight: 950;
 }
 
-.phoneBrand span { color: #67e8f9; }
+.phoneBrand span { color: var(--film-blue); }
 
 .phoneBooking > strong {
   margin: 7px 0 4px;
@@ -744,6 +744,9 @@
   background: none;
   text-shadow: 0 0 30px rgba(0,180,255,.24);
 }
+
+.brandWord { color: #fff; }
+.brandWord > span { color: var(--film-blue); }
 
 .beat p {
   max-width: 570px;
