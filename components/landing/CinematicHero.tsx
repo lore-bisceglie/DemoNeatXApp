@@ -161,11 +161,8 @@ export default function CinematicHero() {
 
     const finishBoot = () => {
       ScrollTrigger.refresh();
-      if (jump !== null) {
-        window.history.scrollRestoration = "manual";
-        window.scrollTo(0, Number(jump) || 0);
-        ScrollTrigger.update();
-      }
+      window.history.scrollRestoration = "manual";
+      window.scrollTo(0, jump !== null ? Number(jump) || 0 : 0);
       ScrollTrigger.update();
       readyWindow.__ready = true;
     };
