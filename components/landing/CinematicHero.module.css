@@ -917,42 +917,59 @@
 
 @media (max-width: 760px) {
   .cinematicBackdropImage { object-position: 64% center; }
-  .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,5,12,.34), rgba(2,5,12,.16) 45%, rgba(2,5,12,.72)); }
-  .closedBadge { right: 18px; bottom: 86px; }
-  .beat { top: 108px; left: 20px; width: calc(100vw - 40px); padding: 0; }
-  .beat h1, .beat h2 { font-size: clamp(2.65rem, 12.5vw, 4rem); line-height: .92; letter-spacing: -.05em; }
-  .beat p { max-width: 100%; margin-top: 18px; font-size: 1rem; line-height: 1.5; }
+  .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,8,18,.22), rgba(2,8,18,.08) 45%, rgba(2,8,18,.48)); }
+  .closedBadge { right: 14px; bottom: 72px; padding: 8px 11px; font-size: 8px; }
+  .beat { top: 92px; left: 20px; width: calc(100vw - 40px); padding: 0; }
+  .beat h1, .beat h2 { font-size: clamp(2.35rem, 11.4vw, 3.35rem); line-height: .94; letter-spacing: -.045em; }
+  .beat p { max-width: 100%; margin-top: 16px; font-size: .93rem; line-height: 1.45; }
+  .eyebrow { gap: 8px; margin-bottom: 14px; font-size: 8px; letter-spacing: .18em; }
+  .eyebrow::before { width: 28px; }
   .beatFinal { left: 20px; right: auto; text-align: left; }
   .beatFinal .beatLine { transform-origin: left center; }
   .beatFinal .eyebrow, .beatFinal .actions { justify-content: flex-start; }
   .beatFinal .eyebrow::after { display: none; }
   .beatFinal .eyebrow::before { display: block; }
-  .journey { bottom: 18px; width: calc(100vw - 32px); gap: 4px; }
+  .journey { bottom: 16px; width: calc(100vw - 144px); gap: 4px; }
   .journeyStep span { display: none; }
   .journeyStep { align-items: center; }
   .journeyTrack { bottom: -6px; }
   .scrollCue { display: none; }
-  .request { min-width: 122px; padding: 8px 11px 8px 8px; font-size: 9px; }
-  .phone { left: 50%; top: 68%; width: min(210px, 56vw); }
-  .bookingTicket { left: 43%; top: 62%; width: 210px; }
+  .request { min-width: 0; max-width: 46vw; padding: 8px 10px 8px 8px; font-size: 8px; white-space: nowrap; }
+  .phone { left: 50%; top: 70%; width: min(184px, 48vw); border-radius: 28px; padding: 6px; }
+  .phoneScreen { border-radius: 22px; }
+  .phoneBooking { inset: 13% 8% 7%; gap: 7px; }
+  .phoneBooking > strong { margin: 5px 0 2px; font-size: 14px; }
+  .phoneBooking > div { gap: 6px; padding: 7px 6px; font-size: 8px; }
+  .phoneBooking button { padding: 8px 4px; font-size: 8px; }
+  .bookingTicket { left: 50%; top: 65%; width: min(210px, 56vw); transform: translateX(-50%); }
   .tunnelCore { width: 108vw; min-height: 56vh; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 20px; }
   .agendaHead { margin-bottom: 4px; padding-bottom: 12px; }
   .agendaHead strong { font-size: 8px; }
   .slot { min-height: 72px; padding: 10px; }
   .agendaConfirmed { bottom: 12px; padding: 8px 12px; font-size: 8px; }
-  .dashboard { width: 118vw; min-height: 55vh; }
-  .readyResult { min-height: 52vh; grid-template-columns: 58px 1fr; grid-template-areas: "check copy" "schedule schedule"; gap: 14px; padding: 22px 44px 22px 22px; }
+  .dashboard { top: 54%; width: 96vw; min-height: 48vh; }
+  .readyResult { min-height: 46vh; grid-template-columns: 48px 1fr; grid-template-areas: "check copy" "schedule schedule"; gap: 10px; padding: 18px 14px; }
   .readyCheck { width: 52px; height: 52px; font-size: 28px; }
-  .readyCopy h3 { font-size: 2rem; }
+  .readyCopy h3 { font-size: 1.7rem; }
   .readyCopy p { display: none; }
   .readySchedule { grid-template-columns: repeat(2, 1fr); }
   .readyStats { display: none; }
   .dashBody { grid-template-columns: 1fr; }
   .summary { display: none; }
   .calendar { min-height: 330px; }
-  .appointment { min-height: 66px; padding: 9px; }
-  .actions { gap: 9px; margin-top: 25px; }
-  .primary, .secondary { min-height: 48px; padding: 0 17px; font-size: 12px; }
+  .appointment { min-height: 58px; padding: 8px; }
+  .actions { gap: 8px; margin-top: 21px; }
+  .primary, .secondary { min-height: 44px; padding: 0 14px; font-size: 11px; }
+}
+
+@media (max-width: 420px) and (max-height: 760px) {
+  .beat { top: 76px; }
+  .beat h1, .beat h2 { font-size: clamp(2.1rem, 10.5vw, 2.8rem); }
+  .beat p { margin-top: 12px; font-size: .86rem; }
+  .actions { margin-top: 16px; }
+  .primary, .secondary { min-height: 40px; }
+  .phone { top: 72%; width: min(164px, 44vw); }
+  .journey { bottom: 13px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

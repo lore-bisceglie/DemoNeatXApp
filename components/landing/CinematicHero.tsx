@@ -40,6 +40,7 @@ export default function CinematicHero() {
     const searchParams = new URLSearchParams(window.location.search);
     const forceMotion = searchParams.get("motion") === "full";
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches && !forceMotion;
+    const isMobile = window.matchMedia("(max-width: 760px)").matches;
     const jump = searchParams.get("jump");
 
     if (forceMotion) root.dataset.motion = "full";
@@ -80,6 +81,15 @@ export default function CinematicHero() {
       };
 
       gsap.set(requests, { opacity: 0, scale: 0.7 });
+      if (isMobile) {
+        const mobileRequestPositions = [
+          { left: "6%", top: "55%" },
+          { left: "49%", top: "61%" },
+          { left: "8%", top: "72%" },
+          { left: "51%", top: "78%" },
+        ];
+        requests.forEach((request, index) => gsap.set(request, mobileRequestPositions[index]));
+      }
       gsap.set(appointments, { opacity: 0, y: 18 });
       gsap.set(`.${styles.phoneSuccess}`, { opacity: 0, y: 18 });
       gsap.set(`.${styles.bookingTicket}`, { opacity: 0, scale: 0.84, y: 18 });
@@ -108,8 +118,8 @@ export default function CinematicHero() {
         .to(`.${styles.aurora}`, { scale: 1.4, opacity: 0.82, duration: 1.1 }, 0)
         .to(requests, { opacity: 1, scale: 1, duration: 0.5, stagger: 0.08 }, 0.38)
         .to(requests, {
-          left: "69%",
-          top: "55%",
+          left: isMobile ? "50%" : "69%",
+          top: isMobile ? "69%" : "55%",
           xPercent: -50,
           yPercent: -50,
           scale: 0.12,
@@ -122,12 +132,17 @@ export default function CinematicHero() {
         .to(`.${styles.phoneSuccess}`, { opacity: 1, y: 0, scale: 1, duration: 0.32 }, 1.52)
         .to(`.${styles.phonePulse}`, { scale: 1.55, duration: 0.5 }, 1.62)
         .to(`.${styles.bookingTicket}`, { opacity: 1, scale: 1, y: 0, duration: 0.34 }, 2.04)
-        .to(`.${styles.phone}`, { scale: 0.88, xPercent: 38, opacity: 0, duration: 0.68 }, 2.12)
+        .to(`.${styles.phone}`, { scale: isMobile ? 0.8 : 0.88, xPercent: isMobile ? 0 : 38, opacity: 0, duration: 0.68 }, 2.12)
         .to(`.${styles.cinematicBackdrop}`, { opacity: 0.13, scale: 1.16, duration: 0.7 }, 2.08)
         .to(`.${styles.dashboard}`, { opacity: 1, scale: 1, rotateX: 0, yPercent: -6, duration: 0.72 }, 2.52)
-        .to(`.${styles.bookingTicket}`, { left: "31%", top: "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
+        .to(`.${styles.bookingTicket}`, { left: isMobile ? "50%" : "31%", top: isMobile ? "74%" : "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
         .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.06 }, 2.72)
-        .to(`.${styles.dashboard}`, { xPercent: -70, scale: 0.72, duration: 0.86 }, 3.08)
+        .to(`.${styles.dashboard}`, {
+          xPercent: isMobile ? 0 : -70,
+          yPercent: isMobile ? 42 : -6,
+          scale: isMobile ? 0.64 : 0.72,
+          duration: 0.86,
+        }, 3.08)
         .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 4.4, ease: "none" }, 0);
 
       requests.forEach((request, index) => {
