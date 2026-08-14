@@ -19,6 +19,7 @@ import LiveNotification from "@/components/landing/LiveNotification";
 import ROICalculator from "@/components/landing/ROICalculator";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import BrandMeaningSection from "@/components/landing/BrandMeaningSection";
+import CinematicHero from "@/components/landing/CinematicHero";
 
 export default function Home() {
   const [showRoiModal, setShowRoiModal] = useState(false);
@@ -71,6 +72,7 @@ export default function Home() {
       />
 
       <Navbar onOpenRoi={() => setShowRoiModal(true)} ctaLabel="Crea la tua pagina" />
+      <CinematicHero />
       <HeroSection />
       
       <ScrollReveal><TrustMarquee /></ScrollReveal>
