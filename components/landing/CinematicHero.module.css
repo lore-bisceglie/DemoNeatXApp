@@ -251,7 +251,7 @@
   z-index: 12;
   left: 50%;
   top: 58%;
-  width: clamp(154px, 15vw, 214px);
+  width: clamp(220px, 18vw, 280px);
   aspect-ratio: 0.49;
   transform: translate(-50%, -50%) rotateX(9deg) rotateY(-8deg) scale(.58);
   opacity: 0;
@@ -317,7 +317,7 @@
 
 .phoneBrand {
   color: white;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
 }
 
@@ -325,7 +325,7 @@
 
 .phoneBooking > strong {
   margin: 7px 0 4px;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.12;
 }
 
@@ -338,7 +338,7 @@
   border-radius: 9px;
   background: rgba(255,255,255,.055);
   color: #e2e8f0;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 800;
 }
 
@@ -360,7 +360,7 @@
   border-radius: 8px;
   color: #021019;
   background: #67e8f9;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 950;
 }
 
@@ -684,10 +684,10 @@
   position: absolute;
   z-index: 44;
   left: clamp(24px, 7vw, 112px);
-  top: 50%;
+  top: clamp(132px, 18vh, 190px);
   width: min(650px, calc(100vw - 48px));
   padding: clamp(24px, 3vw, 38px);
-  transform: translateY(-50%);
+  transform: none;
   pointer-events: none;
   overflow: hidden;
   border: 1px solid rgba(103, 232, 249, .24);
@@ -911,7 +911,7 @@
   .cinematicBackdropImage { object-position: 64% center; }
   .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,5,12,.34), rgba(2,5,12,.16) 45%, rgba(2,5,12,.72)); }
   .closedBadge { right: 18px; bottom: 86px; }
-  .beat { top: 46%; left: 16px; width: calc(100vw - 32px); padding: 22px 20px 24px; border-radius: 0 18px 18px 0; }
+  .beat { top: 104px; left: 16px; width: calc(100vw - 32px); padding: 22px 20px 24px; border-radius: 0 18px 18px 0; }
   .beat h1, .beat h2 { font-size: clamp(2.55rem, 12vw, 3.9rem); line-height: .96; letter-spacing: -.045em; }
   .beat p { max-width: 100%; margin-top: 18px; font-size: 1rem; line-height: 1.5; }
   .beatFinal { left: 16px; right: auto; text-align: left; border-right: 1px solid rgba(103, 232, 249, .24); border-left: 3px solid #67e8f9; border-radius: 0 18px 18px 0; }
@@ -924,7 +924,7 @@
   .journeyTrack { bottom: -6px; }
   .scrollCue { display: none; }
   .request { min-width: 122px; padding: 8px 11px 8px 8px; font-size: 9px; }
-  .phone { width: 146px; }
+  .phone { width: min(230px, 64vw); }
   .tunnelCore { width: 108vw; min-height: 56vh; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 20px; }
   .agendaHead { margin-bottom: 4px; padding-bottom: 12px; }
   .agendaHead strong { font-size: 8px; }

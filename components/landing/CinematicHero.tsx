@@ -126,7 +126,7 @@ export default function CinematicHero() {
         .to(`.${styles.phoneSuccess}`, { opacity: 1, y: 0, duration: 0.28 }, 1.64)
         .to(`.${styles.cinematicBackdrop}`, { opacity: 0.16, scale: 1.22, duration: 0.65 }, 1.55)
         .to(`.${styles.phonePulse}`, { scale: 2.1, duration: 0.65 }, 1.82)
-        .to(`.${styles.phone}`, { scale: 7.2, opacity: 0, duration: 0.75 }, 2.1)
+        .to(`.${styles.phone}`, { scale: 1.48, y: -26, opacity: 0, duration: 0.75 }, 2.1)
         .to(`.${styles.tunnel}`, { opacity: 1, duration: 0.3 }, 2.32)
         .to(`.${styles.tunnelCore}`, { rotateX: 7, scale: 1, duration: 0.8 }, 2.32)
         .to(slots, { opacity: 1, scale: 1, duration: 0.45, stagger: 0.05 }, 2.38)
