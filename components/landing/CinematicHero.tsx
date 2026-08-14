@@ -6,7 +6,6 @@ import { useEffect, useRef } from "react";
 import { ArrowRight, CalendarPlus, MessageCircle } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
 import styles from "./CinematicHero.module.css";
 
 const REQUESTS = [
@@ -62,13 +61,6 @@ export default function CinematicHero() {
     }
 
     gsap.registerPlugin(ScrollTrigger);
-    const lenis = jump === null ? new Lenis({ lerp: 0.09, smoothWheel: true }) : null;
-    const ticker = (time: number) => lenis?.raf(time * 1000);
-    lenis?.on("scroll", ScrollTrigger.update);
-    if (lenis) {
-      gsap.ticker.add(ticker);
-      gsap.ticker.lagSmoothing(0);
-    }
 
     const context = gsap.context(() => {
       const requests = gsap.utils.toArray<HTMLElement>(`.${styles.request}`);
@@ -174,10 +166,6 @@ export default function CinematicHero() {
 
     return () => {
       context.revert();
-      if (lenis) {
-        gsap.ticker.remove(ticker);
-        lenis.destroy();
-      }
       readyWindow.__ready = false;
       delete root.dataset.motion;
     };
