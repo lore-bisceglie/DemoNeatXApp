@@ -30,9 +30,10 @@ function displayDate(date: string) {
  */
 export async function GET(request: Request) {
   const previewToken = process.env.N8N_REMINDER_PREVIEW_TOKEN;
-  const authorization = request.headers.get("authorization");
+  // Do not use `Authorization`: Vercel Preview reserves it for deployment protection.
+  const requestToken = request.headers.get("x-neatx-preview-token");
 
-  if (!previewToken || authorization !== `Bearer ${previewToken}`) {
+  if (!previewToken || requestToken !== previewToken) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
