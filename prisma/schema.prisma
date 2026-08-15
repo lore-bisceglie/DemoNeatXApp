@@ -15,130 +15,132 @@ enum Plan {
 }
 
 model Tenant {
-  id            String        @id @default(cuid()) 
-  slug          String        @unique
-  name          String
-  category      String?
-  city          String?
-  ownerName     String?
-  ownerEmail    String?
-  ownerPasswordHash String?
-  logoUrl       String?
-  themeColor    String        @default("cyan")
-  description   String?
-  phone         String?
-  address       String?
-  instagramUrl  String?
-  facebookUrl   String?
-  tiktokUrl     String?
-  websiteUrl    String?
-  mapsLink      String?
-  bookingUrl    String?
-  openTime      String?
-  closeTime     String?
-  breakStart    String?
-  breakEnd      String?
-  closedDays    String?
-  trialStartedAt DateTime?
-  trialEndsAt   DateTime?
-  trialStatus   String        @default("demo")
-  isDemoData    Boolean       @default(true)
-  template      String        @default("barbiere")
-  isElite       Boolean       @default(false)
-  activationRequested Boolean @default(false)
-  publishedAt   DateTime?
-  convertedAt   DateTime?
-  tutorialSeenAt DateTime?
-  plan          Plan          @default(basic)
-  stripeCustomerId String?
-  stripeSubscriptionId String?
-  createdAt     DateTime      @default(now())
-  staffSheetUrl String?
-  emailVerified Boolean       @default(false)
-  emailVerifyToken String?   @unique
-  emailVerifyExpiresAt DateTime?
-  emailVerifyRequestCount Int @default(0)
-  emailVerifyRequestWindowAt DateTime?
-  passwordResetTokenHash String? @unique
-  passwordResetExpiresAt DateTime?
-  passwordResetRequestCount Int @default(0)
+  id                           String    @id @default(cuid())
+  slug                         String    @unique
+  name                         String
+  category                     String?
+  city                         String?
+  ownerName                    String?
+  ownerEmail                   String?
+  ownerPasswordHash            String?
+  logoUrl                      String?
+  themeColor                   String    @default("cyan")
+  description                  String?
+  phone                        String?
+  address                      String?
+  instagramUrl                 String?
+  facebookUrl                  String?
+  tiktokUrl                    String?
+  websiteUrl                   String?
+  mapsLink                     String?
+  bookingUrl                   String?
+  openTime                     String?
+  closeTime                    String?
+  breakStart                   String?
+  breakEnd                     String?
+  closedDays                   String?
+  trialStartedAt               DateTime?
+  trialEndsAt                  DateTime?
+  trialStatus                  String    @default("demo")
+  isDemoData                   Boolean   @default(true)
+  template                     String    @default("barbiere")
+  isElite                      Boolean   @default(false)
+  activationRequested          Boolean   @default(false)
+  publishedAt                  DateTime?
+  convertedAt                  DateTime?
+  tutorialSeenAt               DateTime?
+  plan                         Plan      @default(basic)
+  stripeCustomerId             String?
+  stripeSubscriptionId         String?
+  createdAt                    DateTime  @default(now())
+  staffSheetUrl                String?
+  emailVerified                Boolean   @default(false)
+  emailVerifyToken             String?   @unique
+  emailVerifyExpiresAt         DateTime?
+  emailVerifyRequestCount      Int       @default(0)
+  emailVerifyRequestWindowAt   DateTime?
+  passwordResetTokenHash       String?   @unique
+  passwordResetExpiresAt       DateTime?
+  passwordResetRequestCount    Int       @default(0)
   passwordResetRequestWindowAt DateTime?
-  sessionVersion Int          @default(0)
-  failedLoginAttempts Int     @default(0)
-  lockoutUntil  DateTime?
-  referralCode  String?       @unique
-  referredByCode String?
-  referredAt    DateTime?
-  referralSignupBonusAt DateTime?
-  referralRewardedAt DateTime?
+  sessionVersion               Int       @default(0)
+  failedLoginAttempts          Int       @default(0)
+  lockoutUntil                 DateTime?
+  referralCode                 String?   @unique
+  referredByCode               String?
+  referredAt                   DateTime?
+  referralSignupBonusAt        DateTime?
+  referralRewardedAt           DateTime?
 
-  appointments  Appointment[]
-  blockedSlots  BlockedSlot[]
-  services      Service[]
-  storeSettings StoreSettings?
-  noShows       NoShow[]
-  waitlists     Waitlist[]
-  customerNotes CustomerNote[]
-  activityLogs  ActivityLog[]
-  staff         Staff[]
-  staffLeaveRequests StaffLeaveRequest[]
-  locations     Location[]
+  appointments          Appointment[]
+  blockedSlots          BlockedSlot[]
+  services              Service[]
+  storeSettings         StoreSettings?
+  noShows               NoShow[]
+  waitlists             Waitlist[]
+  customerNotes         CustomerNote[]
+  activityLogs          ActivityLog[]
+  staff                 Staff[]
+  staffLeaveRequests    StaffLeaveRequest[]
+  locations             Location[]
   processedStripeEvents ProcessedStripeEvent[]
-  platformReview PlatformReview?
-  socialPosts    SocialPost[]
+  platformReview        PlatformReview?
+  socialPosts           SocialPost[]
+  reminderDeliveries    ReminderDelivery[]
 }
 
 model ProcessedStripeEvent {
-  id        String   @id
-  type      String
-  status    String   @default("processing")
-  tenantId  String?
-  createdAt DateTime @default(now())
+  id          String    @id
+  type        String
+  status      String    @default("processing")
+  tenantId    String?
+  createdAt   DateTime  @default(now())
   processedAt DateTime?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  tenant      Tenant?   @relation(fields: [tenantId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
   @@index([createdAt])
 }
 
 model Location {
-  id            String        @id @default(cuid())
-  name          String
-  slug          String
-  address       String?
-  city          String?
-  phone         String?
-  mapsLink      String?
-  isMain        Boolean       @default(false)
-  isActive      Boolean       @default(true)
-  openTime      String?
-  closeTime     String?
-  breakStart    String?
-  breakEnd      String?
-  closedDays    String?
-  staffSheetUrl String?
-  tenantId      String
-  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  staff         Staff[]
+  id             String            @id @default(cuid())
+  name           String
+  slug           String
+  address        String?
+  city           String?
+  phone          String?
+  mapsLink       String?
+  isMain         Boolean           @default(false)
+  isActive       Boolean           @default(true)
+  openTime       String?
+  closeTime      String?
+  breakStart     String?
+  breakEnd       String?
+  closedDays     String?
+  staffSheetUrl  String?
+  tenantId       String
+  tenant         Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  staff          Staff[]
   staffLocations StaffLocation[]
-  services      ServiceLocation[]
-  appointments  Appointment[]
-  settings      LocationSettings?
+  services       ServiceLocation[]
+  appointments   Appointment[]
+  settings       LocationSettings?
+
   @@unique([tenantId, slug])
   @@index([tenantId])
 }
 
 model LocationSettings {
-  id                String  @id @default(cuid())
-  smsCredits        Int     @default(0)
-  stripeAccountId   String?
-  paymentStrategy   String  @default("OFF")
-  paymentFixedAmount Float?  @default(5.0)
-  paymentPercentage Int?    @default(20)
-  paymentMandatory  Boolean @default(false)
-  locationId        String  @unique
-  location          Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  updatedAt         DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  smsCredits         Int      @default(0)
+  stripeAccountId    String?
+  paymentStrategy    String   @default("OFF")
+  paymentFixedAmount Float?   @default(5.0)
+  paymentPercentage  Int?     @default(20)
+  paymentMandatory   Boolean  @default(false)
+  locationId         String   @unique
+  location           Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  updatedAt          DateTime @updatedAt
 }
 
 model ServiceLocation {
@@ -149,44 +151,75 @@ model ServiceLocation {
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   price      Float?
   isActive   Boolean  @default(true)
+
   @@unique([serviceId, locationId])
 }
 
 model Service {
-  id           String        @id @default(cuid())
+  id           String            @id @default(cuid())
   name         String
   duration     Int
   price        Float?
   tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   appointments Appointment[]
   staff        Staff[]
   locations    ServiceLocation[]
 }
 
 model Appointment {
-  id            String   @id @default(cuid())
-  customerName  String
-  customerPhone String
-  date          String
-  time          String
-  endTime       String?
-  cancelToken   String   @unique @default(uuid())
-  source        String   @default("ONLINE")
-  isPaid        Boolean  @default(false)
-  paymentStatus String   @default("NONE")
-  stripeSession String?
-  createdAt     DateTime @default(now())
-  serviceId     String?
-  service       Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
-  staffId       String?
-  staff         Staff?   @relation(fields: [staffId], references: [id], onDelete: SetNull)
-  tenantId      String?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  locationId    String?
-  location      Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  id                 String             @id @default(cuid())
+  customerName       String
+  customerPhone      String
+  date               String
+  time               String
+  endTime            String?
+  cancelToken        String             @unique @default(uuid())
+  source             String             @default("ONLINE")
+  isPaid             Boolean            @default(false)
+  paymentStatus      String             @default("NONE")
+  stripeSession      String?
+  createdAt          DateTime           @default(now())
+  serviceId          String?
+  service            Service?           @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  staffId            String?
+  staff              Staff?             @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  tenantId           String?
+  tenant             Tenant?            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  locationId         String?
+  location           Location?          @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  reminderDeliveries ReminderDelivery[]
+
   @@index([locationId])
   @@index([tenantId, date])
+}
+
+/// Outbox idempotente per i promemoria: un appuntamento può avere al massimo
+/// una consegna per canale. Il worker esterno deve confermare l'esito dopo
+/// l'invio, evitando duplicati in caso di retry o riavvio.
+model ReminderDelivery {
+  id                String      @id @default(cuid())
+  appointmentId     String
+  appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  tenantId          String
+  tenant            Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  channel           String      @default("OPENWA")
+  status            String      @default("PROCESSING")
+  leaseToken        String      @unique @default(uuid())
+  creditReserved    Boolean     @default(false)
+  attemptCount      Int         @default(0)
+  providerMessageId String?
+  lastError         String?
+  queuedAt          DateTime    @default(now())
+  lastAttemptAt     DateTime?
+  sentAt            DateTime?
+  failedAt          DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@unique([appointmentId, channel])
+  @@index([tenantId, status])
+  @@index([status, queuedAt])
 }
 
 model BlockedSlot {
@@ -209,8 +242,8 @@ model StoreSettings {
   paymentPercentage         Int?     @default(20)
   paymentMandatory          Boolean  @default(false)
   updatedAt                 DateTime @updatedAt
-  tenantId   String   @unique
-  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId                  String   @unique
+  tenant                    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model NoShow {
@@ -245,6 +278,7 @@ model CustomerNote {
   updatedAt    DateTime @updatedAt
   tenantId     String
   tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   @@unique([tenantId, phone])
 }
 
@@ -258,6 +292,7 @@ model Lead {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@index([status])
   @@index([createdAt])
 }
@@ -276,42 +311,44 @@ model ActivityLog {
   createdAt     DateTime @default(now())
   tenantId      String
   tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   @@index([tenantId])
 }
 
 model Staff {
-  id           String        @id @default(cuid())
-  name         String
-  tenantId     String
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  services     Service[]
-  baseSchedule    String? @default("{}")
-  shiftExceptions String? @default("[]")
-  staffAccessTokenHash String? @unique
+  id                        String              @id @default(cuid())
+  name                      String
+  tenantId                  String
+  tenant                    Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  services                  Service[]
+  baseSchedule              String?             @default("{}")
+  shiftExceptions           String?             @default("[]")
+  staffAccessTokenHash      String?             @unique
   staffAccessTokenCreatedAt DateTime?
   staffAccessTokenRevokedAt DateTime?
-  staffAccessLastUsedAt DateTime?
-  commissionRate  Int     @default(0)
-  locationId   String?
-  location     Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
-  locations    StaffLocation[]
-  appointments Appointment[]
-  leaveRequests StaffLeaveRequest[]
+  staffAccessLastUsedAt     DateTime?
+  commissionRate            Int                 @default(0)
+  locationId                String?
+  location                  Location?           @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  locations                 StaffLocation[]
+  appointments              Appointment[]
+  leaveRequests             StaffLeaveRequest[]
+
   @@index([locationId])
 }
 
 model StaffLeaveRequest {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   tenantId   String
-  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   staffId    String
-  staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  staff      Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
   date       String
   type       String
   start      String?
   end        String?
-  status     String   @default("pending")
-  createdAt  DateTime @default(now())
+  status     String    @default("pending")
+  createdAt  DateTime  @default(now())
   reviewedAt DateTime?
   reviewedBy String?
 
@@ -325,30 +362,30 @@ model StaffLocation {
   staff      Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
   locationId String
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
   @@unique([staffId, locationId])
   @@index([staffId])
   @@index([locationId])
 }
 
 model PlatformReview {
-  id          String   @id @default(cuid())
-  rating      Int      @default(5)
-  text        String
-  isApproved  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  tenantId    String   @unique
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  rating     Int      @default(5)
+  text       String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  tenantId   String   @unique
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model SocialPost {
-  id          String   @id @default(cuid())
-  tenantId    String
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  imageUrl    String?  // Removed @db.Text, Prisma uses String for large text in Postgres depending on usage, but let's just use String
-  caption     String
-  status      String   @default("SCHEDULED")
-  platform    String   @default("INSTAGRAM")
+  id           String    @id @default(cuid())
+  tenantId     String
+  tenant       Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  imageUrl     String? // Removed @db.Text, Prisma uses String for large text in Postgres depending on usage, but let's just use String
+  caption      String
+  status       String    @default("SCHEDULED")
+  platform     String    @default("INSTAGRAM")
   scheduledFor DateTime?
-  createdAt   DateTime @default(now())
+  createdAt    DateTime  @default(now())
 }
-
