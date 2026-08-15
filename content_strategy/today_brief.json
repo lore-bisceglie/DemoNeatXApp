@@ -1,18 +1,18 @@
 {
   "date": "2026-08-15",
-  "niche": "Fisioterapisti",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "RECENSIONI CHE CONTEGGIANO",
-  "hook_hint": "Se sei tra i fisioterapisti e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Recensioni Automatiche con NeatX",
+  "niche": "Tatuatori",
+  "feature": "multi_staff",
+  "feature_label": "Gestione Staff",
+  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
+  "cover_title": "GESTISCI I TUOI TATUATORI",
+  "hook_hint": "Se sei tra i tatuatori e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Gestione Staff con NeatX",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }

@@ -1,24 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-14T11:05:52.153283+02:00
+Generato: 2026-08-15T10:25:54.022767+02:00
 
-## Idea 1: Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Barbieri
-- hook: Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Se un cliente prenota un fine-line e finisce per errore sull'agenda del tuo tatuatore traditional, stai rovinando la reputazione dello studio.
+- video_title: ERRORE ASSEGNAZIONE TATUATORE
+- hook: Se un cliente prenota un fine-line e finisce per errore sull'agenda del tuo tatuatore traditional, stai rovinando la reputazione dello studio.
+- blog_title: Tatuatori: come evitare l'assegnazione errata dei clienti ai collaboratori
+- description: Un video che evidenzia il caos generato dall'assegnazione errata degli stili di tatuaggio ai diversi collaboratori dello studio, mostrando come NeatX risolva il problema con agende separate e specifiche.
+- keywords: ['prenotazioni tatuatore', 'agenda tatuatori', 'gestione staff']
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Barbieri
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Coordinare le ferie di cinque tatuatori diversi usando un'agenda cartacea e messaggi WhatsApp è il modo più rapido per creare doppi appuntamenti.
+- video_title: STOP FERIE SOVRAPPOSTE
+- hook: Coordinare le ferie di cinque tatuatori diversi usando un'agenda cartacea e messaggi WhatsApp è il modo più rapido per creare doppi appuntamenti.
+- blog_title: La guida definitiva alla gestione dei turni e delle ferie nel tuo studio di tatuaggi
+- description: Analisi del problema classico degli studi di tatuaggi con molti resident e guest artist: la gestione delle ferie e dei turni sovrapposti, risolta tramite l'automazione dei turni di NeatX.
+- keywords: ['agenda tatuatori', 'gestione turni tatuaggi', 'coordinamento staff']
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Barbieri
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Quando un cliente prenota un tatuaggio ma non versa la caparra, non stai solo perdendo tempo tu, stai bloccando l'agenda dei tuoi collaboratori.
+- video_title: PROTEGGI IL TEMPO DEI TATUATORI
+- hook: Quando un cliente prenota un tatuaggio ma non versa la caparra, non stai solo perdendo tempo tu, stai bloccando l'agenda dei tuoi collaboratori.
+- blog_title: Caparra e prenotazioni: come proteggere il tempo dei tuoi tatuatori resident
+- description: Come unire la gestione delle agende dei singoli tatuatori all'obbligo di versamento della caparra per eliminare i no-show che danneggiano i dipendenti dello studio.
+- keywords: ['caparra tatuaggio', 'prenotazioni tatuatore', 'no-show tatuatori']
+
+## Idea 4: Smetti di usare un unico account Google Calendar per tutto lo studio di tatuaggi se vuoi evitare che i clienti vedano gli orari di chi non è in turno.
+- video_title: AGENDA TATUATORI INDIVIDUALE
+- hook: Smetti di usare un unico account Google Calendar per tutto lo studio di tatuaggi se vuoi evitare che i clienti vedano gli orari di chi non è in turno.
+- blog_title: Perché ogni tatuatore del tuo studio ha bisogno di un'agenda online personalizzata
+- description: Spiegazione tecnica e pratica di come configurare profili indipendenti per ogni tatuatore dello studio, garantendo la massima privacy e precisione negli appuntamenti.
+- keywords: ['agenda tatuatori', 'gestione tatuaggi', 'calendario condiviso studio']
+
+## Idea 5: Se passi più tempo a confermare i turni dei tuoi tatuatori resident e guest invece di tatuare, stai gestendo lo studio nel modo sbagliato.
+- video_title: GESTISCI I TUOI TATUATORI
+- hook: Se passi più tempo a confermare i turni dei tuoi tatuatori resident e guest invece di tatuare, stai gestendo lo studio nel modo sbagliato.
+- blog_title: Tatuatori: Gestione Staff con NeatX per ottimizzare i guadagni dello studio
+- description: Focus sui turni automatici e sulla facilità di inserimento dei guest artist temporanei all'interno del sistema di prenotazione NeatX.
+- keywords: ['prenotazioni tatuatore', 'caparra tatuaggio', 'gestione collaboratori tatuaggi']
