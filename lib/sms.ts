@@ -80,7 +80,14 @@ export async function sendTenantMessage(
     } else {
       await refundCredit(tenantId);
       console.error(`[whatsapp] Fallito:`, data);
-      return { success: false, error: "Errore invio WhatsApp" };
+      // Keep the provider response available to the preview-only reminder
+      // endpoint so the automation can report a useful diagnostic. The
+      // production reminder UI still receives a generic failure message.
+      const providerError =
+        typeof data?.error === "string" ? data.error :
+        typeof data?.message === "string" ? data.message :
+        "Errore invio WhatsApp";
+      return { success: false, error: providerError };
     }
   } catch (err: any) {
     await refundCredit(tenantId).catch(() => undefined);
