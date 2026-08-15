@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-14",
-  "niche": "Barbieri",
+  "date": "2026-08-15",
+  "niche": "Fisioterapisti",
   "feature": "recensioni",
   "feature_label": "Recensioni Automatiche",
   "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
   "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "RECENSIONI AUTO ORA",
-  "hook_hint": "Se sei tra i barbieri e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Recensioni Automatiche con NeatX",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "cover_title": "RECENSIONI CHE CONTEGGIANO",
+  "hook_hint": "Se sei tra i fisioterapisti e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Fisioterapisti: Recensioni Automatiche con NeatX",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }
