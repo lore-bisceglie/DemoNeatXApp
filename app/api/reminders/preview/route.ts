@@ -29,10 +29,10 @@ function displayDate(date: string) {
  * It never sends messages, decrements credits, or writes reminder state.
  */
 export async function GET(request: Request) {
-  const cronSecret = process.env.CRON_SECRET;
+  const previewToken = process.env.N8N_REMINDER_PREVIEW_TOKEN;
   const authorization = request.headers.get("authorization");
 
-  if (!cronSecret || authorization !== `Bearer ${cronSecret}`) {
+  if (!previewToken || authorization !== `Bearer ${previewToken}`) {
     // Do not confirm the endpoint exists to callers without the key.
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
