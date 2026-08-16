@@ -18,8 +18,12 @@ type ReminderCandidate = {
 };
 
 export function hasCronAccess(request: Request) {
-  const cronSecret = process.env.CRON_SECRET;
-  return Boolean(cronSecret && request.headers.get("authorization") === `Bearer ${cronSecret}`);
+  const authorization = request.headers.get("authorization");
+  const acceptedSecrets = [process.env.CRON_SECRET, process.env.N8N_REMINDER_WEBHOOK_TOKEN].filter(
+    (secret): secret is string => Boolean(secret),
+  );
+
+  return acceptedSecrets.some((secret) => authorization === `Bearer ${secret}`);
 }
 
 function romeDateParts(date: Date) {
