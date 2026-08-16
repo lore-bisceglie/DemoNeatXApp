@@ -1,0 +1,155 @@
+{
+  "name": "NeatX — Promemoria automatici OpenWA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "neatx-reminders",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "trigger-neatx-reminders",
+      "name": "Avvia promemoria",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-760, 80],
+      "webhookId": "neatx-reminders"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NEATX_PREVIEW_URL}}/api/reminders/queue",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.NEATX_CRON_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ date: $json.body?.date || undefined, limit: 20 }) }}",
+        "options": {}
+      },
+      "id": "read-reminder-queue",
+      "name": "Leggi coda NeatX",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-520, 80]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "reminders",
+        "options": {}
+      },
+      "id": "split-reminders",
+      "name": "Un promemoria alla volta",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [-280, 80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.OPENWA_BASE_URL}}/api/sessions/{{$env.OPENWA_SESSION_ID}}/messages/send-text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{$env.OPENWA_API_KEY}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ chatId: `39${String($json.phone).replace(/\\D/g, '')}@c.us`, text: $json.message }) }}",
+        "options": {}
+      },
+      "id": "send-openwa",
+      "name": "Invia WhatsApp con OpenWA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 80],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "position",
+        "options": {}
+      },
+      "id": "merge-openwa-result",
+      "name": "Conserva dati consegna",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [260, 80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NEATX_PREVIEW_URL}}/api/reminders/delivery",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.NEATX_CRON_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ deliveryId: $json.deliveryId, leaseToken: $json.leaseToken, outcome: $json.error ? 'failed' : 'sent', providerMessageId: $json.id || $json.messageId, error: $json.error || undefined }) }}",
+        "options": {}
+      },
+      "id": "settle-delivery",
+      "name": "Registra esito consegna",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 80],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Avvia promemoria": {
+      "main": [[{"node": "Leggi coda NeatX", "type": "main", "index": 0}]]
+    },
+    "Leggi coda NeatX": {
+      "main": [[{"node": "Un promemoria alla volta", "type": "main", "index": 0}]]
+    },
+    "Un promemoria alla volta": {
+      "main": [
+        [
+          {"node": "Invia WhatsApp con OpenWA", "type": "main", "index": 0},
+          {"node": "Conserva dati consegna", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Invia WhatsApp con OpenWA": {
+      "main": [[{"node": "Conserva dati consegna", "type": "main", "index": 1}]]
+    },
+    "Conserva dati consegna": {
+      "main": [[{"node": "Registra esito consegna", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {}
+}
