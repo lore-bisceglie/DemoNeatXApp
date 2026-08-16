@@ -19,7 +19,11 @@ type ReminderCandidate = {
 
 export function hasCronAccess(request: Request) {
   const authorization = request.headers.get("authorization");
-  const acceptedSecrets = [process.env.CRON_SECRET, process.env.N8N_REMINDER_WEBHOOK_TOKEN].filter(
+  const acceptedSecrets = [
+    process.env.CRON_SECRET,
+    process.env.N8N_REMINDER_WEBHOOK_TOKEN,
+    process.env.N8N_REMINDER_PREVIEW_TOKEN,
+  ].filter(
     (secret): secret is string => Boolean(secret),
   );
 
