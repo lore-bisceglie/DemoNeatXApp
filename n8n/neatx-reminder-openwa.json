@@ -151,5 +151,10 @@
     "executionOrder": "v1"
   },
   "active": false,
-  "pinData": {}
+  "pinData": {},
+  "versionId": "8f2c3b67-2c54-4b06-8d35-4db77f3ac8c4",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
 }
