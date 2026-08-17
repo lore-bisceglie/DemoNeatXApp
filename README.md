@@ -217,10 +217,15 @@ SMTP_PASSWORD=
 SUPPORT_EMAIL=
 RESEND_API_KEY=
 
-# WhatsApp (Green-API)
-GREEN_API_ID_INSTANCE=
-GREEN_API_TOKEN_INSTANCE=
-REMINDERS_ENABLED=
+# Promemoria WhatsApp (n8n + OpenWA)
+# Interruttore unico: "true" abilita sia la coda sia l'avvio giornaliero.
+REMINDERS_ENABLED=false
+# Segreto usato da Vercel per avviare il webhook n8n.
+N8N_REMINDER_WEBHOOK_URL=
+N8N_REMINDER_WEBHOOK_TOKEN=
+# Segreti che autorizzano n8n a leggere e registrare la coda NeatX.
+N8N_REMINDER_PREVIEW_TOKEN=
+CRON_SECRET=
 
 # AI & Supabase Integration
 GOOGLE_GENERATIVE_AI_API_KEY=

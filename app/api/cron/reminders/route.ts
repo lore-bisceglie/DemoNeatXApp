@@ -1,129 +1,64 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { sendTenantSms } from "@/lib/sms";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { nextRomeDate } from "@/lib/reminder-outbox";
 
 export const dynamic = "force-dynamic";
 
-function formatDate(isoDate: string) {
-  return isoDate.split("-").reverse().join("/");
-}
-
 export async function GET(request: Request) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret || request.headers.get("authorization") !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Accesso negato" }, { status: 401 });
+  }
+
+  if (process.env.REMINDERS_ENABLED !== "true") {
+    return NextResponse.json({ success: true, mode: "disabled", processed: 0 });
+  }
+
+  const webhookUrl = process.env.N8N_REMINDER_WEBHOOK_URL;
+  // The preview token existed before the production dispatcher was added.
+  // Keeping it as a fallback lets the isolated preview be tested without
+  // copying a secret into another environment variable.
+  const webhookToken =
+    process.env.N8N_REMINDER_WEBHOOK_TOKEN ||
+    process.env.N8N_REMINDER_PREVIEW_TOKEN;
+  if (!webhookUrl || !webhookToken) {
+    console.error("[Cron Reminders] Workflow n8n non configurato");
+    return NextResponse.json(
+      { error: "Workflow promemoria non configurato" },
+      { status: 503 }
+    );
+  }
+
   try {
-    const authHeader = request.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET;
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Accesso negato" }, { status: 401 });
-    }
-
-    if (process.env.REMINDERS_ENABLED !== "true") {
-      return NextResponse.json({
-        success: true,
-        mode: "disabled",
-        message: "Invio promemoria disattivato.",
-        processed: 0,
-      });
-    }
-
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const parts = new Intl.DateTimeFormat("it-IT", {
-      timeZone: "Europe/Rome",
-      year: "numeric", month: "2-digit", day: "2-digit",
-    }).formatToParts(tomorrow);
-
-    const day   = parts.find(p => p.type === "day")?.value;
-    const month = parts.find(p => p.type === "month")?.value;
-    const year  = parts.find(p => p.type === "year")?.value;
-    const tomorrowString = `${year}-${month}-${day}`;
-
-    const appointments = await prisma.appointment.findMany({
-      where: {
-        date: tomorrowString,
-        customerPhone: { not: "0000000000" },
-        tenant: {
-          OR: [
-            { plan: { in: ["pro", "elite"] } },
-            {
-              plan: { notIn: ["pro", "elite"] },
-              trialEndsAt: { gt: now },
-              trialStatus: { notIn: ["expired"] },
-            },
-          ],
-        },
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-neatx-reminder-token": webhookToken,
       },
-      include: {
-        service: true,
-        tenant: true,
-        location: { select: { id: true } },
-      },
+      body: JSON.stringify({
+        date: nextRomeDate(),
+        // The workflow sends sequentially. A small batch prevents a new shop
+        // from creating a sudden burst of messages from the central number.
+        limit: 10,
+        source: "vercel-cron",
+      }),
+      signal: AbortSignal.timeout(15_000),
     });
 
-    let successCount = 0;
-    let failedCount = 0;
-    let skippedCredits = 0;
-
-    for (const appt of appointments) {
-      if (!appt.tenantId || !appt.tenant || !appt.customerPhone || appt.customerPhone === "0000000000") continue;
-
-      const cancelUrl = `https://${appt.tenant.slug}.neatx.store/cancel/${appt.cancelToken}`;
-      const displayDate = formatDate(tomorrowString);
-
-      const serviceName = appt.service?.name || "il tuo servizio";
-      const smsBody = `🔔 *Promemoria Appuntamento!*\n🏢 *${appt.tenant.name}*\n\n👤 *Cliente:* ${appt.customerName.trim()}\n📅 *Data:* DOMANI (${displayDate})\n⏰ *Ora:* ${appt.time}\n📌 *Servizio:* ${serviceName}\n\n❌ *Per annullare o spostare in autonomia:*\nPuoi usare questo link:\n${cancelUrl}\n\n_Prenotazione gestita tramite NeatX._ 🚀`;
-
-      const whatsappVars = {
-        storeName: appt.tenant.name,
-        customerName: appt.customerName.trim(),
-        date: displayDate,
-        time: appt.time,
-        serviceName: serviceName,
-        cancelUrl: cancelUrl,
-      };
-
-      const result = await sendTenantSms(
-        appt.tenantId,
-        appt.customerPhone,
-        smsBody,
-        whatsappVars,
-        appt.locationId || undefined
-      );
-
-      if (result.success) {
-        successCount++;
-      } else if (result.error === "Crediti esauriti") {
-        skippedCredits++;
-      } else {
-        failedCount++;
-      }
-    }
-
-    const total = appointments.length;
-    if (total > 0) {
-      const msg =
-        `⏰ <b>PROMEMORIA GIORNALIERI</b>\n\n` +
-        `📅 Data: <b>${formatDate(tomorrowString)}</b>\n` +
-        `✅ Inviati: <b>${successCount}</b>\n` +
-        `❌ Falliti: <b>${failedCount}</b>\n` +
-        `⏭️ Saltati (crediti esauriti): <b>${skippedCredits}</b>\n` +
-        `📊 Totale appuntamenti: <b>${total}</b>`;
-      await sendTelegramMessage(msg).catch((e) => console.error("[Cron Reminders] Errore Telegram:", e));
+    if (!response.ok) {
+      const detail = (await response.text()).slice(0, 500);
+      console.error("[Cron Reminders] n8n ha risposto", response.status, detail);
+      return NextResponse.json({ error: "Workflow promemoria non disponibile" }, { status: 502 });
     }
 
     return NextResponse.json({
       success: true,
-      mode: "live",
-      date: tomorrowString,
-      processed: total,
-      successCount,
-      failedCount,
-      skippedCredits,
+      mode: "openwa",
+      date: nextRomeDate(),
+      dispatched: true,
     });
   } catch (error) {
-    console.error("Errore nel cron promemoria:", error);
-    return NextResponse.json({ error: "Errore interno del server" }, { status: 500 });
+    console.error("[Cron Reminders] Impossibile contattare n8n", error);
+    return NextResponse.json({ error: "Workflow promemoria non raggiungibile" }, { status: 502 });
   }
 }
