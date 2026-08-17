@@ -123,10 +123,51 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
               channel: OPENWA_CHANNEL,
             },
           },
-          select: { id: true },
+          select: {
+            id: true,
+            status: true,
+            lastAttemptAt: true,
+            creditReserved: true,
+          },
         });
 
-        if (existing) return { type: "already" as const };
+        if (existing) {
+          // A worker can disappear after reserving the credit but before
+          // sending the message. Keep a short lease window, then make the
+          // same appointment eligible again instead of permanently losing it.
+          const leaseIsFresh = existing.lastAttemptAt
+            ? now.getTime() - existing.lastAttemptAt.getTime() < 10 * 60 * 1000
+            : false;
+
+          if (existing.status === "SENT" || (existing.status === "PROCESSING" && leaseIsFresh)) {
+            return { type: "already" as const };
+          }
+
+          if (!existing.creditReserved) {
+            const credit = await tx.storeSettings.updateMany({
+              where: { tenantId: candidate.tenantId!, smsCredits: { gt: 0 } },
+              data: { smsCredits: { decrement: 1 } },
+            });
+
+            if (credit.count !== 1) return { type: "no-credit" as const };
+          }
+
+          const delivery = await tx.reminderDelivery.update({
+            where: { id: existing.id },
+            data: {
+              status: "PROCESSING",
+              leaseToken: crypto.randomUUID(),
+              creditReserved: true,
+              attemptCount: { increment: 1 },
+              lastAttemptAt: now,
+              lastError: null,
+              failedAt: null,
+            },
+            select: { id: true, leaseToken: true },
+          });
+
+          return { type: "claimed" as const, delivery };
+        }
 
         const credit = await tx.storeSettings.updateMany({
           where: { tenantId: candidate.tenantId!, smsCredits: { gt: 0 } },
