@@ -14,7 +14,12 @@ export async function GET(request: Request) {
   }
 
   const webhookUrl = process.env.N8N_REMINDER_WEBHOOK_URL;
-  const webhookToken = process.env.N8N_REMINDER_WEBHOOK_TOKEN;
+  // The preview token existed before the production dispatcher was added.
+  // Keeping it as a fallback lets the isolated preview be tested without
+  // copying a secret into another environment variable.
+  const webhookToken =
+    process.env.N8N_REMINDER_WEBHOOK_TOKEN ||
+    process.env.N8N_REMINDER_PREVIEW_TOKEN;
   if (!webhookUrl || !webhookToken) {
     console.error("[Cron Reminders] Workflow n8n non configurato");
     return NextResponse.json(
