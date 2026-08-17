@@ -37,9 +37,9 @@ export async function GET(request: Request) {
       },
       body: JSON.stringify({
         date: nextRomeDate(),
-        // The workflow sends sequentially. A small batch prevents a new shop
-        // from creating a sudden burst of messages from the central number.
-        limit: 10,
+        // The workflow sends sequentially. Unless a caller passes a smaller
+        // limit, every eligible reminder goes out on the same run.
+        limit: 2000,
         source: "vercel-cron",
       }),
       signal: AbortSignal.timeout(15_000),

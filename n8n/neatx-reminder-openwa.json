@@ -34,7 +34,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ date: $json.body?.date || undefined, limit: 20 }) }}",
+        "jsonBody": "={{ JSON.stringify({ date: $json.body?.date || undefined, limit: 2000 }) }}",
         "options": {}
       },
       "id": "read-reminder-queue",

@@ -1,10 +1,11 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # GitHub Actions usa UTC: eseguiamo alle 08:00 e 09:00 UTC e il job
-  # procede solo alle 10:00 Europe/Rome, quindi gestisce automaticamente DST.
+  # GitHub Actions usa UTC: eseguiamo alle 16:00 e 17:00 UTC e il job
+  # procede solo alle 18:00 Europe/Rome, quindi gestisce automaticamente DST.
+  # L'invio è unico ogni giorno, la sera prima dell'appuntamento.
   schedule:
-    - cron: "0 8,9 * * *"
+    - cron: "0 16,17 * * *"
   workflow_dispatch:
     inputs:
       date:
@@ -60,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           ROME_HOUR=$(TZ=Europe/Rome date +%H)
-          if [ "$ROME_HOUR" != "10" ]; then
+          if [ "$ROME_HOUR" != "18" ]; then
             echo "Sono le $ROME_HOUR:00 a Roma: questo run e solo quello di riserva per il cambio ora."
             exit 0
           fi

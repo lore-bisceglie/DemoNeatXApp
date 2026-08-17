@@ -3,7 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 const ROME_TIME_ZONE = "Europe/Rome";
 const OPENWA_CHANNEL = "OPENWA";
-const MAX_BATCH_SIZE = 50;
+// Without a fixe cap, a day with many clients would drop reminders beyond 20-50.
+// We batch everything eligible; the cap is only a technical safety ceiling to
+// avoid claiming an unbounded number of credits in a single request.
+const DEFAULT_REMINDER_LIMIT = Infinity;
+const MAX_BATCH_SIZE = 2000;
 
 type ReminderCandidate = {
   id: string;
@@ -82,7 +86,10 @@ export function buildReminderMessage(candidate: ReminderCandidate) {
 
 export async function claimReminderBatch({ date, limit }: { date: string; limit?: number }) {
   const now = new Date();
-  const take = Math.min(Math.max(limit || 20, 1), MAX_BATCH_SIZE);
+  // Default: all eligible reminders. Infinity stays a number so Math.min keeps
+  // the logic below simple and the fixture tests remain deterministic.
+  const requested = typeof limit === "number" ? Math.max(limit, 1) : DEFAULT_REMINDER_LIMIT;
+  const take = Math.min(requested, MAX_BATCH_SIZE);
 
   const candidates = await prisma.appointment.findMany({
     where: {
@@ -104,7 +111,7 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
       tenant: { select: { name: true, slug: true } },
     },
     orderBy: [{ time: "asc" }, { createdAt: "asc" }],
-    take: take * 3,
+    take: take * 2,
   });
 
   const reminders = [];
