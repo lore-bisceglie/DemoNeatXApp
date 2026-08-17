@@ -8,6 +8,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  // A single kill switch for the entire reminder system. This protects the
+  // queue as well as the scheduled dispatcher: turning reminders off cannot
+  // leave already configured automation sending messages in the background.
+  if (process.env.REMINDERS_ENABLED !== "true") {
+    return NextResponse.json({
+      success: true,
+      mode: "disabled",
+      reminderCount: 0,
+      reminders: [],
+    });
+  }
+
   try {
     const body = await request.json().catch(() => ({}));
     const date = typeof body.date === "string" ? body.date : nextRomeDate();

@@ -73,7 +73,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ chatId: `39${String($json.phone).replace(/\\D/g, '')}@c.us`, text: $json.message }) }}",
+        "jsonBody": "={{ (() => { const digits = String($json.phone || '').replace(/\\D/g, ''); const chatId = `${digits.startsWith('39') ? digits : `39${digits}`}@c.us`; return JSON.stringify({ chatId, text: $json.message }); })() }}",
         "options": {}
       },
       "id": "send-openwa",
@@ -114,7 +114,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ deliveryId: $json.deliveryId, leaseToken: $json.leaseToken, outcome: $json.error ? 'failed' : 'sent', providerMessageId: $json.id || $json.messageId, error: $json.error || undefined }) }}",
+        "jsonBody": "={{ (() => { const providerError = $json.error || ($json.success === false ? 'OpenWA ha rifiutato il messaggio' : ($json.status === 'error' ? ($json.message || 'OpenWA ha restituito errore') : '')); return JSON.stringify({ deliveryId: $json.deliveryId, leaseToken: $json.leaseToken, outcome: providerError ? 'failed' : 'sent', providerMessageId: $json.id || $json.messageId || $json.message_id, error: providerError || undefined }); })() }}",
         "options": {}
       },
       "id": "settle-delivery",
