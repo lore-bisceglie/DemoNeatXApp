@@ -21,6 +21,125 @@ type ReminderCandidate = {
   tenant: { name: string; slug: string } | null;
 };
 
+export type ReminderSummaryResult = {
+  date: string;
+  timezone: string;
+  expected: number;
+  pickedUp: number;
+  sent: number;
+  failed: number;
+  processing: number;
+  notProcessed: number;
+  byTenant: Array<{ tenantId: string; tenantName: string; sent: number; failed: number; processing: number }>;
+};
+
+function deliveryStatusSummary(rows: Array<{ status: string }>) {
+  let sent = 0;
+  let failed = 0;
+  let processing = 0;
+  for (const row of rows) {
+    if (row.status === "SENT") sent++;
+    else if (row.status === "FAILED") failed++;
+    else processing++;
+  }
+  return { sent, failed, processing };
+}
+
+/**
+ * Riepilogo VERITIERO di un giro di promemoria: i conteggi sono calcolati
+ * SOLO dal database (niente numeri inventati). "expected" = appuntamenti
+ * eleggibili per quel giorno; le consegne sono quelle del canale OPENWA.
+ */
+export async function buildReminderSummary(date: string) {
+  const now = new Date();
+
+  const expected = await prisma.appointment.count({
+    where: {
+      date,
+      customerPhone: { not: "0000000000" },
+      tenant: {
+        OR: [
+          { plan: { in: ["pro", "elite"] } },
+          {
+            plan: { notIn: ["pro", "elite"] },
+            trialEndsAt: { gt: now },
+            trialStatus: { notIn: ["expired"] },
+          },
+        ],
+      },
+    },
+  });
+
+  const deliveries = await prisma.reminderDelivery.findMany({
+    where: {
+      appointment: { date },
+      channel: OPENWA_CHANNEL,
+    },
+    select: {
+      status: true,
+      tenantId: true,
+      tenant: { select: { name: true } },
+    },
+  });
+
+  const overall = deliveryStatusSummary(deliveries);
+  const processingCount = overall.sent + overall.failed + overall.processing;
+
+  const countsByTenant = new Map<string, { sent: number; failed: number; processing: number; tenantId: string; tenantName: string }>();
+  for (const delivery of deliveries) {
+    if (!delivery.tenantId) continue;
+    const entry = countsByTenant.get(delivery.tenantId) ?? {
+      sent: 0,
+      failed: 0,
+      processing: 0,
+      tenantId: delivery.tenantId,
+      tenantName: delivery.tenant.name || "—",
+    };
+    if (delivery.status === "SENT") entry.sent++;
+    else if (delivery.status === "FAILED") entry.failed++;
+    else entry.processing++;
+    countsByTenant.set(delivery.tenantId, entry);
+  }
+
+  const byTenant = [...countsByTenant.values()].sort((a, b) => a.tenantName.localeCompare(b.tenantName));
+
+  const result: ReminderSummaryResult = {
+    date,
+    timezone: ROME_TIME_ZONE,
+    expected,
+    pickedUp: processingCount,
+    sent: overall.sent,
+    failed: overall.failed,
+    processing: overall.processing,
+    notProcessed: Math.max(expected - processingCount, 0),
+    byTenant,
+  };
+
+  return result;
+}
+
+export function reminderSummaryToText(summary: ReminderSummaryResult) {
+  const lines: string[] = [];
+  lines.push(`🔔 <b>Riepilogo promemoria — ${summary.date}</b>\n`);
+  lines.push(`📅 Appuntamenti eleggibili: <b>${summary.expected}</b>`);
+  lines.push(`📨 Messaggi presi in carico: <b>${summary.pickedUp}</b>`);
+  lines.push(`✅ Inviati: <b>${summary.sent}</b>`);
+  lines.push(`❌ Falliti: <b>${summary.failed}</b>`);
+  lines.push(`⏳ In elaborazione: <b>${summary.processing}</b>`);
+  if (summary.notProcessed > 0) {
+    lines.push(`🚫 Non processati (saldo zero o già inviati): <b>${summary.notProcessed}</b>`);
+  }
+  if (summary.byTenant.length > 0) {
+    lines.push(`\n🏪 <b>Per negozio</b>`);
+    for (const tenant of summary.byTenant) {
+      lines.push(
+        `• ${tenant.tenantName}: ${tenant.sent} inviati, ${tenant.failed} falliti${tenant.processing ? `, ${tenant.processing} in lavorazione` : ""}`,
+      );
+    }
+  }
+  return lines.join("\n");
+}
+
 export function hasCronAccess(request: Request) {
   const authorization = request.headers.get("authorization");
   const acceptedSecrets = [
@@ -239,6 +358,10 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
     }
   }
 
+  console.log(
+    `[reminders/queue] ${date}: ${reminders.length} inviati, ` +
+    `${skippedNoCredits} saltati (credito esaurito), ${skippedAlreadyHandled} già gestiti`,
+  );
   return {
     date,
     timezone: ROME_TIME_ZONE,

@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("[reminders/delivery] errore", error);
+    console.error("[reminders/delivery] errore nel registrare l'esito consegna", error);
     return NextResponse.json({ error: "Errore interno" }, { status: 500 });
   }
 }

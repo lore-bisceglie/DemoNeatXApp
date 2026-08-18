@@ -81,7 +81,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [0, 80],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -123,6 +126,45 @@
       "typeVersion": 4.2,
       "position": [520, 80],
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $('Registra esito consegna').all();\nconst isLast = $index === items.length - 1;\nreturn isLast ? [{ json: $json }] : [];"
+      },
+      "id": "only-last-shot",
+      "name": "Solo all'ultimo invio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [760, 80]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NEATX_PREVIEW_URL}}/api/reminders/summary",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.NEATX_CRON_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ date: $json.date || undefined }) }}",
+        "options": {}
+      },
+      "id": "send-summary",
+      "name": "Invia riepilogo su Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1020, 80],
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -145,6 +187,12 @@
     },
     "Conserva dati consegna": {
       "main": [[{"node": "Registra esito consegna", "type": "main", "index": 0}]]
+    },
+    "Registra esito consegna": {
+      "main": [[{"node": "Solo all'ultimo invio", "type": "main", "index": 0}]]
+    },
+    "Solo all'ultimo invio": {
+      "main": [[{"node": "Invia riepilogo su Telegram", "type": "main", "index": 0}]]
     }
   },
   "settings": {

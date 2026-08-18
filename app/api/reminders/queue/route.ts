@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(await claimReminderBatch({ date, limit }));
   } catch (error) {
-    console.error("[reminders/queue] errore", error);
+    console.error("[reminders/queue] errore nel recupero della coda", error);
     return NextResponse.json({ error: "Errore interno" }, { status: 500 });
   }
 }

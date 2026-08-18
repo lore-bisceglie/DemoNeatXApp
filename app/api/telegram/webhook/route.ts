@@ -6,8 +6,8 @@ import { getTelegramWebhookSecret } from "@/lib/telegram-auth";
 import { awardReferrerForConversion } from "@/lib/referral";
 
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
-const WHATSAPP_DISABLED_NOTE =
-  "Nota: i promemoria WhatsApp restano disattivati. Questi sono crediti messaggio contabilizzati, non invii automatici.";
+const WHATSAPP_ACTIVE_NOTE =
+  "🔔 Promemoria WhatsApp: attivi per negozi paganti o in prova, inviati dal numero centrale NeatX. Il messaggio scala 1 credito; se il saldo del negozio è a zero, il promemoria viene saltato.";
 
 function escapeHtml(value: unknown) {
   return String(value ?? "")
@@ -75,7 +75,7 @@ function helpMessage() {
     "/lead - Ultimi 5 contatti raccolti dal sito\n" +
     "/agent run - Avvia gli agenti su GitHub Actions\n" +
     "/aiuto - Mostra questa guida\n\n" +
-    `ℹ️ ${WHATSAPP_DISABLED_NOTE}`
+    `ℹ️ ${WHATSAPP_ACTIVE_NOTE}`
   );
 }
 
@@ -356,7 +356,7 @@ export async function POST(req: Request) {
               await sendTelegramMessage(
                 `✅ <b>${escapeHtml(tenant.name)}</b> ricaricato di <b>${amount}</b> crediti messaggio.\n` +
                 `Saldo negozio: <b>${settings.smsCredits}</b> crediti.\n\n` +
-                WHATSAPP_DISABLED_NOTE
+                WHATSAPP_ACTIVE_NOTE
               );
             }
           }
@@ -419,7 +419,7 @@ export async function POST(req: Request) {
                 await sendTelegramMessage(
                   `✅ <b>${escapeHtml(tenant.name)}</b> — sede <b>${escapeHtml(location.name)}</b> ricaricata di <b>${amount}</b> crediti messaggio.\n` +
                   `Saldo sede: <b>${settings.smsCredits}</b> crediti.\n\n` +
-                  WHATSAPP_DISABLED_NOTE
+                  WHATSAPP_ACTIVE_NOTE
                 );
               }
             }

@@ -47,7 +47,7 @@ export async function GET(request: Request) {
 
     if (!response.ok) {
       const detail = (await response.text()).slice(0, 500);
-      console.error("[Cron Reminders] n8n ha risposto", response.status, detail);
+      console.error("[Cron Reminders] n8n ha risposto", response.status, detail || "(nessun dettaglio)");
       return NextResponse.json({ error: "Workflow promemoria non disponibile" }, { status: 502 });
     }
 
