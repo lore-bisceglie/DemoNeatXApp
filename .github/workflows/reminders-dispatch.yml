@@ -1,0 +1,87 @@
+name: NeatX Reminder Dispatcher
+
+on:
+  # GitHub Actions usa UTC: eseguiamo alle 16:00 e 17:00 UTC e il job
+  # procede solo alle 18:00 Europe/Rome, quindi gestisce automaticamente DST.
+  # L'invio è unico ogni giorno, la sera prima dell'appuntamento.
+  schedule:
+    - cron: "0 16,17 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Data appuntamenti da ricordare (YYYY-MM-DD). Lascia vuoto per domani in Europe/Rome."
+        required: false
+        type: string
+      confirm:
+        description: "Per un invio manuale reale scrivi SEND_REMINDERS"
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: neatx-reminder-dispatch
+  cancel-in-progress: false
+
+jobs:
+  trigger-n8n:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      REMINDER_AUTOMATION_ENABLED: ${{ secrets.REMINDER_AUTOMATION_ENABLED }}
+      N8N_REMINDER_WEBHOOK_URL: ${{ secrets.N8N_REMINDER_WEBHOOK_URL }}
+      N8N_REMINDER_WEBHOOK_TOKEN: ${{ secrets.N8N_REMINDER_WEBHOOK_TOKEN }}
+      REQUESTED_DATE: ${{ inputs.date }}
+      MANUAL_CONFIRMATION: ${{ inputs.confirm }}
+      EVENT_NAME: ${{ github.event_name }}
+    steps:
+      - name: Verifica che l'automazione sia abilitata
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ "$MANUAL_CONFIRMATION" != "SEND_REMINDERS" ]; then
+              echo "Invio manuale annullato: serve la conferma esatta SEND_REMINDERS."
+              exit 1
+            fi
+          elif [ "$REMINDER_AUTOMATION_ENABLED" != "true" ]; then
+            echo "Automazione disattivata: nessun messaggio verra inviato."
+            exit 0
+          fi
+
+          if [ -z "$N8N_REMINDER_WEBHOOK_URL" ] || [ -z "$N8N_REMINDER_WEBHOOK_TOKEN" ]; then
+            echo "Configurazione incompleta: mancano i segreti del webhook n8n."
+            exit 1
+          fi
+
+      - name: Attendi l'orario corretto in Italia
+        if: ${{ github.event_name == 'schedule' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROME_HOUR=$(TZ=Europe/Rome date +%H)
+          if [ "$ROME_HOUR" != "18" ]; then
+            echo "Sono le $ROME_HOUR:00 a Roma: questo run e solo quello di riserva per il cambio ora."
+            exit 0
+          fi
+
+      - name: Avvia il flusso n8n dei promemoria
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BODY='{}'
+          if [ -n "$REQUESTED_DATE" ]; then
+            if ! [[ "$REQUESTED_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+              echo "Data non valida: usare YYYY-MM-DD."
+              exit 1
+            fi
+            BODY=$(printf '{"date":"%s"}' "$REQUESTED_DATE")
+          fi
+
+          curl --fail-with-body --show-error --silent \
+            --request POST "$N8N_REMINDER_WEBHOOK_URL" \
+            --header "Content-Type: application/json" \
+            --header "X-NeatX-Reminder-Token: $N8N_REMINDER_WEBHOOK_TOKEN" \
+            --data "$BODY"
