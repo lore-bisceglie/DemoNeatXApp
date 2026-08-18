@@ -5,7 +5,7 @@
   --film-mint: #31f7c5;
   position: relative;
   z-index: 10;
-  height: 620svh;
+  height: 500svh;
   color: white;
   background: var(--film-ink);
   isolation: isolate;
@@ -804,10 +804,30 @@
   backdrop-filter: blur(10px);
 }
 
-.primary:hover,
-.secondary:hover { transform: translateY(-3px); }
+.primary {
+  position: relative;
+  overflow: hidden;
+  color: #021019;
+  background: linear-gradient(105deg, #67e8f9, #00b4ff 52%, #8b5cf6);
+  box-shadow: 0 10px 45px rgba(0,180,255,.3);
+}
+
+.primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -45%;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,.5), transparent);
+  transform: skewX(-18deg);
+  transition: left .6s ease;
+  pointer-events: none;
+}
+
+.primary:hover::after { left: 115%; }
+.primary:hover { transform: translateY(-3px); }
 .primary:hover { box-shadow: 0 14px 55px rgba(0,180,255,.45); }
-.secondary:hover { background: rgba(255,255,255,.09); }
 
 .beatFinal {
   left: auto;
@@ -840,7 +860,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  opacity: .32;
+  opacity: .55;
   transition: opacity .2s ease, transform .2s ease;
 }
 
@@ -900,6 +920,26 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, #67e8f9);
   animation: breathe 1.7s ease-in-out infinite;
+}
+
+.scrollCueDot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #67e8f9;
+  box-shadow: 0 0 12px #67e8f9;
+  animation: breathe 1.7s ease-in-out infinite;
+}
+
+.scrollCueCount {
+  margin-left: 4px;
+  padding: 5px 9px;
+  border: 1px solid rgba(103, 232, 249, .38);
+  border-radius: 999px;
+  color: #a5f3fc;
+  background: rgba(5, 18, 34, .6);
+  letter-spacing: .16em;
 }
 
 @keyframes grain {
@@ -978,7 +1018,7 @@
   .requests, .phone, .tunnel, .dashboard, .beat:not(.beatHero), .journey { display: none; }
   .film:not([data-motion="full"]) .cinematicBackdrop { transform: none !important; opacity: .82 !important; }
 
-  .film[data-motion="full"] { height: 620svh !important; }
+  .film[data-motion="full"] { height: 500svh !important; }
   .film[data-motion="full"] .requests,
   .film[data-motion="full"] .phone,
   .film[data-motion="full"] .tunnel,

@@ -74,7 +74,7 @@ export default function CinematicHero() {
         gsap.set(element, { autoAlpha: alpha, y: (1 - alpha) * 28, scale: 0.985 + alpha * 0.015 });
         lines.forEach((line, index) => {
           const lineAlpha = Math.max(0, Math.min(1, (alpha - index * 0.12) / 0.76));
-          gsap.set(line, { opacity: lineAlpha, y: (1 - lineAlpha) * 24, rotateX: (1 - lineAlpha) * -6 });
+          gsap.set(line, { opacity: lineAlpha, y: (1 - lineAlpha) * 34, rotateX: (1 - lineAlpha) * -8 });
         });
         const supportAlpha = Math.max(0, Math.min(1, (alpha - 0.3) / 0.7));
         gsap.set(supporting, { opacity: supportAlpha, y: (1 - supportAlpha) * 16 });
@@ -282,7 +282,11 @@ export default function CinematicHero() {
           {JOURNEY.map((item, index) => <div key={item} className={styles.journeyStep}><b>0{index + 1}</b><span>{item}</span></div>)}
           <span className={styles.journeyTrack}><span className={styles.chapterFill} /></span>
         </div>
-        <div className={styles.scrollCue} aria-hidden="true">Scorri per entrare</div>
+        <div className={styles.scrollCue} aria-hidden="true">
+          <span className={styles.scrollCueDot} />
+          Scorri per scoprire
+          <b className={styles.scrollCueCount}>4 scene</b>
+        </div>
       </div>
     </section>
   );
