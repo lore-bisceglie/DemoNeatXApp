@@ -1,24 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-18T10:35:16.184683+02:00
+Generato: 2026-08-19T10:35:35.661006+02:00
 
-## Idea 1: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Personal Trainer
-- hook: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Smetti di posare la macchinetta da tatuaggio a ogni vibrazione del telefono per rispondere ai DM di Instagram.
+- title: STOP AL TELEFONO DURANTE LE SESSIONI
+- hook: Smetti di posare la macchinetta da tatuaggio a ogni vibrazione del telefono per rispondere ai DM di Instagram.
+- concept: Mostra un tatuatore costretto a interrompere una linea precisa per rispondere a un cliente che chiede disponibilità. Presenta la soluzione: un link NeatX in bio dove i clienti prenotano in autonomia senza disturbare il tuo lavoro.
+- blog_title: Tatuatori: Prenotazione 24 ore su 24 con NeatX
+- gameplay_style: block_miner
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Personal Trainer
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Sei stanco di bloccare mezza giornata per un tatuaggio enorme e poi il cliente sparisce senza darti la caparra?
+- title: IL PROBLEMA DELLA CAPARRA SOSPESA
+- hook: Sei stanco di bloccare mezza giornata per un tatuaggio enorme e poi il cliente sparisce senza darti la caparra?
+- concept: Affronta il problema del no-show e spiega come NeatX permette di richiedere e confermare la caparra direttamente online durante la prenotazione, proteggendo il tuo tempo e il tuo incasso.
+- blog_title: Tatuatori: Conferme appuntamento con NeatX
+- gameplay_style: block_miner
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Personal Trainer
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Sapevi che la maggior parte delle persone decide di volersi tatuare di notte mentre tu stai dormendo?
+- title: PRENOTAZIONI NOTTURNE IN AUTOMATICO
+- hook: Sapevi che la maggior parte delle persone decide di volersi tatuare di notte mentre tu stai dormendo?
+- concept: Invece di perdere queste richieste o rispondere la mattina dopo accumulando messaggi, mostra come l'agenda digitale di NeatX lavora per te h24 compilando gli slot liberi mentre riposi.
+- blog_title: Tatuatori: Prenotazione 24 ore su 24 con NeatX
+- gameplay_style: block_miner
+
+## Idea 4: Basta fare avanti e indietro con messaggi infiniti per trovare un buco libero in agenda che vada bene a entrambi.
+- title: ADDIO PING-PONG DI MESSAGGI
+- hook: Basta fare avanti e indietro con messaggi infiniti per trovare un buco libero in agenda che vada bene a entrambi.
+- concept: Evidenzia lo stress di dover proporre continuamente date e orari diversi via chat. Con NeatX invii un solo link e il cliente vede la tua reale disponibilità aggiornata in tempo reale.
+- blog_title: Tatuatori: Statistiche e Dati con NeatX
+- gameplay_style: block_miner
+
+## Idea 5: Tra inchiostri, aghi e disegni da preparare, a fine mese devi anche impazzire a calcolare le ore per il commercialista?
+- title: IL RESOCONTO MENSILE SENZA STRESS
+- hook: Tra inchiostri, aghi e disegni da preparare, a fine mese devi anche impazzire a calcolare le ore per il commercialista?
+- concept: Spiega come l'agenda di NeatX non serve solo a prendere appuntamenti, ma tiene traccia di tutte le sessioni e genera report chiari per la gestione della tua attività senza fogli Excel volanti.
+- blog_title: Tatuatori: Timesheet Commercialista con NeatX
+- gameplay_style: block_miner
