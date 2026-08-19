@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-18",
-  "niche": "Personal Trainer",
-  "feature": "multi_staff",
-  "feature_label": "Gestione Staff",
-  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
-  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
-  "cover_title": "GESTIONE STAFF ORA",
-  "hook_hint": "Se sei tra i personal trainer e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Gestione Staff con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
+  "date": "2026-08-19",
+  "niche": "Tatuatori",
+  "feature": "conferme",
+  "feature_label": "Conferme appuntamento",
+  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
+  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
+  "cover_title": "DIMENTICHE ADDIO",
+  "hook_hint": "Se sei tra i tatuatori e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Conferme appuntamento con NeatX",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
