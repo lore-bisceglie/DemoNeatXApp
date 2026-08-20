@@ -87,7 +87,15 @@ export default function GoogleTranslateWidget() {
     }, 150);
   };
 
-  if (pathname?.startsWith("/staff/")) return null;
+  // Google Translate mutates the children of its mount node directly. Keep it
+  // out of auth screens so a client-side navigation cannot race React's DOM
+  // reconciliation (NotFoundError: insertBefore).
+  if (
+    pathname?.startsWith("/staff/") ||
+    pathname === "/login" ||
+    pathname === "/superadmin" ||
+    pathname?.startsWith("/superadmin/")
+  ) return null;
 
   return (
     <>

@@ -2,8 +2,10 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function IubendaWrapper() {
+  const pathname = usePathname();
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
@@ -13,7 +15,10 @@ export default function IubendaWrapper() {
     }
   }, []);
 
-  if (!shouldRender) return null;
+  // Iubenda injects banner nodes directly into <body>. Do not load it on the
+  // login screen, where that external mutation can race React during route
+  // transitions and trigger a DOM insertBefore NotFoundError.
+  if (!shouldRender || pathname === "/login") return null;
 
   return (
     <Script 
