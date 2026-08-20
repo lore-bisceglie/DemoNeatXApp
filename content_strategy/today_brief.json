@@ -1,18 +1,18 @@
 {
   "date": "2026-08-20",
-  "niche": "Barbieri",
+  "niche": "Parrucchieri",
   "feature": "conferme",
   "feature_label": "Conferme appuntamento",
   "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
   "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
   "cover_title": "CLIENTI SEMPRE PRESENTI",
-  "hook_hint": "Se sei tra i barbieri e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Conferme appuntamento con NeatX",
+  "hook_hint": "Se sei tra i parrucchieri e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
+  "blog_topic": "Parrucchieri: Conferme appuntamento con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "gestionale parrucchieri",
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }
