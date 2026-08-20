@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-19",
-  "niche": "Tatuatori",
-  "feature": "booking",
-  "feature_label": "Prenotazione 24 ore su 24",
-  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-  "promise": "clienti che prenotano da soli anche mentre dormi",
-  "cover_title": "STOP AL TELEFONO",
-  "hook_hint": "Se sei tra i tatuatori e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: Prenotazione 24 ore su 24 con NeatX",
-  "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
+  "date": "2026-08-20",
+  "niche": "Barbieri",
+  "feature": "conferme",
+  "feature_label": "Conferme appuntamento",
+  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
+  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
+  "cover_title": "CLIENTI SEMPRE PRESENTI",
+  "hook_hint": "Se sei tra i barbieri e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Conferme appuntamento con NeatX",
+  "gameplay_style": "neon_racer",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
