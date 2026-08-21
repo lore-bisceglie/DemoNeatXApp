@@ -1,24 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-20T10:36:12.648811+02:00
+Generato: 2026-08-21T10:38:30.306205+02:00
 
-## Idea 1: Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Parrucchieri
-- hook: Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero clienti che dimenticano l'appuntamento e conferme gestite a mano.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Se nel tuo centro estetico le clienti contente non dicono nulla e quelle arrabbiate corrono subito su Google, stai perdendo decine di trattamenti ogni mese.
+- title: Il paradosso delle recensioni nei centri estetici
+- hook: Se nel tuo centro estetico le clienti contente non dicono nulla e quelle arrabbiate corrono subito su Google, stai perdendo decine di trattamenti ogni mese.
+- description: Video che mostra il contrasto tra una cliente soddisfatta che esce dal centro senza lasciare traccia online e una cliente contrariata che scrive subito una recensione negativa. Presenta la soluzione di NeatX che intercetta i malumori privatamente e spinge le clienti felici a lasciare 5 stelle su Google.
+- blog_title: Centri Estetici: Gestire le recensioni negative in modo privato con NeatX
+- keywords: ['gestionale centro estetico', 'prenotazioni estetista', 'agenda centro estetico']
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Parrucchieri
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Quante clienti scelgono la concorrenza solo perché il tuo centro estetico ha meno della metà delle recensioni Google degli altri?
+- title: La reputazione invisibile del tuo centro estetico
+- hook: Quante clienti scelgono la concorrenza solo perché il tuo centro estetico ha meno della metà delle recensioni Google degli altri?
+- description: Analisi dell'impatto economico della reputazione locale. Spiega come l'invio automatico di un SMS post-appuntamento da parte di NeatX aumenti il numero di recensioni reali e positive in modo costante, senza sforzo da parte dello staff.
+- blog_title: Centri Estetici: Recensioni Automatiche con NeatX per battere la concorrenza
+- keywords: ['agenda centro estetico', 'gestionale centro estetico', 'prenotazioni estetista']
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Parrucchieri
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Cosa succede un minuto dopo che una cliente esce dal tuo centro estetico felice del suo ultimo trattamento?
+- title: Il post-trattamento perfetto
+- hook: Cosa succede un minuto dopo che una cliente esce dal tuo centro estetico felice del suo ultimo trattamento?
+- description: Focalizzato sul tempismo della richiesta di feedback. Mostra come NeatX invii la richiesta di recensione esattamente nel momento di massimo entusiasmo della cliente, massimizzando il tasso di conversione in recensioni a 5 stelle.
+- blog_title: Centri Estetici: Ottimizzare il post-trattamento e aumentare le recensioni con NeatX
+- keywords: ['prenotazioni estetista', 'gestionale centro estetico', 'agenda centro estetico']
+
+## Idea 4: Ecco il sistema esatto per bloccare una recensione da una stella prima che finisca pubblicamente sul profilo del tuo centro estetico.
+- title: Disinnescare le recensioni negative
+- hook: Ecco il sistema esatto per bloccare una recensione da una stella prima che finisca pubblicamente sul profilo del tuo centro estetico.
+- description: Spiegazione tecnica del sistema di filtraggio etico di NeatX. Se il cliente esprime un parere negativo nel questionario interno, il sistema notifica subito la direzione in privato per risolvere il problema, impedendo la pubblicazione su Google.
+- blog_title: Centri Estetici: Come evitare recensioni pubbliche distruttive grazie a NeatX
+- keywords: ['gestionale centro estetico', 'agenda centro estetico', 'prenotazioni estetista']
+
+## Idea 5: Smetti di rincorrere le clienti alla cassa del tuo centro estetico implorando un voto su Google mentre stanno cercando il portafoglio.
+- title: Basta elemosinare recensioni
+- hook: Smetti di rincorrere le clienti alla cassa del tuo centro estetico implorando un voto su Google mentre stanno cercando il portafoglio.
+- description: Video ironico sull'imbarazzo di chiedere recensioni a voce a fine servizio. Contrasta questa scena con l'automazione silenziosa di NeatX che lavora in background garantendo un flusso costante di recensioni spontanee.
+- blog_title: Centri Estetici: Automatizzare la riprova sociale con la funzione recensioni di NeatX
+- keywords: ['prenotazioni estetista', 'agenda centro estetico', 'gestionale centro estetico']
