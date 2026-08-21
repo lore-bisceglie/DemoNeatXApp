@@ -4,15 +4,18 @@ import { hasCronAccess, settleReminderDelivery } from "@/lib/reminder-outbox";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  if (!hasCronAccess(request)) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
   try {
     const body = await request.json();
     const deliveryId = typeof body.deliveryId === "string" ? body.deliveryId : "";
     const leaseToken = typeof body.leaseToken === "string" ? body.leaseToken : "";
     const outcome = body.outcome === "sent" || body.outcome === "failed" ? body.outcome : null;
+
+    // The delivery callback carries a one-time lease token. Accepting that
+    // token lets hosted n8n settle the message even when its environment
+    // variables are hidden; queue and summary remain protected by cron auth.
+    if (!hasCronAccess(request) && (!deliveryId || !leaseToken)) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
 
     if (!deliveryId || !leaseToken || !outcome) {
       return NextResponse.json({ error: "Dati consegna non validi" }, { status: 400 });
