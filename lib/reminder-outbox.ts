@@ -142,6 +142,7 @@ export function reminderSummaryToText(summary: ReminderSummaryResult) {
 
 export function hasCronAccess(request: Request) {
   const authorization = request.headers.get("authorization");
+  const protectionBypass = request.headers.get("x-vercel-protection-bypass");
   const acceptedSecrets = [
     process.env.CRON_SECRET,
     process.env.N8N_REMINDER_WEBHOOK_TOKEN,
@@ -150,7 +151,20 @@ export function hasCronAccess(request: Request) {
     (secret): secret is string => Boolean(secret),
   );
 
-  return acceptedSecrets.some((secret) => authorization === `Bearer ${secret}`);
+  const authorizedBySecret = acceptedSecrets.some(
+    (secret) => authorization === `Bearer ${secret}`,
+  );
+
+  // n8n already authenticates to Vercel with the deployment automation bypass.
+  // Accept that same server-to-server credential for the reminder endpoints so
+  // the cloud workflow does not depend on n8n exposing runtime env variables.
+  const authorizedByVercelAutomation = Boolean(
+    protectionBypass &&
+      process.env.VERCEL_AUTOMATION_BYPASS_SECRET &&
+      protectionBypass === process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+  );
+
+  return authorizedBySecret || authorizedByVercelAutomation;
 }
 
 function romeDateParts(date: Date) {
