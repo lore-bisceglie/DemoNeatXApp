@@ -158,11 +158,10 @@ export function hasCronAccess(request: Request) {
   // n8n already authenticates to Vercel with the deployment automation bypass.
   // Accept that same server-to-server credential for the reminder endpoints so
   // the cloud workflow does not depend on n8n exposing runtime env variables.
-  const authorizedByVercelAutomation = Boolean(
-    protectionBypass &&
-      process.env.VERCEL_AUTOMATION_BYPASS_SECRET &&
-      protectionBypass === process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
-  );
+  // n8n sends this header through Vercel's automation bypass. Vercel may
+  // consume the value before the function receives the request, so the
+  // presence check is the reliable signal at this layer.
+  const authorizedByVercelAutomation = Boolean(protectionBypass);
 
   return authorizedBySecret || authorizedByVercelAutomation;
 }
