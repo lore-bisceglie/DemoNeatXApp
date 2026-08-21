@@ -1,18 +1,18 @@
 {
   "date": "2026-08-21",
-  "niche": "Barbieri",
+  "niche": "Centri Estetici",
   "feature": "recensioni",
   "feature_label": "Recensioni Automatiche",
   "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
   "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "BARBIERI: RECENSIONI GOOGLE DA",
-  "hook_hint": "Se sei tra i barbieri e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Recensioni Automatiche con NeatX",
+  "cover_title": "RECENSIONI CLIENTI SODDISFATTI",
+  "hook_hint": "Se sei tra i centri estetici e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Recensioni Automatiche con NeatX",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
