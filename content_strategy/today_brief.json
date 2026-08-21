@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-20",
-  "niche": "Parrucchieri",
-  "feature": "conferme",
-  "feature_label": "Conferme appuntamento",
-  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
-  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
-  "cover_title": "CLIENTI SEMPRE PRESENTI",
-  "hook_hint": "Se sei tra i parrucchieri e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Parrucchieri: Conferme appuntamento con NeatX",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "date": "2026-08-21",
+  "niche": "Barbieri",
+  "feature": "recensioni",
+  "feature_label": "Recensioni Automatiche",
+  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+  "cover_title": "BARBIERI: RECENSIONI GOOGLE DA",
+  "hook_hint": "Se sei tra i barbieri e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Recensioni Automatiche con NeatX",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
