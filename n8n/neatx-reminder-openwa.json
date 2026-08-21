@@ -18,7 +18,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{$env.NEATX_PREVIEW_URL}}/api/reminders/queue",
+        "url": "https://neatx.store/api/reminders/queue",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -88,20 +88,8 @@
     },
     {
       "parameters": {
-        "mode": "combine",
-        "combineBy": "position",
-        "options": {}
-      },
-      "id": "merge-openwa-result",
-      "name": "Conserva dati consegna",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [260, 80]
-    },
-    {
-      "parameters": {
         "method": "POST",
-        "url": "={{$env.NEATX_PREVIEW_URL}}/api/reminders/delivery",
+        "url": "https://neatx.store/api/reminders/delivery",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -117,7 +105,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ (() => { const providerError = $json.error || ($json.success === false ? 'OpenWA ha rifiutato il messaggio' : ($json.status === 'error' ? ($json.message || 'OpenWA ha restituito errore') : '')); return JSON.stringify({ deliveryId: $json.deliveryId, leaseToken: $json.leaseToken, outcome: providerError ? 'failed' : 'sent', providerMessageId: $json.id || $json.messageId || $json.message_id, error: providerError || undefined }); })() }}",
+        "jsonBody": "={{ (() => { const providerMessageId = $json.messageId || $json.message_id || $json.id; const providerError = $json.error || ($json.success === false ? 'OpenWA ha rifiutato il messaggio' : ($json.status === 'error' ? ($json.message || 'OpenWA ha restituito errore') : (!providerMessageId ? 'OpenWA non ha restituito un messageId: consegna non verificabile' : ''))); const original = $('Un promemoria alla volta').item.json; return JSON.stringify({ deliveryId: original.deliveryId, leaseToken: original.leaseToken, outcome: providerError ? 'failed' : 'sent', providerMessageId, error: providerError || undefined }); })() }}",
         "options": {}
       },
       "id": "settle-delivery",
@@ -140,7 +128,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{$env.NEATX_PREVIEW_URL}}/api/reminders/summary",
+        "url": "https://neatx.store/api/reminders/summary",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -177,15 +165,11 @@
     "Un promemoria alla volta": {
       "main": [
         [
-          {"node": "Invia WhatsApp con OpenWA", "type": "main", "index": 0},
-          {"node": "Conserva dati consegna", "type": "main", "index": 0}
+          {"node": "Invia WhatsApp con OpenWA", "type": "main", "index": 0}
         ]
       ]
     },
     "Invia WhatsApp con OpenWA": {
-      "main": [[{"node": "Conserva dati consegna", "type": "main", "index": 1}]]
-    },
-    "Conserva dati consegna": {
       "main": [[{"node": "Registra esito consegna", "type": "main", "index": 0}]]
     },
     "Registra esito consegna": {
