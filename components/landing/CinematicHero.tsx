@@ -39,11 +39,15 @@ export default function CinematicHero() {
     readyWindow.__ready = false;
     const searchParams = new URLSearchParams(window.location.search);
     const forceMotion = searchParams.get("motion") === "full";
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches && !forceMotion;
+    const disableMotion = searchParams.get("motion") === "off";
+    // The cinematic hero is the product's primary introduction, so it runs by
+    // default even when a desktop browser advertises reduced motion. Keep an
+    // explicit URL opt-out for users who need a static presentation.
+    const reducedMotion = disableMotion && !forceMotion;
     const isMobile = window.matchMedia("(max-width: 760px)").matches;
     const jump = searchParams.get("jump");
 
-    if (forceMotion) root.dataset.motion = "full";
+    if (!disableMotion || forceMotion) root.dataset.motion = "full";
 
     if (reducedMotion) {
       readyWindow.__ready = true;
