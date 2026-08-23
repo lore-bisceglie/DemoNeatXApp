@@ -1,46 +1,71 @@
 {
-  "generated_at": "2026-08-22T10:26:58.549040+02:00",
+  "generated_at": "2026-08-23T10:27:37.937332+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Barbieri"
+    "today_niche": "Parrucchieri"
   },
   "ideas": [
     {
-      "title": "PRENOTAZIONE SEMPRE ATTIVA",
-      "hook": "Se sei tra i barbieri e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
-      "content": "Scopri come NeatX trasforma il tuo barbiere in un business sempre aperto, permettendo ai clienti di prenotare autonomamente anche mentre dormi.",
-      "format": "Video",
-      "type": "Tutorial"
+      "hook": "Sei un parrucchiere e i tuoi clienti finiscono sempre associati al collaboratore sbagliato creando imbarazzo e ritardi?",
+      "video_title": "Stop errori di assegnazione nel salone",
+      "blog_title": "Come evitare l'assegnazione errata dei clienti nel tuo salone di acconciatura",
+      "gameplay_style": "neon_racer",
+      "description": "Spiega come NeatX permette di definire percorsi di prenotazione in cui il cliente seleziona autonomamente il collaboratore desiderato, azzerando le lamentele e ottimizzando i tempi del salone.",
+      "keywords": [
+        "gestionale parrucchieri",
+        "prenotazioni parrucchiere",
+        "agenda salone"
+      ]
     },
     {
-      "title": "CLIENTI CHE PRENOTANO DA SOLI",
-      "hook": "Immagina di svegliarti e trovare prenotazioni già programmate.",
-      "content": "Racconta la storia di barbieri che hanno abbandonato il telefono e hanno visto crescere il loro fatturato grazie all'automazione delle prenotazioni.",
-      "format": "Blog",
-      "type": "Testimonianza"
+      "hook": "Gestire le ferie e i turni del tuo staff di parrucchieri ti richiede ore di fogli Excel e continui mal di testa?",
+      "video_title": "Ferie e turni del personale senza stress",
+      "blog_title": "La guida definitiva per coordinare ferie e turni dei parrucchieri in automatico",
+      "gameplay_style": "neon_racer",
+      "description": "Mostra l'interfaccia di NeatX con agende separate per ogni dipendente, dove i turni e le ferie si aggiornano in automatico evitando sovrapposizioni e telefonate fuori orario.",
+      "keywords": [
+        "gestionale parrucchieri",
+        "agenda salone",
+        "gestione staff parrucchiere"
+      ]
     },
     {
-      "title": "LA SOLUZIONE AI MESSAGGI INCESSANTI",
-      "hook": "Basta rispondere a messaggi! Scopri come semplificare la tua vita da barbiere.",
-      "content": "Mostra come NeatX può liberarti da messaggi infiniti, permettendo una gestione efficiente delle prenotazioni.",
-      "format": "Video",
-      "type": "Informativo"
+      "hook": "Se usi ancora un'unica agenda cartacea per gestire tre o quattro parrucchieri diversi stai perdendo centinaia di euro ogni mese.",
+      "video_title": "Il costo nascosto dell'agenda condivisa",
+      "blog_title": "Perché un'agenda digitale multi-staff fa fatturare di più al tuo salone di parrucchieri",
+      "gameplay_style": "neon_racer",
+      "description": "Spiega come le agende individuali collegate a NeatX permettano di massimizzare gli slot liberi di ciascun lavoratore, aumentando il numero di pieghe e tagli giornalieri senza sforzo.",
+      "keywords": [
+        "prenotazioni parrucchiere",
+        "gestionale parrucchieri",
+        "agenda salone"
+      ]
     },
     {
-      "title": "STOP AGLI ERRORI DI PRENOTAZIONE",
-      "hook": "Dimentica i turni confusi e le doppie prenotazioni.",
-      "content": "Offri un'analisi di come il sistema automatizzato di NeatX elimina gli errori e migliora l'efficienza.",
-      "format": "Blog",
-      "type": "Analisi"
+      "hook": "Sei stanco di dover continuamente controllare quale parrucchiere deve occuparsi di quale cliente minuto per minuto?",
+      "video_title": "Rendi autonomi i tuoi collaboratori",
+      "blog_title": "Come dare autonomia ai tuoi collaboratori parrucchieri grazie alle agende digitali separate",
+      "gameplay_style": "neon_racer",
+      "description": "Focus sulla funzionalità multi-staff di NeatX, dove ogni collaboratore accede solo alla propria agenda personale dal proprio smartphone, riducendo il micro-management del titolare.",
+      "keywords": [
+        "gestionale parrucchieri",
+        "organizzare salone acconciatura",
+        "agenda salone"
+      ]
     },
     {
-      "title": "GUADAGNI SVELATI PER BARBER SHOP",
-      "hook": "Scopri come i barbieri stanno aumentando i loro guadagni grazie all'automazione.",
-      "content": "Presenta dati e statistiche su come NeatX ha rivoluzionato il modo di lavorare nei saloni di bellezza.",
-      "format": "Video",
-      "type": "Statistiche"
+      "hook": "Il segreto per far tornare i clienti nel tuo salone di parrucchieri è farli prenotare direttamente con il loro professionista di fiducia.",
+      "video_title": "Fidelizza i clienti del salone",
+      "blog_title": "Fidelizzazione nel salone di acconciatura: l'importanza della scelta del collaboratore in fase di prenotazione",
+      "gameplay_style": "neon_racer",
+      "description": "Illustra come la prenotazione online di NeatX permetta al cliente di selezionare il parrucchiere preferito per colore, taglio o trattamenti specifici, garantendo un servizio impeccabile.",
+      "keywords": [
+        "prenotazioni parrucchiere",
+        "gestionale parrucchieri",
+        "fidelizzare clienti parrucchiere"
+      ]
     }
   ]
 }

@@ -1,18 +1,18 @@
 {
   "date": "2026-08-23",
-  "niche": "Tatuatori",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "BASTA NO SHOW",
-  "hook_hint": "Se sei tra i tatuatori e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Tatuatori: Zero No-Show con NeatX",
+  "niche": "Parrucchieri",
+  "feature": "multi_staff",
+  "feature_label": "Gestione Staff",
+  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
+  "cover_title": "STOP TURNI DISASTROSI",
+  "hook_hint": "Se sei tra i parrucchieri e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
+  "blog_topic": "Parrucchieri: Gestione Staff con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
   "keywords": [
-    "prenotazioni tatuatore",
-    "agenda tatuatori",
-    "caparra tatuaggio"
+    "gestionale parrucchieri",
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }
