@@ -159,7 +159,7 @@ async function run() {
   assert.equal(lastDayEmail.html.includes("promemoria automatici"), false);
   assert.equal(lastDayEmail.html.includes("I dati non vengono cancellati"), true);
   assert.equal(buildTrialExpiredOfferEmail("Negozio", "Lorenzo", "https://neatx.store/paywall").html.includes("pronto per tornare online"), true);
-  assert.equal(buildSubscriptionActivatedEmail("Negozio", "Lorenzo", "pro", "month", "https://neatx.store/admin").html.includes("temporaneamente disattivati"), true);
+  assert.equal(buildSubscriptionActivatedEmail("Negozio", "Lorenzo", "pro", "month", "https://neatx.store/admin").html.includes("Promemoria automatici"), true);
   assert.equal(buildPaymentFailedEmail("Negozio", "Lorenzo", "https://neatx.store/admin").html.includes("non è andato a buon fine"), true);
   assert.equal(buildSubscriptionCanceledEmail("Negozio", "Lorenzo", "https://neatx.store/paywall").html.includes("I dati non sono stati cancellati"), true);
   assert.equal(appointmentManagementSelect.serviceId, true);

@@ -80,7 +80,7 @@ export default function PaywallContent({ tenantId, slug, publicUrl, currentPlan,
           {annual && <div className="text-emerald-400 text-sm font-semibold mb-8">Risparmi 58&euro;/anno (~24&euro;/mese)</div>}
 
           <div className="space-y-4 mb-8 flex-1">
-            {['Appuntamenti Illimitati', 'Promemoria WhatsApp temporaneamente disattivati', 'Blocco orari e ferie', 'Link brandizzato prenotazione', 'Acconti e pagamenti Stripe', 'Esportazione timesheet CSV'].map((f, i) => (
+            {['Appuntamenti Illimitati', 'Promemoria WhatsApp automatici', 'Blocco orari e ferie', 'Link brandizzato prenotazione', 'Acconti e pagamenti Stripe', 'Esportazione timesheet CSV'].map((f, i) => (
               <div key={i} className="flex items-center gap-3">
                 <span className="text-emerald-400">&#10003;</span>
                 <span className="text-slate-300 text-sm font-medium">{f}</span>

@@ -278,7 +278,7 @@ export function buildSubscriptionActivatedEmail(
        <p>Il piano <strong>${planLabel} ${intervalLabel}</strong> per <strong>${esc(tenantName)}</strong> è attivo.</p>
        <p>Puoi continuare a usare dashboard, pagina clienti, servizi, orari e gestione appuntamenti senza interruzioni.</p>
        ${actionButton(adminUrl, "Vai alla dashboard")}
-       <p><strong>Nota operativa:</strong> i promemoria WhatsApp sono temporaneamente disattivati. NeatX non mostra falsi invii riusciti e non consuma crediti per questa funzione finché resta disattivata.</p>`,
+       <p><strong>Promemoria automatici:</strong> NeatX invia ai clienti un messaggio WhatsApp prima dell&apos;appuntamento, utilizzando i crediti disponibili del negozio.</p>`,
     ),
   };
 }

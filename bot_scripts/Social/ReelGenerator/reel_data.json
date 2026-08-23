@@ -1,14 +1,13 @@
 {
-    "niche": "Parrucchieri",
-    "script_text": "Se sei tra i parrucchieri e stai ancora gestendo appuntamenti su WhatsApp, stai perdendo tempo e soldi. Il problema e' acconti automatici che filtrano i clienti che non si presentano. Con NeatX puoi avere ogni slot occupato da clienti che hanno già pagato, senza rincorrere clienti tutto il giorno. Vuoi saperne di piu? Commenta INFO qui sotto e ti invio tutto in privato!",
-    "hook_text": "ZERO NO-SHOW ORA",
-    "cover_title": "ZERO NO-SHOW ORA",
-    "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
-    "gameplay_style": "runner",
-    "caption": "Parrucchieri: basta agenda gestita a mano. Commenta INFO o AGENDA e ti mando la demo NeatX. #perte #fyp #foryou #viral #imprenditore #businessitalia #crescita",
-    "strategy_date": "2026-07-30",
-    "strategy_feature": "no_show",
-    "strategy_pain": "acconti automatici che filtrano i clienti che non si presentano",
-    "strategy_promise": "ogni slot occupato da clienti che hanno già pagato",
-    "fallback_reason": "Gemini non disponibile: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+    "niche": "Tatuatori",
+    "script_text": "Ancora a calcolare le ore dei tuoi tatuatori su fogli Excel? Stai letteralmente buttando ore preziose. Smetti di impazzire dietro a ferie, permessi e fogli di carta persi nel tuo studio. Con NeatX gestisci tutti i turni in un click e hai il file CSV pronto per il commercialista, tenendo tutto sotto controllo 24 ore su 24. Prova gratis la nostra Agenda su neatx.store!",
+    "hook_text": "TATUATORI: TURNI IN UN CLICK",
+    "cover_title": "TATUATORI: TURNI IN UN CLICK",
+    "image_prompt": "photorealistic cinematic scene inside a modern neon-lit tattoo studio workplace: an iPad on a clean counter displaying a digital timesheet dashboard with tattoo artists' shifts and a ready CSV file button, premium realistic lighting, cinematic depth of field",
+    "gameplay_style": "neon_racer",
+    "caption": "Gestisci uno studio di tatuaggi e perdi ancora ore ogni mese a calcolare turni, ferie e ore dei tuoi artisti su Excel? 🤯\n\nOgni foglio perso o calcolo sbagliato è un mal di testa assicurato, specialmente quando il commercialista chiede i conti di fine mese.\n\nCon NeatX elimini il caos una volta per tutte:\n\n✅ Turni e permessi gestiti in un click\n✅ Ore dei dipendenti calcolate in automatico\n✅ File CSV pronto da inviare al commercialista\n✅ Tutto sotto controllo 24 ore su 24\n\nSmetti di sprecare tempo prezioso che potresti dedicare ai tuoi clienti e alla tua arte. Semplifica la gestione del tuo studio oggi stesso! 🚀\n\n#perte #fyp #foryou #viral #imprenditore #businessitalia #tatuatori #tattoostudio #tatuatore #tatuaggi #gestionestudio\n\n👉 Prova gratis NeatX e riempi il tuo salone in automatico: link in Bio!",
+    "strategy_date": "2026-08-17",
+    "strategy_feature": "timesheet",
+    "strategy_pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+    "strategy_promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista"
 }

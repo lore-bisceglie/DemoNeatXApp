@@ -163,8 +163,8 @@ export default function TeamDrawer({
       <Users size={16} className="text-purple-400" /> Team {pendingRequestCount > 0 && <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-black text-[#211500]">{pendingRequestCount}</span>}
     </button>
 
-    {isOpen && <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />}
-    <aside id="tour-team-drawer" className={`fixed inset-y-0 right-0 z-[101] flex w-full max-w-xl transform flex-col border-l border-[#1e2b4a] bg-[#0b1221] shadow-2xl transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+    {isOpen && <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />}
+    <aside id="tour-team-drawer" className={`fixed inset-y-0 right-0 z-[10000] flex w-full max-w-xl min-h-0 transform flex-col overflow-y-auto md:overflow-hidden border-l border-[#1e2b4a] bg-[#0b1221] shadow-2xl transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
       <header className="relative flex items-center justify-between border-b border-[#1e2b4a] bg-[#131c31] p-5">
         <h2 className="flex items-center gap-2 text-lg font-extrabold text-white"><Users size={19} className="text-purple-400" /> Gestione Team & Servizi</h2>
         <button onClick={() => setIsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1e2b4a] text-slate-300 transition hover:bg-red-500 hover:text-white" aria-label="Chiudi Team"><X size={16} /></button>
@@ -180,13 +180,13 @@ export default function TeamDrawer({
 
       <StaffRequestsPanel tenantId={tenantId} enabled={isOpen} />
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[1fr_1.1fr]">
-        <div className="flex min-h-0 flex-col border-r border-[#1e2b4a]">
+      <div className="grid min-h-0 flex-none grid-cols-1 md:flex-1 md:grid-cols-[1fr_1.1fr]">
+        <div className="flex flex-col border-r border-[#1e2b4a] md:min-h-0">
           <form onSubmit={handleAddStaff} className="flex gap-2 border-b border-[#1e2b4a] p-4">
             <input value={newStaffName} onChange={(event) => setNewStaffName(event.target.value)} disabled={!isPremium && staffList.length >= 1} placeholder="Nome collaboratore" className="w-full rounded-xl border border-[#1e2b4a] bg-[#131c31] px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 disabled:opacity-50" />
             <button type="submit" disabled={adding || (!isPremium && staffList.length >= 1)} className="rounded-xl bg-indigo-500 px-3 py-2 text-sm font-bold text-white transition hover:bg-indigo-400 disabled:opacity-50">+</button>
           </form>
-          <div className="custom-scrollbar flex-1 space-y-3 overflow-y-auto p-4">
+          <div className="custom-scrollbar space-y-3 p-4 md:min-h-0 md:flex-1 md:overflow-y-auto">
             {loading ? <p className="py-8 text-center text-sm text-slate-500">Caricamento...</p> : staffList.length === 0 ? <p className="py-8 text-center text-sm text-slate-500">Nessun collaboratore.</p> : staffList.map((staff, index) => <div key={staff.id} className={`group flex items-center justify-between rounded-xl border bg-[#131c31] p-3 transition ${selectedStaff?.id === staff.id ? "border-indigo-500/70" : "border-[#1e2b4a] hover:border-indigo-500/50"}`}>
               <button id={index === 0 ? "tour-first-staff" : undefined} type="button" onClick={() => setSelectedStaff(staff)} className="min-w-0 flex-1 pr-2 text-left"><div className="truncate text-sm font-bold capitalize text-white group-hover:text-indigo-300">{staff.name}</div><div className="mt-1 text-xs text-slate-500">{staff.services.length} {staff.services.length === 1 ? "servizio" : "servizi"}{staff.locations.length > 0 && ` · ${staff.locations.length} ${staff.locations.length === 1 ? "sede" : "sedi"}`}</div></button>
               <button id={index === 0 ? "tour-first-staff-schedule" : undefined} type="button" onClick={() => setScheduleEditorStaff(staff)} className="mr-1 flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400 transition hover:bg-cyan-500 hover:text-white" title="Gestisci turni"><CalendarClock size={16} /></button>
@@ -195,7 +195,7 @@ export default function TeamDrawer({
           </div>
         </div>
 
-        <div className="custom-scrollbar overflow-y-auto bg-[#070b14] p-5">
+        <div className="custom-scrollbar bg-[#070b14] p-5 md:overflow-y-auto">
           {!selectedStaff ? <div className="flex h-full flex-col items-center justify-center text-center text-slate-500"><Users size={32} className="mb-3 opacity-40" /><p className="text-sm font-bold">Seleziona collaboratore</p><p className="mt-1 text-xs">Scegli servizi, sedi e turni.</p></div> : <div className="space-y-6">
             <div><h3 className="text-2xl font-extrabold capitalize text-white">{selectedStaff.name}</h3><p className="text-sm text-slate-400">Abilita ciò che può svolgere e dove lavora.</p></div>
             <StaffAccessControls staffId={selectedStaff.id} />

@@ -1,13 +1,35 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
-import { sendTelegramMessage } from '@/lib/telegram';
+import { sendTelegramMessage as sendTelegramMessageUnsafe } from '@/lib/telegram';
 import { Prisma } from '@prisma/client';
 import { awardReferrerForConversion } from '@/lib/referral';
-import { sendPaymentFailedEmail, sendSubscriptionActivatedEmail, sendSubscriptionCanceledEmail } from '@/lib/email';
+import { sendPaymentFailedEmail as sendPaymentFailedEmailUnsafe, sendSubscriptionActivatedEmail as sendSubscriptionActivatedEmailUnsafe, sendSubscriptionCanceledEmail as sendSubscriptionCanceledEmailUnsafe } from '@/lib/email';
 import { getTenantAdminUrl } from '@/lib/domains';
 
 export const dynamic = 'force-dynamic';
+
+// Stripe must receive a 2xx once the payment state is persisted. A notification
+// provider being temporarily unavailable must not make Stripe retry the event.
+async function sendTelegramMessage(message: string) {
+  try { await sendTelegramMessageUnsafe(message); }
+  catch (error) { console.error('[Stripe] Telegram notification failed:', error); }
+}
+
+async function sendPaymentFailedEmail(...args: Parameters<typeof sendPaymentFailedEmailUnsafe>) {
+  try { await sendPaymentFailedEmailUnsafe(...args); }
+  catch (error) { console.error('[Stripe] payment-failed email failed:', error); }
+}
+
+async function sendSubscriptionActivatedEmail(...args: Parameters<typeof sendSubscriptionActivatedEmailUnsafe>) {
+  try { await sendSubscriptionActivatedEmailUnsafe(...args); }
+  catch (error) { console.error('[Stripe] activation email failed:', error); }
+}
+
+async function sendSubscriptionCanceledEmail(...args: Parameters<typeof sendSubscriptionCanceledEmailUnsafe>) {
+  try { await sendSubscriptionCanceledEmailUnsafe(...args); }
+  catch (error) { console.error('[Stripe] cancellation email failed:', error); }
+}
 
 export async function POST(req: Request) {
   const payload = await req.text();
