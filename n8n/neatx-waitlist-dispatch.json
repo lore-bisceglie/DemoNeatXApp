@@ -1,0 +1,34 @@
+{
+  "name": "NeatX — Lista d'attesa automatica",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 15 }] } },
+      "id": "waitlist-schedule",
+      "name": "Controlla lista d'attesa ogni 15 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://neatx.store/api/waitlist/dispatch",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "Authorization", "value": "Bearer {{$env.N8N_REMINDER_WEBHOOK_TOKEN}}" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"limit\":20}",
+        "options": {}
+      },
+      "id": "waitlist-dispatch",
+      "name": "Invia notifiche posti liberati",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [560, 300]
+    }
+  ],
+  "connections": { "Controlla lista d'attesa ogni 15 min": { "main": [[{ "node": "Invia notifiche posti liberati", "type": "main", "index": 0 }]] } },
+  "active": false,
+  "settings": {},
+  "versionId": "waitlist-v1"
+}

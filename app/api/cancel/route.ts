@@ -83,16 +83,27 @@ export async function POST(request: Request) {
         });
       }
 
-      // Waitlist FIFO atomica
-      let waitlistEntry: { name: string; phone: string } | null = null;
+      // Waitlist FIFO atomica: enqueue one durable notification for n8n.
       if (appointment.tenantId && appointment.date) {
         const entry = await tx.waitlist.findFirst({
           where: { tenantId: appointment.tenantId, date: appointment.date },
           orderBy: { createdAt: "asc" },
         });
         if (entry) {
+          const tenant = await tx.tenant.findUnique({ where: { id: appointment.tenantId }, select: { slug: true } });
+          if (tenant?.slug) {
+            await tx.waitlistNotification.create({
+              data: {
+                tenantId: appointment.tenantId,
+                waitlistId: entry.id,
+                name: entry.name,
+                phone: entry.phone,
+                date: appointment.date,
+                bookingUrl: `https://${tenant.slug}.neatx.store`,
+              },
+            });
+          }
           await tx.waitlist.delete({ where: { id: entry.id } });
-          waitlistEntry = { name: entry.name, phone: entry.phone };
         }
       }
 
@@ -103,7 +114,7 @@ export async function POST(request: Request) {
       });
       tenantPhone = tenant?.phone ?? null;
 
-      return { ...appointment, tenantPhone, waitlistEntry };
+      return { ...appointment, tenantPhone };
     }, { isolationLevel: "Serializable" });
 
     if (!result) {
@@ -126,18 +137,6 @@ export async function POST(request: Request) {
       if (loc?.phone) {
         const notifBody = `❌ ${result.customerName} ha cancellato\n${result.date.split('-').reverse().join('/')} alle ${result.time}\nSede: ${loc.name}`;
         await sendTenantSms(tid, loc.phone, notifBody, undefined, result.locationId);
-      }
-    }
-
-    if (result.waitlistEntry) {
-      const t = await prisma.tenant.findUnique({
-        where: { id: tid },
-        select: { name: true, slug: true },
-      });
-      if (t?.slug) {
-        const bookingUrl = `https://${t.slug}.neatx.store`;
-        const msg = `🎉 ${t.name} - Posto Liberato!\nCiao ${result.waitlistEntry.name}, si è liberato un posto per il ${result.date.split('-').reverse().join('/')}. Prenotalo subito: ${bookingUrl}`;
-        await sendTenantSms(tid, result.waitlistEntry.phone, msg);
       }
     }
 

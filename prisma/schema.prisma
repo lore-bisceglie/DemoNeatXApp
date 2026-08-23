@@ -78,6 +78,7 @@ model Tenant {
   storeSettings         StoreSettings?
   noShows               NoShow[]
   waitlists             Waitlist[]
+  waitlistNotifications  WaitlistNotification[]
   customerNotes         CustomerNote[]
   activityLogs          ActivityLog[]
   staff                 Staff[]
@@ -266,6 +267,26 @@ model Waitlist {
   tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, phone, date])
+}
+
+model WaitlistNotification {
+  id          String   @id @default(cuid())
+  tenantId    String
+  waitlistId  String?
+  name        String
+  phone       String
+  date        String
+  bookingUrl  String
+  status      String   @default("pending")
+  attempts    Int      @default(0)
+  claimedAt   DateTime?
+  sentAt      DateTime?
+  lastError   String?
+  createdAt   DateTime @default(now())
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([status, claimedAt, createdAt])
+  @@index([tenantId, date, status])
 }
 
 model CustomerNote {
