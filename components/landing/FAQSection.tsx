@@ -47,7 +47,7 @@ const FAQ_GROUPS = [
       },
       {
         q: "Come funzionano prova e piani?",
-        a: "Hai 14 giorni gratuiti per configurare e provare agenda, prenotazioni e pagamenti. Poi puoi scegliere Pro (29€/mese o 290€/anno) oppure Elite (59€/mese o 590€/anno). La configurazione assistita è un servizio opzionale. I promemoria WhatsApp sono temporaneamente disattivati e non consumano crediti.",
+        a: "Hai 14 giorni gratuiti per configurare e provare agenda, prenotazioni, pagamenti e promemoria WhatsApp automatici. Poi puoi scegliere Pro (29€/mese o 290€/anno) oppure Elite (59€/mese o 590€/anno). La configurazione assistita è un servizio opzionale.",
       },
       {
         q: "Posso cancellare quando voglio?",

@@ -39,7 +39,7 @@ export default function SupportWidget({ tenantId }: { tenantId: string; colorThe
   return (
     <>
       {/* FAB (Floating Action Button) - Posizionato SOPRA il mappamondo e colorato per risaltare */}
-      <div className="fixed bottom-[4.5rem] left-3 sm:bottom-24 sm:left-6 z-[9998] pointer-events-auto flex flex-col items-center">
+      <div className="fixed bottom-[8.5rem] left-3 sm:bottom-24 sm:left-6 z-[9998] pointer-events-auto flex flex-col items-center">
         <button
           onClick={() => setIsOpen(true)}
           className="w-11 h-11 sm:w-12 sm:h-12 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400 text-white rounded-full shadow-[0_0_15px_rgba(79,70,229,0.5)] hover:shadow-[0_0_25px_rgba(79,70,229,0.8)] transition-all flex items-center justify-center group"

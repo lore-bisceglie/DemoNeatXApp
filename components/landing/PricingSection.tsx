@@ -35,7 +35,7 @@ export default function PricingSection() {
             <div className="text-emerald-400 font-bold text-sm mb-6">290€/anno <span className="text-slate-500 font-medium text-xs">(risparmi 58€)</span></div>
             <ul className="space-y-4 mb-auto text-sm text-slate-400 font-medium">
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Appuntamenti illimitati</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-slate-500" /> <strong className="text-slate-500">Promemoria WhatsApp: temporaneamente disattivati*</strong></li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Promemoria WhatsApp automatici</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Gestione turni, orari e ferie</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Export presenze per commercialista</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-emerald-400" /> Link brandizzato prenotazione</li>
@@ -79,6 +79,31 @@ export default function PricingSection() {
           </ScrollReveal>
         </div>
 
+        {/* COSTI MESSAGGI WHATSAPP */}
+        <ScrollReveal direction="up">
+          <div className="glow-card mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-emerald-500/25 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500 animate-pulse-slow"></div>
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck size={26} />
+            </div>
+            <div className="text-left flex-1">
+              <h4 className="text-white font-bold text-lg mb-1">Trasparenza 100% sui costi di WhatsApp</h4>
+              <p className="text-slate-400 text-sm leading-relaxed mb-3">
+                I promemoria WhatsApp partono automaticamente prima dell&apos;appuntamento e usano i crediti messaggio del tuo negozio. Paghi solo a consumo, tramite pacchetti ricaricabili: nessun costo nascosto.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300"><span className="text-emerald-400">500</span> messaggi = 29€</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300"><span className="text-emerald-400">1000</span> messaggi = 55€</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300"><span className="text-emerald-400">2000</span> messaggi = 99€</span>
+              </div>
+              <div className="mt-4 rounded-xl border border-emerald-400/15 bg-emerald-400/[0.04] px-4 py-3 text-xs leading-relaxed text-slate-400">
+                <span className="font-bold text-emerald-300">Quanto durano?</span>{" "}
+                Con circa 10 appuntamenti al giorno e un messaggio per appuntamento: <span className="text-slate-300">500 crediti ≈ 2 mesi</span>, <span className="text-slate-300">1000 ≈ 3 mesi</span>, <span className="text-slate-300">2000 ≈ 6 mesi</span>. La durata varia in base agli appuntamenti effettivi.
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+
         <ScrollReveal direction="up">
           <div className="mx-auto mt-20 max-w-3xl text-center">
             <div className="mb-4 text-xs font-extrabold uppercase tracking-[0.25em] text-amber-400">
@@ -121,32 +146,6 @@ export default function PricingSection() {
           </ScrollReveal>
         </div>
         
-        {/* BANNER TRASPARENZA SMS */}
-        <ScrollReveal direction="up">
-        <div className="glow-card mt-12 max-w-4xl mx-auto bg-[#0a0f1c] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500 animate-pulse-slow"></div>
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-center flex-shrink-0">
-            <ShieldCheck size={26} />
-          </div>
-          <div className="text-left flex-1">
-            <h4 className="text-white font-bold text-lg mb-1">Stato promemoria WhatsApp</h4>
-            <p className="text-slate-400 text-sm leading-relaxed mb-3">
-              Gli invii automatici sono temporaneamente disattivati. Finché la funzione resta disattivata non parte alcun messaggio e non viene consumato alcun credito. I pacchetti torneranno acquistabili solo dopo la riattivazione verificata del servizio.
-            </p>
-            <div className="hidden flex-wrap gap-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">500</span> messaggi = 29€
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">1000</span> messaggi = 55€
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-                <span className="text-emerald-400">2000</span> messaggi = 99€
-              </span>
-            </div>
-          </div>
-        </div>
-        </ScrollReveal>
       </div>
     </section>
   );

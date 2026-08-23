@@ -20,7 +20,17 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
     fetch(`/api/marketing/dormant?tenantId=${tenantId}`)
       .then(res => res.json())
       .then(d => {
-        setData(d);
+        // L'API può restituire un errore (o una risposta parziale): il widget
+        // deve restare visualizzabile senza mandare in crash la dashboard.
+        setData({
+          count: typeof d?.count === "number" ? d.count : 0,
+          customers: Array.isArray(d?.customers) ? d.customers : [],
+          estimatedRevenue: typeof d?.estimatedRevenue === "number" ? d.estimatedRevenue : 0,
+        });
+        setLoading(false);
+      })
+      .catch(() => {
+        setData({ count: 0, customers: [], estimatedRevenue: 0 });
         setLoading(false);
       });
   }, [tenantId]);
@@ -37,7 +47,7 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
   return (
     <PaywallOverlay 
       title="Sblocca il Marketing Automatico" 
-      description="Analizza i clienti inattivi. Gli invii WhatsApp automatici sono temporaneamente disattivati."
+      description="Analizza i clienti inattivi e crea campagne WhatsApp mirate."
       plan={plan || (isPremium ? "elite" : "basic")}
       className="mb-8"
     >
@@ -178,10 +188,10 @@ export default function MarketingWidget({ tenantId, isPremium, plan, slug }: { t
                     disabled
                     className="w-full py-4 bg-slate-700 text-slate-300 font-black rounded-2xl border border-slate-600 cursor-not-allowed flex justify-center items-center gap-2"
                   >
-                    Invii WhatsApp temporaneamente disattivati
+                    Promemoria automatici attivi
                   </button>
                   <p className="text-center text-xs text-slate-500 mt-4">
-                    Nessun messaggio verrà inviato e nessun credito verrà consumato.
+                    I promemoria vengono inviati automaticamente e utilizzano i crediti disponibili.
                   </p>
                 </div>
               </div>

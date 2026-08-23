@@ -9,7 +9,7 @@ const FEATURE_CARDS = [
     description:
       "Il cliente apre il link, sceglie servizio, giorno e orario. Tu non devi interrompere il lavoro per rispondere a ogni richiesta.",
     accent: "text-cyan-400",
-    border: "hover:border-cyan-400/50",
+    border: "border-cyan-400/25 hover:border-cyan-400/55",
   },
   {
     icon: Globe2,
@@ -17,7 +17,7 @@ const FEATURE_CARDS = [
     description:
       "Servizi, disponibilità e identità della tua attività in un unico link da condividere dove vuoi.",
     accent: "text-emerald-400",
-    border: "hover:border-emerald-400/50",
+    border: "border-emerald-400/25 hover:border-emerald-400/55",
   },
   {
     icon: WalletCards,
@@ -25,7 +25,7 @@ const FEATURE_CARDS = [
     description:
       "Per i servizi importanti puoi richiedere caparra o pagamento completo con Stripe prima della conferma.",
     accent: "text-purple-400",
-    border: "hover:border-purple-400/50",
+    border: "border-purple-400/25 hover:border-purple-400/55",
   },
   {
     icon: CalendarSync,
@@ -33,7 +33,7 @@ const FEATURE_CARDS = [
     description:
       "Imposti i turni. Ogni collaboratore apre il suo link dal telefono, vede solo la propria agenda e richiede ferie o permessi. Tu approvi e gli slot si aggiornano subito.",
     accent: "text-blue-400",
-    border: "hover:border-blue-400/50",
+    border: "border-blue-400/25 hover:border-blue-400/55",
   },
   {
     icon: MapPin,
@@ -41,7 +41,7 @@ const FEATURE_CARDS = [
     description:
       "Hai più di un salone? Gestisci tutte le sedi da un unico account. Il sistema blocca i dipendenti condivisi per evitare doppie prenotazioni impossibili.",
     accent: "text-amber-400",
-    border: "hover:border-amber-400/50",
+    border: "border-amber-400/25 hover:border-amber-400/55",
   },
   {
     icon: FileSpreadsheet,
@@ -49,7 +49,7 @@ const FEATURE_CARDS = [
     description:
       "Un clic e NeatX genera un CSV con lo spaccato giornaliero di ogni dipendente: ore teoriche, ferie, permessi e totale mensile.",
     accent: "text-rose-400",
-    border: "hover:border-rose-400/50",
+    border: "border-rose-400/25 hover:border-rose-400/55",
   },
 ];
 
@@ -70,7 +70,7 @@ export default function FeaturesSection() {
           {FEATURE_CARDS.map((feature) => {
             const Icon = feature.icon;
             return (
-              <div key={feature.title} className={`glow-card bg-[#050814] p-8 rounded-3xl border border-[#1a2642] shadow-2xl group ${feature.border} transition-all duration-500 hover:-translate-y-2 hover:shadow-cyan-900/20`}>
+              <div key={feature.title} className={`glow-card bg-[#050814] p-8 rounded-3xl border shadow-2xl group ${feature.border} transition-all duration-500 hover:-translate-y-2 hover:shadow-cyan-900/20`}>
                 <div className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 ${feature.accent} group-hover:scale-110 transition-transform`}>
                   <Icon size={26} />
                 </div>
@@ -82,14 +82,13 @@ export default function FeaturesSection() {
         </div>
 
         <div className="mx-auto mt-8 flex max-w-3xl items-start gap-4 rounded-2xl border border-slate-700 bg-[#050814] p-5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-white/5 text-slate-400">
-            <BellRing size={20} />
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/15 text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.28)]">
+            <BellRing size={23} strokeWidth={2.4} />
           </div>
           <div>
-            <h3 className="font-extrabold text-white">Promemoria WhatsApp: temporaneamente disattivati</h3>
+            <h3 className="font-extrabold text-white">Riduci i no-show con un messaggio</h3>
             <p className="mt-1 text-sm leading-relaxed text-slate-400">
-              NeatX non invia ancora promemoria automatici su WhatsApp. Finché il servizio
-              non viene riattivato, non parte alcun messaggio e non viene consumato alcun credito.
+              Ogni sera, tra le 18:00 e le 19:00, NeatX invia automaticamente i promemoria per gli appuntamenti del giorno successivo. Bastano circa 0,06 € per messaggio: recuperare anche un solo appuntamento può ripagare l&apos;intero mese di NeatX, in base al valore del servizio.
             </p>
           </div>
         </div>

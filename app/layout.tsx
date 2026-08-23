@@ -125,7 +125,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
         
         {/* Traduttore Universale di Google (Sempre Visibile) */}
-        <div className="fixed bottom-3 left-3 sm:bottom-6 sm:left-6 z-[9999] pointer-events-auto">
+        <div className="fixed bottom-[5.5rem] left-3 sm:bottom-6 sm:left-6 z-[9999] pointer-events-auto">
           <GoogleTranslateWidget />
         </div>
 

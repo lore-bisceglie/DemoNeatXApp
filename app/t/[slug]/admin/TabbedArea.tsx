@@ -37,8 +37,8 @@ export default function TabbedArea({
   });
 
   return (
-    <>
-      <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 mb-6 border-b border-[#1e2b4a] custom-scrollbar snap-x">
+    <div className="pb-24 md:pb-0">
+      <div className="fixed inset-x-2 bottom-2 z-50 flex gap-2 overflow-x-auto rounded-2xl border border-cyan-400/20 bg-[#0b1221]/95 p-2 shadow-2xl shadow-black/40 backdrop-blur-xl custom-scrollbar snap-x md:static md:inset-auto md:z-auto md:mb-6 md:rounded-none md:border-0 md:border-b md:border-[#1e2b4a] md:bg-transparent md:p-0 md:pb-4 md:shadow-none md:backdrop-blur-none md:gap-4">
         {tabConfig.map((tab) => (
           <button
             key={tab.id}
@@ -57,6 +57,6 @@ export default function TabbedArea({
       </div>
 
       {activeChild}
-    </>
+    </div>
   );
 }

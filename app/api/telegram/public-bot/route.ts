@@ -119,7 +119,7 @@ export async function POST(req: Request) {
           "🚨 <b>Analisi completata</b>\n\n" +
           `Stai perdendo circa <b>${monthlyLoss.toFixed(0)}€ al mese</b>, cioè <b>${yearlyLoss.toFixed(0)}€ all'anno</b>, per appuntamenti saltati o gestiti male.\n\n` +
           "Con <b>NeatX</b> puoi mettere online la tua agenda, far scegliere gli orari ai clienti, richiedere acconti quando serve e ridurre i buchi senza rincorrere messaggi tutto il giorno.\n\n" +
-          "<b>Nota trasparente:</b> i promemoria WhatsApp automatici sono temporaneamente disattivati e non vengono promessi come funzione attiva.\n\n" +
+          "<b>Promemoria automatici:</b> NeatX invia ai clienti un promemoria WhatsApp prima dell'appuntamento, usando i crediti del negozio.\n\n" +
           "Clicca qui sotto per creare gratis il tuo negozio di prova.";
 
         await editMessageText(botToken, chatId, messageId, text, {
