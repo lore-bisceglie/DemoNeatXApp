@@ -5,7 +5,7 @@
   --film-mint: #31f7c5;
   position: relative;
   z-index: 10;
-  height: 500svh;
+  height: 420svh;
   color: white;
   background: var(--film-ink);
   isolation: isolate;
@@ -719,6 +719,42 @@
 .beatRequests,
 .beatOrder { isolation: isolate; }
 
+.beatHero {
+  left: 0;
+  right: 0;
+  top: clamp(118px, 15vh, 154px);
+  width: 100%;
+  padding: 0 clamp(24px, 7vw, 112px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform-origin: center center;
+}
+
+.beatHero .eyebrow,
+.beatHero .actions,
+.beatHero .proofs {
+  justify-content: center;
+}
+
+.beatHero .eyebrow::after {
+  content: "";
+  width: 42px;
+  height: 1px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.beatHero h1 {
+  max-width: 960px;
+  font-size: clamp(3.35rem, 6.4vw, 7rem);
+}
+
+.beatHero p {
+  max-width: 660px;
+}
+
 .beat:not(.beatHero) { opacity: 0; }
 
 .eyebrow {
@@ -776,6 +812,106 @@
   gap: 12px;
   margin-top: 32px;
   pointer-events: auto;
+}
+
+.proofs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 18px;
+  margin-top: 18px;
+  color: rgba(226, 232, 240, .82);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.proofs span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.proofs span::before {
+  content: "✓";
+  color: var(--film-mint);
+  font-size: 11px;
+  text-shadow: 0 0 12px rgba(49, 247, 197, .45);
+}
+
+.autopilotStrip {
+  width: min(1040px, calc(100vw - 48px));
+  display: grid;
+  grid-template-columns: 1.18fr repeat(3, 1fr);
+  gap: 1px;
+  margin-top: clamp(22px, 3.2vh, 34px);
+  overflow: hidden;
+  border: 1px solid rgba(103, 232, 249, .24);
+  border-radius: 18px;
+  background: rgba(103, 232, 249, .13);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, .34), 0 0 56px rgba(0, 180, 255, .09);
+  backdrop-filter: blur(18px);
+}
+
+.autopilotStrip > div {
+  min-width: 0;
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 15px 18px;
+  text-align: left;
+  background: rgba(3, 11, 23, .83);
+}
+
+.autopilotStrip small {
+  color: #67e8f9;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.autopilotStrip strong {
+  margin-top: 7px;
+  color: #f8fafc;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.autopilotStrip span:not(.liveDot) {
+  margin-top: 5px;
+  color: rgba(203, 213, 225, .68);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.autopilotStatus {
+  position: relative;
+  padding-left: 48px !important;
+  background:
+    radial-gradient(circle at 14% 50%, rgba(49, 247, 197, .15), transparent 24%),
+    rgba(3, 18, 27, .92) !important;
+}
+
+.liveDot {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  transform: translateY(-50%);
+  border: 2px solid rgba(49, 247, 197, .42);
+  border-radius: 50%;
+  background: var(--film-mint);
+  box-shadow: 0 0 0 7px rgba(49, 247, 197, .07), 0 0 24px rgba(49, 247, 197, .62);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { transform: translateY(-50%) scale(.82); opacity: .65; }
+  50% { transform: translateY(-50%) scale(1); opacity: 1; }
 }
 
 .primary,
@@ -960,6 +1096,17 @@
   .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,8,18,.22), rgba(2,8,18,.08) 45%, rgba(2,8,18,.48)); }
   .closedBadge { right: 14px; bottom: 72px; padding: 8px 11px; font-size: 8px; }
   .beat { top: 92px; left: 20px; width: calc(100vw - 40px); padding: 0; }
+  .beatHero { left: 0; top: 78px; width: 100%; padding: 0 20px; text-align: left; align-items: flex-start; }
+  .beatHero .eyebrow, .beatHero .actions, .beatHero .proofs { justify-content: flex-start; }
+  .beatHero .eyebrow::after { display: none; }
+  .beatHero h1 { font-size: clamp(2.55rem, 12vw, 3.7rem); }
+  .autopilotStrip { width: 100%; grid-template-columns: 1fr 1fr; margin-top: 17px; border-radius: 14px; }
+  .autopilotStrip > div { min-height: 64px; padding: 11px 12px; }
+  .autopilotStrip > div:nth-child(4) { display: none; }
+  .autopilotStatus { grid-column: 1 / -1; min-height: 58px !important; padding-left: 43px !important; }
+  .liveDot { left: 17px; }
+  .autopilotStrip strong { margin-top: 5px; font-size: 9px; }
+  .autopilotStrip span:not(.liveDot) { margin-top: 3px; font-size: 8px; }
   .beat h1, .beat h2 { font-size: clamp(2.35rem, 11.4vw, 3.35rem); line-height: .94; letter-spacing: -.045em; }
   .beat p { max-width: 100%; margin-top: 16px; font-size: .93rem; line-height: 1.45; }
   .eyebrow { gap: 8px; margin-bottom: 14px; font-size: 8px; letter-spacing: .18em; }
@@ -999,14 +1146,21 @@
   .calendar { min-height: 330px; }
   .appointment { min-height: 58px; padding: 8px; }
   .actions { gap: 8px; margin-top: 21px; }
+  .proofs { gap: 7px 12px; margin-top: 12px; font-size: 8px; letter-spacing: .06em; }
   .primary, .secondary { min-height: 44px; padding: 0 14px; font-size: 11px; }
 }
 
 @media (max-width: 420px) and (max-height: 760px) {
   .beat { top: 76px; }
+  .beatHero { top: 68px; }
   .beat h1, .beat h2 { font-size: clamp(2.1rem, 10.5vw, 2.8rem); }
   .beat p { margin-top: 12px; font-size: .86rem; }
   .actions { margin-top: 16px; }
+  .autopilotStrip { margin-top: 12px; }
+  .autopilotStrip > div { min-height: 54px; padding: 8px 10px; }
+  .autopilotStrip > div:nth-child(3) { display: none; }
+  .autopilotStatus { grid-column: auto; padding-left: 38px !important; }
+  .liveDot { left: 14px; }
   .primary, .secondary { min-height: 40px; }
   .phone { top: 72%; width: min(164px, 44vw); }
   .journey { bottom: 13px; }
@@ -1018,7 +1172,7 @@
   .requests, .phone, .tunnel, .dashboard, .beat:not(.beatHero), .journey { display: none; }
   .film:not([data-motion="full"]) .cinematicBackdrop { transform: none !important; opacity: .82 !important; }
 
-  .film[data-motion="full"] { height: 500svh !important; }
+  .film[data-motion="full"] { height: 420svh !important; }
   .film[data-motion="full"] .requests,
   .film[data-motion="full"] .phone,
   .film[data-motion="full"] .tunnel,

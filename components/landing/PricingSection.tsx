@@ -23,6 +23,7 @@ export default function PricingSection() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Due piani. Nessuna commissione. Nessuna sorpresa.</h2>
             <p className="text-slate-400 font-medium">Pro per partire con tutto in ordine. Elite per team, più sedi e strumenti avanzati.</p>
+            <p className="mt-4 text-sm font-semibold text-emerald-300">14 giorni gratis · nessuna carta richiesta · cancelli quando vuoi</p>
           </div>
         </ScrollReveal>
 

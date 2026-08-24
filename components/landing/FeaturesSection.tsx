@@ -1,6 +1,6 @@
 // Server Component — nessun hook o stato, riduce il bundle JS client
 
-import { MousePointerClick, Globe2, WalletCards, CalendarSync, FileSpreadsheet, MapPin, BellRing } from "lucide-react";
+import { MousePointerClick, Globe2, WalletCards, CalendarSync, FileSpreadsheet, MapPin, BellRing, UserRoundCheck } from "lucide-react";
 
 const FEATURE_CARDS = [
   {
@@ -36,6 +36,14 @@ const FEATURE_CARDS = [
     border: "border-blue-400/25 hover:border-blue-400/55",
   },
   {
+    icon: UserRoundCheck,
+    title: "I buchi si riempiono da soli",
+    description:
+      "Se un cliente disdice, NeatX avvisa automaticamente il primo cliente in lista d'attesa per quel giorno. Il messaggio parte solo quando c'è davvero un posto libero.",
+    accent: "text-cyan-400",
+    border: "border-cyan-400/25 hover:border-cyan-400/55",
+  },
+  {
     icon: MapPin,
     title: "Più sedi, una sola visione",
     description:
@@ -60,10 +68,10 @@ export default function FeaturesSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-xs font-extrabold uppercase tracking-widest text-cyan-300 mb-5">
             <span className="text-[14px]">⚡</span>
-            Tutto al posto giusto
+            Più di una semplice agenda
           </div>
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">Meno interruzioni. Più ordine.</h2>
-          <p className="text-slate-400 font-medium max-w-2xl mx-auto">Non un altro gestionale da gestire. Una pagina che raccoglie le prenotazioni e un&apos;agenda che resta aggiornata.</p>
+          <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">Meno no-show. Più appuntamenti pieni.</h2>
+          <p className="text-slate-400 font-medium max-w-2xl mx-auto">NeatX collega prenotazioni, promemoria, lista d&apos;attesa e report: tutto quello che serve per lavorare meglio, in un unico posto.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -86,9 +94,9 @@ export default function FeaturesSection() {
             <BellRing size={23} strokeWidth={2.4} />
           </div>
           <div>
-            <h3 className="font-extrabold text-white">Riduci i no-show con un messaggio</h3>
+            <h3 className="font-extrabold text-white">La tua agenda lavora anche quando tu lavori</h3>
             <p className="mt-1 text-sm leading-relaxed text-slate-400">
-              Ogni sera, tra le 18:00 e le 19:00, NeatX invia automaticamente i promemoria per gli appuntamenti del giorno successivo. Bastano circa 0,06 € per messaggio: recuperare anche un solo appuntamento può ripagare l&apos;intero mese di NeatX, in base al valore del servizio.
+              I promemoria automatici aiutano a ridurre i no-show. Se si libera un posto, NeatX avvisa il primo cliente in lista d&apos;attesa: tu non devi controllare la lista e puoi concentrarti sul lavoro.
             </p>
           </div>
         </div>
