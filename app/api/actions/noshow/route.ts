@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
 import { requireTenantAdminOrDemo } from "@/lib/demo-access";
+import { enqueueWaitlistNotification } from "@/lib/waitlist-notification";
 
 export async function POST(request: Request) {
   try {
@@ -38,17 +39,18 @@ export async function POST(request: Request) {
     const authError = await requireTenantAdminOrDemo(request, tenantId, "no-show", 30);
     if (authError) return authError;
 
-    await prisma.$transaction([
-      prisma.noShow.create({
+    await prisma.$transaction(async (tx) => {
+      await tx.noShow.create({
         data: {
           customerPhone: appointment.customerPhone,
           customerName: appointment.customerName,
           date: appointment.date,
           tenantId,
         },
-      }),
-      prisma.appointment.delete({ where: { id } }),
-    ]);
+      });
+      await tx.appointment.delete({ where: { id } });
+      await enqueueWaitlistNotification(tx, appointment);
+    });
 
     await logActivity({
       action: "NO_SHOW",
