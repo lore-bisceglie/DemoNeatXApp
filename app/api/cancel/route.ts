@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendTenantSms } from "@/lib/sms";
 import { notifyError } from "@/lib/monitor";
 import { appointmentManagementSelect, canManageAppointment } from "@/lib/appointment-management";
+import { enqueueWaitlistNotification } from "@/lib/waitlist-notification";
 
 // Recupera i dati dell'appuntamento dal token segreto
 export async function GET(request: Request) {
@@ -83,29 +84,8 @@ export async function POST(request: Request) {
         });
       }
 
-      // Waitlist FIFO atomica: enqueue one durable notification for n8n.
-      if (appointment.tenantId && appointment.date) {
-        const entry = await tx.waitlist.findFirst({
-          where: { tenantId: appointment.tenantId, date: appointment.date },
-          orderBy: { createdAt: "asc" },
-        });
-        if (entry) {
-          const tenant = await tx.tenant.findUnique({ where: { id: appointment.tenantId }, select: { slug: true } });
-          if (tenant?.slug) {
-            await tx.waitlistNotification.create({
-              data: {
-                tenantId: appointment.tenantId,
-                waitlistId: entry.id,
-                name: entry.name,
-                phone: entry.phone,
-                date: appointment.date,
-                bookingUrl: `https://${tenant.slug}.neatx.store`,
-              },
-            });
-          }
-          await tx.waitlist.delete({ where: { id: entry.id } });
-        }
-      }
+      // Libera automaticamente il posto al primo cliente in lista.
+      await enqueueWaitlistNotification(tx, appointment);
 
       let tenantPhone: string | null = null;
       const tenant = await tx.tenant.findUnique({

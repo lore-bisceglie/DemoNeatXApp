@@ -14,6 +14,7 @@ import {
 } from "@/lib/schedule";
 import { parseDaySchedule } from "@/lib/opening-hours";
 import { getRomeDayOfWeek } from "@/lib/rome-time";
+import { enqueueWaitlistNotification } from "@/lib/waitlist-notification";
 
 const minutesToTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -195,11 +196,15 @@ export async function POST(
           );
           if (hasConflict) throw new Error("SLOT_TAKEN");
 
-          return tx.appointment.update({
+          const moved = await tx.appointment.update({
             where: { id: appointment.id },
             data: { date, time, endTime },
             include: { service: true },
           });
+          if (appointment.date !== date || appointment.time !== time) {
+            await enqueueWaitlistNotification(tx, appointment);
+          }
+          return moved;
         },
         { isolationLevel: "Serializable" },
       )
