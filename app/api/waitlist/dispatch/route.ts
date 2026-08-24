@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendTenantSms } from "@/lib/sms";
+import { sendWaitlistOpenWa } from "@/lib/openwa";
 import { hasCronAccess } from "@/lib/reminder-outbox";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     for (const row of claimed) {
       const message = `🎉 Posto liberato!\nCiao ${row.name}, si è liberato un posto per il ${row.date.split("-").reverse().join("/")}. Prenota subito: ${row.bookingUrl}`;
       try {
-        const result = await sendTenantSms(row.tenantId, row.phone, message);
+        const result = await sendWaitlistOpenWa(row.tenantId, row.phone, message);
         if (!result.success) throw new Error(result.error || "Invio non riuscito");
         await prisma.waitlistNotification.update({
           where: { id: row.id },
