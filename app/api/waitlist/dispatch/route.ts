@@ -2,8 +2,52 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendWaitlistOpenWa } from "@/lib/openwa";
 import { hasCronAccess } from "@/lib/reminder-outbox";
+import { getAvailabilityForDate } from "@/lib/availability";
+import { enqueueWaitlistNotification } from "@/lib/waitlist-notification";
 
 export const dynamic = "force-dynamic";
+
+async function promoteWaitlistsWithAvailability() {
+  const entries = await prisma.waitlist.findMany({
+    where: { tenantId: { not: null } },
+    select: { tenantId: true, date: true },
+    distinct: ["tenantId", "date"],
+    orderBy: { createdAt: "asc" },
+  });
+
+  let promoted = 0;
+  for (const entry of entries) {
+    if (!entry.tenantId) continue;
+    const services = await prisma.service.findMany({
+      where: { tenantId: entry.tenantId },
+      select: { id: true },
+      take: 12,
+    });
+    let hasFreeSlot = false;
+    for (const service of services) {
+      try {
+        const availability = await getAvailabilityForDate({
+          tenantId: entry.tenantId,
+          date: entry.date,
+          serviceId: service.id,
+        });
+        if (availability.slots.length > 0) {
+          hasFreeSlot = true;
+          break;
+        }
+      } catch {
+        // Invalid/expired dates are ignored; booking rules remain authoritative.
+      }
+    }
+    if (!hasFreeSlot) continue;
+
+    const moved = await prisma.$transaction((tx) =>
+      enqueueWaitlistNotification(tx, { tenantId: entry.tenantId, date: entry.date }),
+    );
+    if (moved) promoted++;
+  }
+  return promoted;
+}
 
 /**
  * Called by the dedicated n8n waitlist workflow. The endpoint owns the
@@ -21,6 +65,9 @@ export async function POST(request: Request) {
   const staleBefore = new Date(Date.now() - 15 * 60_000);
 
   try {
+    // Safety net for stale pages: promote entries even when the slot was
+    // already free before the customer joined the waitlist.
+    const promoted = await promoteWaitlistsWithAvailability();
     const claimed = await prisma.$transaction(async (tx) => {
       await tx.waitlistNotification.updateMany({
         where: { status: "processing", claimedAt: { lt: staleBefore } },
@@ -59,7 +106,7 @@ export async function POST(request: Request) {
         failed++;
       }
     }
-    return NextResponse.json({ success: true, claimed: claimed.length, sent, failed });
+    return NextResponse.json({ success: true, promoted, claimed: claimed.length, sent, failed });
   } catch (error) {
     console.error("[waitlist/dispatch] errore", error);
     return NextResponse.json({ error: "Errore interno" }, { status: 500 });
