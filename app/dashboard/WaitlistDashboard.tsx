@@ -14,12 +14,14 @@ export default function WaitlistDashboard({ initialData, tenantId, slug }: { ini
   const [deleteTarget, setDeleteTarget] = useState<WaitlistItem | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleWhatsApp = (name: string, phone: string, date: string) => {
-    const formattedDate = date.split("-").reverse().join("/");
-    const baseUrl = window.location.origin;
-    const msg = `Ciao ${name}! Buone notizie 🎉 Si è liberato un posto per il ${formattedDate}. Prenotalo subito qui: ${baseUrl}/t/${slug || tenantId}`;
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
+  const handleWhatsApp = async (id: string) => {
+    const res = await fetch("/api/waitlist/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (!res.ok) throw new Error("Impossibile accodare la notifica");
+    setWaitlist((prev) => prev.filter((item) => item.id !== id));
   };
 
   const openRemovePopup = (item: WaitlistItem) => {
@@ -124,9 +126,7 @@ export default function WaitlistDashboard({ initialData, tenantId, slug }: { ini
 
               <div className="flex gap-2">
                 <button
-                  onClick={() =>
-                    handleWhatsApp(item.name, item.phone, item.date)
-                  }
+                  onClick={() => void handleWhatsApp(item.id).catch((e) => console.error(e))}
                   className="bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                   title="Avvisa su WhatsApp"
                 >
