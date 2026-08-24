@@ -1,43 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-23T10:27:37.937332+02:00
+Generato: 2026-08-24T10:45:46.546235+02:00
 
-## Idea 1: Sei un parrucchiere e i tuoi clienti finiscono sempre associati al collaboratore sbagliato creando imbarazzo e ritardi?
-- hook: Sei un parrucchiere e i tuoi clienti finiscono sempre associati al collaboratore sbagliato creando imbarazzo e ritardi?
-- video_title: Stop errori di assegnazione nel salone
-- blog_title: Come evitare l'assegnazione errata dei clienti nel tuo salone di acconciatura
-- gameplay_style: neon_racer
-- description: Spiega come NeatX permette di definire percorsi di prenotazione in cui il cliente seleziona autonomamente il collaboratore desiderato, azzerando le lamentele e ottimizzando i tempi del salone.
-- keywords: ['gestionale parrucchieri', 'prenotazioni parrucchiere', 'agenda salone']
+## Idea 1: Tatuatori: se passate ancora le sere a scrivere 'ci sei domani per il tatuaggio?' su WhatsApp, state buttando ore di lavoro.
+- title: Basta rincorrere i clienti per confermare il tatuaggio
+- hook: Tatuatori: se passate ancora le sere a scrivere 'ci sei domani per il tatuaggio?' su WhatsApp, state buttando ore di lavoro.
+- platform_format: Reel / TikTok
+- description: Un video che mostra il contrasto tra il tatuatore stressato che scrive messaggi di conferma manuali a tarda sera e chi usa un sistema automatico per ricevere le conferme dai clienti in automatico.
+- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
 
-## Idea 2: Gestire le ferie e i turni del tuo staff di parrucchieri ti richiede ore di fogli Excel e continui mal di testa?
-- hook: Gestire le ferie e i turni del tuo staff di parrucchieri ti richiede ore di fogli Excel e continui mal di testa?
-- video_title: Ferie e turni del personale senza stress
-- blog_title: La guida definitiva per coordinare ferie e turni dei parrucchieri in automatico
-- gameplay_style: neon_racer
-- description: Mostra l'interfaccia di NeatX con agende separate per ogni dipendente, dove i turni e le ferie si aggiornano in automatico evitando sovrapposizioni e telefonate fuori orario.
-- keywords: ['gestionale parrucchieri', 'agenda salone', 'gestione staff parrucchiere']
+## Idea 2: Un cliente che non si presenta a una sessione di tatuaggio da 4 ore non ti fa solo perdere tempo, ti costa una giornata di affitto dello studio.
+- title: Il costo reale di un no-show nel tuo studio di tatuaggi
+- hook: Un cliente che non si presenta a una sessione di tatuaggio da 4 ore non ti fa solo perdere tempo, ti costa una giornata di affitto dello studio.
+- platform_format: Blog Post
+- description: Un articolo focalizzato sulla gestione economica dello studio, spiegando come le conferme automatiche di NeatX riducano i no-show salvando il fatturato dei tatuatori.
+- keywords: ['caparra tatuaggio', 'prenotazioni tatuatore']
 
-## Idea 3: Se usi ancora un'unica agenda cartacea per gestire tre o quattro parrucchieri diversi stai perdendo centinaia di euro ogni mese.
-- hook: Se usi ancora un'unica agenda cartacea per gestire tre o quattro parrucchieri diversi stai perdendo centinaia di euro ogni mese.
-- video_title: Il costo nascosto dell'agenda condivisa
-- blog_title: Perché un'agenda digitale multi-staff fa fatturare di più al tuo salone di parrucchieri
-- gameplay_style: neon_racer
-- description: Spiega come le agende individuali collegate a NeatX permettano di massimizzare gli slot liberi di ciascun lavoratore, aumentando il numero di pieghe e tagli giornalieri senza sforzo.
-- keywords: ['prenotazioni parrucchiere', 'gestionale parrucchieri', 'agenda salone']
+## Idea 3: Smetti di incrociare le dita sperando che il cliente si ricordi del suo appuntamento di domani mattina.
+- title: Smetti di sperare che il cliente si ricordi del tatuaggio
+- hook: Smetti di incrociare le dita sperando che il cliente si ricordi del suo appuntamento di domani mattina.
+- platform_format: Reel / TikTok
+- description: Video dal ritmo dinamico, ideale per lo stile di gioco runner in sottofondo, che spiega come blindare l'agenda senza dover inviare promemoria manuali.
+- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
 
-## Idea 4: Sei stanco di dover continuamente controllare quale parrucchiere deve occuparsi di quale cliente minuto per minuto?
-- hook: Sei stanco di dover continuamente controllare quale parrucchiere deve occuparsi di quale cliente minuto per minuto?
-- video_title: Rendi autonomi i tuoi collaboratori
-- blog_title: Come dare autonomia ai tuoi collaboratori parrucchieri grazie alle agende digitali separate
-- gameplay_style: neon_racer
-- description: Focus sulla funzionalità multi-staff di NeatX, dove ogni collaboratore accede solo alla propria agenda personale dal proprio smartphone, riducendo il micro-management del titolare.
-- keywords: ['gestionale parrucchieri', 'organizzare salone acconciatura', 'agenda salone']
+## Idea 4: Chiedere la caparra per il tatuaggio non basta se poi devi comunque passare ore a inseguire il cliente per confermare la data.
+- title: Come gestire la caparra del tatuaggio e le conferme senza stress
+- hook: Chiedere la caparra per il tatuaggio non basta se poi devi comunque passare ore a inseguire il cliente per confermare la data.
+- platform_format: Blog Post
+- description: Guida pratica per tatuatori che spiega come unire la politica della caparra a un sistema di conferme automatico per eliminare definitivamente i buchi in agenda.
+- keywords: ['caparra tatuaggio', 'agenda tatuatori']
 
-## Idea 5: Il segreto per far tornare i clienti nel tuo salone di parrucchieri è farli prenotare direttamente con il loro professionista di fiducia.
-- hook: Il segreto per far tornare i clienti nel tuo salone di parrucchieri è farli prenotare direttamente con il loro professionista di fiducia.
-- video_title: Fidelizza i clienti del salone
-- blog_title: Fidelizzazione nel salone di acconciatura: l'importanza della scelta del collaboratore in fase di prenotazione
-- gameplay_style: neon_racer
-- description: Illustra come la prenotazione online di NeatX permetta al cliente di selezionare il parrucchiere preferito per colore, taglio o trattamenti specifici, garantendo un servizio impeccabile.
-- keywords: ['prenotazioni parrucchiere', 'gestionale parrucchieri', 'fidelizzare clienti parrucchiere']
+## Idea 5: I clienti si dimenticano della sessione di tatuaggio non perché non la vogliono, ma perché la gestione dei tuoi appuntamenti è ancora manuale.
+- title: La soluzione per i clienti che dimenticano il tatuaggio
+- hook: I clienti si dimenticano della sessione di tatuaggio non perché non la vogliono, ma perché la gestione dei tuoi appuntamenti è ancora manuale.
+- platform_format: Reel / TikTok
+- description: Un video che spiega come NeatX aiuti a mantenere l'agenda ordinata e i clienti sempre presenti all'appuntamento senza promesse irrealistiche di integrazioni complesse.
+- keywords: ['agenda tatuatori', 'prenotazioni tatuatore']
