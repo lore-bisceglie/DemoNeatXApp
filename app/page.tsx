@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Navbar from "@/components/landing/Navbar";
-import HeroSection from "@/components/landing/HeroSection";
 import TrustMarquee from "@/components/landing/TrustMarquee";
 import BeforeAfterSlider from "@/components/landing/BeforeAfterSlider";
 import ComparisonTable from "@/components/landing/ComparisonTable";
@@ -73,17 +72,16 @@ export default function Home() {
 
       <Navbar onOpenRoi={() => setShowRoiModal(true)} ctaLabel="Crea la tua pagina" />
       <CinematicHero />
-      <HeroSection />
-      
+
       <ScrollReveal><TrustMarquee /></ScrollReveal>
-      <ScrollReveal direction="right"><TimesheetFeatureSection /></ScrollReveal>
-      <ScrollReveal direction="left"><BeforeAfterSlider /></ScrollReveal>
-      <ScrollReveal direction="up"><BrandMeaningSection /></ScrollReveal>
-      <ScrollReveal direction="up"><TestimonialsSection /></ScrollReveal>
-      <ScrollReveal direction="left"><FeaturesSection /></ScrollReveal>
       <ScrollReveal direction="right"><OperatingSteps /></ScrollReveal>
+      <ScrollReveal direction="left"><FeaturesSection /></ScrollReveal>
+      <ScrollReveal direction="left"><BeforeAfterSlider /></ScrollReveal>
+      <ScrollReveal direction="right"><TimesheetFeatureSection /></ScrollReveal>
+      <ScrollReveal direction="up"><TestimonialsSection /></ScrollReveal>
       <PricingSection />
       <ScrollReveal direction="left"><ComparisonTable /></ScrollReveal>
+      <ScrollReveal direction="up"><BrandMeaningSection /></ScrollReveal>
       <ScrollReveal direction="right"><IntegrationsSection /></ScrollReveal>
       <ScrollReveal direction="up"><FAQSection /></ScrollReveal>
       <ScrollReveal><FinalCTA /></ScrollReveal>
