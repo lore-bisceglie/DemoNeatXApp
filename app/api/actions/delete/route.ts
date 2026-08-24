@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
 import { revalidatePath } from "next/cache";
 import { requireTenantAdminOrDemo } from "@/lib/demo-access";
+import { enqueueWaitlistNotification } from "@/lib/waitlist-notification";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,10 @@ export async function POST(req: Request) {
   const authError = await requireTenantAdminOrDemo(req, appointment.tenantId, "delete", 30);
   if (authError) return authError;
 
-  await prisma.appointment.delete({ where: { id } });
+  await prisma.$transaction(async (tx) => {
+    await tx.appointment.delete({ where: { id } });
+    await enqueueWaitlistNotification(tx, appointment);
+  });
 
   if (appointment.tenantId) {
     await logActivity({
