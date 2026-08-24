@@ -128,9 +128,9 @@ export default function WaitlistDashboard({ initialData, tenantId, slug }: { ini
                 <button
                   onClick={() => void handleWhatsApp(item.id).catch((e) => console.error(e))}
                   className="bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
-                  title="Avvisa su WhatsApp"
+                  title="Avvisa subito (fallback manuale)"
                 >
-                  💬 Avvisa
+                  💬 Avvisa ora
                 </button>
 
                 <button
