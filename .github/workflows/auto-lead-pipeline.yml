@@ -45,4 +45,3 @@ jobs:
         with:
           commit_message: 'Auto-leads: aggiorna pipeline prospect'
           file_pattern: 'leads/*.csv leads/*.md content_strategy/*.json content_strategy/*.md'
-          pull_options: '--rebase'
