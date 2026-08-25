@@ -49,6 +49,7 @@ export async function GET(request: Request) {
       date,
       customerPhone: { not: "0000000000" },
       tenant: {
+        isDemoData: false,
         OR: [
           { plan: { in: ["pro", "elite"] } },
           {

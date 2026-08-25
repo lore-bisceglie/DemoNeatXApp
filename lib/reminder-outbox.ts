@@ -58,6 +58,7 @@ export async function buildReminderSummary(date: string) {
       date,
       customerPhone: { not: "0000000000" },
       tenant: {
+        isDemoData: false,
         OR: [
           { plan: { in: ["pro", "elite"] } },
           {
@@ -228,6 +229,7 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
       date,
       customerPhone: { not: "0000000000" },
       tenant: {
+        isDemoData: false,
         OR: [
           { plan: { in: ["pro", "elite"] } },
           {
@@ -247,11 +249,28 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
   });
 
   const reminders = [];
+  // Difesa aggiuntiva contro dati duplicati nell'agenda: la chiave tecnica
+  // dell'appuntamento resta l'id, ma due record identici (stesso cliente,
+  // orario e servizio) non devono mai generare due WhatsApp nello stesso giro.
+  const reminderKeys = new Set<string>();
   let skippedNoCredits = 0;
   let skippedAlreadyHandled = 0;
 
   for (const candidate of candidates) {
     if (reminders.length >= take || !candidate.tenantId || !candidate.tenant) continue;
+
+    const duplicateKey = [
+      candidate.tenantId,
+      candidate.customerPhone.replace(/\D/g, ""),
+      candidate.date,
+      candidate.time,
+      candidate.service?.name?.trim().toLowerCase() || "",
+    ].join("|");
+    if (reminderKeys.has(duplicateKey)) {
+      skippedAlreadyHandled++;
+      continue;
+    }
+    reminderKeys.add(duplicateKey);
 
     try {
       const claimed = await prisma.$transaction(async (tx) => {

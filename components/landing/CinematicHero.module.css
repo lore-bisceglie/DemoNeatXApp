@@ -1162,6 +1162,10 @@
 }
 
 @media (max-width: 760px) {
+  /* Keep the cinematic sequence readable on narrow screens: the copy owns
+     the upper half, while the product previews stay in a reserved lower
+     zone instead of covering the message or the chapter rail. */
+  .stage { min-height: 100svh; }
   .cinematicBackdropImage { object-position: 64% center; }
   .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,8,18,.22), rgba(2,8,18,.08) 45%, rgba(2,8,18,.48)); }
   .closedBadge { right: 14px; bottom: 72px; padding: 8px 11px; font-size: 8px; }
@@ -1170,13 +1174,12 @@
   .beatHero .eyebrow, .beatHero .actions, .beatHero .proofs { justify-content: flex-start; }
   .beatHero .eyebrow::after { display: none; }
   .beatHero h1 { font-size: clamp(2.55rem, 12vw, 3.7rem); }
-  .autopilotStrip { width: 100%; grid-template-columns: 1fr 1fr; margin-top: 17px; border-radius: 14px; }
-  .autopilotStrip > div { min-height: 64px; padding: 11px 12px; }
-  .autopilotStrip > div:nth-child(4) { display: none; }
-  .autopilotStatus { grid-column: 1 / -1; min-height: 58px !important; padding-left: 43px !important; }
+  .autopilotStrip { width: 100%; grid-template-columns: 1fr 1fr; margin-top: 13px; border-radius: 14px; }
+  .autopilotStrip > div { min-height: 54px; padding: 9px 10px; }
+  .autopilotStatus { grid-column: 1 / -1; min-height: 52px !important; padding-left: 39px !important; }
   .liveDot { left: 17px; }
-  .autopilotStrip strong { margin-top: 5px; font-size: 9px; }
-  .autopilotStrip span:not(.liveDot) { margin-top: 3px; font-size: 8px; }
+  .autopilotStrip strong { margin-top: 4px; font-size: 8px; }
+  .autopilotStrip span:not(.liveDot) { margin-top: 2px; font-size: 7px; }
   .beat h1, .beat h2 { font-size: clamp(2.35rem, 11.4vw, 3.35rem); line-height: .94; letter-spacing: -.045em; }
   .beat p { max-width: 100%; margin-top: 16px; font-size: .93rem; line-height: 1.45; }
   .slideProofs { gap: 6px; margin-top: 16px; }
@@ -1191,25 +1194,25 @@
   .beatFinal .eyebrow, .beatFinal .actions { justify-content: flex-start; }
   .beatFinal .eyebrow::after { display: none; }
   .beatFinal .eyebrow::before { display: block; }
-  .journey { bottom: 16px; width: calc(100vw - 144px); gap: 4px; }
+  .journey { bottom: 11px; width: calc(100vw - 118px); gap: 4px; }
   .journeyStep span { display: none; }
   .journeyStep { align-items: center; }
   .journeyTrack { bottom: -6px; }
   .scrollCue { display: none; }
-  .request { min-width: 0; max-width: 46vw; padding: 8px 10px 8px 8px; font-size: 8px; white-space: nowrap; }
-  .phone { left: 50%; top: 70%; width: min(184px, 48vw); border-radius: 28px; padding: 6px; }
+  .request { min-width: 0; max-width: 39vw; padding: 7px 9px 7px 7px; font-size: 7px; white-space: nowrap; }
+  .phone { left: 50%; top: 73%; width: min(158px, 41vw); border-radius: 26px; padding: 5px; }
   .phoneScreen { border-radius: 22px; }
   .phoneBooking { inset: 13% 8% 7%; gap: 7px; }
   .phoneBooking > strong { margin: 5px 0 2px; font-size: 14px; }
   .phoneBooking > div { gap: 6px; padding: 7px 6px; font-size: 8px; }
   .phoneBooking button { padding: 8px 4px; font-size: 8px; }
-  .bookingTicket { left: 50%; top: 65%; width: min(210px, 56vw); transform: translateX(-50%); }
+  .bookingTicket { left: 50%; top: 64%; width: min(190px, 52vw); transform: translateX(-50%); padding: 12px 14px; }
   .tunnelCore { width: 108vw; min-height: 56vh; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 20px; }
   .agendaHead { margin-bottom: 4px; padding-bottom: 12px; }
   .agendaHead strong { font-size: 8px; }
   .slot { min-height: 72px; padding: 10px; }
   .agendaConfirmed { bottom: 12px; padding: 8px 12px; font-size: 8px; }
-  .dashboard { top: 54%; width: 96vw; min-height: 48vh; }
+  .dashboard { top: 52%; width: 90vw; min-height: 40vh; }
   .readyResult { min-height: 46vh; grid-template-columns: 48px 1fr; grid-template-areas: "check copy" "schedule schedule"; gap: 10px; padding: 18px 14px; }
   .readyCheck { width: 52px; height: 52px; font-size: 28px; }
   .readyCopy h3 { font-size: 1.7rem; }
@@ -1218,11 +1221,13 @@
   .readyStats { display: none; }
   .dashBody { grid-template-columns: 1fr; }
   .summary { display: none; }
-  .calendar { min-height: 330px; }
+  .calendar { min-height: 270px; }
   .appointment { min-height: 58px; padding: 8px; }
   .actions { gap: 8px; margin-top: 21px; }
   .proofs { gap: 7px 12px; margin-top: 12px; font-size: 8px; letter-spacing: .06em; }
   .primary, .secondary { min-height: 44px; padding: 0 14px; font-size: 11px; }
+  .beatHero .autopilotStrip { margin-top: 11px; }
+  .beatRequests, .beatOrder, .beatFinal { max-width: calc(100vw - 32px); }
 }
 
 @media (max-width: 420px) and (max-height: 760px) {
@@ -1233,11 +1238,10 @@
   .actions { margin-top: 16px; }
   .autopilotStrip { margin-top: 12px; }
   .autopilotStrip > div { min-height: 54px; padding: 8px 10px; }
-  .autopilotStrip > div:nth-child(3) { display: none; }
-  .autopilotStatus { grid-column: auto; padding-left: 38px !important; }
+  .autopilotStatus { grid-column: 1 / -1; padding-left: 38px !important; }
   .liveDot { left: 14px; }
   .primary, .secondary { min-height: 40px; }
-  .phone { top: 72%; width: min(164px, 44vw); }
+  .phone { top: 74%; width: min(148px, 40vw); }
   .journey { bottom: 13px; }
 }
 
