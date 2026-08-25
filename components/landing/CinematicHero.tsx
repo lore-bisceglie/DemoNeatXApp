@@ -292,18 +292,24 @@ export default function CinematicHero() {
           <div className={styles.eyebrow}>Quando vuole, senza chiamare</div>
           <h2><span className={styles.beatLine}>Il cliente trova</span><span className={`${styles.beatLine} ${styles.accent}`}>il suo posto da solo.</span></h2>
           <p>Vede servizi, prezzi e disponibilità reali. Sceglie in pochi secondi, anche quando sei occupato.</p>
+          <div className={styles.slideProofs}><span>Servizi sempre aggiornati</span><span>Disponibilità reale</span><span>24/7</span></div>
+          <div className={styles.slideMiniCard}><span className={styles.miniDot} /><div><b>Pagina sempre aperta</b><small>Il cliente prenota anche mentre sei occupato.</small></div></div>
         </div>
 
         <div className={`${styles.beat} ${styles.beatOrder}`}>
           <div className={styles.eyebrow}>Una prenotazione, zero passaggi a mano</div>
           <h2><span className={styles.beatLine}>Prenota.</span><span className={`${styles.beatLine} ${styles.accent}`}>L&apos;agenda si aggiorna.</span></h2>
           <p>Orario, servizio, professionista e pagamento finiscono subito al posto giusto.</p>
+          <div className={styles.slideProofs}><span>Orario bloccato</span><span>Pagamento visibile</span><span>Nessun doppio inserimento</span></div>
+          <div className={styles.slideMiniCard}><span className={styles.miniDot} /><div><b>Agenda aggiornata</b><small>Nuova prenotazione acquisita <em>Nuovo</em></small></div></div>
         </div>
 
         <div className={`${styles.beat} ${styles.beatFinal}`}>
           <div className={styles.eyebrow}>Il risultato che conta</div>
           <h2><span className={styles.beatLine}>Meno buchi.</span><span className={`${styles.beatLine} ${styles.accent}`}>Più controllo.</span></h2>
           <p>Promemoria automatici, lista d&apos;attesa e turni del team tengono l&apos;agenda piena e aggiornata.</p>
+          <div className={styles.slideProofs}><span>Promemoria automatici</span><span>Lista d&apos;attesa attiva</span><span>Team sincronizzato</span></div>
+          <div className={styles.slideMiniCard}><span className={styles.miniDot} /><div><b>Un posto si libera?</b><small>NeatX avvisa automaticamente il primo in lista.</small></div></div>
           <div className={styles.actions}>
             <Link href="/registrazione" className={styles.primary}>Inizia gratis per 14 giorni <ArrowRight size={17} /></Link>
           </div>
