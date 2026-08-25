@@ -1228,6 +1228,13 @@
   .primary, .secondary { min-height: 44px; padding: 0 14px; font-size: 11px; }
   .beatHero .autopilotStrip { margin-top: 11px; }
   .beatRequests, .beatOrder, .beatFinal { max-width: calc(100vw - 32px); }
+  /* The final chapter has the most UI layers. Keep its story card and CTA
+     above a smaller dashboard preview instead of stacking them on top of it. */
+  .beatFinal h2 { font-size: clamp(2.2rem, 10.2vw, 3rem); }
+  .beatFinal p { margin-top: 11px; font-size: .86rem; line-height: 1.38; }
+  .beatFinal .slideProofs { margin-top: 10px; }
+  .beatFinal .slideMiniCard { margin-top: 9px; }
+  .beatFinal .actions { position: relative; z-index: 60; margin-top: 11px; }
 }
 
 @media (max-width: 420px) and (max-height: 760px) {
