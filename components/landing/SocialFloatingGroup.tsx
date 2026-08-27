@@ -80,8 +80,8 @@ export default function SocialFloatingGroup() {
 
   return (
     <>
-      {/* Mobile: pill verticale larga quanto il mappamondo */}
-      <div className="sm:hidden flex flex-col items-center gap-1.5 rounded-full bg-[#0b1221]/70 backdrop-blur-xl border border-white/5 px-1.5 py-2 shadow-2xl shadow-black/50">
+      {/* Mobile: four separate, equal-sized circles — no outer container. */}
+      <div className="sm:hidden flex flex-col items-center gap-2">
         {links.map((link) => {
           const isActiveCopied = link.id === "email" && copied;
           const Icon = isActiveCopied ? Check : link.icon;
@@ -94,7 +94,7 @@ export default function SocialFloatingGroup() {
               rel={link.href ? "noopener noreferrer" : undefined}
               onClick={(e) => handleClick(link.id, e)}
               aria-label={link.label}
-              className={`flex items-center justify-center bg-gradient-to-r ${link.gradient} text-white rounded-full shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform w-8 h-8`}
+              className={`flex items-center justify-center shrink-0 aspect-square bg-gradient-to-r ${link.gradient} text-white rounded-full shadow-lg ${link.shadow} hover:scale-110 active:scale-95 transition-all duration-150 transform-gpu will-change-transform w-8 h-8`}
             >
               <Icon size={13} />
             </a>

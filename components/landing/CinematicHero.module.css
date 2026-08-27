@@ -684,6 +684,8 @@
 .appointmentPaid strong,
 .appointmentPaid span { color: #6ee7b7; }
 
+.mobileFinalPreview { display: none; }
+
 .summary {
   display: grid;
   align-content: center;
@@ -1165,6 +1167,7 @@
   /* Keep the cinematic sequence readable on narrow screens: the copy owns
      the upper half, while the product previews stay in a reserved lower
      zone instead of covering the message or the chapter rail. */
+  .film { height: 500svh; }
   .stage { min-height: 100svh; }
   .cinematicBackdropImage { object-position: 64% center; }
   .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,8,18,.22), rgba(2,8,18,.08) 45%, rgba(2,8,18,.48)); }
@@ -1178,8 +1181,8 @@
   .autopilotStrip > div { min-height: 54px; padding: 9px 10px; }
   .autopilotStatus { grid-column: 1 / -1; min-height: 52px !important; padding-left: 39px !important; }
   .liveDot { left: 17px; }
-  .autopilotStrip strong { margin-top: 4px; font-size: 8px; }
-  .autopilotStrip span:not(.liveDot) { margin-top: 2px; font-size: 7px; }
+  .autopilotStrip strong { margin-top: 4px; font-size: 8px; line-height: 1.2; overflow-wrap: normal; word-break: normal; }
+  .autopilotStrip span:not(.liveDot) { margin-top: 2px; font-size: 7px; line-height: 1.2; overflow-wrap: normal; word-break: normal; }
   .beat h1, .beat h2 { font-size: clamp(2.35rem, 11.4vw, 3.35rem); line-height: .94; letter-spacing: -.045em; }
   .beat p { max-width: 100%; margin-top: 16px; font-size: .93rem; line-height: 1.45; }
   .slideProofs { gap: 6px; margin-top: 16px; }
@@ -1212,7 +1215,39 @@
   .agendaHead strong { font-size: 8px; }
   .slot { min-height: 72px; padding: 10px; }
   .agendaConfirmed { bottom: 12px; padding: 8px 12px; font-size: 8px; }
-  .dashboard { top: 52%; width: 90vw; min-height: 40vh; }
+  /* On a phone the full dashboard is too tall to coexist with the final
+     story, its proof pills and CTA. Desktop keeps the full view; mobile gets
+     a dedicated compact agenda placed in the free lower portion of the scene. */
+  .dashboard { display: none; }
+  .mobileFinalPreview {
+    position: absolute;
+    z-index: 22;
+    left: 96px;
+    right: 18px;
+    bottom: 62px;
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid rgba(103,232,249,.28);
+    border-radius: 15px;
+    color: #e2f8ff;
+    background: linear-gradient(145deg, rgba(5,22,38,.93), rgba(4,12,27,.9));
+    box-shadow: 0 16px 42px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.07);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+  }
+  .film[data-chapter="3"] .mobileFinalPreview { opacity: 1; transform: translateY(0); }
+  .mobileFinalHead { display: flex; align-items: center; gap: 6px; color: #67e8f9; font-size: 8px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+  .mobileFinalHead strong { margin-left: auto; color: rgba(226,232,240,.64); font-size: 7px; }
+  .mobileFinalLive { width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; }
+  .mobileFinalRow { display: grid; grid-template-columns: 38px 1fr 13px; align-items: center; gap: 6px; min-height: 21px; padding: 4px 6px; border: 1px solid rgba(255,255,255,.07); border-radius: 8px; background: rgba(255,255,255,.025); font-size: 8px; }
+  .mobileFinalRow b { color: #67e8f9; font-size: 8px; }
+  .mobileFinalRow span { color: rgba(226,232,240,.88); font-weight: 750; }
+  .mobileFinalRow em { color: #6ee7b7; font-size: 10px; font-style: normal; }
+  .mobileFinalWait { display: flex; align-items: center; gap: 6px; color: rgba(226,232,240,.76); font-size: 7px; font-weight: 700; line-height: 1.25; }
+  .mobileFinalWait span { color: #a78bfa; font-size: 11px; }
   .readyResult { min-height: 46vh; grid-template-columns: 48px 1fr; grid-template-areas: "check copy" "schedule schedule"; gap: 10px; padding: 18px 14px; }
   .readyCheck { width: 52px; height: 52px; font-size: 28px; }
   .readyCopy h3 { font-size: 1.7rem; }
@@ -1228,13 +1263,14 @@
   .primary, .secondary { min-height: 44px; padding: 0 14px; font-size: 11px; }
   .beatHero .autopilotStrip { margin-top: 11px; }
   .beatRequests, .beatOrder, .beatFinal { max-width: calc(100vw - 32px); }
-  /* The final chapter has the most UI layers. Keep its story card and CTA
-     above a smaller dashboard preview instead of stacking them on top of it. */
+  /* The final chapter keeps its copy in the upper half; its dedicated mobile
+     agenda uses the free lower area, away from the CTA and progress rail. */
   .beatFinal h2 { font-size: clamp(2.2rem, 10.2vw, 3rem); }
   .beatFinal p { margin-top: 11px; font-size: .86rem; line-height: 1.38; }
   .beatFinal .slideProofs { margin-top: 10px; }
   .beatFinal .slideMiniCard { margin-top: 9px; }
-  .beatFinal .actions { position: relative; z-index: 60; margin-top: 11px; }
+  .beatFinal .slideMiniCard { max-width: 100%; }
+  .beatFinal .actions { position: relative; z-index: 60; margin-top: 17px; }
 }
 
 @media (max-width: 420px) and (max-height: 760px) {

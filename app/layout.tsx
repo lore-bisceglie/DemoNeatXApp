@@ -125,7 +125,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
         
         {/* Traduttore Universale di Google (Sempre Visibile) */}
-        <div className="fixed bottom-[5.5rem] left-3 sm:bottom-6 sm:left-6 z-[9999] pointer-events-auto">
+        <div className="fixed bottom-24 left-4 sm:bottom-6 sm:left-6 z-[10051] pointer-events-auto">
           <GoogleTranslateWidget />
         </div>
 
@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Chatbot />
 
           {/* Social bar — verticale, glass, a sinistra. */}
-          <div className="fixed bottom-24 sm:bottom-20 left-4 sm:left-6 z-[9998] pointer-events-auto">
+          <div className="fixed bottom-[8.75rem] sm:bottom-20 left-4 sm:left-6 z-[10050] pointer-events-auto">
             <SocialFloatingGroup />
           </div>
         </PublicWidgetsWrapper>

@@ -138,16 +138,20 @@ export default function CinematicHero() {
         .to(`.${styles.bookingTicket}`, { opacity: 1, scale: 1, y: 0, duration: 0.34 }, 2.04)
         .to(`.${styles.phone}`, { scale: isMobile ? 0.8 : 0.88, xPercent: isMobile ? 0 : 38, opacity: 0, duration: 0.68 }, 2.12)
         .to(`.${styles.cinematicBackdrop}`, { opacity: 0.13, scale: 1.16, duration: 0.7 }, 2.08)
-        .to(`.${styles.dashboard}`, { opacity: 1, scale: 1, rotateX: 0, yPercent: -6, duration: 0.72 }, 2.52)
-        .to(`.${styles.bookingTicket}`, { left: isMobile ? "50%" : "31%", top: isMobile ? "74%" : "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
-        .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.06 }, 2.72)
+        // Reveal the dashboard once at its final visual scale. The previous
+        // overlapping scale(1) -> scale(.5) tweens caused a visible jump on
+        // mobile (and a brief overshoot on desktop).
         .to(`.${styles.dashboard}`, {
-          top: isMobile ? "84%" : "51%",
+          opacity: 1,
+          top: isMobile ? "92%" : "51%",
           xPercent: isMobile ? -50 : -70,
           yPercent: isMobile ? -50 : -6,
-          scale: isMobile ? 0.5 : 0.72,
-          duration: 0.45,
-        }, 2.75)
+          scale: isMobile ? 0.78 : 0.72,
+          rotateX: 0,
+          duration: 1.05,
+        }, 2.52)
+        .to(`.${styles.bookingTicket}`, { left: isMobile ? "50%" : "31%", top: isMobile ? "74%" : "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
+        .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.06 }, 2.72)
         .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 4.4, ease: "none" }, 0);
 
       requests.forEach((request, index) => {
@@ -249,6 +253,18 @@ export default function CinematicHero() {
             </div>
             <div className={styles.readyStats}><strong>6</strong><span>prenotazioni in agenda</span><strong>2</strong><span>già pagate</span></div>
           </div>
+        </div>
+
+        {/* A compact, phone-first version of the final dashboard scene. */}
+        <div className={styles.mobileFinalPreview} aria-hidden="true">
+          <div className={styles.mobileFinalHead}>
+            <span className={styles.mobileFinalLive} />
+            Agenda aggiornata
+            <strong>oggi</strong>
+          </div>
+          <div className={styles.mobileFinalRow}><b>10:30</b><span>Prenotazione acquisita</span><em>✓</em></div>
+          <div className={styles.mobileFinalRow}><b>16:00</b><span>Pagamento visibile</span><em>✓</em></div>
+          <div className={styles.mobileFinalWait}><span>↗</span> Posto libero? Il primo in lista viene avvisato.</div>
         </div>
 
         <div className={`${styles.beat} ${styles.beatHero}`}>
