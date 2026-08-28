@@ -36,6 +36,7 @@ jobs:
       EVENT_NAME: ${{ github.event_name }}
     steps:
       - name: Verifica che l'automazione sia abilitata
+        id: automation_guard
         shell: bash
         run: |
           set -euo pipefail
@@ -47,6 +48,7 @@ jobs:
             fi
           elif [ "$REMINDER_AUTOMATION_ENABLED" != "true" ]; then
             echo "Automazione disattivata: nessun messaggio verra inviato."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -55,7 +57,10 @@ jobs:
             exit 1
           fi
 
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+
       - name: Attendi l'orario corretto in Italia
+        id: rome_time_guard
         if: ${{ github.event_name == 'schedule' }}
         shell: bash
         run: |
@@ -63,10 +68,13 @@ jobs:
           ROME_HOUR=$(TZ=Europe/Rome date +%H)
           if [ "$ROME_HOUR" != "18" ]; then
             echo "Sono le $ROME_HOUR:00 a Roma: questo run e solo quello di riserva per il cambio ora."
+            echo "in_window=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          echo "in_window=true" >> "$GITHUB_OUTPUT"
 
       - name: Avvia il flusso n8n dei promemoria
+        if: ${{ steps.automation_guard.outputs.enabled == 'true' && (github.event_name != 'schedule' || steps.rome_time_guard.outputs.in_window == 'true') }}
         shell: bash
         run: |
           set -euo pipefail
