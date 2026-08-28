@@ -1,18 +1,18 @@
 {
   "date": "2026-08-28",
-  "niche": "Personal Trainer",
-  "feature": "conferme",
-  "feature_label": "Conferme appuntamento",
-  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
-  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
-  "cover_title": "CLIENTI SEMPRE PRESENTI",
-  "hook_hint": "Se sei tra i personal trainer e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Conferme appuntamento con NeatX",
+  "niche": "Centri Estetici",
+  "feature": "booking",
+  "feature_label": "Prenotazione 24 ore su 24",
+  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+  "promise": "clienti che prenotano da soli anche mentre dormi",
+  "cover_title": "DORMI E PRENOTA",
+  "hook_hint": "Se sei tra i centri estetici e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Prenotazione 24 ore su 24 con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
