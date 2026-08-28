@@ -1,0 +1,81 @@
+name: NeatX Waitlist Dispatcher
+
+on:
+  # La versione pubblicata su n8n controllava la lista ogni 15 minuti.
+  # La coda NeatX gestisce claim, tentativi e protezione dai duplicati.
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Controlla il collegamento oppure elabora realmente la lista"
+        required: true
+        default: "check"
+        type: choice
+        options:
+          - check
+          - dispatch
+      confirm:
+        description: "Per elaborare realmente scrivi DISPATCH_WAITLIST"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: neatx-waitlist-dispatch
+  cancel-in-progress: false
+
+jobs:
+  dispatch-waitlist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NEATX_AUTOMATION_TOKEN: ${{ secrets.N8N_REMINDER_WEBHOOK_TOKEN }}
+      MANUAL_MODE: ${{ inputs.mode }}
+      MANUAL_CONFIRMATION: ${{ inputs.confirm }}
+      EVENT_NAME: ${{ github.event_name }}
+
+    steps:
+      - name: Scarica il dispatcher
+        uses: actions/checkout@v7
+
+      - name: Configura Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Verifica modalità
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            echo "dispatch=true" >> "$GITHUB_OUTPUT"
+            echo "check=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$MANUAL_MODE" = "check" ]; then
+            echo "dispatch=false" >> "$GITHUB_OUTPUT"
+            echo "check=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$MANUAL_MODE" != "dispatch" ] || [ "$MANUAL_CONFIRMATION" != "DISPATCH_WAITLIST" ]; then
+            echo "Esecuzione manuale annullata: seleziona dispatch e scrivi DISPATCH_WAITLIST."
+            exit 1
+          fi
+
+          echo "dispatch=true" >> "$GITHUB_OUTPUT"
+          echo "check=false" >> "$GITHUB_OUTPUT"
+
+      - name: Controlla NeatX senza elaborare la lista
+        if: ${{ steps.guard.outputs.check == 'true' }}
+        run: node scripts/waitlist-dispatch.mjs --check
+
+      - name: Elabora la lista d'attesa
+        if: ${{ steps.guard.outputs.dispatch == 'true' }}
+        run: node scripts/waitlist-dispatch.mjs
