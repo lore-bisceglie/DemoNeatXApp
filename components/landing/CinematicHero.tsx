@@ -9,7 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./CinematicHero.module.css";
 
 const REQUESTS = [
-  { label: "Prenotazioni · 24/7", left: "60%", top: "24%" },
+  { label: "Pagina online · 24/7", left: "60%", top: "24%" },
   { label: "Giulia sceglie Colore", left: "72%", top: "39%" },
   { label: "Domani · 10:30", left: "62%", top: "57%" },
   { label: "Pagamento online", left: "75%", top: "72%" },
@@ -24,7 +24,7 @@ const APPOINTMENTS = [
   ["17:30", "Matteo C.", "Taglio + barba", "false"],
 ];
 
-const JOURNEY = ["Scopre", "Sceglie", "Prenota", "Tu lavori"];
+const JOURNEY = ["La tua pagina", "Il cliente sceglie", "Prenota", "Agenda pronta"];
 
 export default function CinematicHero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -74,7 +74,7 @@ export default function CinematicHero() {
       const placeBeat = (element: HTMLElement | null, alpha: number) => {
         if (!element) return;
         const lines = element.querySelectorAll<HTMLElement>(`.${styles.beatLine}`);
-        const supporting = element.querySelectorAll<HTMLElement>(`.${styles.eyebrow}, p, .${styles.actions}, .${styles.proofs}, .${styles.autopilotStrip}`);
+        const supporting = element.querySelectorAll<HTMLElement>(`.${styles.eyebrow}, p, .${styles.actions}`);
         gsap.set(element, { autoAlpha: alpha, y: (1 - alpha) * 28, scale: 0.985 + alpha * 0.015 });
         lines.forEach((line, index) => {
           const lineAlpha = Math.max(0, Math.min(1, (alpha - index * 0.12) / 0.76));
@@ -87,10 +87,10 @@ export default function CinematicHero() {
       gsap.set(requests, { opacity: 0, scale: 0.7 });
       if (isMobile) {
         const mobileRequestPositions = [
-          { left: "5%", top: "58%" },
-          { left: "57%", top: "55%" },
-          { left: "6%", top: "73%" },
-          { left: "58%", top: "70%" },
+          { left: "6%", top: "55%" },
+          { left: "49%", top: "61%" },
+          { left: "8%", top: "72%" },
+          { left: "51%", top: "78%" },
         ];
         requests.forEach((request, index) => gsap.set(request, mobileRequestPositions[index]));
       }
@@ -110,8 +110,8 @@ export default function CinematicHero() {
             root.dataset.chapter = String(progress < .16 ? 0 : progress < .38 ? 1 : progress < .72 ? 2 : 3);
             placeBeat(beatHero, envelope(progress, 0, 0, 0.085, 0.16));
             placeBeat(beatRequests, envelope(progress, 0.14, 0.2, 0.31, 0.37));
-            placeBeat(beatOrder, envelope(progress, 0.36, 0.42, 0.64, 0.72));
-            placeBeat(beatFinal, envelope(progress, 0.66, 0.72, 1.08, 1.18));
+            placeBeat(beatOrder, envelope(progress, 0.36, 0.42, 0.6, 0.67));
+            placeBeat(beatFinal, envelope(progress, 0.71, 0.78, 1.08, 1.18));
           },
         },
       });
@@ -138,20 +138,16 @@ export default function CinematicHero() {
         .to(`.${styles.bookingTicket}`, { opacity: 1, scale: 1, y: 0, duration: 0.34 }, 2.04)
         .to(`.${styles.phone}`, { scale: isMobile ? 0.8 : 0.88, xPercent: isMobile ? 0 : 38, opacity: 0, duration: 0.68 }, 2.12)
         .to(`.${styles.cinematicBackdrop}`, { opacity: 0.13, scale: 1.16, duration: 0.7 }, 2.08)
-        // Reveal the dashboard once at its final visual scale. The previous
-        // overlapping scale(1) -> scale(.5) tweens caused a visible jump on
-        // mobile (and a brief overshoot on desktop).
-        .to(`.${styles.dashboard}`, {
-          opacity: 1,
-          top: isMobile ? "92%" : "51%",
-          xPercent: isMobile ? -50 : -70,
-          yPercent: isMobile ? -50 : -6,
-          scale: isMobile ? 0.78 : 0.72,
-          rotateX: 0,
-          duration: 1.05,
-        }, 2.52)
+        .to(`.${styles.dashboard}`, { opacity: 1, scale: 1, rotateX: 0, yPercent: -6, duration: 0.72 }, 2.52)
         .to(`.${styles.bookingTicket}`, { left: isMobile ? "50%" : "31%", top: isMobile ? "74%" : "68%", scale: 0.42, opacity: 0, duration: 0.66 }, 2.62)
         .to(appointments, { opacity: 1, y: 0, duration: 0.38, stagger: 0.06 }, 2.72)
+        .to(`.${styles.dashboard}`, {
+          top: isMobile ? "72%" : "51%",
+          xPercent: isMobile ? -50 : -70,
+          yPercent: isMobile ? -50 : -6,
+          scale: isMobile ? 0.68 : 0.72,
+          duration: 0.45,
+        }, 2.75)
         .to(`.${styles.chapterFill}`, { scaleX: 1, duration: 4.4, ease: "none" }, 0);
 
       requests.forEach((request, index) => {
@@ -184,7 +180,7 @@ export default function CinematicHero() {
   }, []);
 
   return (
-    <section ref={rootRef} className={styles.film} data-chapter="0" aria-label="NeatX gestisce prenotazioni e agenda mentre lavori">
+    <section ref={rootRef} className={styles.film} data-chapter="0" aria-label="NeatX continua a lavorare mentre la tua attività riposa">
       <div ref={stageRef} className={styles.stage}>
         <div className={styles.aurora} />
         <div className={styles.cinematicBackdrop} aria-hidden="true">
@@ -196,7 +192,7 @@ export default function CinematicHero() {
             sizes="100vw"
             className={styles.cinematicBackdropImage}
           />
-          <div className={styles.closedBadge}><span /> Prenotazioni · 24/7</div>
+          <div className={styles.closedBadge}><span /> Online · 24/7</div>
         </div>
 
         <div className={styles.requests} aria-hidden="true">
@@ -222,7 +218,7 @@ export default function CinematicHero() {
             <div className={`${styles.phoneBooking} ${styles.phoneSuccess}`}>
               <span className={styles.phoneBrand}>Prenotazione salvata ✓</span>
               <strong>È già nella dashboard.</strong>
-              <div><b><MessageCircle size={12} /></b><span>Promemoria programmato</span></div>
+              <div><b><MessageCircle size={12} /></b><span>Invia i dettagli al gestore</span></div>
               <div><b><CalendarPlus size={12} /></b><span>Aggiungi al calendario</span></div>
             </div>
           </div>
@@ -237,7 +233,7 @@ export default function CinematicHero() {
         <div className={styles.dashboard} aria-hidden="true">
           <div className={styles.dashTop}>
             <div className={styles.dashBrand}>Neat<span>X</span></div>
-            <div className={styles.live}>Agenda aggiornata</div>
+            <div className={styles.live}>Giornata pronta</div>
           </div>
           <div className={styles.readyResult}>
             <div className={styles.readyCheck}>✓</div>
@@ -255,79 +251,34 @@ export default function CinematicHero() {
           </div>
         </div>
 
-        {/* A compact, phone-first version of the final dashboard scene. */}
-        <div className={styles.mobileFinalPreview} aria-hidden="true">
-          <div className={styles.mobileFinalHead}>
-            <span className={styles.mobileFinalLive} />
-            Agenda aggiornata
-            <strong>oggi</strong>
-          </div>
-          <div className={styles.mobileFinalRow}><b>10:30</b><span>Prenotazione acquisita</span><em>✓</em></div>
-          <div className={styles.mobileFinalRow}><b>16:00</b><span>Pagamento visibile</span><em>✓</em></div>
-          <div className={styles.mobileFinalWait}><span>↗</span> Posto libero? Il primo in lista viene avvisato.</div>
-        </div>
-
         <div className={`${styles.beat} ${styles.beatHero}`}>
-          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · Agenda online senza commissioni</div>
-          <h1><span className={styles.beatLine}>Meno telefonate.</span><span className={`${styles.beatLine} ${styles.accent}`}>Più tempo per i clienti.</span></h1>
-          <p>Prenotazioni, promemoria e lista d&apos;attesa lavorano mentre tu sei con chi hai davanti.</p>
+          <div className={styles.eyebrow}><span className={styles.brandWord}>Neat<span>X</span></span> · Più tempo per ciò che conta</div>
+          <h1><span className={styles.beatLine}>Più tempo per</span><span className={`${styles.beatLine} ${styles.accent}`}>il tuo lavoro.</span></h1>
+          <p>I clienti prenotano in autonomia, mentre tu resti concentrato sulle persone che hai davanti.</p>
           <div className={styles.actions}>
-            <Link href="/registrazione" className={styles.primary}>Crea la tua pagina gratis <ArrowRight size={17} /></Link>
-            <Link href="/t/demo-neatx" className={styles.secondary}>Guarda una demo reale</Link>
-          </div>
-          <div className={styles.proofs} aria-label="Condizioni della prova">
-            <span>14 giorni gratis</span>
-            <span>0% commissioni</span>
-            <span>Nessuna carta</span>
-          </div>
-          <div className={styles.autopilotStrip} aria-label="Attività automatizzate da NeatX">
-            <div className={styles.autopilotStatus}>
-              <span className={styles.liveDot} />
-              <small>NeatX è al lavoro</small>
-              <strong>Tu puoi restare con i clienti</strong>
-            </div>
-            <div className={styles.autopilotEvent}>
-              <small>Adesso</small>
-              <strong>Prenotazione acquisita</strong>
-              <span>Senza telefonata</span>
-            </div>
-            <div className={styles.autopilotEvent}>
-              <small>In automatico</small>
-              <strong>Promemoria programmato</strong>
-              <span>Cliente già in agenda</span>
-            </div>
-            <div className={styles.autopilotEvent}>
-              <small>Posto liberato</small>
-              <strong>Lista d&apos;attesa avvisata</strong>
-              <span>Nessun buco dimenticato</span>
-            </div>
+            <Link href="/registrazione" className={styles.primary}>Crea la tua pagina <ArrowRight size={17} /></Link>
+            <Link href="/t/demo-neatx" className={styles.secondary}>Guardala dal vivo</Link>
           </div>
         </div>
 
         <div className={`${styles.beat} ${styles.beatRequests}`}>
-          <div className={styles.eyebrow}>Quando vuole, senza chiamare</div>
-          <h2><span className={styles.beatLine}>Il cliente trova</span><span className={`${styles.beatLine} ${styles.accent}`}>il suo posto da solo.</span></h2>
-          <p>Vede servizi, prezzi e disponibilità reali. Sceglie in pochi secondi, anche quando sei occupato.</p>
-          <div className={styles.slideProofs}><span>Servizi sempre aggiornati</span><span>Disponibilità reale</span><span>24/7</span></div>
-          <div className={styles.slideMiniCard}><span className={styles.miniDot} /><div><b>Pagina sempre aperta</b><small>Il cliente prenota anche mentre sei occupato.</small></div></div>
+          <div className={styles.eyebrow}>Quando è comodo per il cliente</div>
+          <h2><span className={styles.beatLine}>Trova il momento</span><span className={`${styles.beatLine} ${styles.accent}`}>giusto per sé.</span></h2>
+          <p>Consulta servizi, disponibilità e prezzi. Sceglie senza chiamare e senza dover aspettare.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatOrder}`}>
-          <div className={styles.eyebrow}>Una prenotazione, zero passaggi a mano</div>
-          <h2><span className={styles.beatLine}>Prenota.</span><span className={`${styles.beatLine} ${styles.accent}`}>L&apos;agenda si aggiorna.</span></h2>
-          <p>Orario, servizio, professionista e pagamento finiscono subito al posto giusto.</p>
-          <div className={styles.slideProofs}><span>Orario bloccato</span><span>Pagamento visibile</span><span>Nessun doppio inserimento</span></div>
-          <div className={styles.slideMiniCard}><span className={styles.miniDot} /><div><b>Agenda aggiornata</b><small>Nuova prenotazione acquisita <em>Nuovo</em></small></div></div>
+          <div className={styles.eyebrow}>Tutto al posto giusto</div>
+          <h2><span className={styles.beatLine}>Il cliente prenota.</span><span className={`${styles.beatLine} ${styles.accent}`}>NeatX fa ordine.</span></h2>
+          <p>Il cliente può inviarti i dettagli o salvarli nel suo calendario. Tu trovi subito lo slot in dashboard.</p>
         </div>
 
         <div className={`${styles.beat} ${styles.beatFinal}`}>
-          <div className={styles.eyebrow}>Il risultato che conta</div>
-          <h2><span className={styles.beatLine}>Meno buchi.</span><span className={`${styles.beatLine} ${styles.accent}`}>Più controllo.</span></h2>
-          <p>Promemoria automatici, lista d&apos;attesa e turni del team tengono l&apos;agenda piena e aggiornata.</p>
-          <div className={styles.slideProofs}><span>Promemoria automatici</span><span>Lista d&apos;attesa attiva</span><span>Team sincronizzato</span></div>
-          <div className={styles.slideMiniCard}><span className={styles.miniDot} /><div><b>Un posto si libera?</b><small>NeatX avvisa automaticamente il primo in lista.</small></div></div>
+          <div className={styles.eyebrow}>La tua giornata, più semplice</div>
+          <h2><span className={styles.beatLine}>Tu inizi.</span><span className={`${styles.beatLine} ${styles.accent}`}>L’agenda è già pronta.</span></h2>
+          <p>Orari, clienti, servizi e pagamenti visibili in un colpo d’occhio. Più chiarezza, fin dal primo appuntamento.</p>
           <div className={styles.actions}>
-            <Link href="/registrazione" className={styles.primary}>Inizia gratis per 14 giorni <ArrowRight size={17} /></Link>
+            <Link href="/registrazione" className={styles.primary}>Prova gratis 14 giorni <ArrowRight size={17} /></Link>
           </div>
         </div>
 
@@ -338,7 +289,7 @@ export default function CinematicHero() {
         <div className={styles.scrollCue} aria-hidden="true">
           <span className={styles.scrollCueDot} />
           Scorri per scoprire
-          <b className={styles.scrollCueCount}>4 momenti</b>
+          <b className={styles.scrollCueCount}>4 scene</b>
         </div>
       </div>
     </section>

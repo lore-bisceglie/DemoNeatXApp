@@ -5,7 +5,7 @@
   --film-mint: #31f7c5;
   position: relative;
   z-index: 10;
-  height: 420svh;
+  height: 500svh;
   color: white;
   background: var(--film-ink);
   isolation: isolate;
@@ -684,8 +684,6 @@
 .appointmentPaid strong,
 .appointmentPaid span { color: #6ee7b7; }
 
-.mobileFinalPreview { display: none; }
-
 .summary {
   display: grid;
   align-content: center;
@@ -720,59 +718,6 @@
 .beatHero,
 .beatRequests,
 .beatOrder { isolation: isolate; }
-
-.beatHero {
-  left: clamp(24px, 7vw, 112px);
-  right: auto;
-  top: clamp(118px, 15vh, 154px);
-  width: min(46vw, 650px);
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  transform-origin: left center;
-}
-
-.beatHero .eyebrow,
-.beatHero .actions,
-.beatHero .proofs {
-  justify-content: flex-start;
-}
-
-.beatHero .eyebrow::after {
-  content: "";
-  width: 42px;
-  height: 1px;
-  background: currentColor;
-  box-shadow: 0 0 10px currentColor;
-}
-
-.beatHero h1 {
-  max-width: 650px;
-  font-size: clamp(3.35rem, 5.2vw, 6rem);
-}
-
-.beatHero p {
-  max-width: 535px;
-}
-
-.beatHero .autopilotStrip {
-  width: min(820px, calc(100vw - 48px));
-  grid-template-columns: 1.18fr repeat(3, 1fr);
-  margin-top: 14px;
-  transform: scale(.82);
-  transform-origin: left top;
-}
-
-.beatHero .autopilotStatus {
-  grid-column: auto;
-}
-
-.beatHero .autopilotStrip > div {
-  min-height: 58px;
-  padding: 10px 13px;
-}
 
 .beat:not(.beatHero) { opacity: 0; }
 
@@ -825,165 +770,12 @@
   text-shadow: none;
 }
 
-.slideProofs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 24px;
-  max-width: 620px;
-}
-
-.slideProofs span {
-  padding: 9px 12px;
-  border: 1px solid rgba(103, 232, 249, .24);
-  border-radius: 999px;
-  color: rgba(224, 247, 255, .9);
-  background: rgba(6, 25, 42, .65);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .03em;
-}
-
-.slideProofs span::before {
-  content: "✓";
-  margin-right: 6px;
-  color: var(--film-mint);
-}
-
-.slideMiniCard {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: min(430px, 100%);
-  margin-top: 18px;
-  padding: 13px 15px;
-  border: 1px solid rgba(103, 232, 249, .2);
-  border-radius: 14px;
-  background: linear-gradient(110deg, rgba(6, 31, 48, .82), rgba(4, 14, 27, .58));
-  box-shadow: 0 14px 35px rgba(0,0,0,.18);
-}
-
-.miniDot {
-  width: 9px;
-  height: 9px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--film-mint);
-  box-shadow: 0 0 14px rgba(49,247,197,.8);
-}
-
-.slideMiniCard b,
-.slideMiniCard small { display: block; }
-.slideMiniCard b { color: #e9fbff; font-size: 11px; }
-.slideMiniCard small { margin-top: 4px; color: rgba(188, 211, 225, .78); font-size: 10px; line-height: 1.35; }
-.slideMiniCard em { margin-left: 6px; color: var(--film-mint); font-style: normal; font-weight: 900; }
-
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 32px;
   pointer-events: auto;
-}
-
-.proofs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px 18px;
-  margin-top: 18px;
-  color: rgba(226, 232, 240, .82);
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-}
-
-.proofs span {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.proofs span::before {
-  content: "✓";
-  color: var(--film-mint);
-  font-size: 11px;
-  text-shadow: 0 0 12px rgba(49, 247, 197, .45);
-}
-
-.autopilotStrip {
-  width: min(1040px, calc(100vw - 48px));
-  display: grid;
-  grid-template-columns: 1.18fr repeat(3, 1fr);
-  gap: 1px;
-  margin-top: clamp(22px, 3.2vh, 34px);
-  overflow: hidden;
-  border: 1px solid rgba(103, 232, 249, .24);
-  border-radius: 18px;
-  background: rgba(103, 232, 249, .13);
-  box-shadow: 0 26px 80px rgba(0, 0, 0, .34), 0 0 56px rgba(0, 180, 255, .09);
-  backdrop-filter: blur(18px);
-}
-
-.autopilotStrip > div {
-  min-width: 0;
-  min-height: 82px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 15px 18px;
-  text-align: left;
-  background: rgba(3, 11, 23, .83);
-}
-
-.autopilotStrip small {
-  color: #67e8f9;
-  font-size: 8px;
-  font-weight: 950;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-}
-
-.autopilotStrip strong {
-  margin-top: 7px;
-  color: #f8fafc;
-  font-size: 11px;
-  line-height: 1.25;
-}
-
-.autopilotStrip span:not(.liveDot) {
-  margin-top: 5px;
-  color: rgba(203, 213, 225, .68);
-  font-size: 9px;
-  font-weight: 700;
-}
-
-.autopilotStatus {
-  position: relative;
-  padding-left: 48px !important;
-  background:
-    radial-gradient(circle at 14% 50%, rgba(49, 247, 197, .15), transparent 24%),
-    rgba(3, 18, 27, .92) !important;
-}
-
-.liveDot {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  width: 11px;
-  height: 11px;
-  transform: translateY(-50%);
-  border: 2px solid rgba(49, 247, 197, .42);
-  border-radius: 50%;
-  background: var(--film-mint);
-  box-shadow: 0 0 0 7px rgba(49, 247, 197, .07), 0 0 24px rgba(49, 247, 197, .62);
-  animation: livePulse 1.8s ease-in-out infinite;
-}
-
-@keyframes livePulse {
-  0%, 100% { transform: translateY(-50%) scale(.82); opacity: .65; }
-  50% { transform: translateY(-50%) scale(1); opacity: 1; }
 }
 
 .primary,
@@ -1164,32 +956,12 @@
 }
 
 @media (max-width: 760px) {
-  /* Keep the cinematic sequence readable on narrow screens: the copy owns
-     the upper half, while the product previews stay in a reserved lower
-     zone instead of covering the message or the chapter rail. */
-  .film { height: 500svh; }
-  .stage { min-height: 100svh; }
   .cinematicBackdropImage { object-position: 64% center; }
   .cinematicBackdrop::after { background: linear-gradient(180deg, rgba(2,8,18,.22), rgba(2,8,18,.08) 45%, rgba(2,8,18,.48)); }
   .closedBadge { right: 14px; bottom: 72px; padding: 8px 11px; font-size: 8px; }
   .beat { top: 92px; left: 20px; width: calc(100vw - 40px); padding: 0; }
-  .beatHero { left: 0; top: 78px; width: 100%; padding: 0 20px; text-align: left; align-items: flex-start; }
-  .beatHero .eyebrow, .beatHero .actions, .beatHero .proofs { justify-content: flex-start; }
-  .beatHero .eyebrow::after { display: none; }
-  .beatHero h1 { font-size: clamp(2.55rem, 12vw, 3.7rem); }
-  .autopilotStrip { width: 100%; grid-template-columns: 1fr 1fr; margin-top: 13px; border-radius: 14px; }
-  .autopilotStrip > div { min-height: 54px; padding: 9px 10px; }
-  .autopilotStatus { grid-column: 1 / -1; min-height: 52px !important; padding-left: 39px !important; }
-  .liveDot { left: 17px; }
-  .autopilotStrip strong { margin-top: 4px; font-size: 8px; line-height: 1.2; overflow-wrap: normal; word-break: normal; }
-  .autopilotStrip span:not(.liveDot) { margin-top: 2px; font-size: 7px; line-height: 1.2; overflow-wrap: normal; word-break: normal; }
   .beat h1, .beat h2 { font-size: clamp(2.35rem, 11.4vw, 3.35rem); line-height: .94; letter-spacing: -.045em; }
   .beat p { max-width: 100%; margin-top: 16px; font-size: .93rem; line-height: 1.45; }
-  .slideProofs { gap: 6px; margin-top: 16px; }
-  .slideProofs span { padding: 7px 9px; font-size: 8px; }
-  .slideMiniCard { margin-top: 13px; padding: 10px 12px; }
-  .slideMiniCard b { font-size: 9px; }
-  .slideMiniCard small { font-size: 8px; }
   .eyebrow { gap: 8px; margin-bottom: 14px; font-size: 8px; letter-spacing: .18em; }
   .eyebrow::before { width: 28px; }
   .beatFinal { left: 20px; right: auto; text-align: left; }
@@ -1197,57 +969,25 @@
   .beatFinal .eyebrow, .beatFinal .actions { justify-content: flex-start; }
   .beatFinal .eyebrow::after { display: none; }
   .beatFinal .eyebrow::before { display: block; }
-  .journey { bottom: 11px; width: calc(100vw - 118px); gap: 4px; }
+  .journey { bottom: 16px; width: calc(100vw - 144px); gap: 4px; }
   .journeyStep span { display: none; }
   .journeyStep { align-items: center; }
   .journeyTrack { bottom: -6px; }
   .scrollCue { display: none; }
-  .request { min-width: 0; max-width: 39vw; padding: 7px 9px 7px 7px; font-size: 7px; white-space: nowrap; }
-  .phone { left: 50%; top: 73%; width: min(158px, 41vw); border-radius: 26px; padding: 5px; }
+  .request { min-width: 0; max-width: 46vw; padding: 8px 10px 8px 8px; font-size: 8px; white-space: nowrap; }
+  .phone { left: 50%; top: 70%; width: min(184px, 48vw); border-radius: 28px; padding: 6px; }
   .phoneScreen { border-radius: 22px; }
   .phoneBooking { inset: 13% 8% 7%; gap: 7px; }
   .phoneBooking > strong { margin: 5px 0 2px; font-size: 14px; }
   .phoneBooking > div { gap: 6px; padding: 7px 6px; font-size: 8px; }
   .phoneBooking button { padding: 8px 4px; font-size: 8px; }
-  .bookingTicket { left: 50%; top: 64%; width: min(190px, 52vw); transform: translateX(-50%); padding: 12px 14px; }
+  .bookingTicket { left: 50%; top: 65%; width: min(210px, 56vw); transform: translateX(-50%); }
   .tunnelCore { width: 108vw; min-height: 56vh; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 20px; }
   .agendaHead { margin-bottom: 4px; padding-bottom: 12px; }
   .agendaHead strong { font-size: 8px; }
   .slot { min-height: 72px; padding: 10px; }
   .agendaConfirmed { bottom: 12px; padding: 8px 12px; font-size: 8px; }
-  /* On a phone the full dashboard is too tall to coexist with the final
-     story, its proof pills and CTA. Desktop keeps the full view; mobile gets
-     a dedicated compact agenda placed in the free lower portion of the scene. */
-  .dashboard { display: none; }
-  .mobileFinalPreview {
-    position: absolute;
-    z-index: 22;
-    left: 96px;
-    right: 18px;
-    bottom: 62px;
-    display: grid;
-    gap: 5px;
-    padding: 10px;
-    border: 1px solid rgba(103,232,249,.28);
-    border-radius: 15px;
-    color: #e2f8ff;
-    background: linear-gradient(145deg, rgba(5,22,38,.93), rgba(4,12,27,.9));
-    box-shadow: 0 16px 42px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.07);
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity .25s ease, transform .25s ease;
-    pointer-events: none;
-  }
-  .film[data-chapter="3"] .mobileFinalPreview { opacity: 1; transform: translateY(0); }
-  .mobileFinalHead { display: flex; align-items: center; gap: 6px; color: #67e8f9; font-size: 8px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
-  .mobileFinalHead strong { margin-left: auto; color: rgba(226,232,240,.64); font-size: 7px; }
-  .mobileFinalLive { width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; }
-  .mobileFinalRow { display: grid; grid-template-columns: 38px 1fr 13px; align-items: center; gap: 6px; min-height: 21px; padding: 4px 6px; border: 1px solid rgba(255,255,255,.07); border-radius: 8px; background: rgba(255,255,255,.025); font-size: 8px; }
-  .mobileFinalRow b { color: #67e8f9; font-size: 8px; }
-  .mobileFinalRow span { color: rgba(226,232,240,.88); font-weight: 750; }
-  .mobileFinalRow em { color: #6ee7b7; font-size: 10px; font-style: normal; }
-  .mobileFinalWait { display: flex; align-items: center; gap: 6px; color: rgba(226,232,240,.76); font-size: 7px; font-weight: 700; line-height: 1.25; }
-  .mobileFinalWait span { color: #a78bfa; font-size: 11px; }
+  .dashboard { top: 54%; width: 96vw; min-height: 48vh; }
   .readyResult { min-height: 46vh; grid-template-columns: 48px 1fr; grid-template-areas: "check copy" "schedule schedule"; gap: 10px; padding: 18px 14px; }
   .readyCheck { width: 52px; height: 52px; font-size: 28px; }
   .readyCopy h3 { font-size: 1.7rem; }
@@ -1256,35 +996,19 @@
   .readyStats { display: none; }
   .dashBody { grid-template-columns: 1fr; }
   .summary { display: none; }
-  .calendar { min-height: 270px; }
+  .calendar { min-height: 330px; }
   .appointment { min-height: 58px; padding: 8px; }
   .actions { gap: 8px; margin-top: 21px; }
-  .proofs { gap: 7px 12px; margin-top: 12px; font-size: 8px; letter-spacing: .06em; }
   .primary, .secondary { min-height: 44px; padding: 0 14px; font-size: 11px; }
-  .beatHero .autopilotStrip { margin-top: 11px; }
-  .beatRequests, .beatOrder, .beatFinal { max-width: calc(100vw - 32px); }
-  /* The final chapter keeps its copy in the upper half; its dedicated mobile
-     agenda uses the free lower area, away from the CTA and progress rail. */
-  .beatFinal h2 { font-size: clamp(2.2rem, 10.2vw, 3rem); }
-  .beatFinal p { margin-top: 11px; font-size: .86rem; line-height: 1.38; }
-  .beatFinal .slideProofs { margin-top: 10px; }
-  .beatFinal .slideMiniCard { margin-top: 9px; }
-  .beatFinal .slideMiniCard { max-width: 100%; }
-  .beatFinal .actions { position: relative; z-index: 60; margin-top: 17px; }
 }
 
 @media (max-width: 420px) and (max-height: 760px) {
   .beat { top: 76px; }
-  .beatHero { top: 68px; }
   .beat h1, .beat h2 { font-size: clamp(2.1rem, 10.5vw, 2.8rem); }
   .beat p { margin-top: 12px; font-size: .86rem; }
   .actions { margin-top: 16px; }
-  .autopilotStrip { margin-top: 12px; }
-  .autopilotStrip > div { min-height: 54px; padding: 8px 10px; }
-  .autopilotStatus { grid-column: 1 / -1; padding-left: 38px !important; }
-  .liveDot { left: 14px; }
   .primary, .secondary { min-height: 40px; }
-  .phone { top: 74%; width: min(148px, 40vw); }
+  .phone { top: 72%; width: min(164px, 44vw); }
   .journey { bottom: 13px; }
 }
 
@@ -1294,7 +1018,7 @@
   .requests, .phone, .tunnel, .dashboard, .beat:not(.beatHero), .journey { display: none; }
   .film:not([data-motion="full"]) .cinematicBackdrop { transform: none !important; opacity: .82 !important; }
 
-  .film[data-motion="full"] { height: 420svh !important; }
+  .film[data-motion="full"] { height: 500svh !important; }
   .film[data-motion="full"] .requests,
   .film[data-motion="full"] .phone,
   .film[data-motion="full"] .tunnel,
