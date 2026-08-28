@@ -1,11 +1,11 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # GitHub Actions usa UTC: eseguiamo alle 16:00 e 17:00 UTC e il job
-  # procede solo alle 18:00 Europe/Rome, quindi gestisce automaticamente DST.
-  # L'invio è unico ogni giorno, la sera prima dell'appuntamento.
+  # GitHub Actions usa UTC: proviamo più volte nella finestra delle 18:00
+  # italiane (16:00/17:00 UTC, ogni 15 minuti) per tollerare ritardi del runner.
+  # Il controllo sotto lascia passare una sola esecuzione, gestendo anche DST.
   schedule:
-    - cron: "0 16,17 * * *"
+    - cron: "0,15,30,45 16,17 * * *"
   workflow_dispatch:
     inputs:
       date:
