@@ -1,10 +1,11 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # Primo tentativo alle 18:00 italiane e tre tentativi di riserva. La coda
-  # NeatX è idempotente: soltanto il primo run trova promemoria da inviare.
+  # Primo tentativo alle 18:00 italiane e controlli di riserva ogni 5 minuti.
+  # GitHub può ritardare i cron; la coda NeatX è idempotente, quindi soltanto
+  # il primo run effettivo trova promemoria da inviare.
   schedule:
-    - cron: "0,15,30,45 18 * * *"
+    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 18 * * *"
       timezone: "Europe/Rome"
   workflow_dispatch:
     inputs:
