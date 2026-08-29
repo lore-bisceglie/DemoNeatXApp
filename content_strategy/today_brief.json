@@ -1,18 +1,18 @@
 {
-  "date": "2026-08-28",
-  "niche": "Centri Estetici",
+  "date": "2026-08-29",
+  "niche": "Parrucchieri",
   "feature": "recensioni",
   "feature_label": "Recensioni Automatiche",
   "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
   "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "CLIENTI ZITTI PERCHÉ?",
-  "hook_hint": "Se sei tra i centri estetici e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: Recensioni Automatiche con NeatX",
-  "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "cover_title": "RECENSIONI CLIENTI REALI",
+  "hook_hint": "Se sei tra i parrucchieri e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Parrucchieri: Recensioni Automatiche con NeatX",
+  "gameplay_style": "neon_racer",
+  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "gestionale parrucchieri",
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }
