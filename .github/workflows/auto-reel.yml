@@ -3,6 +3,7 @@ on:
   schedule:
     # 14:19 e 20:19 Europe/Rome
     - cron: '19 12,18 * * *'
+      timezone: 'Europe/Rome'
   workflow_dispatch:
 concurrency:
   group: neatx-auto-reel
