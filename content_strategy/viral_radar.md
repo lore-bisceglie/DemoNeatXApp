@@ -1,12 +1,12 @@
 # NeatX Viral Radar
 
-Generato: 2026-08-28T21:54:48.704870+02:00
+Generato: 2026-08-29T15:39:07.553519+02:00
 
 ## Idea 1: Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?
 - format: pain shock
 - niche: Centri Estetici
 - hook: Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche.
+- angle: Mostra quanto costa davvero telefono che squilla tutto il giorno e messaggi senza fine.
 - cta: Commenta AGENDA e ti mando il link.
 
 ## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
