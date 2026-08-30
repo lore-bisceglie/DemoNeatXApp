@@ -201,11 +201,14 @@ async function refreshTelegramCommands() {
   if (!botToken) return;
 
   try {
-    await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+    const response = await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ commands: getTelegramCommands() }),
     });
+    if (!response.ok) {
+      console.error("[Telegram] Menu comandi non aggiornato:", response.status);
+    }
   } catch (error) {
     console.error("[Telegram] Impossibile aggiornare il menu comandi:", error);
   }

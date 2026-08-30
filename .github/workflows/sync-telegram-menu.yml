@@ -1,0 +1,59 @@
+name: Sync Telegram Admin Menu
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-menu:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+    steps:
+      - name: Aggiorna il menu nativo del bot Telegram
+        shell: python
+        run: |
+          import json
+          import os
+          import urllib.request
+
+          token = os.environ.get("TELEGRAM_BOT_TOKEN")
+          if not token:
+              raise RuntimeError("TELEGRAM_BOT_TOKEN non configurato")
+
+          commands = [
+              {"command": "azioni", "description": "Apri tutte le Actions"},
+              {"command": "agenti", "description": "Avvia gli agenti NeatX"},
+              {"command": "controllo", "description": "Controlla salute e build sito"},
+              {"command": "report", "description": "Genera il report giornaliero"},
+              {"command": "promemoria", "description": "Controlla coda promemoria"},
+              {"command": "calendario", "description": "Aggiorna calendario contenuti"},
+              {"command": "radar", "description": "Avvia il radar virale"},
+              {"command": "concorrenti", "description": "Analizza i concorrenti"},
+              {"command": "pipeline", "description": "Aggiorna pipeline lead"},
+              {"command": "seo", "description": "Avvia SEO blog"},
+              {"command": "post", "description": "Prepara/pubblica un post"},
+              {"command": "reel", "description": "Crea un Reel"},
+              {"command": "stats", "description": "Statistiche NeatX"},
+              {"command": "ultimi", "description": "Ultimi 3 negozi iscritti"},
+              {"command": "cerca", "description": "Cerca un negozio"},
+              {"command": "entra", "description": "Crea login assistenza"},
+              {"command": "agents", "description": "Stato agenti AI"},
+              {"command": "lead", "description": "Ultimi contatti ricevuti"},
+              {"command": "aiuto", "description": "Guida ai comandi"},
+          ]
+
+          payload = json.dumps({"commands": commands}).encode()
+          request = urllib.request.Request(
+              f"https://api.telegram.org/bot{token}/setMyCommands",
+              data=payload,
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          with urllib.request.urlopen(request, timeout=20) as response:
+              result = json.load(response)
+          if not result.get("ok"):
+              raise RuntimeError("Telegram ha rifiutato l'aggiornamento del menu")
+          print(f"Menu Telegram aggiornato: {len(commands)} comandi")
