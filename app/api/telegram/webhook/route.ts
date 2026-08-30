@@ -107,9 +107,34 @@ const ACTION_GROUPS = {
   publish: { title: "📣 <b>Pubblicazione</b>", button: "📣 Pubblicazione" },
 } as const;
 
+const ACTION_COMMANDS: Record<string, string> = {
+  "/agenti": "agents",
+  "/controllo": "health",
+  "/report": "report",
+  "/promemoria": "reminders-check",
+  "/calendario": "calendar",
+  "/radar": "radar",
+  "/concorrenti": "competitors",
+  "/pipeline": "leads",
+  "/seo": "seo",
+  "/post": "post",
+  "/reel": "reel",
+};
+
 function getTelegramCommands() {
   return [
-    { command: "azioni", description: "Apri il pannello delle Actions" },
+    { command: "azioni", description: "Apri tutte le Actions" },
+    { command: "agenti", description: "Avvia gli agenti NeatX" },
+    { command: "controllo", description: "Controlla salute e build sito" },
+    { command: "report", description: "Genera il report giornaliero" },
+    { command: "promemoria", description: "Controlla coda promemoria" },
+    { command: "calendario", description: "Aggiorna calendario contenuti" },
+    { command: "radar", description: "Avvia il radar virale" },
+    { command: "concorrenti", description: "Analizza i concorrenti" },
+    { command: "pipeline", description: "Aggiorna pipeline lead" },
+    { command: "seo", description: "Avvia SEO blog" },
+    { command: "post", description: "Prepara/pubblica un post" },
+    { command: "reel", description: "Crea un Reel" },
     { command: "stats", description: "Statistiche NeatX" },
     { command: "ultimi", description: "Ultimi 3 negozi iscritti" },
     { command: "cerca", description: "Cerca un negozio" },
@@ -152,6 +177,23 @@ function actionsHomeText() {
 
 function findAction(id: string) {
   return TELEGRAM_ACTIONS.find((action) => action.id === id);
+}
+
+function actionConfirmationText(action: TelegramAction) {
+  return (
+    `⚠️ <b>Conferma avvio</b>\n\n` +
+    `<b>${escapeHtml(action.label)}</b>\n${escapeHtml(action.description)}\n\n` +
+    "Vuoi avviarla ora su GitHub Actions?"
+  );
+}
+
+function actionConfirmationKeyboard(action: TelegramAction) {
+  return {
+    inline_keyboard: [
+      [{ text: "✅ Avvia ora", callback_data: `actions:run:${action.id}` }],
+      [{ text: "← Indietro", callback_data: `actions:group:${action.group}` }],
+    ],
+  };
 }
 
 async function refreshTelegramCommands() {
@@ -364,15 +406,8 @@ export async function POST(req: Request) {
           await editMessageText(
             chatId,
             messageId,
-            `⚠️ <b>Conferma avvio</b>\n\n` +
-              `<b>${escapeHtml(action.label)}</b>\n${escapeHtml(action.description)}\n\n` +
-              "Vuoi avviarla ora su GitHub Actions?",
-            {
-              inline_keyboard: [
-                [{ text: "✅ Avvia ora", callback_data: `actions:run:${action.id}` }],
-                [{ text: "← Indietro", callback_data: `actions:group:${action.group}` }],
-              ],
-            }
+            actionConfirmationText(action),
+            actionConfirmationKeyboard(action)
           );
         }
       } else if (data.startsWith("actions:run:")) {
@@ -423,8 +458,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      if (text === "/azioni" || text === "/actions") {
-        await refreshTelegramCommands();
+      await refreshTelegramCommands();
+      const action = findAction(ACTION_COMMANDS[text] || "");
+
+      if (action) {
+        await sendTelegramMessage(actionConfirmationText(action), actionConfirmationKeyboard(action));
+      } else if (text === "/azioni" || text === "/actions") {
         await sendTelegramMessage(actionsHomeText(), actionsHomeKeyboard());
       } else if (text === "/stats") {
         const [
