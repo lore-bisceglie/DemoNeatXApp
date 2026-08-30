@@ -9,6 +9,194 @@ const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "neatx.store";
 const WHATSAPP_ACTIVE_NOTE =
   "🔔 Promemoria WhatsApp: attivi per negozi paganti o in prova, inviati dal numero centrale NeatX. Il messaggio scala 1 credito; se il saldo del negozio è a zero, il promemoria viene saltato.";
 
+const GITHUB_REPOSITORY = "lore-bisceglie/DemoNeatXApp";
+
+type TelegramAction = {
+  id: string;
+  workflow: string;
+  label: string;
+  description: string;
+  group: "ops" | "growth" | "publish";
+  inputs?: Record<string, string>;
+};
+
+const TELEGRAM_ACTIONS: TelegramAction[] = [
+  {
+    id: "agents",
+    workflow: "auto-neatx-agents.yml",
+    label: "Agenti NeatX",
+    description: "Aggiorna gli agenti e la loro lavagna operativa.",
+    group: "ops",
+  },
+  {
+    id: "health",
+    workflow: "auto-build-health.yml",
+    label: "Controllo salute sito",
+    description: "Esegue lint, build e controllo del sito in produzione.",
+    group: "ops",
+  },
+  {
+    id: "report",
+    workflow: "auto-daily-report.yml",
+    label: "Report giornaliero",
+    description: "Genera subito il riepilogo Telegram della giornata.",
+    group: "ops",
+  },
+  {
+    id: "reminders-check",
+    workflow: "reminders-dispatch.yml",
+    label: "Controlla promemoria",
+    description: "Verifica coda e collegamenti senza inviare WhatsApp.",
+    group: "ops",
+    inputs: { mode: "check" },
+  },
+  {
+    id: "calendar",
+    workflow: "auto-content-calendar.yml",
+    label: "Calendario contenuti",
+    description: "Aggiorna il calendario e la strategia editoriale.",
+    group: "growth",
+  },
+  {
+    id: "radar",
+    workflow: "auto-viral-radar.yml",
+    label: "Radar virale",
+    description: "Cerca e registra idee e trend da usare nei contenuti.",
+    group: "growth",
+  },
+  {
+    id: "competitors",
+    workflow: "auto-competitor-spy.yml",
+    label: "Analizza concorrenti",
+    description: "Aggiorna il monitoraggio dei concorrenti.",
+    group: "growth",
+  },
+  {
+    id: "leads",
+    workflow: "auto-lead-pipeline.yml",
+    label: "Pipeline lead",
+    description: "Aggiorna la pipeline commerciale e le priorità.",
+    group: "growth",
+  },
+  {
+    id: "seo",
+    workflow: "auto-seo.yml",
+    label: "SEO blog",
+    description: "Genera e pubblica un nuovo contenuto SEO quando previsto.",
+    group: "growth",
+  },
+  {
+    id: "post",
+    workflow: "auto-post.yml",
+    label: "Pubblica post",
+    description: "Può pubblicare un contenuto sui canali collegati.",
+    group: "publish",
+  },
+  {
+    id: "reel",
+    workflow: "auto-reel.yml",
+    label: "Crea Reel",
+    description: "Genera il Reel e può eseguire le azioni social previste.",
+    group: "publish",
+  },
+];
+
+const ACTION_GROUPS = {
+  ops: { title: "🛠️ <b>Gestione e controlli</b>", button: "🛠️ Gestione e controlli" },
+  growth: { title: "📈 <b>Crescita e contenuti</b>", button: "📈 Crescita e contenuti" },
+  publish: { title: "📣 <b>Pubblicazione</b>", button: "📣 Pubblicazione" },
+} as const;
+
+function getTelegramCommands() {
+  return [
+    { command: "azioni", description: "Apri il pannello delle Actions" },
+    { command: "stats", description: "Statistiche NeatX" },
+    { command: "ultimi", description: "Ultimi 3 negozi iscritti" },
+    { command: "cerca", description: "Cerca un negozio" },
+    { command: "entra", description: "Crea login assistenza" },
+    { command: "agents", description: "Stato agenti AI" },
+    { command: "lead", description: "Ultimi contatti ricevuti" },
+    { command: "aiuto", description: "Guida ai comandi" },
+  ];
+}
+
+function actionsHomeKeyboard() {
+  return {
+    inline_keyboard: [
+      [
+        { text: ACTION_GROUPS.ops.button, callback_data: "actions:group:ops" },
+        { text: ACTION_GROUPS.growth.button, callback_data: "actions:group:growth" },
+      ],
+      [{ text: ACTION_GROUPS.publish.button, callback_data: "actions:group:publish" }],
+    ],
+  };
+}
+
+function actionsGroupKeyboard(group: TelegramAction["group"]) {
+  return {
+    inline_keyboard: [
+      ...TELEGRAM_ACTIONS.filter((action) => action.group === group).map((action) => [
+        { text: `▶️ ${action.label}`, callback_data: `actions:confirm:${action.id}` },
+      ]),
+      [{ text: "← Tutte le Actions", callback_data: "actions:home" }],
+    ],
+  };
+}
+
+function actionsHomeText() {
+  return (
+    "🎛️ <b>NeatX Actions</b>\n\n" +
+    "Scegli un'area. Ogni avvio richiede una seconda conferma: le Actions che pubblicano contenuti non partono per errore."
+  );
+}
+
+function findAction(id: string) {
+  return TELEGRAM_ACTIONS.find((action) => action.id === id);
+}
+
+async function refreshTelegramCommands() {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commands: getTelegramCommands() }),
+    });
+  } catch (error) {
+    console.error("[Telegram] Impossibile aggiornare il menu comandi:", error);
+  }
+}
+
+async function dispatchGitHubAction(action: TelegramAction) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_PAT;
+  if (!token) return { ok: false, reason: "GITHUB_TOKEN non configurato." };
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/${encodeURIComponent(action.workflow)}/dispatches`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+        body: JSON.stringify({ ref: "main", inputs: action.inputs || {} }),
+      }
+    );
+
+    if (response.ok) return { ok: true };
+    console.error(`[Telegram] GitHub Action ${action.workflow} non avviata:`, response.status);
+    return { ok: false, reason: `GitHub ha risposto ${response.status}.` };
+  } catch (error) {
+    console.error(`[Telegram] Errore avvio Action ${action.workflow}:`, error);
+    return { ok: false, reason: "Errore di collegamento con GitHub." };
+  }
+}
+
 function escapeHtml(value: unknown) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -41,7 +229,7 @@ async function answerCallbackQuery(callbackQueryId: string, text?: string) {
   });
 }
 
-async function editMessageText(chatId: string, messageId: number, text: string) {
+async function editMessageText(chatId: string, messageId: number, text: string, replyMarkup?: any) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) return;
 
@@ -53,6 +241,7 @@ async function editMessageText(chatId: string, messageId: number, text: string) 
       message_id: messageId,
       text,
       parse_mode: "HTML",
+      ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
     }),
   });
 }
@@ -73,7 +262,8 @@ function helpMessage() {
     "/avvisa [messaggio] - Simula una comunicazione ai saloni; non invia email reali\n" +
     "/agents - Stato agenti automatici\n" +
     "/lead - Ultimi 5 contatti raccolti dal sito\n" +
-    "/agent run - Avvia gli agenti su GitHub Actions\n" +
+    "/azioni - Pannello per avviare le GitHub Actions\n" +
+    "/agent run - Avvia direttamente gli agenti su GitHub Actions\n" +
     "/aiuto - Mostra questa guida\n\n" +
     `ℹ️ ${WHATSAPP_ACTIVE_NOTE}`
   );
@@ -149,6 +339,77 @@ export async function POST(req: Request) {
         } catch {
           await answerCallbackQuery(cb.id, "Attivazione non completata. Controlla il salone dal pannello admin.");
         }
+      } else if (data === "actions:home") {
+        await answerCallbackQuery(cb.id);
+        await editMessageText(chatId, messageId, actionsHomeText(), actionsHomeKeyboard());
+      } else if (data.startsWith("actions:group:")) {
+        const group = data.replace("actions:group:", "") as TelegramAction["group"];
+        if (!(group in ACTION_GROUPS)) {
+          await answerCallbackQuery(cb.id, "Azione non valida.");
+        } else {
+          await answerCallbackQuery(cb.id);
+          await editMessageText(
+            chatId,
+            messageId,
+            `${ACTION_GROUPS[group].title}\n\nScegli cosa avviare. Prima dell'esecuzione ti chiederò conferma.`,
+            actionsGroupKeyboard(group)
+          );
+        }
+      } else if (data.startsWith("actions:confirm:")) {
+        const action = findAction(data.replace("actions:confirm:", ""));
+        if (!action) {
+          await answerCallbackQuery(cb.id, "Azione non valida.");
+        } else {
+          await answerCallbackQuery(cb.id);
+          await editMessageText(
+            chatId,
+            messageId,
+            `⚠️ <b>Conferma avvio</b>\n\n` +
+              `<b>${escapeHtml(action.label)}</b>\n${escapeHtml(action.description)}\n\n` +
+              "Vuoi avviarla ora su GitHub Actions?",
+            {
+              inline_keyboard: [
+                [{ text: "✅ Avvia ora", callback_data: `actions:run:${action.id}` }],
+                [{ text: "← Indietro", callback_data: `actions:group:${action.group}` }],
+              ],
+            }
+          );
+        }
+      } else if (data.startsWith("actions:run:")) {
+        const action = findAction(data.replace("actions:run:", ""));
+        if (!action) {
+          await answerCallbackQuery(cb.id, "Azione non valida.");
+        } else {
+          await answerCallbackQuery(cb.id, "Avvio in corso...");
+          await editMessageText(
+            chatId,
+            messageId,
+            `⏳ <b>${escapeHtml(action.label)}</b> in avvio...`,
+            { inline_keyboard: [] }
+          );
+          const result = await dispatchGitHubAction(action);
+          if (result.ok) {
+            await editMessageText(
+              chatId,
+              messageId,
+              `✅ <b>${escapeHtml(action.label)}</b> avviata.\n\n` +
+                "GitHub Actions sta lavorando: riceverai il riepilogo automatico quando l'azione termina.",
+              { inline_keyboard: [[{ text: "← Torna alle Actions", callback_data: "actions:home" }]] }
+            );
+          } else {
+            await editMessageText(
+              chatId,
+              messageId,
+              `❌ <b>${escapeHtml(action.label)}</b> non è partita.\n\n${escapeHtml(result.reason || "Errore sconosciuto.")}`,
+              {
+                inline_keyboard: [
+                  [{ text: "↻ Riprova", callback_data: `actions:run:${action.id}` }],
+                  [{ text: "← Torna alle Actions", callback_data: "actions:home" }],
+                ],
+              }
+            );
+          }
+        }
       }
 
       return NextResponse.json({ ok: true });
@@ -162,7 +423,10 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
       }
 
-      if (text === "/stats") {
+      if (text === "/azioni" || text === "/actions") {
+        await refreshTelegramCommands();
+        await sendTelegramMessage(actionsHomeText(), actionsHomeKeyboard());
+      } else if (text === "/stats") {
         const [
           tenantsCount,
           appointmentsCount,
@@ -511,24 +775,16 @@ export async function POST(req: Request) {
           await sendTelegramMessage("Errore durante la lettura dei lead.");
         }
       } else if (text === "/agent run") {
-        try {
-          const token = process.env.GITHUB_TOKEN || process.env.GH_PAT;
-          if (!token) {
-            await sendTelegramMessage("GITHUB_TOKEN non configurato. Imposta la variabile d'ambiente prima di avviare gli agenti.");
-          } else {
-            const res = await fetch("https://api.github.com/repos/neatxinfo-db/DemoNeatXApp/actions/workflows/auto-neatx-agents.yml/dispatches", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-              body: JSON.stringify({ ref: "main" }),
-            });
-            if (res.ok) {
-              await sendTelegramMessage("Agenti avviati su GitHub Actions. Controlla il risultato tra qualche minuto.");
-            } else {
-              await sendTelegramMessage(`GitHub Actions non ha avviato gli agenti. Stato risposta: ${res.status}.`);
-            }
-          }
-        } catch {
-          await sendTelegramMessage("Errore durante l'avvio degli agenti.");
+        const action = findAction("agents");
+        if (!action) {
+          await sendTelegramMessage("Azione agenti non configurata.");
+        } else {
+          const result = await dispatchGitHubAction(action);
+          await sendTelegramMessage(
+            result.ok
+              ? "✅ Agenti avviati su GitHub Actions. Riceverai il riepilogo automatico al termine."
+              : `❌ Agenti non avviati. ${escapeHtml(result.reason || "Errore sconosciuto.")}`
+          );
         }
       } else if (text === "/aiuto") {
         await sendTelegramMessage(helpMessage());

@@ -33,13 +33,13 @@ export async function GET(req: Request) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         commands: [
+          { command: "azioni", description: "Apri il pannello delle Actions" },
           { command: "stats", description: "Calcola i profitti e le statistiche" },
           { command: "ultimi", description: "Mostra gli ultimi 3 negozi iscritti" },
           { command: "cerca", description: "Cerca un negozio per nome" },
           { command: "entra", description: "Crea il link per il login magico" },
           { command: "agents", description: "Mostra lo stato degli Agenti AI" },
           { command: "lead", description: "Mostra gli ultimi 5 contatti ricevuti" },
-          { command: "avvisa", description: "Manda una mail a tutti i negozi" },
           { command: "aiuto", description: "Mostra la guida ai comandi" }
         ]
       })
@@ -76,7 +76,7 @@ export async function GET(req: Request) {
       public_webhook: publicWebhookData,
       public_menu: publicMenuData
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json({ error: "Impossibile impostare il webhook" }, { status: 500 });
   }
 }
