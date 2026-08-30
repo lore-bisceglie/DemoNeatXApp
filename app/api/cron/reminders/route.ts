@@ -1,7 +1,33 @@
 import { NextResponse } from "next/server";
-import { nextRomeDate } from "@/lib/reminder-outbox";
+import {
+  buildReminderSummary,
+  claimReminderBatch,
+  nextRomeDate,
+  reminderSummaryToText,
+  settleReminderDelivery,
+} from "@/lib/reminder-outbox";
+import { sendReminderOpenWa } from "@/lib/openwa";
+import { sendTelegramMessage } from "@/lib/telegram";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
+const ROME_TIME_ZONE = "Europe/Rome";
+const REMINDER_HOUR = 18;
+const BATCH_SIZE = 100;
+const SEND_CONCURRENCY = 4;
+
+function romeHour(date: Date) {
+  return Number(new Intl.DateTimeFormat("en-GB", {
+    timeZone: ROME_TIME_ZONE,
+    hour: "2-digit",
+    hourCycle: "h23",
+  }).format(date));
+}
+
+export function isReminderWindow(date = new Date()) {
+  return romeHour(date) === REMINDER_HOUR;
+}
 
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
@@ -13,52 +39,71 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: true, mode: "disabled", processed: 0 });
   }
 
-  const webhookUrl = process.env.N8N_REMINDER_WEBHOOK_URL;
-  // The preview token existed before the production dispatcher was added.
-  // Keeping it as a fallback lets the isolated preview be tested without
-  // copying a secret into another environment variable.
-  const webhookToken =
-    process.env.N8N_REMINDER_WEBHOOK_TOKEN ||
-    process.env.N8N_REMINDER_PREVIEW_TOKEN;
-  if (!webhookUrl || !webhookToken) {
-    console.error("[Cron Reminders] Workflow n8n non configurato");
-    return NextResponse.json(
-      { error: "Workflow promemoria non configurato" },
-      { status: 503 }
-    );
+  const now = new Date();
+  if (!isReminderWindow(now)) {
+    return NextResponse.json({
+      success: true,
+      mode: "outside-window",
+      timezone: ROME_TIME_ZONE,
+      romeHour: romeHour(now),
+      processed: 0,
+    });
   }
 
   try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-neatx-reminder-token": webhookToken,
-      },
-      body: JSON.stringify({
-        date: nextRomeDate(),
-        // The workflow sends sequentially. Unless a caller passes a smaller
-        // limit, every eligible reminder goes out on the same run.
-        limit: 2000,
-        source: "vercel-cron",
-      }),
-      signal: AbortSignal.timeout(15_000),
-    });
+    const date = nextRomeDate();
+    const batch = await claimReminderBatch({ date, limit: BATCH_SIZE });
+    let sent = 0;
+    let failed = 0;
 
-    if (!response.ok) {
-      const detail = (await response.text()).slice(0, 500);
-      console.error("[Cron Reminders] n8n ha risposto", response.status, detail || "(nessun dettaglio)");
-      return NextResponse.json({ error: "Workflow promemoria non disponibile" }, { status: 502 });
+    for (let index = 0; index < batch.reminders.length; index += SEND_CONCURRENCY) {
+      const chunk = batch.reminders.slice(index, index + SEND_CONCURRENCY);
+      const results = await Promise.all(chunk.map(async (reminder) => {
+        const provider = await sendReminderOpenWa(reminder.phone, reminder.message);
+        const settlement = await settleReminderDelivery({
+          deliveryId: reminder.deliveryId,
+          leaseToken: reminder.leaseToken,
+          outcome: provider.success ? "sent" : "failed",
+          providerMessageId: provider.success ? provider.messageId : undefined,
+          error: provider.success ? undefined : provider.error,
+        });
+
+        if (!settlement.success) {
+          console.error("[Cron Reminders] Esito non registrato", reminder.deliveryId, settlement.reason);
+          return false;
+        }
+        return provider.success;
+      }));
+
+      sent += results.filter(Boolean).length;
+      failed += results.filter((result) => !result).length;
     }
 
-    return NextResponse.json({
+    const summary = await buildReminderSummary(date);
+    if (batch.reminderCount > 0) {
+      await sendTelegramMessage(reminderSummaryToText(summary));
+    }
+
+    const payload = {
       success: true,
-      mode: "openwa",
-      date: nextRomeDate(),
-      dispatched: true,
-    });
+      mode: "vercel-openwa",
+      date,
+      queued: batch.reminderCount,
+      sent,
+      failed,
+      skippedNoCredits: batch.skippedNoCredits,
+      skippedAlreadyHandled: batch.skippedAlreadyHandled,
+      summary,
+    };
+
+    if (failed > 0) {
+      console.error("[Cron Reminders] Uno o più invii non sono riusciti", payload);
+      return NextResponse.json({ ...payload, success: false }, { status: 502 });
+    }
+
+    return NextResponse.json(payload);
   } catch (error) {
-    console.error("[Cron Reminders] Impossibile contattare n8n", error);
-    return NextResponse.json({ error: "Workflow promemoria non raggiungibile" }, { status: 502 });
+    console.error("[Cron Reminders] Errore dispatcher Vercel", error);
+    return NextResponse.json({ error: "Dispatcher promemoria non disponibile" }, { status: 500 });
   }
 }

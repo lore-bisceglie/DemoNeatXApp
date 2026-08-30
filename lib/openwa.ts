@@ -24,6 +24,41 @@ function chatId(raw: string) {
   return `${digits.startsWith("39") ? digits : `39${digits}`}@c.us`;
 }
 
+export async function sendReminderOpenWa(phone: string, text: string) {
+  if (!BASE_URL || !API_KEY || !SESSION_ID) {
+    return { success: false as const, error: "OpenWA non configurato" };
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/sessions/${SESSION_ID}/messages/send-text`, {
+      method: "POST",
+      headers: { "X-API-Key": API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ chatId: chatId(phone), text }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    const data = await response.json().catch(() => ({}));
+    const messageId = data.messageId || data.message_id || data.id;
+
+    if (response.ok && messageId && data.success !== false) {
+      return {
+        success: true as const,
+        messageId: String(messageId),
+        channel: "whatsapp" as const,
+      };
+    }
+
+    return {
+      success: false as const,
+      error: String(data.error || data.message || "OpenWA ha rifiutato il messaggio"),
+    };
+  } catch (error) {
+    return {
+      success: false as const,
+      error: error instanceof Error ? error.message : "Errore OpenWA",
+    };
+  }
+}
+
 /** Dedicated OpenWA sender for waitlist notifications. It intentionally does
  * not alter the legacy lib/sms.ts path used by cancellation flows. */
 export async function sendWaitlistOpenWa(tenantId: string, phone: string, text: string) {

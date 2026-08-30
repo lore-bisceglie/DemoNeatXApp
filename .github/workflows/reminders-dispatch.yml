@@ -1,12 +1,8 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # Primo tentativo alle 18:00 italiane e controlli di riserva ogni 5 minuti.
-  # GitHub può ritardare i cron; la coda NeatX è idempotente, quindi soltanto
-  # il primo run effettivo trova promemoria da inviare.
-  schedule:
-    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 18 * * *"
-      timezone: "Europe/Rome"
+  # L'avvio automatico è gestito da Vercel Cron. GitHub resta disponibile
+  # esclusivamente come controllo o invio manuale di emergenza.
   workflow_dispatch:
     inputs:
       mode:
