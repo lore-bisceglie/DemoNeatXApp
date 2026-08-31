@@ -35,12 +35,21 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Accesso negato" }, { status: 401 });
   }
 
+  console.info("[Cron Reminders] Invocazione autenticata ricevuta", {
+    source: request.headers.get("x-vercel-cron") === "1" ? "vercel-cron" : "manual-or-backup",
+  });
+
   if (process.env.REMINDERS_ENABLED !== "true") {
+    console.warn("[Cron Reminders] Automazione disattivata da REMINDERS_ENABLED");
     return NextResponse.json({ success: true, mode: "disabled", processed: 0 });
   }
 
   const now = new Date();
   if (!isReminderWindow(now)) {
+    console.info("[Cron Reminders] Invocazione fuori dalla finestra italiana", {
+      timezone: ROME_TIME_ZONE,
+      romeHour: romeHour(now),
+    });
     return NextResponse.json({
       success: true,
       mode: "outside-window",
@@ -80,8 +89,16 @@ export async function GET(request: Request) {
     }
 
     const summary = await buildReminderSummary(date);
-    if (batch.reminderCount > 0) {
+    let telegramSummarySent = false;
+    try {
+      // Anche un giro con zero appuntamenti deve lasciare una traccia visibile:
+      // così distinguiamo "cron eseguito, nessun destinatario" da "cron mai partito".
       await sendTelegramMessage(reminderSummaryToText(summary));
+      telegramSummarySent = true;
+    } catch (error) {
+      // Telegram è osservabilità, non deve trasformare un invio WhatsApp riuscito
+      // in un falso fallimento del dispatcher.
+      console.error("[Cron Reminders] Riepilogo Telegram non inviato", error);
     }
 
     const payload = {
@@ -93,6 +110,7 @@ export async function GET(request: Request) {
       failed,
       skippedNoCredits: batch.skippedNoCredits,
       skippedAlreadyHandled: batch.skippedAlreadyHandled,
+      telegramSummarySent,
       summary,
     };
 
