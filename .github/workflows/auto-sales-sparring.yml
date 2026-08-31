@@ -28,10 +28,36 @@ jobs:
         run: |
           python bot_scripts/Sales_Sparring/franco_email.py 2>&1 | tee /tmp/workflow.log
       - name: 💾 Commit & Push Sfida
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "Franco: Nuova sfida di vendita giornaliera! 🥊"
-          file_pattern: "sales_challenges/*.md"
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sales_challenges/*.md
+
+          if git diff --cached --quiet; then
+            echo "Nessuna nuova sfida da pubblicare."
+            exit 0
+          fi
+
+          git commit -m "Franco: Nuova sfida di vendita giornaliera! 🥊"
+
+          # Altri job automatici aggiornano gli stessi file su main. Integra
+          # l'ultimo main prima del push e ritenta in caso di gara ravvicinata.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              echo "Sfida pubblicata al tentativo $attempt."
+              exit 0
+            fi
+            echo "Push concorrente al tentativo $attempt; riprovo."
+            sleep 3
+          done
+
+          echo "Impossibile pubblicare la sfida dopo 5 tentativi." >&2
+          exit 1
       - name: Notifica Telegram
         if: always()
         env:

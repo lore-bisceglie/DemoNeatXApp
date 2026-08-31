@@ -21,13 +21,11 @@ Rispondi in questo formato:
 
 def generate_challenge():
     try:
-        response = client.models.generate_content(
+        chat = client.chats.create(
             model=MODEL,
-            contents="Genera la sfida di vendita di oggi in italiano.",
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-            )
+            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
         )
+        response = chat.send_message("Genera la sfida di vendita di oggi in italiano.")
         return response.text
     except Exception as e:
         print(f"❌ Errore durante la chiamata a Gemini in franco_email.py: {e}")
