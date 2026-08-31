@@ -19,19 +19,19 @@ BASE_URL = os.getenv("NEXT_PUBLIC_ROOT_DOMAIN", "neatx.store")
 if not BASE_URL.startswith("http"):
     BASE_URL = f"https://{BASE_URL}"
 
-# Demo Data: In produzione questo verrebbe popolato da uno scraper Google Maps (Apify/Puppeteer)
-target_salons = [
-    {
-        "nome": "Barberia Rossi",
-        "email_destinatario": "test.barberiarossi@example.com", 
-        "competitor": "Treatwell"
-    },
-    {
-        "nome": "Glamour Beauty Roma",
-        "email_destinatario": "test.glamour@example.com",
-        "competitor": "Uala"
-    }
-]
+# I destinatari demo sono stati rimossi: example.com e gli indirizzi test non
+# devono mai essere usati da un workflow schedulato. Inserire qui solo email
+# raccolte e verificate prima di riattivare l'invio.
+target_salons = []
+
+PLACEHOLDER_DOMAINS = {"example.com", "example.org", "example.net"}
+
+
+def is_placeholder_email(email):
+    """Blocca indirizzi demo anche se qualcuno li reintroduce per errore."""
+    normalized = email.strip().lower()
+    local, _, domain = normalized.partition("@")
+    return domain in PLACEHOLDER_DOMAINS or local.startswith("test.") or local.startswith("test-")
 
 def generate_audit_link(salon_name):
     """Crea lo slug per il routing dinamico di Next.js (es. Barberia Rossi -> barberia-rossi)"""
@@ -101,10 +101,25 @@ def main():
     print(" 🧛‍♂️ IL VAMPIRO DI TREATWELL ATTIVO ")
     print("=========================================\n")
     
+    sent = 0
+    failed = []
+
     for salon in target_salons:
-        send_vampire_email(salon)
-        
-    print(f"\n[+] Operazione completata. Le trappole sono state consegnate.")
+        recipient = salon["email_destinatario"]
+        if is_placeholder_email(recipient):
+            print(f"[!] Destinatario demo bloccato: {recipient}")
+            continue
+        if send_vampire_email(salon):
+            sent += 1
+        else:
+            failed.append(salon["nome"])
+
+    if not target_salons:
+        print("[i] Nessun destinatario verificato configurato: nessuna email inviata.")
+    if failed:
+        raise RuntimeError(f"Invio fallito per: {', '.join(failed)}")
+
+    print(f"\n[+] Operazione completata. Email inviate: {sent}.")
 
 if __name__ == "__main__":
     main()

@@ -6,8 +6,8 @@ on:
         description: "Numero massimo di email vampiro da inviare oggi"
         required: false
         default: "5"
-  schedule:
-    - cron: "0 8 * * 1-5" # Ogni mattina dal lunedi al venerdi alle 08:30
+  # Nessun invio automatico finché non vengono configurati destinatari reali
+  # e verificati. L'esecuzione resta disponibile solo manualmente.
 jobs:
   run-vampire:
     runs-on: ubuntu-latest
