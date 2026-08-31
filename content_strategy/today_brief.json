@@ -1,18 +1,18 @@
 {
   "date": "2026-08-31",
-  "niche": "Barbieri",
+  "niche": "Tatuatori",
   "feature": "timesheet",
   "feature_label": "Timesheet Commercialista",
   "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
   "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-  "cover_title": "STOP PERDITE TEMPO",
-  "hook_hint": "Se sei tra i barbieri e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Timesheet Commercialista con NeatX",
+  "cover_title": "BASTA TIMESHEET",
+  "hook_hint": "Se sei tra i tatuatori e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Timesheet Commercialista con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
