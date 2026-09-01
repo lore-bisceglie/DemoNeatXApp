@@ -158,9 +158,9 @@ export function reminderSummaryToText(summary: ReminderSummaryResult) {
   } else if (summary.notProcessed > 0) {
     lines.push(`🚫 Non processati (già gestiti o non disponibili): <b>${summary.notProcessed}</b>`);
   }
-  if (summary.byTenant.length > 0) {
-    lines.push(`\n🏪 <b>Per negozio</b>`);
-    for (const tenant of summary.byTenant) {
+  if (summary.failed > 0 || summary.processing > 0) {
+    lines.push(`\n🏪 <b>Stato per negozio</b>`);
+    for (const tenant of summary.byTenant.filter((entry) => entry.failed > 0 || entry.processing > 0)) {
       lines.push(
         `• ${tenant.tenantName}: ${tenant.sent} inviati, ${tenant.failed} falliti${tenant.processing ? `, ${tenant.processing} in lavorazione` : ""}`,
       );
