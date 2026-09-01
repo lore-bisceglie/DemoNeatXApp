@@ -1,32 +1,72 @@
 {
-  "generated_at": "2026-08-31T17:51:23.143361+02:00",
+  "generated_at": "2026-09-01T15:06:51.723770+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Barbieri"
+    "today_niche": "Tatuatori"
   },
   "ideas": [
     {
-      "format": "pain shock",
-      "niche": "Barbieri",
-      "hook": "Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?",
-      "angle": "Mostra quanto costa davvero ore dei dipendenti segnate a mano su fogli Excel persi.",
-      "cta": "Commenta AGENDA e ti mando il link."
+      "video_title": "TATUATORI: INCASSI VISIBILI",
+      "hook": "Se sei un tatuatore e non sai di preciso quanto incassi ogni mese al netto dei materiali, stai perdendo una fortuna senza saperlo.",
+      "pain": "Non sapere il guadagno netto reale e quali servizi coprono davvero i costi fissi dello studio.",
+      "solution": "Una dashboard finanziaria in tempo reale con grafici di incassi e performance per monitorare la salute dello studio.",
+      "blog_title": "Tatuatori: Statistiche e Dati con NeatX",
+      "gameplay_style": "block_miner",
+      "keywords": [
+        "prenotazioni tatuatore",
+        "agenda tatuatori",
+        "caparra tatuaggio"
+      ]
     },
     {
-      "format": "before after",
-      "niche": "Barbieri",
-      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
-      "angle": "Confronto diretto tra caos manuale e link NeatX.",
-      "cta": "Scrivi DEMO se vuoi provarlo."
+      "video_title": "TATUATORI: LO STILE CHE RENDE",
+      "hook": "Accetti solo progetti enormi che ti occupano giornate intere senza calcolare il reale guadagno orario rispetto ai tatuaggi piccoli e veloci?",
+      "pain": "Mancanza di dati su quali stili o servizi di tatuaggio generano il margine di profitto più alto.",
+      "solution": "Analisi dei trend integrata che mostra graficamente quali tipi di tatuaggi e servizi ti fanno guadagnare di più all'ora.",
+      "blog_title": "Tatuatori: Statistiche e Dati con NeatX",
+      "gameplay_style": "block_miner",
+      "keywords": [
+        "prenotazioni tatuatore",
+        "agenda tatuatori"
+      ]
     },
     {
-      "format": "calculator",
-      "niche": "Barbieri",
-      "hook": "Un no-show non è un fastidio, è fatturato perso.",
-      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
-      "cta": "Commenta AGENDA."
+      "video_title": "TATUATORI: STOP ORE VUOTE",
+      "hook": "Se hai ore vuote durante la settimana e non sai mai in quali giorni concentrare gli appuntamenti per ridurre i costi di gestione, stai sprecando risorse.",
+      "pain": "Slot orari inutilizzati nello studio che consumano elettricità e tempo senza generare entrate.",
+      "solution": "Report statistici sui flussi di prenotazione che identificano i momenti morti per lanciare promozioni mirate o ottimizzare i turni.",
+      "blog_title": "Tatuatori: Statistiche e Dati con NeatX",
+      "gameplay_style": "block_miner",
+      "keywords": [
+        "agenda tatuatori",
+        "prenotazioni tatuatore"
+      ]
+    },
+    {
+      "video_title": "TATUATORI: TRACCIA LE CAPARRE",
+      "hook": "Gestire le caparre dei tatuaggi sui fogli di carta o nelle chat di Instagram ti farà perdere il conto di quanti acconti hai effettivamente incassato.",
+      "pain": "Disorganizzazione nella gestione finanziaria degli acconti e rischio di dimenticare i pagamenti ricevuti.",
+      "solution": "Tracciamento automatico delle caparre integrato nella dashboard finanziaria per una contabilità impeccabile e senza errori.",
+      "blog_title": "Tatuatori: Zero No-Show con NeatX",
+      "gameplay_style": "block_miner",
+      "keywords": [
+        "caparra tatuaggio",
+        "prenotazioni tatuatore"
+      ]
+    },
+    {
+      "video_title": "TATUATORI: DATI COMMERCIALISTA",
+      "hook": "Passi ancora ore a fine mese a raccogliere tutte le ricevute e a calcolare le ore di lavoro da mandare al tuo commercialista?",
+      "pain": "Spreco di ore preziose per la gestione burocratica e contabile dello studio di tatuaggi a fine mese.",
+      "solution": "Esportazione immediata di tutti i dati di performance, incassi e statistiche per il commercialista con un solo click.",
+      "blog_title": "Tatuatori: Timesheet Commercialista con NeatX",
+      "gameplay_style": "block_miner",
+      "keywords": [
+        "agenda tatuatori",
+        "prenotazioni tatuatore"
+      ]
     }
   ]
 }
