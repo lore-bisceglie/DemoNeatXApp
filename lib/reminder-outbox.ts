@@ -30,7 +30,21 @@ export type ReminderSummaryResult = {
   failed: number;
   processing: number;
   notProcessed: number;
-  byTenant: Array<{ tenantId: string; tenantName: string; sent: number; failed: number; processing: number }>;
+  skippedNoCredits: number;
+  skippedNoCreditsByTenant: Array<{ tenantId: string; tenantName: string; count: number }>;
+  byTenant: Array<{
+    tenantId: string;
+    tenantName: string;
+    sent: number;
+    failed: number;
+    processing: number;
+  }>;
+};
+
+export type SkippedNoCreditsByTenant = {
+  tenantId: string;
+  tenantName: string;
+  count: number;
 };
 
 function deliveryStatusSummary(rows: Array<{ status: string }>) {
@@ -50,7 +64,10 @@ function deliveryStatusSummary(rows: Array<{ status: string }>) {
  * SOLO dal database (niente numeri inventati). "expected" = appuntamenti
  * eleggibili per quel giorno; le consegne sono quelle del canale OPENWA.
  */
-export async function buildReminderSummary(date: string) {
+export async function buildReminderSummary(
+  date: string,
+  options: { skippedNoCreditsByTenant?: SkippedNoCreditsByTenant[] } = {},
+) {
   const now = new Date();
 
   const expected = await prisma.appointment.count({
@@ -102,6 +119,10 @@ export async function buildReminderSummary(date: string) {
     countsByTenant.set(delivery.tenantId, entry);
   }
 
+  const skippedNoCreditsByTenant = (options.skippedNoCreditsByTenant ?? [])
+    .filter((entry) => entry.count > 0)
+    .sort((a, b) => a.tenantName.localeCompare(b.tenantName));
+  const skippedNoCredits = skippedNoCreditsByTenant.reduce((total, entry) => total + entry.count, 0);
   const byTenant = [...countsByTenant.values()].sort((a, b) => a.tenantName.localeCompare(b.tenantName));
 
   const result: ReminderSummaryResult = {
@@ -113,6 +134,8 @@ export async function buildReminderSummary(date: string) {
     failed: overall.failed,
     processing: overall.processing,
     notProcessed: Math.max(expected - processingCount, 0),
+    skippedNoCredits,
+    skippedNoCreditsByTenant,
     byTenant,
   };
 
@@ -127,8 +150,13 @@ export function reminderSummaryToText(summary: ReminderSummaryResult) {
   lines.push(`✅ Inviati: <b>${summary.sent}</b>`);
   lines.push(`❌ Falliti: <b>${summary.failed}</b>`);
   lines.push(`⏳ In elaborazione: <b>${summary.processing}</b>`);
-  if (summary.notProcessed > 0) {
-    lines.push(`🚫 Non processati (saldo zero o già inviati): <b>${summary.notProcessed}</b>`);
+  if (summary.skippedNoCredits > 0) {
+    lines.push(`\n⚠️ <b>Da avvisare: crediti promemoria esauriti</b>`);
+    for (const tenant of summary.skippedNoCreditsByTenant) {
+      lines.push(`• ${tenant.tenantName}: <b>${tenant.count}</b> promemoria non inviati`);
+    }
+  } else if (summary.notProcessed > 0) {
+    lines.push(`🚫 Non processati (già gestiti o non disponibili): <b>${summary.notProcessed}</b>`);
   }
   if (summary.byTenant.length > 0) {
     lines.push(`\n🏪 <b>Per negozio</b>`);
@@ -254,6 +282,7 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
   // orario e servizio) non devono mai generare due WhatsApp nello stesso giro.
   const reminderKeys = new Set<string>();
   let skippedNoCredits = 0;
+  const skippedNoCreditsByTenant = new Map<string, SkippedNoCreditsByTenant>();
   let skippedAlreadyHandled = 0;
 
   for (const candidate of candidates) {
@@ -358,6 +387,13 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
 
       if (claimed.type === "no-credit") {
         skippedNoCredits++;
+        const skipped = skippedNoCreditsByTenant.get(candidate.tenantId) ?? {
+          tenantId: candidate.tenantId,
+          tenantName: candidate.tenant.name,
+          count: 0,
+        };
+        skipped.count++;
+        skippedNoCreditsByTenant.set(candidate.tenantId, skipped);
         continue;
       }
 
@@ -399,6 +435,8 @@ export async function claimReminderBatch({ date, limit }: { date: string; limit?
     timezone: ROME_TIME_ZONE,
     reminderCount: reminders.length,
     skippedNoCredits,
+    skippedNoCreditsByTenant: [...skippedNoCreditsByTenant.values()]
+      .sort((a, b) => a.tenantName.localeCompare(b.tenantName)),
     skippedAlreadyHandled,
     reminders,
   };

@@ -88,7 +88,9 @@ export async function GET(request: Request) {
       failed += results.filter((result) => !result).length;
     }
 
-    const summary = await buildReminderSummary(date);
+    const summary = await buildReminderSummary(date, {
+      skippedNoCreditsByTenant: batch.skippedNoCreditsByTenant,
+    });
     let telegramSummarySent = false;
     try {
       // Anche un giro con zero appuntamenti deve lasciare una traccia visibile:
@@ -109,6 +111,7 @@ export async function GET(request: Request) {
       sent,
       failed,
       skippedNoCredits: batch.skippedNoCredits,
+      skippedNoCreditsByTenant: batch.skippedNoCreditsByTenant,
       skippedAlreadyHandled: batch.skippedAlreadyHandled,
       telegramSummarySent,
       summary,

@@ -23,7 +23,21 @@ export async function POST(request: Request) {
       ? body.date
       : nextRomeDate();
 
-    const summary = await buildReminderSummary(date);
+    const skippedNoCreditsByTenant = Array.isArray(body.skippedNoCreditsByTenant)
+      ? body.skippedNoCreditsByTenant.filter((entry: unknown): entry is {
+        tenantId: string;
+        tenantName: string;
+        count: number;
+      } => (
+        typeof entry === "object" && entry !== null &&
+        typeof (entry as { tenantId?: unknown }).tenantId === "string" &&
+        typeof (entry as { tenantName?: unknown }).tenantName === "string" &&
+        typeof (entry as { count?: unknown }).count === "number" &&
+        (entry as { count: number }).count > 0
+      ))
+      : undefined;
+
+    const summary = await buildReminderSummary(date, { skippedNoCreditsByTenant });
 
     // Notifica Telegram solo con numeri veri (lib/telegram ignora l'invio nei
     // test con NODE_ENV=test, quindi il canale non viene sporcato).
