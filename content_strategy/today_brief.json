@@ -1,18 +1,18 @@
 {
   "date": "2026-09-02",
-  "niche": "Fisioterapisti",
-  "feature": "conferme",
-  "feature_label": "Conferme appuntamento",
-  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
-  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
-  "cover_title": "CONFERME APPUNT ORA",
-  "hook_hint": "Se sei tra i fisioterapisti e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Conferme appuntamento con NeatX",
+  "niche": "Parrucchieri",
+  "feature": "multi_staff",
+  "feature_label": "Gestione Staff",
+  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
+  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
+  "cover_title": "GESTIONE STAFF ORA",
+  "hook_hint": "Se sei tra i parrucchieri e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
+  "blog_topic": "Parrucchieri: Gestione Staff con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale parrucchieri",
+    "prenotazioni parrucchiere",
+    "agenda salone"
   ]
 }
