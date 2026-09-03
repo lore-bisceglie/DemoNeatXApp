@@ -305,6 +305,7 @@ export default function SuperAdminPage() {
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               <Link href="/" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🏠 Sito</Link>
               <Link href="/superadmin/agents" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🤖 Agenti</Link>
+              <Link href="/superadmin/openwa" className="text-sm font-medium bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-full transition-colors">📱 WhatsApp</Link>
               <button onClick={() => { setLoading(true); fetchTenants(); }} className="text-sm font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-full transition-colors">🔄 Aggiorna</button>
               <button
                 type="button"
