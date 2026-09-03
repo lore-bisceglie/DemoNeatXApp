@@ -1,38 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-09-02T14:33:44.946591+02:00
+Generato: 2026-09-03T14:37:25.402254+02:00
 
-## Idea 1: Se nel tuo salone di parrucchieri gestisci ancora i turni e le ferie dello staff a mano, stai perdendo clienti e denaro ogni giorno.
-- title: PARRUCCHIERI: CAOS TURNI
-- hook: Se nel tuo salone di parrucchieri gestisci ancora i turni e le ferie dello staff a mano, stai perdendo clienti e denaro ogni giorno.
-- description: Spiega come la gestione manuale dei turni crei sovrapposizioni e clienti scontenti, introducendo l'agenda digitale per singolo collaboratore di NeatX.
-- blog_topic: Come ottimizzare i turni dei dipendenti nel tuo salone di parrucchieri senza impazzire
-- keywords: ['gestionale parrucchieri', 'agenda salone']
+## Idea 1: Se sei un tatuatore e continui a perdere ore di lavoro per clienti che non si presentano, ti serve la caparra automatica.
+- video_title: TATUATORI: STOP CLIENTI CHE NON SI PRESENTANO
+- hook: Se sei un tatuatore e continui a perdere ore di lavoro per clienti che non si presentano, ti serve la caparra automatica.
+- blog_title: Tatuatori: Zero No-Show con NeatX
+- gameplay_style: runner
+- concept: Video con gameplay runner in sottofondo mentre la voce spiega come l'attivazione della caparra automatica dimezza i no-show nel tuo studio di tatuaggi.
 
-## Idea 2: Quante volte un cliente ha prenotato un trattamento tecnico finendo nell'agenda del collaboratore che non doveva gestirlo?
-- title: COLLABORATORE SBAGLIATO
-- hook: Quante volte un cliente ha prenotato un trattamento tecnico finendo nell'agenda del collaboratore che non doveva gestirlo?
-- description: Analizza l'errore classico dell'assegnazione errata dei trattamenti allo staff e mostra come NeatX vincola i servizi solo a chi ha le giuste competenze.
-- blog_topic: Assegnazione clienti automatica: evita gli errori di prenotazione nel tuo salone
-- keywords: ['prenotazioni parrucchiere', 'gestionale parrucchieri']
+## Idea 2: Quanti soldi hai perso questa settimana per quel cliente che ha disdetto il tatuaggio all'ultimo minuto senza pagare?
+- video_title: BASTA NO SHOW IN STUDIO
+- hook: Quanti soldi hai perso questa settimana per quel cliente che ha disdetto il tatuaggio all'ultimo minuto senza pagare?
+- blog_title: Come gestire le prenotazioni per tatuatori senza rischiare disdette
+- gameplay_style: runner
+- concept: Il gameplay mostra una corsa fluida mentre lo speaker spiega che con NeatX ogni slot in agenda viene bloccato solo dopo il pagamento della caparra.
 
-## Idea 3: Coordinare le ferie del tuo staff di parrucchieri senza bloccare l'agenda online e senza creare buchi sembra impossibile?
-- title: FERIE SOTTO CONTROLLO
-- hook: Coordinare le ferie del tuo staff di parrucchieri senza bloccare l'agenda online e senza creare buchi sembra impossibile?
-- description: Mostra come configurare i turni automatici e bloccare i giorni di ferie dei dipendenti direttamente dal sistema NeatX per evitare appuntamenti fantasma.
-- blog_topic: La guida definitiva per gestire le ferie del personale nei saloni di acconciatura
-- keywords: ['agenda salone', 'gestionale parrucchieri']
+## Idea 3: Ecco il segreto per avere l'agenda piena di clienti paganti ed eliminare chi ti fa solo perdere tempo e materiale.
+- video_title: LA GUIDA PER L'AGENDA TATUATORI
+- hook: Ecco il segreto per avere l'agenda piena di clienti paganti ed eliminare chi ti fa solo perdere tempo e materiale.
+- blog_title: Caparra tatuaggio: come automatizzare i pagamenti e proteggere il tuo tempo
+- gameplay_style: runner
+- concept: Voce narrante che descrive la frustrazione della postazione pronta e del disegno fatto per poi subire un no-show, risolta con il sistema NeatX.
 
-## Idea 4: Smetti di usare un unico librone cartaceo per cinque parrucchieri: ogni tuo collaboratore ha bisogno della sua agenda digitale.
-- title: OGNI STAFF UNA AGENDA
-- hook: Smetti di usare un unico librone cartaceo per cinque parrucchieri: ogni tuo collaboratore ha bisogno della sua agenda digitale.
-- description: Come NeatX separa le agende dello staff pur mantenendo una visione d'insieme per il titolare, eliminando le perdite di tempo alla reception.
-- blog_topic: Perche ogni tuo collaboratore dovrebbe avere un'agenda digitale personalizzata
-- keywords: ['agenda salone', 'prenotazioni parrucchiere']
+## Idea 4: Smetti di iniziare a disegnare il prossimo tatuaggio se il cliente non ha ancora versato la caparra sul tuo calendario.
+- video_title: MAI PIÙ DISEGNI DI TATUAGGI GRATIS
+- hook: Smetti di iniziare a disegnare il prossimo tatuaggio se il cliente non ha ancora versato la caparra sul tuo calendario.
+- blog_title: Gestione prenotazioni tatuatore: i vantaggi dell'acconto automatico
+- gameplay_style: runner
+- concept: Gameplay dinamico associato al racconto di come filtrare i perditempo richiedendo un acconto automatico direttamente all'atto della prenotazione.
 
-## Idea 5: Passi ancora la domenica sera a incastrare i turni dei tuoi parrucchieri per la settimana successiva?
-- title: STOP EMERGENZA TURNI
-- hook: Passi ancora la domenica sera a incastrare i turni dei tuoi parrucchieri per la settimana successiva?
-- description: Presenta la funzionalità di turni ricorrenti e automatici su NeatX che elimina il lavoro amministrativo del titolare di salone.
-- blog_topic: Gestione staff parrucchieri: automatizzare i turni per risparmiare 5 ore a settimana
-- keywords: ['gestionale parrucchieri', 'prenotazioni parrucchiere', 'agenda salone']
+## Idea 5: Ogni singolo slot della tua agenda deve essere occupato solo da clienti che hanno già pagato per essere lì.
+- video_title: COME RIEMPIRE OGNI SLOT DA TATUATORE
+- hook: Ogni singolo slot della tua agenda deve essere occupato solo da clienti che hanno già pagato per essere lì.
+- blog_title: NeatX per tatuatori: elimina i no-show e proteggi il tuo fatturato
+- gameplay_style: runner
+- concept: Analisi dei costi di un no-show per un tatuatore professionista e spiegazione di come l'acconto automatico di NeatX risolve il problema all'origine.
