@@ -7,7 +7,7 @@ type OpenWaSession = { id: string; status: string; ready: boolean };
 
 type SessionState =
   | { loading: true }
-  | { loading: false; ready: boolean; status?: string; configuredSessionId?: string; sessions?: OpenWaSession[]; error?: string };
+  | { loading: false; ready: boolean; status?: string; configuredSessionId?: string; sessions?: OpenWaSession[]; qrCode?: string; error?: string };
 
 export default function OpenWaReconnectPage() {
   const [state, setState] = useState<SessionState>({ loading: true });
@@ -18,6 +18,11 @@ export default function OpenWaReconnectPage() {
       const response = await fetch("/api/superadmin/openwa/session", { cache: "no-store" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Impossibile leggere OpenWA.");
+      if (!data.ready) {
+        const qrResponse = await fetch("/api/superadmin/openwa/qr", { cache: "no-store" });
+        const qrData = await qrResponse.json().catch(() => ({}));
+        if (qrResponse.ok && typeof qrData.qrCode === "string") data.qrCode = qrData.qrCode;
+      }
       setState({ loading: false, ...data });
     } catch (error) {
       setState({
@@ -49,8 +54,16 @@ export default function OpenWaReconnectPage() {
             <>
               <div className="mt-6 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-5">
                 <p className="font-bold text-amber-200">Non aggiungere un altro dispositivo</p>
-                <p className="mt-1 text-sm text-slate-300">NeatX è configurato sulla sessione <b>{state.configuredSessionId}</b>, ma quella sessione è <b>{state.status}</b>. Prima confrontiamo questo nome con la lista del tuo WhatsApp.</p>
+              <p className="mt-1 text-sm text-slate-300">NeatX è configurato sulla sessione <b>{state.configuredSessionId}</b>, ma quella sessione è <b>{state.status}</b>. Prima confrontiamo questo nome con la lista del tuo WhatsApp.</p>
               </div>
+
+              {state.qrCode && (
+                <div className="mt-6 rounded-2xl border border-cyan-400/30 bg-white p-5 text-center">
+                  <p className="font-bold text-slate-900">Ricollega la sessione NeatX</p>
+                  <p className="mt-1 text-sm text-slate-600">Scansiona questo QR dal numero NeatX. Non creare una nuova sessione.</p>
+                  <img src={state.qrCode} alt="QR per ricollegare WhatsApp NeatX" className="mx-auto mt-4 h-64 w-64" />
+                </div>
+              )}
 
               <p className="mt-6 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">{state.error}</p>
             </>
