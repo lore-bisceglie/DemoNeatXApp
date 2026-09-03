@@ -193,9 +193,9 @@ export async function dispatchReminders({
     if (index < reminders.length - 1) await sleep(PAUSE_BETWEEN_MESSAGES_MS);
   }
 
-  // Anche una coda vuota deve produrre un riepilogo: conferma che il giro è
-  // partito davvero e distingue zero appuntamenti da cron mai eseguito.
-  if (date) {
+  // I tentativi successivi possono trovare la coda vuota dopo il primo giro:
+  // in quel caso non mandiamo riepiloghi Telegram duplicati.
+  if (reminders.length > 0 && date) {
     const summary = await requestJson(fetchImpl, `${neatxBaseUrl}/api/reminders/summary`, {
       method: "POST",
       headers: neatxHeaders(cronSecret),

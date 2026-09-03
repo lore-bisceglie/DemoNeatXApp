@@ -1,16 +1,12 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # L'avvio automatico è gestito da Vercel Cron. GitHub resta disponibile
-  # anche come seconda rete di sicurezza gratuita: se uno dei due scheduler
-  # parte per primo, l'outbox idempotente impedisce qualsiasi doppio invio.
+  # GitHub può ritardare l'avvio di un singolo cron: quattro tentativi nella
+  # stessa finestra garantiscono che il giro venga eseguito. L'outbox
+  # idempotente impedisce qualsiasi doppio invio.
   schedule:
-    # 18:15 in Italia durante l'ora legale; il controllo nel job esclude
-    # questo giro in inverno.
-    - cron: "15 16 * * *"
-    # 18:15 in Italia durante l'ora solare; il controllo nel job esclude
-    # questo giro in estate.
-    - cron: "15 17 * * *"
+    - cron: "0,15,30,45 18 * * *"
+      timezone: "Europe/Rome"
   workflow_dispatch:
     inputs:
       mode:
@@ -70,17 +66,6 @@ jobs:
           if [ "$EVENT_NAME" = "schedule" ]; then
             if [ "$REMINDER_AUTOMATION_ENABLED" != "true" ]; then
               echo "Automazione disattivata: nessun messaggio verrà inviato."
-              echo "send=false" >> "$GITHUB_OUTPUT"
-              echo "check=false" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-
-            ROME_HOUR="$(TZ=Europe/Rome date +%H)"
-            # GitHub può avviare i cron con ritardo. Accettiamo anche le 19:xx:
-            # l'outbox idempotente impedisce comunque un doppio invio se
-            # arrivano entrambe le esecuzioni tecniche (16 e 17 UTC).
-            if [ "$ROME_HOUR" != "18" ] && [ "$ROME_HOUR" != "19" ]; then
-              echo "Backup non necessario: fuori dalla finestra 18:00-19:59 italiane."
               echo "send=false" >> "$GITHUB_OUTPUT"
               echo "check=false" >> "$GITHUB_OUTPUT"
               exit 0
