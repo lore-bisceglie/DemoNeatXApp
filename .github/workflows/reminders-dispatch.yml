@@ -76,8 +76,11 @@ jobs:
             fi
 
             ROME_HOUR="$(TZ=Europe/Rome date +%H)"
-            if [ "$ROME_HOUR" != "18" ]; then
-              echo "Backup non necessario: fuori dalla finestra delle 18:00 italiane."
+            # GitHub può avviare i cron con ritardo. Accettiamo anche le 19:xx:
+            # l'outbox idempotente impedisce comunque un doppio invio se
+            # arrivano entrambe le esecuzioni tecniche (16 e 17 UTC).
+            if [ "$ROME_HOUR" != "18" ] && [ "$ROME_HOUR" != "19" ]; then
+              echo "Backup non necessario: fuori dalla finestra 18:00-19:59 italiane."
               echo "send=false" >> "$GITHUB_OUTPUT"
               echo "check=false" >> "$GITHUB_OUTPUT"
               exit 0
