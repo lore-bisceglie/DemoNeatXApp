@@ -6,7 +6,7 @@ import {
   reminderSummaryToText,
   settleReminderDelivery,
 } from "@/lib/reminder-outbox";
-import { sendReminderOpenWa } from "@/lib/openwa";
+import { getOpenWaSessionHealth, sendReminderOpenWa } from "@/lib/openwa";
 import { sendTelegramMessage } from "@/lib/telegram";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +16,42 @@ const ROME_TIME_ZONE = "Europe/Rome";
 const REMINDER_HOUR = 18;
 const BATCH_SIZE = 100;
 const SEND_CONCURRENCY = 4;
+const OPENWA_CONFLICT_RETRY_DELAY_MS = 8_000;
+
+function delay(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+async function sendReminderWithRecovery(phone: string, message: string) {
+  const firstAttempt = await sendReminderOpenWa(phone, message);
+  if (firstAttempt.success || !firstAttempt.retryable) return firstAttempt;
+
+  // OpenWA returned an HTTP 409: the provider rejected the request before it
+  // produced a message id. Wait briefly for the WhatsApp session to become
+  // available again, then make one—and only one—safe recovery attempt.
+  console.warn("[Cron Reminders] OpenWA Conflict: controllo sessione e ritento una volta", {
+    httpStatus: firstAttempt.httpStatus,
+  });
+  await delay(OPENWA_CONFLICT_RETRY_DELAY_MS);
+
+  const session = await getOpenWaSessionHealth();
+  if (!session.ready) {
+    return {
+      success: false as const,
+      error: `OpenWA Conflict; sessione non pronta${session.status ? ` (${session.status})` : ""}: ${session.error}`,
+      retryable: false,
+    };
+  }
+
+  const retryAttempt = await sendReminderOpenWa(phone, message);
+  if (!retryAttempt.success) {
+    console.error("[Cron Reminders] Recupero OpenWA non riuscito", {
+      httpStatus: retryAttempt.httpStatus,
+      error: retryAttempt.error,
+    });
+  }
+  return retryAttempt;
+}
 
 function romeHour(date: Date) {
   return Number(new Intl.DateTimeFormat("en-GB", {
@@ -60,6 +96,24 @@ export async function GET(request: Request) {
   }
 
   try {
+    const session = await getOpenWaSessionHealth();
+    if (!session.ready) {
+      const detail = `⚠️ <b>Promemoria non avviati</b>\n\n` +
+        `La sessione WhatsApp OpenWA non è pronta${session.status ? ` (${session.status})` : ""}.\n` +
+        `Nessun messaggio è stato preso in carico.\n` +
+        `<code>${session.error}</code>`;
+      console.error("[Cron Reminders] Sessione OpenWA non pronta", session);
+      await sendTelegramMessage(detail).catch((error) => {
+        console.error("[Cron Reminders] Avviso Telegram sessione non pronta non inviato", error);
+      });
+      return NextResponse.json({
+        success: false,
+        mode: "openwa-session-unavailable",
+        status: session.status,
+        error: session.error,
+      }, { status: 503 });
+    }
+
     const date = nextRomeDate();
     const batch = await claimReminderBatch({ date, limit: BATCH_SIZE });
     let sent = 0;
@@ -68,7 +122,15 @@ export async function GET(request: Request) {
     for (let index = 0; index < batch.reminders.length; index += SEND_CONCURRENCY) {
       const chunk = batch.reminders.slice(index, index + SEND_CONCURRENCY);
       const results = await Promise.all(chunk.map(async (reminder) => {
-        const provider = await sendReminderOpenWa(reminder.phone, reminder.message);
+        const provider = await sendReminderWithRecovery(reminder.phone, reminder.message);
+        if (!provider.success) {
+          console.error("[Cron Reminders] Invio OpenWA fallito", {
+            deliveryId: reminder.deliveryId,
+            tenantId: reminder.tenantId,
+            httpStatus: provider.httpStatus,
+            error: provider.error,
+          });
+        }
         const settlement = await settleReminderDelivery({
           deliveryId: reminder.deliveryId,
           leaseToken: reminder.leaseToken,
