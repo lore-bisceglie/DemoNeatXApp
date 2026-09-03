@@ -4,26 +4,28 @@ import { requireSuperAdmin } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 type OpenWaSession = {
+  id?: string;
+  sessionId?: string;
+  name?: string;
   status?: string;
   engineLoaded?: boolean;
   error?: string;
   message?: string;
 };
 
-function dataUrlFromPayload(payload: unknown): string | null {
-  if (typeof payload === "string") {
-    return payload.startsWith("data:image/") ? payload : null;
-  }
+function normalizeSessions(payload: unknown) {
+  const record = payload && typeof payload === "object" ? payload as Record<string, unknown> : null;
+  const values = Array.isArray(payload)
+    ? payload
+    : [record?.sessions, record?.data, record?.items].find(Array.isArray) || [];
 
-  if (!payload || typeof payload !== "object") return null;
-
-  const record = payload as Record<string, unknown>;
-  for (const key of ["qr", "qrCode", "dataUrl", "dataURL", "image"]) {
-    const value = dataUrlFromPayload(record[key]);
-    if (value) return value;
-  }
-
-  return null;
+  return values
+    .filter((value): value is OpenWaSession => Boolean(value) && typeof value === "object")
+    .map((session) => ({
+      id: String(session.id || session.sessionId || session.name || "sessione senza nome"),
+      status: typeof session.status === "string" ? session.status : "sconosciuto",
+      ready: session.status === "ready" && session.engineLoaded !== false,
+    }));
 }
 
 export async function GET(request: Request) {
@@ -41,12 +43,22 @@ export async function GET(request: Request) {
   const headers = { "X-API-Key": apiKey };
 
   try {
-    const sessionResponse = await fetch(`${baseUrl}/api/sessions/${sessionId}`, {
-      headers,
-      cache: "no-store",
-      signal: AbortSignal.timeout(10_000),
-    });
+    const [sessionResponse, sessionsResponse] = await Promise.all([
+      fetch(`${baseUrl}/api/sessions/${sessionId}`, {
+        headers,
+        cache: "no-store",
+        signal: AbortSignal.timeout(10_000),
+      }),
+      fetch(`${baseUrl}/api/sessions`, {
+        headers,
+        cache: "no-store",
+        signal: AbortSignal.timeout(10_000),
+      }),
+    ]);
     const session = await sessionResponse.json().catch(() => ({})) as OpenWaSession;
+    const sessions = sessionsResponse.ok
+      ? normalizeSessions(await sessionsResponse.json().catch(() => null))
+      : [];
 
     if (!sessionResponse.ok) {
       return NextResponse.json(
@@ -58,32 +70,18 @@ export async function GET(request: Request) {
     const ready = session.status === "ready" && session.engineLoaded !== false;
     if (ready) {
       return NextResponse.json(
-        { ready: true, status: session.status },
+        { ready: true, status: session.status, configuredSessionId: sessionId, sessions },
         { headers: { "Cache-Control": "no-store" } },
       );
-    }
-
-    const qrResponse = await fetch(`${baseUrl}/api/sessions/${sessionId}/qr`, {
-      headers,
-      cache: "no-store",
-      signal: AbortSignal.timeout(10_000),
-    });
-
-    let qrDataUrl: string | null = null;
-    const contentType = qrResponse.headers.get("content-type") || "";
-    if (qrResponse.ok && contentType.startsWith("image/")) {
-      const image = Buffer.from(await qrResponse.arrayBuffer()).toString("base64");
-      qrDataUrl = `data:${contentType};base64,${image}`;
-    } else if (qrResponse.ok) {
-      qrDataUrl = dataUrlFromPayload(await qrResponse.json().catch(() => null));
     }
 
     return NextResponse.json(
       {
         ready: false,
         status: session.status || "non pronta",
-        qrDataUrl,
-        error: qrDataUrl ? undefined : "Il QR non è ancora disponibile. Attendi qualche secondo e aggiorna.",
+        configuredSessionId: sessionId,
+        sessions,
+        error: "Non creare un nuovo dispositivo: prima individuiamo la sessione configurata.",
       },
       { headers: { "Cache-Control": "no-store" } },
     );

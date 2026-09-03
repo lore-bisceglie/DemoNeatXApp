@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+
+type OpenWaSession = { id: string; status: string; ready: boolean };
 
 type SessionState =
   | { loading: true }
-  | { loading: false; ready: true; status: string }
-  | { loading: false; ready: false; status?: string; qrDataUrl?: string | null; error?: string };
+  | { loading: false; ready: boolean; status?: string; configuredSessionId?: string; sessions?: OpenWaSession[]; error?: string };
 
 export default function OpenWaReconnectPage() {
   const [state, setState] = useState<SessionState>({ loading: true });
@@ -43,24 +43,31 @@ export default function OpenWaReconnectPage() {
           ) : state.ready ? (
             <div className="mt-6 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-5">
               <p className="text-lg font-bold text-emerald-300">✓ WhatsApp è collegato</p>
-              <p className="mt-1 text-sm text-slate-300">La sessione è pronta: i promemoria possono essere inviati.</p>
+              <p className="mt-1 text-sm text-slate-300">La sessione <b>{state.configuredSessionId}</b> è pronta: i promemoria possono essere inviati.</p>
             </div>
           ) : (
             <>
               <div className="mt-6 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-5">
-                <p className="font-bold text-amber-200">WhatsApp deve essere ricollegato</p>
-                <p className="mt-1 text-sm text-slate-300">Apri WhatsApp sul telefono, vai in <b>Impostazioni → Dispositivi collegati → Collega un dispositivo</b> e inquadra questo QR.</p>
+                <p className="font-bold text-amber-200">Non aggiungere un altro dispositivo</p>
+                <p className="mt-1 text-sm text-slate-300">NeatX è configurato sulla sessione <b>{state.configuredSessionId}</b>, ma quella sessione è <b>{state.status}</b>. Prima confrontiamo questo nome con la lista del tuo WhatsApp.</p>
               </div>
 
-              {state.qrDataUrl ? (
-                <div className="mt-6 rounded-2xl bg-white p-4">
-                  {/* The QR is intentionally served only by the authenticated SuperAdmin route. */}
-                  <Image src={state.qrDataUrl} alt="QR per ricollegare WhatsApp" width={640} height={640} unoptimized className="mx-auto aspect-square w-full max-w-sm" />
-                </div>
-              ) : (
-                <p className="mt-6 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">{state.error || "QR non disponibile."}</p>
-              )}
+              <p className="mt-6 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">{state.error}</p>
             </>
+          )}
+
+          {!state.loading && state.sessions && state.sessions.length > 0 && (
+            <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/60 p-5">
+              <p className="text-sm font-bold uppercase tracking-[0.12em] text-slate-300">Sessioni presenti su OpenWA</p>
+              <ul className="mt-3 space-y-2 text-sm">
+                {state.sessions.map((session) => (
+                  <li key={session.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900 px-3 py-2">
+                    <span className="font-medium text-white">{session.id}</span>
+                    <span className={session.ready ? "text-emerald-300" : "text-amber-300"}>{session.status}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
           <button
@@ -68,7 +75,7 @@ export default function OpenWaReconnectPage() {
             onClick={() => void loadStatus()}
             className="mt-6 rounded-xl bg-cyan-400 px-5 py-3 font-bold text-slate-950 transition hover:bg-cyan-300"
           >
-            Aggiorna stato / QR
+            Aggiorna stato
           </button>
         </section>
       </div>
