@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ActivityLogPanel from "@/app/t/[slug]/admin/ActivityLogPanel";
+import { TENANT_THEME_OPTIONS } from "@/lib/tenant-theme";
 
 type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never" | "demo";
 
@@ -261,7 +262,7 @@ export default function SuperAdminPage() {
     });
   };
 
-  const THEME_OPTIONS: [string, string][] = [["cyan","🔵 Cyan"],["rose","🌸 Rosa"],["emerald","🌿 Smeraldo"],["amber","💛 Ambra"],["purple","💜 Viola"],["slate","🪨 Grigio"],["red","🔴 Rosso"],["indigo","🌌 Indaco"],["teal","🌊 Verde Acqua"],["fuchsia","🌺 Fucsia"]];
+  const THEME_OPTIONS = TENANT_THEME_OPTIONS;
   const IC = "w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-indigo-500";
   const ISM = "w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500";
 
@@ -433,7 +434,7 @@ export default function SuperAdminPage() {
                       <div>
                         <label className="block text-xs text-slate-400 mb-1">Tema</label>
                         <select value={themeColor} onChange={e => setThemeColor(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500">
-                          {THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                          {THEME_OPTIONS.map(({ value, label, emoji }) => <option key={value} value={value}>{emoji} {label}</option>)}
                         </select>
                       </div>
                     </div>
@@ -602,7 +603,7 @@ export default function SuperAdminPage() {
               <div><label className="block text-xs text-slate-400 mb-1">Descrizione</label><textarea value={editData.description} onChange={e => setEditData({ ...editData, description: e.target.value })} className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white text-sm h-16 resize-none focus:outline-none focus:border-indigo-500" /></div>
               <div className="grid grid-cols-2 gap-4">
                 <div><label className="block text-xs text-slate-400 mb-1">Logo URL</label><input type="url" value={editData.logoUrl} onChange={e => setEditData({ ...editData, logoUrl: e.target.value })} className={IC} /></div>
-                <div><label className="block text-xs text-slate-400 mb-1">Tema</label><select value={editData.themeColor} onChange={e => setEditData({ ...editData, themeColor: e.target.value })} className={IC}>{THEME_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>
+                <div><label className="block text-xs text-slate-400 mb-1">Tema</label><select value={editData.themeColor === "purple" ? "violet" : editData.themeColor} onChange={e => setEditData({ ...editData, themeColor: e.target.value })} className={IC}>{THEME_OPTIONS.map(({ value, label, emoji }) => <option key={value} value={value}>{emoji} {label}</option>)}</select></div>
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1">Nuova password admin (opzionale)</label>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChevronRight, Navigation, MapPin as MapPinIcon, Users, Users as UsersIcon, Clock, Calendar as CalendarIcon, Phone as PhoneIcon } from "lucide-react";
+import { getTenantTheme } from "@/lib/tenant-theme";
 
 interface LocationData {
   id: string;
@@ -41,6 +42,7 @@ function isMainLabel() {
 export default function LocationsPageClient({ tenant, slug }: Props) {
   const locs = tenant.locations;
   const firstLoc = locs[0];
+  const theme = getTenantTheme(tenant.themeColor);
 
   function handleCardClick(locationSlug: string) {
     window.location.href = "/t/" + slug + "/sede/" + locationSlug;
@@ -64,8 +66,8 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
   return (
     <div className="min-h-screen bg-[#050814] text-slate-100">
       <section className="relative min-h-[80vh] flex items-center justify-center px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-emerald-500/5" />
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className={"absolute inset-0 bg-gradient-to-br " + theme.softBackground + " via-transparent to-transparent"} />
+        <div className={"absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] " + theme.softBackground + " rounded-full blur-3xl animate-pulse"} />
         <div className="relative z-10 max-w-4xl mx-auto text-center py-20">
           {tenant.logoUrl && (
             <>
@@ -79,7 +81,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
           )}
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
             Le nostre {" "}
-            <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
+            <span className={"bg-gradient-to-r " + theme.gradient + " bg-clip-text text-transparent"}>
               sedi
             </span>
           </h1>
@@ -89,7 +91,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={"/t/" + slug}
-              className="inline-flex items-center gap-2 px-8 py-4 text-lg font-extrabold rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white transition-all hover:scale-105"
+              className={"inline-flex items-center gap-2 px-8 py-4 text-lg font-extrabold rounded-2xl bg-gradient-to-r " + theme.gradient + " " + theme.gradientHover + " text-white transition-all hover:scale-105"}
             >
               Torna alla home
             </Link>
@@ -112,7 +114,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
           <div className="mb-12 text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
               Le nostre {" "}
-              <span className="bg-gradient-to-r from-cyan-500 to-emerald-500 bg-clip-text text-transparent">
+              <span className={"bg-gradient-to-r " + theme.gradient + " bg-clip-text text-transparent"}>
                 sedi
               </span>
             </h2>
@@ -127,7 +129,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
                 <div
                   key={location.id}
                   onClick={function () { handleCardClick(location.slug); }}
-                  className="group relative bg-[#0b1221] rounded-3xl border border-[#1a2642] overflow-hidden hover:border-cyan-500/30 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  className={"group relative bg-[#0b1221] rounded-3xl border border-[#1a2642] overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer " + theme.borderMain}
                 >
                   <div className="absolute top-4 right-4 z-10">
                     {location.isMain && (
@@ -139,7 +141,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
 
                   <div className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                      <div className={"w-12 h-12 rounded-2xl bg-gradient-to-br " + theme.gradient + " flex items-center justify-center"}>
                         <Navigation size={24} className="text-white" />
                       </div>
                       <div>
@@ -150,7 +152,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
 
                     <div className="space-y-3 mt-6">
                       <div className="flex items-center gap-2 text-slate-300 text-sm">
-                        <MapPinIcon size={16} className="text-cyan-400" />
+                        <MapPinIcon size={16} className={theme.textMain} />
                         <span>{location.address || "Indirizzo non definito"}{location.city ? ", " + location.city : ""}</span>
                       </div>
 
@@ -160,19 +162,19 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
                           className="flex items-center gap-2 text-slate-300 text-sm hover:text-white transition-colors"
                           onClick={function (e) { e.stopPropagation(); }}
                         >
-                          <PhoneIcon size={16} className="text-cyan-400" />
+                          <PhoneIcon size={16} className={theme.textMain} />
                           <span>{location.phone}</span>
                         </a>
                       )}
 
                       <div className="flex items-center gap-2 text-slate-300 text-sm">
-                        <Clock size={16} className="text-cyan-400" />
+                        <Clock size={16} className={theme.textMain} />
                         <span>{location.openTime ? location.openTime + " - " + location.closeTime : "Orari non definiti"}</span>
                       </div>
 
                       {location.closedDays && (
                         <div className="flex items-center gap-2 text-slate-300 text-sm">
-                          <Users size={16} className="text-cyan-400" />
+                          <Users size={16} className={theme.textMain} />
                           <span>Chiuso: {getClosedDaysText(location.closedDays)}</span>
                         </div>
                       )}
@@ -180,17 +182,17 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
 
                     <div className="grid grid-cols-3 gap-3 mt-6 pt-4 border-t border-[#1a2642]">
                       <div className="text-center p-3 bg-[#050814] rounded-xl">
-                        <UsersIcon size={20} className="mx-auto text-cyan-400 mb-1" />
+                        <UsersIcon size={20} className={"mx-auto " + theme.textMain + " mb-1"} />
                         <p className="text-2xl font-bold text-white">{location._count.staff || 0}</p>
                         <p className="text-xs text-slate-400">Staff</p>
                       </div>
                       <div className="text-center p-3 bg-[#050814] rounded-xl">
-                        <CalendarIcon size={20} className="mx-auto text-cyan-400 mb-1" />
+                        <CalendarIcon size={20} className={"mx-auto " + theme.textMain + " mb-1"} />
                         <p className="text-2xl font-bold text-white">{location._count.services || 0}</p>
                         <p className="text-xs text-slate-400">Servizi</p>
                       </div>
                       <div className="text-center p-3 bg-[#050814] rounded-xl">
-                        <CalendarIcon size={20} className="mx-auto text-cyan-400 mb-1" />
+                        <CalendarIcon size={20} className={"mx-auto " + theme.textMain + " mb-1"} />
                         <p className="text-2xl font-bold text-white">{location._count.appointments || 0}</p>
                         <p className="text-xs text-slate-400">Prenotazioni</p>
                       </div>
@@ -198,11 +200,11 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
                   </div>
 
                   <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#0b1221] to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className={"absolute inset-0 bg-gradient-to-t " + theme.softBackground + " via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"} />
                   <div className="absolute bottom-4 left-6 right-6 opacity-0 group-hover:opacity-100 translate-y-2 transition-all duration-300">
                     <button
                       onClick={function (e) { handleBookClick(e, location.slug); }}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl hover:from-cyan-400 hover:to-blue-500 transition-all"
+                      className={"w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r " + theme.gradient + " " + theme.gradientHover + " text-white font-bold rounded-xl transition-all"}
                     >
                       Prenota in questa sede
                       <ChevronRight size={18} />
@@ -218,7 +220,7 @@ export default function LocationsPageClient({ tenant, slug }: Props) {
               <p className="text-slate-400 mb-4">Una sola sede? Nessun problema!</p>
               <Link
                 href={"/t/" + slug + "/sede/" + locs[0].slug}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-2xl hover:from-cyan-400 hover:to-blue-500 transition-all"
+                className={"inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r " + theme.gradient + " " + theme.gradientHover + " text-white font-bold rounded-2xl transition-all"}
               >
                 Vai alla prenotazione
                 <ChevronRight size={20} />

@@ -12,10 +12,11 @@ import { BookingForm } from "@/components/tenant/BookingForm";
 import type { FirstAvailableResult } from "@/components/tenant/FirstAvailableButton";
 import { ActivitySelectionModal } from "@/components/tenant/modals/ActivitySelectionModal";
 import { DemoSuccessModal, DemoModalState } from "@/components/tenant/modals/DemoSuccessModal";
-import { BookingInitialData, Service, TenantInfoType, ThemeConfig } from "@/components/tenant/types";
+import { BookingInitialData, Service, TenantInfoType } from "@/components/tenant/types";
 import { activityProfiles } from "@/components/tenant/constants";
 import { parseClosedDays } from "@/lib/opening-hours";
 import { getRomeClock, getRomeDate } from "@/lib/rome-time";
+import { getTenantTheme } from "@/lib/tenant-theme";
 
 function toTenantInfo(data: BookingInitialData): TenantInfoType {
   return {
@@ -108,68 +109,10 @@ export function BookingClient({ slug, initialData, initialLocationId = "" }: { s
 
   const _router = useRouter();
 
-  const themeMap: Record<string, ThemeConfig> = {
-    cyan: {
-      mainHex: '00b4ff',
-      btnBg: 'bg-[#00b4ff] hover:bg-cyan-400 text-[#050814]',
-      textMain: 'text-[#00b4ff]',
-      textHover: 'hover:text-cyan-400',
-      borderMain: 'border-[#00b4ff]/30',
-      shadowMain: 'shadow-cyan-900/20',
-      avatarShadow: 'shadow-[0_20px_42px_rgba(0,180,255,.26)]',
-      badgeBg: 'bg-cyan-950/40',
-      selection: 'selection:bg-cyan-500/30'
-    },
-    rose: {
-      mainHex: 'f43f5e',
-      btnBg: 'bg-rose-500 hover:bg-rose-400 text-white',
-      textMain: 'text-rose-500',
-      textHover: 'hover:text-rose-400',
-      borderMain: 'border-rose-500/30',
-      shadowMain: 'shadow-rose-900/20',
-      avatarShadow: 'shadow-[0_20px_42px_rgba(244,63,94,.26)]',
-      badgeBg: 'bg-rose-950/40',
-      selection: 'selection:bg-rose-500/30'
-    },
-    emerald: {
-      mainHex: '10b981',
-      btnBg: 'bg-emerald-500 hover:bg-emerald-400 text-white',
-      textMain: 'text-emerald-500',
-      textHover: 'hover:text-emerald-400',
-      borderMain: 'border-emerald-500/30',
-      shadowMain: 'shadow-emerald-900/20',
-      avatarShadow: 'shadow-[0_20px_42px_rgba(16,185,129,.26)]',
-      badgeBg: 'bg-emerald-950/40',
-      selection: 'selection:bg-emerald-500/30'
-    },
-    violet: {
-      mainHex: '8b5cf6',
-      btnBg: 'bg-violet-500 hover:bg-violet-400 text-white',
-      textMain: 'text-violet-500',
-      textHover: 'hover:text-violet-400',
-      borderMain: 'border-violet-500/30',
-      shadowMain: 'shadow-violet-900/20',
-      avatarShadow: 'shadow-[0_20px_42px_rgba(139,92,246,.26)]',
-      badgeBg: 'bg-violet-950/40',
-      selection: 'selection:bg-violet-500/30'
-    },
-    amber: {
-      mainHex: 'f59e0b',
-      btnBg: 'bg-amber-500 hover:bg-amber-400 text-[#050814]',
-      textMain: 'text-amber-500',
-      textHover: 'hover:text-amber-400',
-      borderMain: 'border-amber-500/30',
-      shadowMain: 'shadow-amber-900/20',
-      avatarShadow: 'shadow-[0_20px_42px_rgba(245,158,11,.26)]',
-      badgeBg: 'bg-amber-950/40',
-      selection: 'selection:bg-amber-500/30'
-    }
-  };
-
   const [selectedService, setSelectedService] = useState<Service | null>(firstService);
   const [selectedStaffId, setSelectedStaffId] = useState(firstCapableStaff?.id || "any");
   const isPlaygroundDemo = tenantInfo.isDemo && tenantInfo.trialStatus === "demo";
-  const th = themeMap[tenantInfo.themeColor] || themeMap.cyan;
+  const th = getTenantTheme(tenantInfo.themeColor);
 
   const selectedLocation = useMemo(() =>
     locations.find(l => l.id === selectedLocationId) || null,
@@ -723,7 +666,7 @@ export function BookingClient({ slug, initialData, initialLocationId = "" }: { s
   }
 
   return (
-    <div className="min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 selection:bg-cyan-500/30 relative overflow-hidden animate-in fade-in duration-200">
+    <div className={`min-h-screen bg-[#050814] flex flex-col items-center py-10 px-4 font-sans text-slate-200 ${th.selection} relative overflow-hidden animate-in fade-in duration-200`}>
       {tenantInfo.isDemo && !isPlaygroundDemo && tenantInfo.trialEndsAt && (
         <div className="mb-5 w-full max-w-md rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-center text-xs font-extrabold uppercase tracking-widest text-emerald-300">
           Prova gratuita attiva fino al{" "}
@@ -753,7 +696,7 @@ export function BookingClient({ slug, initialData, initialLocationId = "" }: { s
         th={th}
       />
 
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#00b4ff] opacity-[0.04] blur-[120px] pointer-events-none rounded-full"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] opacity-[0.04] blur-[120px] pointer-events-none rounded-full" style={{ backgroundColor: `#${th.mainHex}` }}></div>
 
       <div className={`bg-[#0b1221] max-w-md md:max-w-lg lg:max-w-xl w-full rounded-3xl shadow-2xl border border-[#1a2642] p-6 sm:p-8 relative z-10 transition-all ${th.shadowMain}`}>
         {isPlaygroundDemo && (
@@ -815,7 +758,7 @@ export function BookingClient({ slug, initialData, initialLocationId = "" }: { s
                   onClick={() => chooseActivity(profile.id)}
                   className={`rounded-xl border px-2 py-2 text-xs font-extrabold transition-all duration-150 flex items-center justify-center gap-1.5 active:scale-90 ${
                     selectedActivityId === profile.id
-                      ? `bg-[#00b4ff]/10 border-[#00b4ff] ${th.textMain} shadow-[0_0_10px_rgba(0,180,255,0.2)]`
+                      ? `${th.badgeBg} ${th.borderMain} ${th.textMain} ${th.shadowMain}`
                       : "bg-[#131c31] border-[#1e2b4a] text-slate-400 hover:border-slate-500 hover:text-white hover:scale-[1.05]"
                   }`}
                 >

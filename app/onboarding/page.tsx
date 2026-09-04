@@ -21,6 +21,7 @@ import {
 import { demoCategoryOptions, sanitizeSlug } from "@/lib/demoShopTemplates";
 import { isReservedSubdomain } from "@/lib/domains";
 import { validateInstagramProfile } from "@/lib/contact";
+import { TENANT_THEME_OPTIONS } from "@/lib/tenant-theme";
 
 const categoryHints: Record<string, { services: string; staff: string; bookings: string }> = {
   hair_women: {
@@ -90,18 +91,7 @@ const categoryHints: Record<string, { services: string; staff: string; bookings:
   },
 };
 
-const THEME_COLORS = [
-  { value: "cyan", label: "Cyan", dot: "bg-cyan-400" },
-  { value: "rose", label: "Rosa", dot: "bg-rose-400" },
-  { value: "emerald", label: "Smeraldo", dot: "bg-emerald-400" },
-  { value: "amber", label: "Ambra", dot: "bg-amber-400" },
-  { value: "purple", label: "Viola", dot: "bg-purple-400" },
-  { value: "slate", label: "Grigio", dot: "bg-slate-400" },
-  { value: "red", label: "Rosso", dot: "bg-red-400" },
-  { value: "indigo", label: "Indaco", dot: "bg-indigo-400" },
-  { value: "teal", label: "Verde Acqua", dot: "bg-teal-400" },
-  { value: "fuchsia", label: "Fucsia", dot: "bg-fuchsia-400" },
-];
+const THEME_COLORS = TENANT_THEME_OPTIONS;
 
 export default function Onboarding() {
   const [businessName, setBusinessName] = useState("");

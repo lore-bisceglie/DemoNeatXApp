@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ROOT_DOMAIN } from "@/lib/domains";
+import { getTenantTheme } from "@/lib/tenant-theme";
 
 // NOTA: niente `runtime = "edge"` qui — Prisma non gira su Edge Runtime.
 // Con il runtime Node di default, `ImageResponse` funziona comunque.
@@ -27,7 +28,7 @@ export async function GET(
     const name = tenant?.name || "NeatX";
     const city = tenant?.city || "";
     const category = tenant?.category || "";
-    const accent = tenant?.themeColor === "emerald" ? "#10b981" : "#00b4ff";
+    const accent = `#${getTenantTheme(tenant?.themeColor).mainHex}`;
     const tagline = tenant?.description
       ? tenant.description.slice(0, 70) + (tenant.description.length > 70 ? "…" : "")
       : `Prenota online su ${name}${city ? ` a ${city}` : ""}`;

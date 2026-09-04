@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Calendar, MapPin, Users, CheckCircle, ChevronRight, ChevronLeft, AlertCircle, Loader2 } from "lucide-react";
 import { FirstAvailableButton, type FirstAvailableResult } from "@/components/tenant/FirstAvailableButton";
 import { getRomeDate } from "@/lib/rome-time";
+import { getTenantTheme } from "@/lib/tenant-theme";
 
 interface Props {
   tenant: {
@@ -180,13 +181,8 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
     }
   }
 
-  var themeColor = tenant.themeColor || "cyan";
-  var gradient = "from-cyan-500 to-blue-600";
-  if (themeColor === "emerald") { gradient = "from-emerald-500 to-teal-600"; }
-  else if (themeColor === "rose") { gradient = "from-rose-500 to-pink-600"; }
-  else if (themeColor === "amber") { gradient = "from-amber-500 to-orange-600"; }
-  else if (themeColor === "violet") { gradient = "from-violet-500 to-purple-600"; }
-  else if (themeColor === "indigo") { gradient = "from-indigo-500 to-blue-600"; }
+  var theme = getTenantTheme(tenant.themeColor);
+  var gradient = theme.gradient;
 
   var progressPct = 0;
   if (step === "service") { progressPct = 25; }
@@ -226,7 +222,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
               Gestisci o annulla prenotazione
             </Link>
           )}
-          <Link href={"/t/" + tenant.slug} className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-3 rounded-xl block">
+          <Link href={"/t/" + tenant.slug} className={"w-full bg-gradient-to-r " + gradient + " text-white font-bold py-3 rounded-xl block"}>
             Torna alla Home
           </Link>
         </div>
@@ -240,9 +236,9 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
     var items = [];
     for (var i = 0; i < steps.length; i++) {
       var isActive = stepIndex >= i;
-      var circleClass = isActive ? "bg-cyan-500 text-white" : "bg-[#1a264a] text-slate-500";
+      var circleClass = isActive ? theme.btnBg : "bg-[#1a264a] text-slate-500";
       items.push(
-        <div key={steps[i]} className={"flex items-center gap-1 " + (step === steps[i] ? "text-cyan-400" : "text-slate-500")}>
+        <div key={steps[i]} className={"flex items-center gap-1 " + (step === steps[i] ? theme.textMain : "text-slate-500")}>
           <span className={"w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors " + circleClass}>
             {i + 1}
           </span>
@@ -263,8 +259,8 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
       const displayPrice = svc.priceInLocation ?? svc.price;
       const isSelected = selectedService === svc.id;
       const cardClass = isSelected
-        ? "w-full relative p-5 rounded-2xl border-2 border-cyan-500 bg-cyan-500/5"
-        : "w-full relative p-5 rounded-2xl border-2 border-[#1a264a] bg-[#0b1221] hover:border-cyan-500/30";
+        ? "w-full relative p-5 rounded-2xl border-2 " + theme.borderMain + " " + theme.softBackground
+        : "w-full relative p-5 rounded-2xl border-2 border-[#1a264a] bg-[#0b1221] hover:" + theme.borderMain;
       cards.push(
         <button
           key={svc.id}
@@ -275,8 +271,8 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
           className={cardClass}
         >
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-              <Users size={24} className="text-cyan-400" />
+            <div className={"w-12 h-12 rounded-xl " + theme.softBackground + " flex items-center justify-center flex-shrink-0"}>
+              <Users size={24} className={theme.textMain} />
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-white text-lg">{svc.name}</h3>
@@ -286,7 +282,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
               </p>
             </div>
             {isSelected && (
-              <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center">
+              <div className={"absolute top-3 right-3 w-8 h-8 rounded-full " + theme.btnBg + " flex items-center justify-center"}>
                 <CheckCircle size={18} className="text-white" />
               </div>
             )}
@@ -314,8 +310,8 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
       const sl = availableSlots[i];
       const isSlotSelected = selectedTime === sl;
       const btnClass = isSlotSelected
-        ? "px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-cyan-500 text-white"
-        : "px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-[#131c31] border border-[#1a264a] text-slate-300 hover:border-cyan-500/30 hover:text-white";
+        ? "px-3 py-2.5 rounded-xl text-sm font-medium transition-all " + theme.btnBg
+        : "px-3 py-2.5 rounded-xl text-sm font-medium transition-all bg-[#131c31] border border-[#1a264a] text-slate-300 hover:" + theme.borderMain + " hover:text-white";
       slotButtons.push(
         <button
           key={sl}
@@ -347,7 +343,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
             onChange={handleDateChange}
             min={calendarBounds.today}
             max={calendarBounds.maxDate}
-            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 cursor-pointer focus:border-cyan-500 focus:outline-none"
+            className={"w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 cursor-pointer focus:outline-none " + theme.borderMain}
           />
         </div>
 
@@ -376,7 +372,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
           )}
           {loadingSlots && (
             <div className="flex justify-center py-4">
-              <Loader2 size={24} className="text-cyan-400 animate-spin" />
+              <Loader2 size={24} className={theme.textMain + " animate-spin"} />
             </div>
           )}
         </div>
@@ -394,7 +390,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
             value={name}
             onChange={function (e) { setName(e.target.value); }}
             placeholder="Mario Rossi"
-            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+            className={"w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none " + theme.borderMain}
             required
           />
         </div>
@@ -406,7 +402,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
             value={phone}
             onChange={function (e) { setPhone(e.target.value); }}
             placeholder="+39 3XX XXXXXXX"
-            className="w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+            className={"w-full bg-[#131c31] border border-[#1e2b4a] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none " + theme.borderMain}
             required
           />
         </div>
@@ -417,11 +413,12 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
             type="checkbox"
             checked={privacyAccepted}
             onChange={(event) => setPrivacyAccepted(event.target.checked)}
-            className="mt-1 h-4 w-4 accent-cyan-500"
+            className="mt-1 h-4 w-4"
+            style={{ accentColor: `#${theme.mainHex}` }}
           />
           <label htmlFor="location-booking-privacy" className="text-xs leading-relaxed text-slate-400">
             Ho letto e accetto la{" "}
-            <Link href="/privacy" className="text-cyan-300 underline">
+            <Link href="/privacy" className={theme.textMain + " underline"}>
               Privacy Policy
             </Link>{" "}
             per la gestione dell&apos;appuntamento.
@@ -489,7 +486,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
   }
 
   var nextBtnClass = canNext
-    ? "flex-1 px-6 py-3 rounded-xl font-bold transition-all bg-gradient-to-r " + gradient + " text-white hover:from-cyan-400 hover:to-blue-500"
+    ? "flex-1 px-6 py-3 rounded-xl font-bold transition-all bg-gradient-to-r " + gradient + " " + theme.gradientHover + " text-white"
     : "flex-1 px-6 py-3 rounded-xl font-bold transition-all bg-[#1a264a] text-slate-500 cursor-not-allowed";
 
   return (
@@ -510,11 +507,11 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
       <main className="pt-20 pb-20 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <Link href={"/t/" + tenant.slug + "/sedi"} className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 text-sm mb-4">
+            <Link href={"/t/" + tenant.slug + "/sedi"} className={"inline-flex items-center gap-2 text-slate-400 " + theme.textHover + " text-sm mb-4"}>
               <ChevronLeft size={16} /> Cambia Sede
             </Link>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#131c31] rounded-xl border border-[#1e2b4a] mb-4">
-              <MapPin size={16} className="text-cyan-400" />
+              <MapPin size={16} className={theme.textMain} />
               <span className="font-medium text-white">{location.name}</span>
               {location.isMain && <span className="px-2 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded-full">Principale</span>}
             </div>
@@ -532,7 +529,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
 
           {loading && (
             <div className="flex justify-center py-12">
-              <Loader2 size={32} className="text-cyan-400 animate-spin" />
+              <Loader2 size={32} className={theme.textMain + " animate-spin"} />
             </div>
           )}
 
@@ -563,7 +560,7 @@ export default function SedeBookingClient({ tenant, location, services, staff: _
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className={"w-full px-6 py-4 bg-gradient-to-r " + gradient + " " + theme.gradientHover + " text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"}
               >
                 {loading ? <Loader2 size={20} className="mx-auto animate-spin" /> : "Conferma Prenotazione"}
               </button>
