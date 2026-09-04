@@ -1,38 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-09-03T14:37:25.402254+02:00
+Generato: 2026-09-04T14:31:20.077352+02:00
 
-## Idea 1: Se sei un tatuatore e continui a perdere ore di lavoro per clienti che non si presentano, ti serve la caparra automatica.
-- video_title: TATUATORI: STOP CLIENTI CHE NON SI PRESENTANO
-- hook: Se sei un tatuatore e continui a perdere ore di lavoro per clienti che non si presentano, ti serve la caparra automatica.
-- blog_title: Tatuatori: Zero No-Show con NeatX
-- gameplay_style: runner
-- concept: Video con gameplay runner in sottofondo mentre la voce spiega come l'attivazione della caparra automatica dimezza i no-show nel tuo studio di tatuaggi.
+## Idea 1: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
+- format: pain shock
+- niche: Personal Trainer
+- hook: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero clienti che dimenticano l'appuntamento e conferme gestite a mano.
+- cta: Commenta AGENDA e ti mando il link.
 
-## Idea 2: Quanti soldi hai perso questa settimana per quel cliente che ha disdetto il tatuaggio all'ultimo minuto senza pagare?
-- video_title: BASTA NO SHOW IN STUDIO
-- hook: Quanti soldi hai perso questa settimana per quel cliente che ha disdetto il tatuaggio all'ultimo minuto senza pagare?
-- blog_title: Come gestire le prenotazioni per tatuatori senza rischiare disdette
-- gameplay_style: runner
-- concept: Il gameplay mostra una corsa fluida mentre lo speaker spiega che con NeatX ogni slot in agenda viene bloccato solo dopo il pagamento della caparra.
+## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- format: before after
+- niche: Personal Trainer
+- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- angle: Confronto diretto tra caos manuale e link NeatX.
+- cta: Scrivi DEMO se vuoi provarlo.
 
-## Idea 3: Ecco il segreto per avere l'agenda piena di clienti paganti ed eliminare chi ti fa solo perdere tempo e materiale.
-- video_title: LA GUIDA PER L'AGENDA TATUATORI
-- hook: Ecco il segreto per avere l'agenda piena di clienti paganti ed eliminare chi ti fa solo perdere tempo e materiale.
-- blog_title: Caparra tatuaggio: come automatizzare i pagamenti e proteggere il tuo tempo
-- gameplay_style: runner
-- concept: Voce narrante che descrive la frustrazione della postazione pronta e del disegno fatto per poi subire un no-show, risolta con il sistema NeatX.
-
-## Idea 4: Smetti di iniziare a disegnare il prossimo tatuaggio se il cliente non ha ancora versato la caparra sul tuo calendario.
-- video_title: MAI PIÙ DISEGNI DI TATUAGGI GRATIS
-- hook: Smetti di iniziare a disegnare il prossimo tatuaggio se il cliente non ha ancora versato la caparra sul tuo calendario.
-- blog_title: Gestione prenotazioni tatuatore: i vantaggi dell'acconto automatico
-- gameplay_style: runner
-- concept: Gameplay dinamico associato al racconto di come filtrare i perditempo richiedendo un acconto automatico direttamente all'atto della prenotazione.
-
-## Idea 5: Ogni singolo slot della tua agenda deve essere occupato solo da clienti che hanno già pagato per essere lì.
-- video_title: COME RIEMPIRE OGNI SLOT DA TATUATORE
-- hook: Ogni singolo slot della tua agenda deve essere occupato solo da clienti che hanno già pagato per essere lì.
-- blog_title: NeatX per tatuatori: elimina i no-show e proteggi il tuo fatturato
-- gameplay_style: runner
-- concept: Analisi dei costi di un no-show per un tatuatore professionista e spiegazione di come l'acconto automatico di NeatX risolve il problema all'origine.
+## Idea 3: Un no-show non è un fastidio, è fatturato perso.
+- format: calculator
+- niche: Personal Trainer
+- hook: Un no-show non è un fastidio, è fatturato perso.
+- angle: Stima soldi persi in un mese e collega promemoria/acconto.
+- cta: Commenta AGENDA.
