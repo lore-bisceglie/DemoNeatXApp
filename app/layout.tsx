@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  verification: {
+    google: "5v19eJ3m2VLzrofKEh-Q3edQ0bKY-zMONQnTxNOsx2Q",
+  },
   keywords: ["agenda online", "prenotazioni salone", "booking barbiere", "software gestione appuntamenti", "zero commissioni", "promemoria automatici", "neatx"],
   icons: {
     icon: "/apple-icon.png",
