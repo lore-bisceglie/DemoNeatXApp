@@ -3,39 +3,9 @@
 import { useEffect, useState } from "react";
 import { Star, MessageSquareQuote } from "lucide-react";
 
-const FALLBACK_REVIEWS = [
-  {
-    name: "BarberShop Mito Renato",
-    role: "Barber Shop",
-    content: "Ragazzi, NeatX mi ha cambiato la vita in barberia. I miei clienti mi scrivono su WhatsApp, io butto un occhio sullo smartwatch, aspetto 20 secondi e mi arriva da solo il messaggio con la prenotazione chiusa. Zero stress per me che continuo a tagliare, comodità top per loro. Geniale! 💈🔥⌚",
-    stars: 5,
-    highlight: "Prenotazioni con un tocco"
-  },
-  {
-    name: "Marco D.",
-    role: "Titolare Barber Shop",
-    content: "Da quando usiamo NeatX, i telefoni hanno smesso di squillare in continuazione. I clienti prenotano da soli e io a fine mese scarico il foglio per il commercialista in un click. Fantastico.",
-    stars: 5,
-    highlight: "Il commercialista ringrazia"
-  },
-  {
-    name: "Silvia R.",
-    role: "Centro Estetico",
-    content: "Prima usavamo un'altra app che ci tratteneva il 25% su ogni nuovo cliente. Con NeatX paghiamo solo l'abbonamento fisso ed è tutto nostro. Le caparre con Stripe hanno azzerato i clienti che non si presentano.",
-    stars: 5,
-    highlight: "Zero commissioni"
-  },
-  {
-    name: "Alessandro F.",
-    role: "Personal Trainer",
-    content: "Molto comodo. Condivido il link nella bio di Instagram e i clienti prenotano gli slot liberi in automatico. La gestione delle disdette è facilissima.",
-    stars: 5,
-    highlight: "Facile da usare"
-  }
-];
-
 export default function TestimonialsSection() {
-  const [reviews, setReviews] = useState<any[]>(FALLBACK_REVIEWS);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/platform-reviews")
@@ -52,16 +22,16 @@ export default function TestimonialsSection() {
             logoUrl: r.tenant?.logoUrl
           }));
           
-          // Pad with fallbacks if less than 3
-          if (formatted.length < 3) {
-            setReviews([...formatted, ...FALLBACK_REVIEWS.slice(0, 3 - formatted.length)]);
-          } else {
-            setReviews(formatted.slice(0, 6)); // Show max 6
-          }
+          setReviews(formatted.slice(0, 6));
         }
       })
-      .catch(() => console.error("Failed to load reviews"));
+      .catch(() => console.error("Failed to load reviews"))
+      .finally(() => setLoaded(true));
   }, []);
+
+  // Le testimonianze sono una prova: se non abbiamo ancora recensioni vere,
+  // non mostriamo esempi fittizi come se fossero clienti reali.
+  if (!loaded || reviews.length === 0) return null;
 
   return (
     <section id="testimonials" className="relative z-10 overflow-hidden bg-[#07111f] py-24">
