@@ -1,11 +1,10 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # GitHub interpreta il cron in UTC. Due esecuzioni coprono le 18:00 italiane
-  # sia con ora solare sia con ora legale; l'outbox impedisce duplicati.
+  # GitHub interpreta il cron in UTC. Quattro tentativi coprono le 18:00
+  # italiane sia con ora solare sia con ora legale; l'outbox impedisce duplicati.
   schedule:
-    - cron: "0 16 * * *"
-    - cron: "0 17 * * *"
+    - cron: "0,15,30,45 16,17 * * *"
   workflow_dispatch:
     inputs:
       mode:
