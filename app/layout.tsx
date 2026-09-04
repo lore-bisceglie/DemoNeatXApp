@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import "driver.js/dist/driver.css";
 import SocialFloatingGroup from "@/components/landing/SocialFloatingGroup";
@@ -94,6 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
 
         {children}
+        <Analytics />
         
         {/* Fix iubenda: restore body scroll when modal closes */}
         <Script id="fix-iubenda-scroll" strategy="afterInteractive">
