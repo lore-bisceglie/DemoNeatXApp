@@ -238,8 +238,13 @@ def upload_to_github_public_url(file_path):
             payload["sha"] = existing_sha
         uploaded = requests.put(api_url, headers=headers, json=payload, timeout=60)
         if uploaded.status_code in (200, 201):
-            version = str(int(time.time()))
-            public_url = f"https://raw.githubusercontent.com/{GITHUB_REPOSITORY}/main/{path}?v={version}"
+            # Use GitHub's signed download URL (plain raw.githubusercontent.com
+            # can return 404 to Meta's fetcher before its edge cache updates).
+            response_data = uploaded.json()
+            public_url = response_data.get("content", {}).get("download_url")
+            if not public_url:
+                print("Upload GitHub riuscito ma URL pubblico assente.")
+                return None
             print(f"Immagine pubblicata su URL stabile: {public_url}")
             return public_url
         print(f"Upload GitHub non riuscito ({uploaded.status_code}): {uploaded.text[:300]}")
