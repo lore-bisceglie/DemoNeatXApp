@@ -3,6 +3,7 @@ import json
 import time
 import requests
 import random
+import base64
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -31,6 +32,8 @@ META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
 IG_ACCOUNT_ID = os.getenv("IG_ACCOUNT_ID")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "lore-bisceglie/DemoNeatXApp")
 
 missing = []
 if not META_ACCESS_TOKEN: missing.append("META_ACCESS_TOKEN")
@@ -203,6 +206,47 @@ def upload_to_temp_server(file_path):
         print(f"Errore caricamento temp: {resp.text}")
         return None
 
+def upload_to_github_public_url(file_path):
+    """Publish the generated asset at a stable public URL for Meta's fetcher.
+
+    Temporary file hosts occasionally return an HTML error page while keeping a
+    200 response. GitHub Contents gives Meta a real PNG URL and is available in
+    Actions through the repository-scoped token.
+    """
+    if not GITHUB_TOKEN or not os.getenv("GITHUB_ACTIONS"):
+        return None
+    path = "bot_scripts/Social/PostGenerator/runtime-post.png"
+    api_url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/contents/{path}"
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    existing_sha = None
+    try:
+        existing = requests.get(api_url, headers=headers, params={"ref": "main"}, timeout=30)
+        if existing.status_code == 200:
+            existing_sha = existing.json().get("sha")
+        with open(file_path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("ascii")
+        payload = {
+            "message": "Auto-post: aggiorna immagine pubblica",
+            "content": encoded,
+            "branch": "main",
+        }
+        if existing_sha:
+            payload["sha"] = existing_sha
+        uploaded = requests.put(api_url, headers=headers, json=payload, timeout=60)
+        if uploaded.status_code in (200, 201):
+            version = str(int(time.time()))
+            public_url = f"https://raw.githubusercontent.com/{GITHUB_REPOSITORY}/main/{path}?v={version}"
+            print(f"Immagine pubblicata su URL stabile: {public_url}")
+            return public_url
+        print(f"Upload GitHub non riuscito ({uploaded.status_code}): {uploaded.text[:300]}")
+    except (OSError, requests.RequestException, ValueError) as exc:
+        print(f"Upload GitHub non riuscito: {exc}")
+    return None
+
 def publish_to_instagram(image_url, caption):
     print("Inizio procedura di pubblicazione su Instagram...")
     url_media = f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}/media"
@@ -287,8 +331,8 @@ def main():
     title = theme.get("main_topic", "L'Innovazione nel Salone")
     img_path = create_graphic_post(title, bg_url)
     
-    # Upload su host temporaneo
-    public_url = upload_to_temp_server(img_path)
+    # Preferisci un URL GitHub stabile: Meta deve scaricare un vero file PNG.
+    public_url = upload_to_github_public_url(img_path) or upload_to_temp_server(img_path)
     
     if public_url:
         success = publish_to_instagram(public_url, caption)
