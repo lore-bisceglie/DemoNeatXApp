@@ -1,0 +1,37 @@
+name: NeatX Reel Access Check
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: neatx-reel-preflight
+  cancel-in-progress: false
+
+jobs:
+  verify-instagram:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Verify Instagram publishing access
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv
+          cd bot_scripts/Social/ReelGenerator
+          python publish_reel.py --check-instagram-access
+      - name: Send Telegram result
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd bot_scripts
+          SUMMARY="$(python Social/ReelGenerator/publish_report_summary.py)"
+          python notify_telegram.py "Controllo accesso Reel" "$SUMMARY" "[CHECK]"
