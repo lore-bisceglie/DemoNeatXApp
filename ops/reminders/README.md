@@ -1,82 +1,62 @@
 # Promemoria WhatsApp automatici
 
-> Per attivare il sistema (primo cliente): vedi **[CHECKLIST-ATTIVAZIONE.md](./CHECKLIST-ATTIVAZIONE.md)**.
-
 ## Stato attuale
 
-Questa configurazione e **pronta ma inattiva** finche non si attiva il server
-n8n Cloud e non si configurano i segreti. Non manda messaggi da sola e non
-sostituisce ancora UltraMsg. Il test manuale con OpenWA ha gia inviato
-correttamente un promemoria reale al negozio prova Green Beauty.
+Il flusso di produzione è attivo e non dipende da n8n Cloud. GitHub Actions avvia i controlli e gli invii; Vercel gestisce la coda idempotente; OpenWA consegna i messaggi su WhatsApp.
 
-L'attivazione avverra soltanto dopo il test completo e dopo una decisione
-esplicita di pubblicazione.
+Il test reale su Green Beauty ha verificato anche la lista d’attesa: uno slot liberato ha promosso il primo contatto e ha inviato un messaggio WhatsApp con esito `sent` e zero errori.
 
-## Flusso finale
+## Flusso dei promemoria
 
 ```text
-GitHub Actions (ogni giorno alle 18:00 Europe/Rome, la sera prima)
-  -> webhook protetto n8n Cloud (server 24/7 a pagamento)
-  -> POST /api/reminders/queue su NeatX
-  -> un promemoria alla volta (tutti quelli eleggibili, nessun limite di 20)
-  -> OpenWA / WhatsApp
-  -> POST /api/reminders/delivery (inviato oppure fallito)
+GitHub Actions (ogni giorno alle 18:00 Europe/Rome)
+  -> POST /api/reminders/queue su Vercel
+  -> claim idempotente nel database
+  -> invio OpenWA / WhatsApp
+  -> POST /api/reminders/delivery
 ```
 
-Il database e la coda di consegna bloccano i doppioni: una prenotazione puo
-risultare inviata una sola volta per canale. Se il provider restituisce un
-errore, il credito riservato viene restituito e l'errore resta tracciato.
+La coda impedisce i doppioni e conserva lo stato `SENT`, `FAILED` o `PROCESSING`. In caso di errore il credito riservato viene restituito e l’errore resta tracciato.
 
-## Cosa serve prima di attivarla davvero
+## Flusso della lista d’attesa
 
-1. Il server n8n Cloud a pagamento (host `neatx.app.n8n.cloud`), con OpenWA,
-   che conserva la sessione WhatsApp in un volume persistente.
-2. Applicare la migrazione `20260815000000_reminder_delivery_outbox` al
-   database scelto per l'ambiente interessato.
-3. In n8n, usare un webhook protetto (non il trigger manuale) e mantenere
-   questi nodi: richiesta coda -> un promemoria alla volta -> invio OpenWA ->
-   conferma consegna. Il percorso resta quello gia testato.
-4. Impostare questi segreti GitHub (mai nel repository):
-   - `N8N_REMINDER_WEBHOOK_URL` (URL di produzione `/webhook/`, non `-test`)
-   - `N8N_REMINDER_WEBHOOK_TOKEN`
-   - `REMINDER_AUTOMATION_ENABLED` con valore `true` **solo dopo il test**.
-5. Fare un ultimo invio reale al negozio prova e controllare il registro
-   consegne. Solo allora si puo sostituire il vecchio invio UltraMsg.
+```text
+GitHub Actions (ogni 15 minuti)
+  -> POST /api/waitlist/dispatch su Vercel
+  -> ricerca di uno slot libero
+  -> promozione FIFO del primo contatto
+  -> invio OpenWA / WhatsApp
+  -> stato della notifica: sent, pending oppure failed
+```
 
-## Trigger unico
+La lista usa la stessa sessione OpenWA dei promemoria. Se non c’è uno slot libero, il contatto resta in lista; quando lo slot compare, viene preso in ordine di iscrizione.
 
-L'invio e controllato **solo** da GitHub Actions, ogni giorno alle
-**18:00 Europe/Rome** (la sera prima dell'appuntamento). Il cron Vercel
-`/api/cron/reminders` e stato rimosso per evitare invii duplicati. La Action
-usa una doppia programmazione UTC (16:00 e 17:00) e prosegue solo quando a
-Roma sono le 18:00, così il cambio ora legale/solare resta gestito.
+## Configurazione da mantenere
 
-## Chi riceve i promemoria
+### Segreti GitHub Actions
 
-La regola gia implementata e automatica per ogni negozio, presente o futuro:
+- `REMINDER_AUTOMATION_ENABLED=true` per gli invii automatici dei promemoria.
+- `OPENWA_BASE_URL`, `OPENWA_API_KEY`, `OPENWA_SESSION_ID` per il dispatcher dei promemoria.
+- `N8N_REMINDER_WEBHOOK_TOKEN`: il nome è storico, ma oggi è solo il token condiviso per autorizzare le chiamate GitHub → Vercel; non richiede n8n Cloud.
 
-- piano `pro` o `elite`;
-- oppure periodo di prova ancora attivo;
-- appuntamento del giorno successivo, numero cliente valido e almeno un
-  credito disponibile.
+### Variabili Vercel
 
-Il piano `basic` resta escluso, coerentemente con le regole commerciali
-attuali. Non serve configurare ogni singolo negozio: quando un nuovo negozio
-entra in prova, viene incluso automaticamente.
+- `REMINDERS_ENABLED=true` abilita coda promemoria e dispatcher waitlist.
+- `OPENWA_BASE_URL`, `OPENWA_API_KEY`, `OPENWA_SESSION_ID` devono puntare alla sessione OpenWA attiva.
+- `N8N_REMINDER_WEBHOOK_TOKEN` (o `CRON_SECRET`) autorizza le chiamate server-to-server.
 
-## Orario e sicurezza
+Non creare una nuova sessione quando quella attiva è pronta: se WhatsApp si disconnette, si ricollega la stessa sessione dalla pagina SuperAdmin usando il QR rigenerato.
 
-GitHub avvia il webhook alle **18:00 Europe/Rome**, anche durante il cambio
-tra ora solare e legale. La Action contiene una doppia chiamata tecnica in UTC
-ma ne lascia proseguire una sola all'orario italiano corretto.
+## Orari e sicurezza
 
-L'invio manuale dalla pagina Actions richiede di digitare `SEND_REMINDERS`:
-non esistono pulsanti che possano mandare messaggi per errore. I segreti sono
-salvati solo in GitHub, n8n e nel server OpenWA.
+Il cron dei promemoria prova più volte in UTC e lascia passare una sola esecuzione alle 18:00 italiane, così il cambio ora legale/solare resta gestito. Il cron Vercel dei promemoria non è attivo: il trigger unico è GitHub Actions.
 
-## Cosa non fare
+L’invio manuale richiede `SEND_REMINDERS`; la lista d’attesa richiede `DISPATCH_WAITLIST`. I segreti non vanno mai inseriti nel repository o nei messaggi di log.
 
-- Non mettere l'URL OpenWA o le chiavi WhatsApp nel repository.
-- Non attivare `REMINDER_AUTOMATION_ENABLED` prima del test con server 24/7.
-- Non eliminare UltraMsg finche non sono verificati almeno alcuni invii reali
-  automatici e il relativo registro consegne.
+## Cosa controllare quando qualcosa non arriva
+
+1. Aprire il run GitHub dell’orario interessato.
+2. Verificare che la sessione OpenWA risulti `ready` nella pagina SuperAdmin.
+3. Controllare il riepilogo: `sent`, `failed`, `processing` e `notProcessed`.
+4. Per la waitlist verificare anche `promoted`, `claimed`, `sent` e `failed`.
+5. Se la sessione è disconnessa, ricollegare lo stesso ID e ripetere il controllo; non cambiare chiave o sessione senza motivo.
