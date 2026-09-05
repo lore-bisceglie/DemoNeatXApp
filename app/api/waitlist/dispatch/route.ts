@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendWaitlistOpenWa } from "@/lib/openwa";
+import { sendTelegramMessage } from "@/lib/telegram";
 import { hasCronAccess } from "@/lib/reminder-outbox";
 import { getAvailabilityForDate } from "@/lib/availability";
 import { enqueueWaitlistNotification } from "@/lib/waitlist-notification";
 
 export const dynamic = "force-dynamic";
+
+function escapeTelegramHtml(value: unknown) {
+  return String(value ?? "").replace(/[&<>]/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+  })[character] || character);
+}
 
 async function promoteWaitlistsWithAvailability() {
   const entries = await prisma.waitlist.findMany({
@@ -77,7 +86,6 @@ export async function POST(request: Request) {
         where: { status: "pending", attempts: { lt: 3 } },
         orderBy: { createdAt: "asc" },
         take: limit,
-        include: { tenant: { select: { name: true } } },
       });
       if (!rows.length) return [];
       await tx.waitlistNotification.updateMany({
@@ -89,8 +97,16 @@ export async function POST(request: Request) {
 
     let sent = 0;
     let failed = 0;
+    const tenants = claimed.length > 0
+      ? await prisma.tenant.findMany({
+          where: { id: { in: [...new Set(claimed.map((row) => row.tenantId))] } },
+          select: { id: true, name: true },
+        })
+      : [];
+    const tenantNames = new Map(tenants.map((tenant) => [tenant.id, tenant.name]));
+    const telegramLines: string[] = [];
     for (const row of claimed) {
-      const shopName = row.tenant.name || "il negozio";
+      const shopName = tenantNames.get(row.tenantId) || "il negozio";
       const formattedDate = row.date.split("-").reverse().join("/");
       const message = `🎉 Si è liberato un posto da ${shopName}!\n\nCiao ${row.name}, si è liberato un posto per la data che avevi richiesto: ${formattedDate}.\n\nSe vuoi approfittarne, puoi prenotare subito qui:\n${row.bookingUrl}\n\nIl posto potrebbe essere preso da un altro cliente.`;
       try {
@@ -101,14 +117,31 @@ export async function POST(request: Request) {
           data: { status: "sent", sentAt: new Date(), claimedAt: null, lastError: null },
         });
         sent++;
+        telegramLines.push(`✅ ${escapeTelegramHtml(shopName)} — ${escapeTelegramHtml(row.name)} (${formattedDate})`);
       } catch (error) {
         await prisma.waitlistNotification.update({
           where: { id: row.id },
           data: { status: row.attempts + 1 >= 3 ? "failed" : "pending", claimedAt: null, lastError: String(error) },
         });
         failed++;
+        telegramLines.push(`❌ ${escapeTelegramHtml(shopName)} — ${escapeTelegramHtml(row.name)} (${formattedDate})`);
       }
     }
+
+    // Un solo riepilogo interno per esecuzione evita di intasare Telegram
+    // quando vengono liberati più posti nello stesso giro.
+    if (claimed.length > 0) {
+      const telegram = await sendTelegramMessage(
+        `⏳ <b>Lista d'attesa</b>\n\n` +
+        `✅ WhatsApp inviati: <b>${sent}</b>\n` +
+        `❌ Falliti: <b>${failed}</b>\n\n` +
+        telegramLines.join("\n"),
+      );
+      if (!telegram.sent) {
+        console.error("[waitlist/dispatch] riepilogo Telegram non inviato", telegram);
+      }
+    }
+
     return NextResponse.json({ success: true, promoted, claimed: claimed.length, sent, failed });
   } catch (error) {
     console.error("[waitlist/dispatch] errore", error);
