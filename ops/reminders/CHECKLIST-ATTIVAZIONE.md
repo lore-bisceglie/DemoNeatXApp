@@ -1,138 +1,78 @@
-# CHECKLIST ATTIVAZIONE promemoria WhatsApp — per il primo cliente
+# CHECKLIST OPERATIVA — promemoria e lista d’attesa
 
-> Scopo: attivare l'invio automatico dei promemoria quando arriverà il primo
-> cliente. Segui i punti IN ORDINE. Ogni punto è verificabile.
-> Tempo stimato: 20-30 minuti la prima volta.
+Questa checklist descrive il flusso attuale di produzione. Non serve attivare n8n Cloud.
 
----
+## 1. Prerequisiti
 
-## FASE 0 — Prerequisiti (tutto già fatto, solo verifica)
+- [ ] Il progetto è aggiornato su `main`.
+- [ ] L’app di produzione risponde su Vercel.
+- [ ] OpenWA è raggiungibile e la sessione configurata è `ready`.
+- [ ] La tabella `ReminderDelivery` esiste nel database di produzione.
 
-- [ ] Il lavoro sul limite e sul trigger è pushato sul ramo giusto (vedi `../..` nota git). *(da fare, vedi fine checklist)*
-- [ ] Il server n8n Cloud è raggiungibile: `https://neatx.app.n8n.cloud` risponde.
-- [ ] L'app NeatX è su Vercel (URL produzione: es. `demo-neatx-app.vercel.app`).
+## 2. Segreti GitHub Actions
 
----
+In **Settings → Secrets and variables → Actions** devono essere presenti:
 
-## FASE 1 — Database di produzione: applicare la migrazione
-
-**Cosa**: creare la tabella `ReminderDelivery` (l'outbox idempotente) nel DB che
-usi per prod (Supabase). Senza questa, il primo promemoria va in errore.
-
-**Come** (una delle due strade):
-
-- **Strada A — da Prisma (consigliata)**: con `DATABASE_URL` che punta al DB di
-  produzione eseguire:
-  ```bash
-  npx prisma migrate deploy
-  ```
-  (deve applicare `20260815000000_reminder_delivery_outbox`).
-
-- **Strada B — SQL diretto** (es. in Supabase SQL Editor): il contenuto della
-  migrazione è in
-  `prisma/migrations/20260815000000_reminder_delivery_outbox/migration.sql`
-  → incollarlo ed eseguire.
-
-**Verifica**:
-```sql
-SELECT EXISTS (
-  SELECT 1 FROM information_schema.tables
-  WHERE table_schema='public' AND table_name='ReminderDelivery'
-);  -- deve restituire true
-```
-Oppure: in Vercel console, un log senza errore dataset al primo giro.
-
----
-
-## FASE 2 — Segreti su GitHub (Settings → Secrets and variables → Actions)
-
-Aggiungere **3 secret** (mai nel repository):
-
-| Secret | Valore |
+| Segreto | Uso |
 |---|---|
-| `N8N_REMINDER_WEBHOOK_URL` | `https://neatx.app.n8n.cloud/webhook/neatx-reminders` ⚠️ **URL di produzione** (senza `-test`) |
-| `N8N_REMINDER_WEBHOOK_TOKEN` | il token del webhook (dalla dashboard n8n Cloud) |
-| `REMINDER_AUTOMATION_ENABLED` | `true` **solo dopo il test manuale** della FASE 5 (mettere `false` o non mettere per restare inattivo) |
+| `REMINDER_AUTOMATION_ENABLED` | `true` per il cron automatico dei promemoria |
+| `OPENWA_BASE_URL` | URL del server OpenWA |
+| `OPENWA_API_KEY` | chiave API OpenWA |
+| `OPENWA_SESSION_ID` | ID della sessione WhatsApp attiva |
+| `N8N_REMINDER_WEBHOOK_TOKEN` | nome storico del token GitHub → Vercel |
 
-> Nota: il workflow, se manca `REMINDER_AUTOMATION_ENABLED=true`, esce "senza
-> inviare" (sicuro). Il token si trova su n8n Cloud → nodo Webhook → sezione
-> "Authentication" / "HTTP Header".
+Il nome `N8N_REMINDER_WEBHOOK_TOKEN` è mantenuto per compatibilità. Non implica che n8n sia in uso.
 
----
+## 3. Variabili Vercel
 
-## FASE 3 — n8n Cloud: mettere il workflow ATTIVO
+In **Project → Settings → Environment Variables** verificare in Production:
 
-1. Vai su `neatx.app.n8n.cloud` → apri il workflow **"NeatX — Promemoria automatici OpenWA"**.
-2. Controlla che il trigger sia il **Webhook** (non il trigger manuale) con path `neatx-reminders`.
-3. Verifica le env del workflow n8n (nella sezione *Workflow Settings / Credentials* o *Environment Variables* di n8n Cloud):
-   - `NEATX_PREVIEW_URL` → l'URL dell'app **di produzione** (es. `https://demo-neatx-app.vercel.app`)
-   - `NEATX_CRON_SECRET` → lo stesso valore di `CRON_SECRET` usato su Vercel
-   - `OPENWA_BASE_URL`, `OPENWA_API_KEY`, `OPENWA_SESSION_ID` → i dati OpenWA
-4. Metti il workflow su **"Active"** (oggi il file ha `"active": false`).
-5. **Verifica**: nella dashboard n8n il workflow non deve mostrare "Inactive".
-
-> ⚠️ Se il workflow usa ancora `NEATX_PREVIEW_URL` per un ambiente di test,
-> sostituirlo con l'URL di produzione prima dell'attivazione.
-
----
-
-## FASE 4 — Vercel: env di produzione
-
-Assicurati che nell'ambiente di **Production** su Vercel (Project → Settings →
-Environment Variables) esista:
-
-| Env | Valore |
+| Variabile | Valore |
 |---|---|
 | `REMINDERS_ENABLED` | `true` |
+| `OPENWA_BASE_URL` | stesso server OpenWA dei segreti GitHub |
+| `OPENWA_API_KEY` | stessa chiave OpenWA |
+| `OPENWA_SESSION_ID` | stesso ID di sessione attiva |
+| `N8N_REMINDER_WEBHOOK_TOKEN` oppure `CRON_SECRET` | token per le chiamate protette |
 
-> Senza questo flag, `/api/reminders/queue` risponde `mode: "disabled"` e nessun
-> messaggio parte. Impostarlo **solo quando** le Fasi 2-3 sono pronte.
+Dopo una modifica alle variabili Vercel serve un nuovo deployment.
 
----
+## 4. Promemoria automatici
 
-## FASE 5 — TEST REALE prima dell'attivazione (obbligatorio)
+- [ ] Workflow **NeatX Reminder Dispatcher** attivo.
+- [ ] Schedule: alle 18:00 Europe/Rome (con guardia sul fuso).
+- [ ] Il run mostra `sent` oppure `0` se non ci sono appuntamenti eleggibili.
+- [ ] Nessun errore OpenWA o `Not found`.
+- [ ] Un appuntamento già `SENT` non viene reinviato.
 
-Fai un **proxy test** con un appuntamento vero del primo cliente su un negozio di
-prova (es. Green Beauty), con `REMINDER_AUTOMATION_ENABLED=false` ancora:
+Per un test manuale usare **Run workflow → mode `send`**, indicare la data e scrivere esattamente `SEND_REMINDERS` nel campo di conferma.
 
-1. In GitHub → Actions → workflow **NeatX Reminder Dispatcher** → **Run workflow**.
-2. Immetti il campo **confirm** = `SEND_REMINDERS` (scrivere esattamente questo).
-3. Oppure testa l'endpoint direttamente (solo lettura):
-   ```bash
-   curl -X POST https://neatx.app.n8n.cloud/webhook-test/neatx-reminders \
-     -H "Content-Type: application/json" \
-     -H "X-NeatX-Reminder-Token: <token>" \
-     -d '{"date":"<ANNO>-<MESE>-<GIORNO>"}'
-   ```
-4. Verifica che:
-   - il cliente riceva il messaggio su WhatsApp;
-   - su DB, `ReminderDelivery` abbia `status='SENT'` per quell'appuntamento;
-   - il campo `smsCredits` (StoreSettings) sia diminuito di 1.
+## 5. Lista d’attesa
 
-**Solo quando il test è OK**: metti `REMINDER_AUTOMATION_ENABLED=true` su GitHub
-e `REMINDERS_ENABLED=true` su Vercel.
+- [ ] Workflow **NeatX Waitlist Dispatcher** attivo.
+- [ ] Schedule: ogni 15 minuti.
+- [ ] Il run mostra `promossi`, `elaborati`, `inviati` e `falliti`.
+- [ ] Con uno slot libero, il primo contatto viene promosso in ordine FIFO.
+- [ ] La notifica passa a `sent` nel database e il messaggio arriva su WhatsApp.
+- [ ] Se non c’è posto, il contatto resta in lista senza errore.
 
----
+Per un test manuale usare **Run workflow → mode `dispatch`** e scrivere `DISPATCH_WAITLIST` nel campo di conferma.
 
-## FASE 6 — Attivazione finale e monitoraggio
+## 6. Ricollegamento WhatsApp
 
-- [ ] `REMINDER_AUTOMATION_ENABLED=true` su GitHub.
-- [ ] L'app ha `REMINDERS_ENABLED=true` (Vercel prod).
-- [ ] Workflow n8n Active.
-- [ ] Primo giro automatico: **ore 18:00 Roma** vedi `ReminderDelivery` popolarsi.
+Il QR non è permanente. Se la sessione è disconnessa:
 
-**Controlli periodici**:
-- Telefono: ricevono i clienti? (primo campanello)
-- DB: `SENT` / `FAILED` nel `ReminderDelivery`.
-- Log Actions GitHub: il run non deve mostrare errori `Configurazione incompleta`.
+1. Aprire la pagina SuperAdmin OpenWA.
+2. Premere **Aggiorna stato**.
+3. Scansionare il QR nuovo con lo stesso WhatsApp Business.
+4. Attendere lo stato `ready`/`connesso`.
+5. Ripetere un run in modalità `check`.
 
----
+Non creare una nuova sessione e non ruotare la chiave se quella attuale è valida.
 
-## Checklist GIT (portare questo lavoro in produzione)
+## 7. Diagnosi rapida
 
-- [ ] Commit su `codex/reminder-main-release` delle modifiche (limite + trigger).
-- [ ] Merge su `main` (o push del ramo e PR a `main`).
-- [ ] Push → **Vercel** fa deploy automatico → il deploy NON include più il cron
-      reminder (solo GitHub lo attiva). Verificare in Vercel che gli altri 3 cron restino.
-
-> Cosa NON fare mai: mettere URL OpenWA / chiavi WhatsApp / token in file del repo.
+- `Not found`: token, URL o ID sessione non corrispondono.
+- `Session not ready`: ricollegare la stessa sessione OpenWA.
+- `0 promossi`: nessuno slot libero per le date presenti in lista.
+- `failed`: leggere `lastError` nella notifica e riprovare dopo aver risolto la causa.
