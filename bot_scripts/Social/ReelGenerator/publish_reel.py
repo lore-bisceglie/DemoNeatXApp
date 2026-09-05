@@ -108,7 +108,31 @@ def instagram_auth_check():
         if not valid:
             error = data.get("data", {}).get("error", {}).get("message", "token non valido")
             return platform_result(False, f"Token Meta non valido o scaduto: {error}.")
-        return platform_result(True, "Token Meta valido e verificato.")
+        account_check = _requests.get(
+            f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}",
+            params={"fields": "id,username", "access_token": META_ACCESS_TOKEN},
+            timeout=10,
+        )
+        if not account_check.ok:
+            try:
+                account_error = account_check.json().get("error", {}).get("message")
+            except ValueError:
+                account_error = None
+            return platform_result(
+                False,
+                "Il token Meta non può accedere all'account Instagram configurato"
+                + (f": {account_error}." if account_error else "."),
+            )
+
+        account = account_check.json()
+        if str(account.get("id")) != str(IG_ACCOUNT_ID):
+            return platform_result(False, "L'account Instagram verificato non corrisponde a quello configurato.")
+
+        username = account.get("username")
+        return platform_result(
+            True,
+            f"Token Meta e account Instagram{f' @{username}' if username else ''} verificati.",
+        )
     except Exception as exc:
         return platform_result(False, f"Impossibile verificare il token Meta: {exc}.")
 
@@ -514,6 +538,18 @@ def publish_to_youtube():
 
 if __name__ == "__main__":
     print("=== INIZIO PUBBLICAZIONE MULTI-PIATTAFORMA ===")
+
+    # This lightweight check is used by GitHub Actions before it spends time
+    # generating a reel. It verifies the real token *and* the configured IG
+    # account, without creating media or publishing anything.
+    if "--check-instagram-access" in sys.argv:
+        instagram_check = instagram_auth_check()
+        write_report({"instagram": instagram_check}, {"instagram": instagram_check})
+        print(('[+] ' if instagram_check["ok"] else '[!] ') + instagram_check["message"])
+        if not instagram_check["ok"]:
+            raise SystemExit("Controllo preventivo Instagram non superato.")
+        raise SystemExit(0)
+
     preflight, preflight_failed = run_preflight()
     if "--preflight" in sys.argv:
         results = {
