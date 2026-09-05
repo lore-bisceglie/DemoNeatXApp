@@ -131,15 +131,12 @@ export async function POST(request: Request) {
     // Un solo riepilogo interno per esecuzione evita di intasare Telegram
     // quando vengono liberati più posti nello stesso giro.
     if (claimed.length > 0) {
-      const telegram = await sendTelegramMessage(
+      await sendTelegramMessage(
         `⏳ <b>Lista d'attesa</b>\n\n` +
         `✅ WhatsApp inviati: <b>${sent}</b>\n` +
         `❌ Falliti: <b>${failed}</b>\n\n` +
         telegramLines.join("\n"),
       );
-      if (!telegram.sent) {
-        console.error("[waitlist/dispatch] riepilogo Telegram non inviato", telegram);
-      }
     }
 
     return NextResponse.json({ success: true, promoted, claimed: claimed.length, sent, failed });
