@@ -77,6 +77,7 @@ export async function POST(request: Request) {
         where: { status: "pending", attempts: { lt: 3 } },
         orderBy: { createdAt: "asc" },
         take: limit,
+        include: { tenant: { select: { name: true } } },
       });
       if (!rows.length) return [];
       await tx.waitlistNotification.updateMany({
@@ -89,7 +90,9 @@ export async function POST(request: Request) {
     let sent = 0;
     let failed = 0;
     for (const row of claimed) {
-      const message = `🎉 Posto liberato!\nCiao ${row.name}, si è liberato un posto per il ${row.date.split("-").reverse().join("/")}. Prenota subito: ${row.bookingUrl}`;
+      const shopName = row.tenant.name || "il negozio";
+      const formattedDate = row.date.split("-").reverse().join("/");
+      const message = `🎉 Si è liberato un posto da ${shopName}!\n\nCiao ${row.name}, si è liberato un posto per la data che avevi richiesto: ${formattedDate}.\n\nSe vuoi approfittarne, puoi prenotare subito qui:\n${row.bookingUrl}\n\nIl posto potrebbe essere preso da un altro cliente.`;
       try {
         const result = await sendWaitlistOpenWa(row.tenantId, row.phone, message);
         if (!result.success) throw new Error(result.error || "Invio non riuscito");
