@@ -1,9 +1,9 @@
 name: NeatX Auto-Reel Machine
 on:
   schedule:
-    # Due pubblicazioni: 14:00 e 22:00 Europe/Rome.
-    - cron: '0 14,22 * * *'
-      timezone: 'Europe/Rome'
+    # GitHub Actions schedules in UTC. The two checks cover summer and winter
+    # time; the gate below accepts only 14:xx in Rome: one reel per local day.
+    - cron: '0 12,13 * * *'
   workflow_dispatch:
 concurrency:
   group: neatx-auto-reel
@@ -30,7 +30,7 @@ jobs:
           fi
           rome_hour="$(TZ=Europe/Rome date +'%H')"
           rome_time="$(TZ=Europe/Rome date +'%Y-%m-%d %H:%M:%S %Z')"
-          if [[ "$rome_hour" =~ ^(14|15|22|23)$ ]]; then
+          if [[ "$rome_hour" == "14" ]]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
             echo "Posting window matched: $rome_time"
           else
