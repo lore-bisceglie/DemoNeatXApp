@@ -11,14 +11,6 @@
     {
       "path": "/api/cron/demo-reset",
       "schedule": "0 5 * * *"
-    },
-    {
-      "path": "/api/cron/reminders",
-      "schedule": "0 16 * * *"
-    },
-    {
-      "path": "/api/cron/reminders",
-      "schedule": "0 17 * * *"
     }
   ]
-}
+}`n
