@@ -88,7 +88,7 @@ def youtube_auth_check():
     return platform_result(False, "Richiede YOUTUBE_TOKEN_JSON o token.json locale valido.")
 
 def instagram_auth_check():
-    """Verifica DAVVERO che il token Meta sia valido chiamando l'API di debug.
+    """Verifica DAVVERO token e account facendo una chiamata innocua a Meta.
 
     Il semplice controllo 'token presente e non placeholder' è insufficiente:
     se il token è scaduto o bloccato da Meta, la pubblicazione fallirebbe ma
@@ -101,13 +101,6 @@ def instagram_auth_check():
 
     try:
         import requests as _requests
-        url = f"https://graph.facebook.com/debug_token?input_token={META_ACCESS_TOKEN}&access_token={META_ACCESS_TOKEN}"
-        res = _requests.get(url, timeout=10)
-        data = res.json()
-        valid = bool(data.get("data", {}).get("is_valid"))
-        if not valid:
-            error = data.get("data", {}).get("error", {}).get("message", "token non valido")
-            return platform_result(False, f"Token Meta non valido o scaduto: {error}.")
         account_check = _requests.get(
             f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}",
             params={"fields": "id,username", "access_token": META_ACCESS_TOKEN},
@@ -120,7 +113,7 @@ def instagram_auth_check():
                 account_error = None
             return platform_result(
                 False,
-                "Il token Meta non può accedere all'account Instagram configurato"
+                "Il token Meta non è valido oppure non può accedere all'account Instagram configurato"
                 + (f": {account_error}." if account_error else "."),
             )
 
