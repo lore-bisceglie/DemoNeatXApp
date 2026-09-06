@@ -1,33 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-09-05T13:39:23.190142+02:00
+Generato: 2026-09-06T13:58:21.777170+02:00
 
-## Idea 1: Se sei un coach o un consulente e passi ore a rispondere ai messaggi per fissare una sessione, stai perdendo clienti e denaro.
-- hook: Se sei un coach o un consulente e passi ore a rispondere ai messaggi per fissare una sessione, stai perdendo clienti e denaro.
-- video_concept: Un video a schermo diviso che mostra a sinistra il caos di un consulente che cerca di coordinare un appuntamento tramite infiniti messaggi WhatsApp, e a destra l'esperienza fluida di un cliente che prenota da solo tramite il link NeatX in pochi secondi.
-- blog_title: Coach e Consulenti: Prenotazione 24 ore su 24 con NeatX
-- keywords: ['agenda consulente', 'prenotazioni coach', 'booking consulenze']
+## Idea 1: Se sei un fisioterapista e non sai quale trattamento ti fa guadagnare di più a livello orario, stai perdendo soldi ogni giorno.
+- title: Fisioterapisti: Analisi dei Margini Reali
+- hook: Se sei un fisioterapista e non sai quale trattamento ti fa guadagnare di più a livello orario, stai perdendo soldi ogni giorno.
+- video_concept: Un video focalizzato sul confronto tra terapie manuali e strumentali, mostrando come calcolare il rendimento effettivo orario attraverso i grafici di NeatX.
+- blog_topic: Fisioterapisti: Come calcolare la redditività dei trattamenti con i dati di NeatX
+- keywords: ['gestionale fisioterapisti', 'agenda fisioterapista']
 
-## Idea 2: Smetti di fare il centralinista per la tua attività di consulenza: ecco come far prenotare i tuoi clienti in totale autonomia.
-- hook: Smetti di fare il centralinista per la tua attività di consulenza: ecco come far prenotare i tuoi clienti in totale autonomia.
-- video_concept: Il professionista mostra direttamente la schermata della propria agenda digitale NeatX spiegando come ha configurato gli slot orari disponibili per fare in modo che il telefono smetta di squillare durante le sessioni di lavoro.
-- blog_title: Come ottimizzare l'agenda da consulente ed eliminare le telefonate di prenotazione
-- keywords: ['agenda consulente', 'booking consulenze']
+## Idea 2: Fisioterapisti, sapete esattamente quali sono i giorni e le ore con più buchi in agenda? Ecco come scoprirlo e rimediare.
+- title: Stop Ore Vuote in Studio
+- hook: Fisioterapisti, sapete esattamente quali sono i giorni e le ore con più buchi in agenda? Ecco come scoprirlo e rimediare.
+- video_concept: Un video rapido in cui si mostra la schermata della dashboard analitica che evidenzia i momenti di calo delle prenotazioni, spiegando come pianificare richiami mirati.
+- blog_topic: Fisioterapisti: Statistiche e Dati con NeatX per eliminare i tempi morti
+- keywords: ['prenotazioni fisioterapia', 'gestionale fisioterapisti']
 
-## Idea 3: Come ricevere prenotazioni confermate per le tue sessioni di coaching anche mentre stai dormendo o sei a cena.
-- hook: Come ricevere prenotazioni confermate per le tue sessioni di coaching anche mentre stai dormendo o sei a cena.
-- video_concept: Inquadratura in stile POV che mostra la notifica di una nuova prenotazione e relativo pagamento ricevuta alle 2 di notte, spiegando i vantaggi di un sistema di booking attivo 24 ore su 24.
-- blog_title: Automatizzare il booking delle consulenze: la guida definitiva per coach
-- keywords: ['prenotazioni coach', 'booking consulenze']
+## Idea 3: Molti fisioterapisti confondono il fatturato lordo con il guadagno reale dello studio. Questa dashboard fa chiarezza in un secondo.
+- title: La Verità sul Tuo Fatturato di Studio
+- hook: Molti fisioterapisti confondono il fatturato lordo con il guadagno reale dello studio. Questa dashboard fa chiarezza in un secondo.
+- video_concept: Confronto visivo tra la gestione caotica delle ricevute cartacee e la pulizia dei grafici di fatturato in tempo reale generati da NeatX.
+- blog_topic: Fisioterapisti: Come monitorare le performance finanziarie dello studio senza errori
+- keywords: ['agenda fisioterapista', 'gestionale fisioterapisti']
 
-## Idea 4: Il vero motivo per cui il tuo telefono da consulente è intasato di messaggi infiniti per concordare un singolo appuntamento.
-- hook: Il vero motivo per cui il tuo telefono da consulente è intasato di messaggi infiniti per concordare un singolo appuntamento.
-- video_concept: Analisi dei tempi persi nel proporre date e orari via chat. Il video mostra come NeatX risolve questo collo di bottiglia mostrando in tempo reale le sole disponibilità reali del professionista.
-- blog_title: Gestione del tempo per coach: come liberare ore preziose dalle chat di prenotazione
-- keywords: ['agenda consulente', 'prenotazioni coach']
+## Idea 4: Se gestisci uno studio di fisioterapia e non monitori i trend storici delle prenotazioni, stai pianificando le tue ferie alla cieca.
+- title: Tracciamento Incassi Attivo
+- hook: Se gestisci uno studio di fisioterapia e non monitori i trend storici delle prenotazioni, stai pianificando le tue ferie alla cieca.
+- video_concept: Gameplay runner in sottofondo con testo in sovrimpressione che spiega l'importanza di prevedere i flussi di cassa stagionali basandosi sui dati degli anni precedenti.
+- blog_topic: Fisioterapisti: Guida al tracciamento automatico e previsionale dei flussi di cassa
+- keywords: ['agenda fisioterapista', 'prenotazioni fisioterapia']
 
-## Idea 5: Se usi ancora i messaggi manuali per coordinare i giorni e gli orari delle tue consulenze, stai dimezzando i tuoi profitti.
-- hook: Se usi ancora i messaggi manuali per coordinare i giorni e gli orari delle tue consulenze, stai dimezzando i tuoi profitti.
-- video_concept: Un video dal tono diretto che spiega l'impatto economico del tempo perso in segreteria per un libero professionista, proponendo la transizione immediata al sistema di prenotazione automatica di NeatX.
-- blog_title: Perché l'agenda manuale sta limitando la crescita del tuo business di coaching
-- keywords: ['agenda consulente', 'prenotazioni coach', 'booking consulenze']
+## Idea 5: Il tuo gestionale ti dice quanti pazienti completano il ciclo di terapie e quanti spariscono dopo la prima seduta?
+- title: Fidelizzazione Pazienti Sotto Controllo
+- hook: Il tuo gestionale ti dice quanti pazienti completano il ciclo di terapie e quanti spariscono dopo la prima seduta?
+- video_concept: Analisi dei dati relativi al tasso di abbandono dei pazienti. Il video mostra come rintracciare chi ha interrotto il percorso di riabilitazione per ricontattarlo.
+- blog_topic: Fisioterapisti: Come analizzare i dati dei pazienti per migliorare la fidelizzazione
+- keywords: ['gestionale fisioterapisti', 'prenotazioni fisioterapia']
