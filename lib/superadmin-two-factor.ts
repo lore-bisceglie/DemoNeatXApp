@@ -7,6 +7,8 @@ const PENDING_TOKEN_MAX_AGE_SECONDS = 5 * 60;
 const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
 function getSecretKey() {
+  const password = process.env.SUPERADMIN_PASSWORD;
+  if (password) return createHash("sha256").update(`neatx-superadmin-totp-v2\0${password}`).digest("hex");
   return getSessionSigningSecret();
 }
 
