@@ -1,10 +1,11 @@
 name: NeatX Reminder Dispatcher
 
 on:
-  # GitHub interpreta il cron in UTC. Quattro tentativi coprono le 18:00
-  # italiane sia con ora solare sia con ora legale; l'outbox impedisce duplicati.
+  # GitHub interpreta il cron in UTC. Eseguiamo tentativi ripetuti in una
+  # finestra ampia: GitHub può ritardare l'avvio dei job schedulati.
+  # La coda/outbox di NeatX impedisce gli invii duplicati.
   schedule:
-    - cron: "0,15,30,45 16,17 * * *"
+    - cron: "*/15 16-19 * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -88,23 +89,10 @@ jobs:
           echo "send=true" >> "$GITHUB_OUTPUT"
           echo "check=false" >> "$GITHUB_OUTPUT"
 
-      - name: Verifica finestra oraria italiana
-        id: rome_time_guard
-        if: ${{ github.event_name == 'schedule' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          HOUR=$(TZ=Europe/Rome date +%H)
-          if [ "$HOUR" != "18" ]; then
-            echo "in_window=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "in_window=true" >> "$GITHUB_OUTPUT"
-
       - name: Controlla NeatX e WhatsApp senza inviare
         if: ${{ steps.guard.outputs.check == 'true' }}
         run: node scripts/reminders-dispatch.mjs --check
 
       - name: Invia i promemoria direttamente da GitHub
-        if: ${{ steps.guard.outputs.send == 'true' && (github.event_name != 'schedule' || steps.rome_time_guard.outputs.in_window == 'true') }}
+        if: ${{ steps.guard.outputs.send == 'true' }}
         run: node scripts/reminders-dispatch.mjs
