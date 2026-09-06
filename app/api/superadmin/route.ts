@@ -4,6 +4,7 @@ import { sendWelcomeEmail } from '@/lib/email';
 import { sendTelegramMessage } from '@/lib/telegram';
 import { requireSuperAdmin } from '@/lib/auth';
 import { hashPassword } from '@/lib/password';
+import { logActivity } from '@/lib/activity';
 
 export async function POST(req: Request) {
   const auth = requireSuperAdmin(req);
@@ -247,6 +248,13 @@ export async function POST(req: Request) {
       `🔗 https://${slug}.neatx.store`
     );
 
+    await logActivity({
+      tenantId: newTenant.id,
+      actor: "superadmin",
+      action: "tenant_created",
+      message: `Negozio creato dal Super Admin (${template}).`,
+    });
+
     return NextResponse.json({
       success: true,
       tenant: { id: newTenant.id, slug: newTenant.slug, name: newTenant.name },
@@ -295,6 +303,14 @@ export async function PATCH(req: Request) {
     const tenant = await prisma.tenant.update({
       where: { id },
       data: updateData,
+    });
+
+    await logActivity({
+      tenantId: tenant.id,
+      actor: "superadmin",
+      action: "tenant_updated",
+      message: "Dati del negozio aggiornati dal Super Admin.",
+      metadata: { fields: Object.keys(updateData).filter((field) => field !== "ownerPasswordHash") },
     });
 
     return NextResponse.json({ success: true, tenant });

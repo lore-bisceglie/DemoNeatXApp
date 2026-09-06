@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSuperAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: Request) {
   const auth = requireSuperAdmin(req);
@@ -25,6 +26,13 @@ export async function POST(req: Request) {
         trialStatus: "published",
         publishedAt: tenant.publishedAt || new Date(),
       },
+    });
+
+    await logActivity({
+      tenantId: updated.id,
+      actor: "superadmin",
+      action: "tenant_published",
+      message: "Negozio pubblicato come attività reale dal Super Admin.",
     });
 
     return NextResponse.json({ success: true, tenant: { id: updated.id, slug: updated.slug, name: updated.name } });

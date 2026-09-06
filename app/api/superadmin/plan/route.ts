@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireSuperAdmin } from '@/lib/auth';
 import { awardReferrerForConversion } from '@/lib/referral';
+import { logActivity } from '@/lib/activity';
 
 export async function POST(req: Request) {
   const auth = requireSuperAdmin(req);
@@ -59,6 +60,20 @@ export async function POST(req: Request) {
         }
       });
     }
+
+    const planMessages: Record<string, string> = {
+      pro: "Piano cambiato in Pro dal Super Admin.",
+      elite: "Piano cambiato in Elite dal Super Admin.",
+      expire: "Trial forzato come scaduto dal Super Admin.",
+      basic: "Trial riattivato dal Super Admin.",
+    };
+    await logActivity({
+      tenantId,
+      actor: "superadmin",
+      action: "plan_updated",
+      message: planMessages[plan] || "Piano aggiornato dal Super Admin.",
+      metadata: { plan },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

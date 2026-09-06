@@ -7,6 +7,14 @@ import { TENANT_THEME_OPTIONS } from "@/lib/tenant-theme";
 
 type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never" | "demo";
 
+type SuperAdminActivity = {
+  id: string;
+  action: string;
+  message: string;
+  createdAt: string;
+  tenant: { id: string; name: string; slug: string };
+};
+
 const generateSecurePassword = () => {
   const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
   const lower = "abcdefghjkmnpqrstuvwxyz";
@@ -57,6 +65,8 @@ export default function SuperAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState("");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [recentActivity, setRecentActivity] = useState<SuperAdminActivity[]>([]);
 
   const now = new Date();
   const todayStart = new Date();
@@ -69,6 +79,16 @@ export default function SuperAdminPage() {
     return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
   }).length;
 
+  const fetchRecentActivity = async () => {
+    try {
+      const res = await fetch("/api/superadmin/activity?limit=8");
+      if (!res.ok) return;
+      const data = await res.json();
+      setRecentActivity(data.logs || []);
+    } catch {
+      // Lo storico è di supporto: non deve bloccare il pannello principale.
+    }
+  };
   const fetchTenants = async ({ silentUnauthorized = false } = {}) => {
     try {
       const res = await fetch("/api/superadmin/list");
@@ -87,6 +107,7 @@ export default function SuperAdminPage() {
       if (data.stats) setStats(data.stats);
       setIsAuthenticated(true);
       setAuthError("");
+      void fetchRecentActivity();
     } catch (e: unknown) {
       setAuthError(e instanceof Error ? e.message : "Errore");
     } finally {
@@ -95,6 +116,21 @@ export default function SuperAdminPage() {
   };
 
   useEffect(() => { fetchTenants({ silentUnauthorized: true }); }, []);
+
+  const activeTenants = tenants.filter((tenant) => !tenant.isDemoData);
+  const trialEndingSoon = activeTenants.filter((tenant) => {
+    if (tenant.plan === "pro" || tenant.plan === "elite" || !tenant.trialEndsAt) return false;
+    const remaining = new Date(tenant.trialEndsAt).getTime() - now.getTime();
+    return remaining > 0 && remaining <= 3 * 86400000;
+  });
+  const lowSmsTenants = activeTenants.filter((tenant) => (tenant.storeSettings?.smsCredits ?? 0) <= 10);
+  const inactiveTenants = activeTenants.filter((tenant) => !tenant.trialEndsAt && tenant.plan !== "pro" && tenant.plan !== "elite");
+  const attentionItems = [
+    ...activeTenants.filter((tenant) => tenant.trialEndsAt && new Date(tenant.trialEndsAt) <= now && tenant.plan !== "pro" && tenant.plan !== "elite").map((tenant) => ({ tenant, tone: "red", title: "Trial scaduto", detail: "Richiede una decisione" })),
+    ...trialEndingSoon.map((tenant) => ({ tenant, tone: "amber", title: "Trial in scadenza", detail: `Scade tra ${Math.max(1, Math.ceil((new Date(tenant.trialEndsAt).getTime() - now.getTime()) / 86400000))} gg` })),
+    ...lowSmsTenants.map((tenant) => ({ tenant, tone: "cyan", title: "SMS quasi esauriti", detail: `${tenant.storeSettings?.smsCredits ?? 0} SMS rimasti` })),
+    ...inactiveTenants.map((tenant) => ({ tenant, tone: "slate", title: "Mai attivato", detail: "Nessun trial o piano attivo" })),
+  ].slice(0, 8);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -316,6 +352,13 @@ export default function SuperAdminPage() {
               <Link href="/" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🏠 Sito</Link>
               <Link href="/superadmin/agents" className="text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition-colors">🤖 Agenti</Link>
               <Link href="/superadmin/openwa" className="text-sm font-medium bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/20 px-3 py-1.5 rounded-full transition-colors">📱 WhatsApp</Link>
+              <button
+                type="button"
+                onClick={() => setShowCreateForm((open) => !open)}
+                className="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-full transition-colors"
+              >
+                {showCreateForm ? "× Chiudi creazione" : "＋ Nuovo negozio"}
+              </button>
               <button onClick={() => { setLoading(true); fetchTenants(); }} className="text-sm font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-full transition-colors">🔄 Aggiorna</button>
               <button
                 type="button"
@@ -355,10 +398,63 @@ export default function SuperAdminPage() {
             ))}
           </div>
 
-          <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <section className="mb-8 grid grid-cols-1 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,.85fr)] gap-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h2 className="text-base font-bold text-white">⚡ Da controllare oggi</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Solo cose su cui puoi intervenire.</p>
+                </div>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${attentionItems.length ? "bg-amber-500/15 text-amber-300 border border-amber-500/20" : "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"}`}>
+                  {attentionItems.length ? `${attentionItems.length} da vedere` : "Tutto in ordine"}
+                </span>
+              </div>
+              {attentionItems.length ? (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {attentionItems.map(({ tenant, tone, title, detail }) => (
+                    <button
+                      key={`${title}-${tenant.id}`}
+                      type="button"
+                      onClick={() => setDetailTenant(tenant)}
+                      className={`text-left rounded-lg border px-3 py-2.5 transition hover:brightness-125 ${
+                        tone === "red" ? "border-red-500/25 bg-red-500/10" : tone === "amber" ? "border-amber-500/25 bg-amber-500/10" : tone === "cyan" ? "border-cyan-500/25 bg-cyan-500/10" : "border-slate-700 bg-slate-800/50"
+                      }`}
+                    >
+                      <span className="block text-xs font-bold text-slate-100">{title} · {tenant.name}</span>
+                      <span className="block text-[11px] text-slate-400 mt-0.5">{detail} →</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-3 py-3 text-sm text-emerald-200">Nessun trial urgente, credito SMS basso o negozio da riattivare.</p>
+              )}
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-bold text-white">🕘 Ultime azioni</h2>
+                <button type="button" onClick={fetchRecentActivity} className="text-xs text-indigo-300 hover:text-indigo-200">Aggiorna</button>
+              </div>
+              {recentActivity.length ? (
+                <div className="space-y-2.5">
+                  {recentActivity.map((entry) => (
+                    <button key={entry.id} type="button" onClick={() => setDetailTenant(tenants.find((tenant) => tenant.id === entry.tenant.id) || null)} className="block w-full text-left border-l-2 border-indigo-500/60 pl-3 hover:bg-slate-800/50 rounded-r transition">
+                      <span className="block text-xs font-semibold text-slate-200 truncate">{entry.tenant.name}</span>
+                      <span className="block text-[11px] text-slate-400 line-clamp-1">{entry.message}</span>
+                      <span className="block text-[10px] text-slate-600 mt-0.5">{new Date(entry.createdAt).toLocaleString("it-IT", { dateStyle: "short", timeStyle: "short" })}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-500">Le prossime modifiche ai negozi compariranno qui.</p>
+              )}
+            </div>
+          </section>
+
+          <div className="w-full space-y-8">
 
             {/* FORM CREAZIONE */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
+            {showCreateForm && <div className="bg-slate-900 border border-indigo-500/30 rounded-xl p-6 shadow-xl h-fit max-w-2xl">
               <h2 className="text-xl font-semibold mb-5 text-white">➕ Nuovo Cliente</h2>
               <form onSubmit={handleCreate} className="space-y-4">
                 <div>
@@ -452,10 +548,10 @@ export default function SuperAdminPage() {
                 {error && <div className="p-3 bg-red-900/30 border border-red-800 text-red-400 text-sm rounded-lg">{error}</div>}
                 <button type="submit" disabled={creating} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg transition disabled:opacity-50">{creating ? "Creazione..." : "🚀 Genera Cliente"}</button>
               </form>
-            </div>
+            </div>}
 
             {/* LISTA CLIENTI */}
-            <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl h-fit">
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <div className="flex items-center gap-3">

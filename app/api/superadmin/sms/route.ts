@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireSuperAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: Request) {
   const auth = requireSuperAdmin(req);
@@ -19,6 +20,14 @@ export async function POST(req: Request) {
       where: { tenantId },
       create: { tenantId, smsCredits: creditsToAdd },
       update: { smsCredits: { increment: creditsToAdd } },
+    });
+
+    await logActivity({
+      tenantId,
+      actor: "superadmin",
+      action: "sms_credits_updated",
+      message: `${creditsToAdd > 0 ? "Aggiunti" : "Rimossi"} ${Math.abs(creditsToAdd)} crediti SMS dal Super Admin.`,
+      metadata: { amount: creditsToAdd, total: storeSettings.smsCredits },
     });
 
     return NextResponse.json({ 
