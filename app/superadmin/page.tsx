@@ -70,6 +70,9 @@ export default function SuperAdminPage() {
   const [isGifted, setIsGifted] = useState(false);
   const [giftedPlan, setGiftedPlan] = useState<"pro" | "elite">("elite");
   const [giftedMonths, setGiftedMonths] = useState("6");
+  const [giftTenant, setGiftTenant] = useState<any>(null);
+  const [giftChoice, setGiftChoice] = useState<{ plan: "pro" | "elite"; duration: string }>({ plan: "elite", duration: "6" });
+  const [gifting, setGifting] = useState(false);
 
   const now = new Date();
   const todayStart = new Date();
@@ -217,23 +220,16 @@ export default function SuperAdminPage() {
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
   };
 
-  const handleGift = async (tenant: any) => {
-    const plan = prompt(`Piano da regalare a ${tenant.name}: pro oppure elite`, "elite")?.trim().toLowerCase();
-    if (!plan) return;
-    if (plan !== "pro" && plan !== "elite") { alert("Inserisci pro oppure elite."); return; }
-    const monthsText = prompt("Per quanti mesi? (es. 3, 6, 12 oppure scrivi illimitato)", "6");
-    if (!monthsText) return;
-    const isUnlimited = monthsText.trim().toLowerCase() === "illimitato";
-    const months = Number(monthsText);
-    if (!isUnlimited && (!Number.isInteger(months) || months < 1 || months > 36)) { alert("Inserisci un numero da 1 a 36 mesi oppure illimitato."); return; }
-    const durationLabel = isUnlimited ? "senza scadenza" : `per ${months} mesi`;
-    if (!confirm(`Regalare ${plan.toUpperCase()} ${durationLabel} a ${tenant.name}?${isUnlimited ? "" : " Alla scadenza passerà automaticamente al rinnovo."}`)) return;
+  const handleGift = async () => {
+    if (!giftTenant || gifting) return;
+    setGifting(true);
     try {
-      const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tenantId: tenant.id, plan: "gifted", giftedPlan: plan, giftedMonths: isUnlimited ? "unlimited" : months }) });
+      const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tenantId: giftTenant.id, plan: "gifted", giftedPlan: giftChoice.plan, giftedMonths: giftChoice.duration }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
+      setGiftTenant(null);
       fetchTenants();
-    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); } finally { setGifting(false); }
   };
 
   const handlePublish = async (tenantId: string, tenantName: string) => {
@@ -705,7 +701,7 @@ export default function SuperAdminPage() {
                                     <div className="flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 gap-1 overflow-hidden">
                                       <button onClick={() => { handleMakePlan(tenant.id, "pro"); setOpenMenuId(null); }} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "pro" ? "bg-blue-500/20 text-blue-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>📘 Imposta PRO</button>
                                       <button onClick={() => { handleMakePlan(tenant.id, "elite"); setOpenMenuId(null); }} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "elite" ? "bg-fuchsia-500/20 text-fuchsia-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>🌟 Imposta ELITE</button>
-                                      <button onClick={() => { handleGift(tenant); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-violet-500/15 text-violet-200 transition">🎁 Regala abbonamento</button>
+                                      <button onClick={() => { setGiftTenant(tenant); setGiftChoice({ plan: "elite", duration: "6" }); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-violet-500/15 text-violet-200 transition">🎁 Regala abbonamento</button>
                                       <div className="h-px bg-slate-800 my-1 w-full" />
                                       <button onClick={() => { handleMakePlan(tenant.id, "basic"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
                                       <button onClick={() => { handleMakePlan(tenant.id, "expire"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>
@@ -735,6 +731,47 @@ export default function SuperAdminPage() {
           </div>
         </div>
       </div>
+
+      {giftTenant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="gift-title">
+          <button aria-label="Chiudi" onClick={() => !gifting && setGiftTenant(null)} className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
+          <div className="relative w-full max-w-md rounded-2xl border border-violet-400/30 bg-slate-900 p-6 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-violet-300">🎁 Abbonamento regalato</p>
+                <h2 id="gift-title" className="mt-1 text-xl font-bold text-white">{giftTenant.name}</h2>
+                <p className="mt-1 text-sm text-slate-400">Scegli piano e durata con un click.</p>
+              </div>
+              <button onClick={() => !gifting && setGiftTenant(null)} className="rounded-lg px-2 py-1 text-slate-400 hover:bg-slate-800 hover:text-white">✕</button>
+            </div>
+
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Piano incluso</p>
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              {(["pro", "elite"] as const).map((plan) => (
+                <button key={plan} onClick={() => setGiftChoice((choice) => ({ ...choice, plan }))} className={`rounded-xl border p-4 text-left transition ${giftChoice.plan === plan ? "border-violet-400 bg-violet-500/15 text-white" : "border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-500"}`}>
+                  <span className="block font-bold">{plan === "pro" ? "Pro" : "Elite"}</span>
+                  <span className="mt-1 block text-xs text-slate-400">{plan === "pro" ? "Funzioni essenziali" : "Esperienza completa"}</span>
+                </button>
+              ))}
+            </div>
+
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Durata del regalo</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[["3", "3 mesi"], ["6", "6 mesi"], ["12", "1 anno"], ["24", "2 anni"], ["unlimited", "Illimitato"]].map(([duration, label]) => (
+                <button key={duration} onClick={() => setGiftChoice((choice) => ({ ...choice, duration }))} className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${giftChoice.duration === duration ? "border-violet-400 bg-violet-500/15 text-violet-100" : "border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-500"}`}>{label}</button>
+              ))}
+            </div>
+
+            <div className="mt-5 rounded-xl bg-slate-950 px-4 py-3 text-sm text-slate-300">
+              {giftChoice.duration === "unlimited" ? "Nessuna scadenza: non sarà conteggiato in MRR o clienti paganti." : `Alla scadenza, ${giftTenant.name} passerà automaticamente al rinnovo.`}
+            </div>
+            <div className="mt-5 flex gap-3">
+              <button onClick={() => setGiftTenant(null)} disabled={gifting} className="flex-1 rounded-xl border border-slate-700 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-800 disabled:opacity-50">Annulla</button>
+              <button onClick={handleGift} disabled={gifting} className="flex-1 rounded-xl bg-violet-600 px-4 py-3 text-sm font-bold text-white hover:bg-violet-500 disabled:opacity-50">{gifting ? "Salvataggio..." : "Conferma regalo"}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL MODIFICA */}
       {editTarget && (
