@@ -69,10 +69,18 @@ export default function SuperAdminPage() {
     return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
   }).length;
 
-  const fetchTenants = async () => {
+  const fetchTenants = async ({ silentUnauthorized = false } = {}) => {
     try {
       const res = await fetch("/api/superadmin/list");
-      if (res.status === 401) { setAuthError("Password errata"); setIsAuthenticated(false); setLoading(false); return; }
+      if (res.status === 401) {
+        // Al primo caricamento non esiste ancora una sessione: non è un errore di password.
+        // Restiamo silenziosi anche per evitare che questa risposta in ritardo sovrascriva un login riuscito.
+        if (!silentUnauthorized) {
+          setAuthError("Sessione scaduta. Inserisci di nuovo la password.");
+          setIsAuthenticated(false);
+        }
+        return;
+      }
       if (!res.ok) { const err = await res.json(); setAuthError("Errore: " + (err.error || res.statusText)); setIsAuthenticated(false); setLoading(false); return; }
       const data = await res.json();
       setTenants(data.tenants || (Array.isArray(data) ? data : []));
@@ -86,11 +94,12 @@ export default function SuperAdminPage() {
     }
   };
 
-  useEffect(() => { fetchTenants(); }, []);
+  useEffect(() => { fetchTenants({ silentUnauthorized: true }); }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setAuthError("");
     const response = await fetch("/api/superadmin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
