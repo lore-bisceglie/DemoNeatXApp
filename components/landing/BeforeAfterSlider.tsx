@@ -81,7 +81,7 @@ export default function BeforeAfterSlider() {
 
       <div 
         ref={containerRef}
-        className="relative w-full h-[450px] sm:h-[550px] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gray-800 select-none cursor-ew-resize bg-[#050814]"
+        className="relative w-full h-[620px] sm:h-[650px] rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gray-800 select-none cursor-ew-resize bg-[#050814]"
         onMouseDown={(e) => {
           setIsDragging(true);
           handleMove(e.clientX);
@@ -251,18 +251,24 @@ export default function BeforeAfterSlider() {
 function DashboardAgendaPreview() {
   const times = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
   const staff = ["MARTINA", "ELISA", "DAVIDE", "SOFIA"];
+  const labels = [
+    { name: "Chiara B.", service: "Taglio", duration: "45m" },
+    { name: "Lorenzo P.", service: "Piega", duration: "45m" },
+    { name: "Marco R.", service: "Barba", duration: "30m" },
+    { name: "Arianna F.", service: "Colore", duration: "90m" },
+  ];
   return (
     <div className="relative mx-auto w-full max-w-[760px] rounded-2xl border border-slate-700/80 bg-[#0b1427]/95 p-3 shadow-2xl sm:p-5">
       <div className="mb-3 flex items-center justify-between gap-2 border-b border-slate-700/60 pb-3">
-        <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Agenda dinamica</p><p className="text-sm font-black text-white">Martedì 08/09</p></div>
+        <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Agenda dinamica</p><p className="text-sm font-black text-white">Esempio di giornata</p></div>
         <div className="flex gap-1"><span className="rounded-md border border-slate-700 px-2 py-1 text-[10px] text-slate-400">← Prec</span><span className="rounded-md bg-cyan-400/15 px-2 py-1 text-[10px] font-bold text-cyan-200">Oggi</span><span className="rounded-md border border-slate-700 px-2 py-1 text-[10px] text-slate-400">Pros →</span></div>
       </div>
-      <div className="mb-2 flex flex-wrap gap-2 text-[9px] font-bold uppercase tracking-wider text-slate-400"><span className="text-cyan-300">● Disponibile</span><span className="text-emerald-300">● Pagato</span><span className="text-rose-300">● No-show</span><span className="text-amber-300">● Pausa</span><span className="text-blue-300">● Permesso</span><span className="text-orange-300">● Ferie</span><span className="text-rose-300">● Chiuso</span></div>
-      <div className="grid grid-cols-[42px_repeat(4,minmax(0,1fr))] gap-1 text-[8px] sm:grid-cols-[60px_repeat(4,minmax(0,1fr))] sm:gap-1.5 sm:text-[9px]">
-        <div className="py-2 text-center font-bold text-slate-500">ORA</div>{staff.map((name) => <div key={name} className="rounded-md border border-slate-700/60 py-2 text-center font-bold text-slate-400">{name}</div>)}
-        {times.map((time) => <div key={time} className="contents"><div className="flex items-center justify-center rounded-md bg-slate-900/70 font-bold text-slate-500">{time}</div>{staff.map((name, index) => { const appointment = (time === "09:30" && index === 0) || (time === "10:00" && index === 2) || (time === "10:30" && index === 1) || (time === "11:30" && index === 3); const paid = time === "10:00" && index === 2; const noShow = time === "12:30" && index === 0; const paused = time === "13:00"; const labels = ["Chiara B.", "Lorenzo P.", "Marco R.", "Arianna F."]; return <div key={`${time}-${name}`} className={`flex min-h-7 items-center justify-center rounded-md border px-1 text-center ${noShow ? "border-rose-400/70 bg-rose-500/20 font-bold text-rose-200" : paid ? "border-emerald-300/70 bg-emerald-400/20 font-bold text-emerald-100" : appointment ? "border-blue-400/60 bg-blue-400/15 font-bold text-blue-100" : paused ? "border-amber-400/40 bg-amber-400/10 text-amber-200" : "border-slate-800/80 bg-slate-950/40 text-slate-600"}`}>{noShow ? `${labels[index]} · No-show` : paid ? `${labels[index]} · Pagato` : appointment ? labels[index] : paused ? "PAUSA" : "+ Libero"}</div>; })}</div>)}
+      <div className="mb-2 flex flex-wrap gap-2 text-[9px] font-bold uppercase tracking-wider text-slate-400"><span className="text-cyan-300">● Disponibile</span><span className="text-emerald-300">● Pagato</span><span className="text-rose-300">● No-show</span><span className="text-amber-300">● Pausa</span><span className="text-blue-300">● Permesso</span><span className="text-orange-300">● Ferie</span><span className="text-slate-500">● Chiuso</span></div>
+      <div className="grid grid-cols-[32px_repeat(4,minmax(0,1fr))] gap-0.5 text-[7px] sm:grid-cols-[60px_repeat(4,minmax(0,1fr))] sm:gap-1.5 sm:text-[9px]">
+          <div className="py-2 text-center font-bold text-slate-500">ORA</div>{staff.map((name) => <div key={name} className="rounded-md border border-slate-700/60 py-2 text-center font-bold text-slate-400">{name}</div>)}
+          {times.map((time) => <div key={time} className="contents"><div className="flex items-center justify-center rounded-md bg-slate-900/70 font-bold text-slate-500">{time}</div>{staff.map((name, index) => { const appointment = (time === "09:30" && index === 0) || (time === "10:00" && index === 2) || (time === "10:30" && index === 1) || (time === "11:30" && index === 3); const paid = time === "10:00" && index === 2; const noShow = time === "11:00" && index === 2; const paused = time === "13:00"; const person = labels[index]; return <div key={`${time}-${name}`} className={`flex min-h-7 items-center justify-center rounded-md border px-1 text-center ${noShow ? "border-rose-400/70 bg-rose-500/20 font-bold text-rose-200" : paid ? "border-emerald-300/70 bg-emerald-400/20 font-bold text-emerald-100" : appointment ? "border-blue-400/60 bg-blue-400/15 font-bold text-blue-100" : paused ? "border-amber-400/40 bg-amber-400/10 text-amber-200" : "border-slate-800/80 bg-slate-950/40 text-slate-600"}`}>{noShow ? <span><strong>{person.name}</strong><small className="block font-medium">No-show</small></span> : paid ? <span><strong>{person.name}</strong><small className="block font-medium">{person.service} · Pagato</small></span> : appointment ? <span><strong>{person.name}</strong><small className="block font-medium">{person.service} · {person.duration}</small></span> : paused ? "PAUSA" : "+ Libero"}</div>; })}</div>)}
       </div>
-      <p className="mt-3 text-center text-[10px] font-medium text-slate-500">Clicca uno slot per prenotare · aggiornato in tempo reale</p>
+      <p className="mt-3 text-center text-[10px] font-medium text-slate-500">Gli slot liberi si aggiornano in tempo reale</p>
     </div>
   );
 }
