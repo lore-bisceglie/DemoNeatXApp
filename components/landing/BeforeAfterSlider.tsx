@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { CheckCircle2, Clock, Calendar, Check, AlertCircle } from "lucide-react";
+import { Caveat } from "next/font/google";
+
+const caveat = Caveat({ subsets: ["latin"], weight: ["500", "700"] });
 
 export default function BeforeAfterSlider() {
   const [sliderPosition, setSliderPosition] = useState(50);
@@ -45,12 +48,7 @@ export default function BeforeAfterSlider() {
   return (
     <div className="relative w-full max-w-5xl mx-auto my-24 px-4 sm:px-6">
       
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
       <style dangerouslySetInnerHTML={{__html: `
-        .font-handwriting { font-family: 'Caveat', cursive; }
-        
         /* Realistic Paper Texture */
         .paper-texture {
           background-color: #f5f0e1;
@@ -105,7 +103,7 @@ export default function BeforeAfterSlider() {
           </div>
           
           {/* App UI Replica */}
-          <div className="w-[85%] sm:w-[60%] ml-auto space-y-4 relative">
+          <div className="hidden w-[85%] sm:w-[60%] ml-auto space-y-4 relative">
             
             {/* Glowing background blob */}
             <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full opacity-50 pointer-events-none" />
@@ -166,6 +164,8 @@ export default function BeforeAfterSlider() {
               </div>
             </div>
           </div>
+
+          <DashboardAgendaPreview />
         </div>
 
         {/* LEFT SIDE: BEFORE (CHAOS) - Clipped Layer */}
@@ -194,7 +194,7 @@ export default function BeforeAfterSlider() {
             </div>
             
             {/* Messy Handwriting Notes */}
-            <div className="relative font-handwriting text-2xl sm:text-3xl text-blue-900/90 font-bold leading-relaxed max-w-[80%]">
+            <div className={`relative ${caveat.className} text-2xl sm:text-3xl text-blue-900/90 font-bold leading-relaxed max-w-[80%]`}>
               
               {/* Note 1 */}
               <div className="relative mb-6 transform rotate-1">
@@ -202,7 +202,7 @@ export default function BeforeAfterSlider() {
                 <span className="opacity-60">15:30 - Mario (o Marco?) </span>
                 <span className="block text-xl opacity-60 ml-16">taglio boh</span>
                 {/* Sticky Note overlapping */}
-                <div className="absolute -right-16 sm:-right-24 top-2 bg-yellow-200 shadow-md p-2 transform rotate-6 w-32 font-handwriting text-lg text-red-600 border border-yellow-300">
+                <div className={`absolute -right-16 sm:-right-24 top-2 bg-yellow-200 shadow-md p-2 transform rotate-6 w-32 ${caveat.className} text-lg text-red-600 border border-yellow-300`}>
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-3 bg-red-500/20 backdrop-blur-sm" />
                   NON SI È PRESENTATO!! 🤬
                 </div>
@@ -244,6 +244,25 @@ export default function BeforeAfterSlider() {
         </div>
 
       </div>
+    </div>
+  );
+}
+
+function DashboardAgendaPreview() {
+  const times = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
+  const staff = ["MARTINA", "ELISA", "DAVIDE", "SOFIA"];
+  return (
+    <div className="relative mx-auto w-full max-w-[760px] rounded-2xl border border-slate-700/80 bg-[#0b1427]/95 p-3 shadow-2xl sm:p-5">
+      <div className="mb-3 flex items-center justify-between gap-2 border-b border-slate-700/60 pb-3">
+        <div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">Agenda dinamica</p><p className="text-sm font-black text-white">Martedì 08/09</p></div>
+        <div className="flex gap-1"><span className="rounded-md border border-slate-700 px-2 py-1 text-[10px] text-slate-400">← Prec</span><span className="rounded-md bg-cyan-400/15 px-2 py-1 text-[10px] font-bold text-cyan-200">Oggi</span><span className="rounded-md border border-slate-700 px-2 py-1 text-[10px] text-slate-400">Pros →</span></div>
+      </div>
+      <div className="mb-2 flex flex-wrap gap-2 text-[9px] font-bold uppercase tracking-wider text-slate-400"><span className="text-cyan-300">● Disponibile</span><span className="text-emerald-300">● Pagato</span><span className="text-rose-300">● No-show</span><span className="text-amber-300">● Pausa</span><span className="text-blue-300">● Permesso</span><span className="text-orange-300">● Ferie</span><span className="text-rose-300">● Chiuso</span></div>
+      <div className="grid grid-cols-[42px_repeat(4,minmax(0,1fr))] gap-1 text-[8px] sm:grid-cols-[60px_repeat(4,minmax(0,1fr))] sm:gap-1.5 sm:text-[9px]">
+        <div className="py-2 text-center font-bold text-slate-500">ORA</div>{staff.map((name) => <div key={name} className="rounded-md border border-slate-700/60 py-2 text-center font-bold text-slate-400">{name}</div>)}
+        {times.map((time) => <div key={time} className="contents"><div className="flex items-center justify-center rounded-md bg-slate-900/70 font-bold text-slate-500">{time}</div>{staff.map((name, index) => { const appointment = (time === "09:30" && index === 0) || (time === "10:00" && index === 2) || (time === "10:30" && index === 1) || (time === "11:30" && index === 3); const paid = time === "10:00" && index === 2; const noShow = time === "12:30" && index === 0; const paused = time === "13:00"; const labels = ["Chiara B.", "Lorenzo P.", "Marco R.", "Arianna F."]; return <div key={`${time}-${name}`} className={`flex min-h-7 items-center justify-center rounded-md border px-1 text-center ${noShow ? "border-rose-400/70 bg-rose-500/20 font-bold text-rose-200" : paid ? "border-emerald-300/70 bg-emerald-400/20 font-bold text-emerald-100" : appointment ? "border-blue-400/60 bg-blue-400/15 font-bold text-blue-100" : paused ? "border-amber-400/40 bg-amber-400/10 text-amber-200" : "border-slate-800/80 bg-slate-950/40 text-slate-600"}`}>{noShow ? `${labels[index]} · No-show` : paid ? `${labels[index]} · Pagato` : appointment ? labels[index] : paused ? "PAUSA" : "+ Libero"}</div>; })}</div>)}
+      </div>
+      <p className="mt-3 text-center text-[10px] font-medium text-slate-500">Clicca uno slot per prenotare · aggiornato in tempo reale</p>
     </div>
   );
 }
