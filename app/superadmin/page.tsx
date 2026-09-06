@@ -15,14 +15,6 @@ type SuperAdminActivity = {
   tenant: { id: string; name: string; slug: string };
 };
 
-type SuperAdminActivity = {
-  id: string;
-  action: string;
-  message: string;
-  createdAt: string;
-  tenant: { id: string; name: string; slug: string };
-};
-
 const generateSecurePassword = () => {
   const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
   const lower = "abcdefghjkmnpqrstuvwxyz";
@@ -229,13 +221,15 @@ export default function SuperAdminPage() {
     const plan = prompt(`Piano da regalare a ${tenant.name}: pro oppure elite`, "elite")?.trim().toLowerCase();
     if (!plan) return;
     if (plan !== "pro" && plan !== "elite") { alert("Inserisci pro oppure elite."); return; }
-    const monthsText = prompt("Per quanti mesi? (es. 3, 6 o 12)", "6");
+    const monthsText = prompt("Per quanti mesi? (es. 3, 6, 12 oppure scrivi illimitato)", "6");
     if (!monthsText) return;
+    const isUnlimited = monthsText.trim().toLowerCase() === "illimitato";
     const months = Number(monthsText);
-    if (!Number.isInteger(months) || months < 1 || months > 36) { alert("Inserisci un numero da 1 a 36 mesi."); return; }
-    if (!confirm(`Regalare ${plan.toUpperCase()} per ${months} mesi a ${tenant.name}? Alla scadenza passerà automaticamente al rinnovo.`)) return;
+    if (!isUnlimited && (!Number.isInteger(months) || months < 1 || months > 36)) { alert("Inserisci un numero da 1 a 36 mesi oppure illimitato."); return; }
+    const durationLabel = isUnlimited ? "senza scadenza" : `per ${months} mesi`;
+    if (!confirm(`Regalare ${plan.toUpperCase()} ${durationLabel} a ${tenant.name}?${isUnlimited ? "" : " Alla scadenza passerà automaticamente al rinnovo."}`)) return;
     try {
-      const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tenantId: tenant.id, plan: "gifted", giftedPlan: plan, giftedMonths: months }) });
+      const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tenantId: tenant.id, plan: "gifted", giftedPlan: plan, giftedMonths: isUnlimited ? "unlimited" : months }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
       fetchTenants();
@@ -549,7 +543,7 @@ export default function SuperAdminPage() {
                       </label>
                       <label className="text-xs text-slate-300">Durata
                         <select value={giftedMonths} onChange={(e) => setGiftedMonths(e.target.value)} className={`${ISM} mt-1`}>
-                          <option value="3">3 mesi</option><option value="6">6 mesi</option><option value="12">1 anno</option><option value="24">2 anni</option>
+                          <option value="3">3 mesi</option><option value="6">6 mesi</option><option value="12">1 anno</option><option value="24">2 anni</option><option value="unlimited">Illimitato</option>
                         </select>
                       </label>
                     </div>
@@ -671,7 +665,7 @@ export default function SuperAdminPage() {
                             {exp && tenant.plan !== "pro" && tenant.plan !== "elite" && (
                               <div className={`text-xs font-semibold ${expired ? "text-red-400" : "text-orange-400"}`}>{expired ? `🔒 Scaduto da ${Math.abs(days)} gg` : `⏳ ${days} gg rimanenti`}</div>
                             )}
-                            {tenant.trialStatus === "gifted" && exp && <div className="text-xs font-semibold text-violet-300">🎁 Regalato fino al {exp.toLocaleDateString("it-IT")}</div>}
+                            {tenant.trialStatus === "gifted" && <div className="text-xs font-semibold text-violet-300">🎁 {exp ? `Regalato fino al ${exp.toLocaleDateString("it-IT")}` : "Regalato illimitato"}</div>}
                             {tenant.ownerEmail && <div className="text-xs truncate text-slate-500" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
                             <div className="flex items-center justify-between pt-1 border-t border-slate-800/50">
                               <span className="text-xs text-slate-400">💬 {tenant.storeSettings?.smsCredits || 0} SMS</span>

@@ -153,6 +153,7 @@ export async function POST(req: Request) {
     const trialLimit = new Date();
     trialLimit.setDate(trialLimit.getDate() + 14);
     const validGiftPlan = giftedPlan === "pro" ? "pro" : "elite";
+    const isUnlimitedGift = giftedMonths === "unlimited";
     const validGiftMonths = Math.min(Math.max(Number(giftedMonths) || 0, 1), 36);
     const giftedUntil = new Date();
     giftedUntil.setMonth(giftedUntil.getMonth() + validGiftMonths);
@@ -163,7 +164,7 @@ export async function POST(req: Request) {
         name,
         slug,
         ownerPasswordHash: hashPassword(finalPassword),
-        trialEndsAt: isGifted === true ? giftedUntil : trialLimit,
+        trialEndsAt: isGifted === true ? (isUnlimitedGift ? null : giftedUntil) : trialLimit,
         phone: phone || null,
         address: address || null,
         instagramUrl: instagramUrl || null,
@@ -258,7 +259,7 @@ export async function POST(req: Request) {
       actor: "superadmin",
       action: "tenant_created",
       message: isGifted === true
-        ? `Negozio creato con piano ${validGiftPlan.toUpperCase()} regalato fino al ${giftedUntil.toLocaleDateString("it-IT")}.`
+        ? `Negozio creato con piano ${validGiftPlan.toUpperCase()} regalato${isUnlimitedGift ? " senza scadenza" : ` fino al ${giftedUntil.toLocaleDateString("it-IT")}`}.`
         : `Negozio creato dal Super Admin (${template}).`,
     });
 

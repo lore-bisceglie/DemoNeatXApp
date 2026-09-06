@@ -25,6 +25,7 @@ export async function POST(req: Request) {
 
     if (plan === 'gifted') {
       const giftPlan = giftedPlan === 'pro' ? 'pro' : 'elite';
+      const isUnlimitedGift = giftedMonths === 'unlimited';
       const months = Math.min(Math.max(Number(giftedMonths) || 0, 1), 36);
       const giftedUntil = new Date();
       giftedUntil.setMonth(giftedUntil.getMonth() + months);
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
         data: {
           plan: giftPlan,
           trialStatus: 'gifted',
-          trialEndsAt: giftedUntil,
+          trialEndsAt: isUnlimitedGift ? null : giftedUntil,
         },
       });
     } else if (plan === 'pro' || plan === 'elite') {
