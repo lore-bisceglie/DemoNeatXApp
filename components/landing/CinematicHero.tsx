@@ -355,7 +355,7 @@ export default function CinematicHero() {
                   </div>
                 </div>
 
-                <div className={styles.messageShowcase}>
+                <div className={styles.messageShowcase} data-tone={item.tone}>
                   <div className={styles.viewLabel}><span />{item.recipientView}</div>
                   <div className={styles.whatsappWindow} data-tone={item.tone}>
                     <div className={styles.whatsappBar}>

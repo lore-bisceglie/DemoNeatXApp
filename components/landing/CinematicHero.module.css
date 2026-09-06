@@ -6,7 +6,7 @@
   --mint: #35f2c3;
   position: relative;
   z-index: 10;
-  height: 500svh;
+  height: 450svh;
   color: #fff;
   background: var(--ink);
   isolation: isolate;
@@ -1086,6 +1086,24 @@
   .messageBubble > span { font-size: .62rem; }
   .messageBubble > .messageLink { font-size: .59rem; }
   .messageBubble > small { font-size: .51rem; }
+}
+
+/* Solo smartphone: i messaggi dettagliati restano leggibili senza invadere
+   i pulsanti. Tablet e desktop mantengono la loro composizione. */
+@media (max-width: 599px) {
+  .messageShowcase {
+    width: min(330px, calc(100vw - 64px));
+  }
+
+  .messageShowcase[data-tone="reminder"] {
+    bottom: 46px;
+  }
+
+  .viewLabel { display: none; }
+
+  .whatsappWindow { height: 250px; }
+  .whatsappWindow[data-tone="booking"] { height: 282px; }
+  .whatsappWindow[data-tone="reminder"] { height: 260px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
