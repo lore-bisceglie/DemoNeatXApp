@@ -15,6 +15,16 @@ type SuperAdminActivity = {
   tenant: { id: string; name: string; slug: string };
 };
 
+type UpcomingRenewal = {
+  tenantId: string;
+  name: string;
+  plan: "pro" | "elite";
+  renewsAt: string;
+  amount: number | null;
+  interval: "month" | "year" | null;
+  willCancel: boolean;
+};
+
 const generateSecurePassword = () => {
   const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
   const lower = "abcdefghjkmnpqrstuvwxyz";
@@ -67,6 +77,8 @@ export default function SuperAdminPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [recentActivity, setRecentActivity] = useState<SuperAdminActivity[]>([]);
+  const [upcomingRenewals, setUpcomingRenewals] = useState<UpcomingRenewal[]>([]);
+  const [renewalsLoading, setRenewalsLoading] = useState(false);
   const [isGifted, setIsGifted] = useState(false);
   const [giftedPlan, setGiftedPlan] = useState<"pro" | "elite">("elite");
   const [giftedMonths, setGiftedMonths] = useState("6");
@@ -95,6 +107,21 @@ export default function SuperAdminPage() {
       // Lo storico è di supporto: non deve bloccare il pannello principale.
     }
   };
+
+  const fetchUpcomingRenewals = async () => {
+    setRenewalsLoading(true);
+    try {
+      const res = await fetch("/api/superadmin/renewals");
+      if (!res.ok) return;
+      const data = await res.json();
+      setUpcomingRenewals(data.renewals || []);
+    } catch {
+      setUpcomingRenewals([]);
+    } finally {
+      setRenewalsLoading(false);
+    }
+  };
+
   const fetchTenants = async ({ silentUnauthorized = false } = {}) => {
     try {
       const res = await fetch("/api/superadmin/list");
@@ -114,6 +141,7 @@ export default function SuperAdminPage() {
       setIsAuthenticated(true);
       setAuthError("");
       void fetchRecentActivity();
+      void fetchUpcomingRenewals();
     } catch (e: unknown) {
       setAuthError(e instanceof Error ? e.message : "Errore");
     } finally {
@@ -425,7 +453,32 @@ export default function SuperAdminPage() {
           </div>
 
           <section className="mb-8 grid grid-cols-1 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,.85fr)] gap-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+            <div className="space-y-4">
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h2 className="text-base font-bold text-white">🔄 Prossimi rinnovi</h2>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Dati aggiornati direttamente da Stripe.</p>
+                  </div>
+                  <button type="button" onClick={fetchUpcomingRenewals} className="text-xs text-indigo-300 hover:text-indigo-200">Aggiorna</button>
+                </div>
+                {renewalsLoading ? (
+                  <p className="text-sm text-slate-500">Controllo rinnovi in corso…</p>
+                ) : upcomingRenewals.length ? (
+                  <div className="space-y-2.5">
+                    {upcomingRenewals.slice(0, 4).map((renewal) => (
+                      <button key={renewal.tenantId} type="button" onClick={() => setDetailTenant(tenants.find((tenant) => tenant.id === renewal.tenantId) || null)} className="block w-full text-left border-l-2 border-emerald-500/60 pl-3 hover:bg-slate-800/50 rounded-r transition">
+                        <span className="flex items-center justify-between gap-2 text-xs font-semibold text-slate-200"><span className="truncate">{renewal.name}</span><span className={renewal.plan === "elite" ? "text-fuchsia-300" : "text-blue-300"}>{renewal.plan.toUpperCase()}</span></span>
+                        <span className={`block text-[11px] mt-0.5 ${renewal.willCancel ? "text-amber-300" : "text-slate-400"}`}>{renewal.willCancel ? "Termina" : "Rinnova"} il {new Date(renewal.renewsAt).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}{renewal.amount != null ? ` · ${(renewal.amount / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" })}` : ""}{renewal.interval ? ` / ${renewal.interval === "year" ? "anno" : "mese"}` : ""}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500">Nessun rinnovo Stripe attivo da mostrare.</p>
+                )}
+              </div>
+
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div>
                   <h2 className="text-base font-bold text-white">⚡ Da controllare oggi</h2>
@@ -454,6 +507,7 @@ export default function SuperAdminPage() {
               ) : (
                 <p className="rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-3 py-3 text-sm text-emerald-200">Nessun trial urgente, credito SMS basso o negozio da riattivare.</p>
               )}
+              </div>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
