@@ -15,20 +15,35 @@ type MessageScene = {
   title: string;
   description: string;
   sender: string;
+  senderRole: string;
   recipient: string;
+  recipientRole: string;
+  flowDirection: "left" | "right";
   routeNote: string;
   recipientView: string;
   contact: string;
   contactStatus: string;
   avatar: string;
   tone: "booking" | "reminder" | "waitlist" | "moved" | "cancelled";
-  messageTitle: string;
+  messageTitle?: string;
   rows: Array<{ label?: string; value: string }>;
   link?: string;
-  footer: string;
+  footer?: string;
   time: string;
   statusLabel: string;
 };
+
+function DirectionArrow({ direction }: { direction: MessageScene["flowDirection"] }) {
+  const path = direction === "right"
+    ? "M2 10H178M170 3l8 7-8 7"
+    : "M178 10H2M10 3l-8 7 8 7";
+
+  return (
+    <svg viewBox="0 0 180 20" preserveAspectRatio="none" role="presentation">
+      <path d={path} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
+    </svg>
+  );
+}
 
 const MESSAGE_SCENES: MessageScene[] = [
   {
@@ -36,23 +51,30 @@ const MESSAGE_SCENES: MessageScene[] = [
     shortLabel: "Prenotazione",
     eyebrow: "Prenotazione online",
     title: "Il cliente prenota. Tu lo sai subito.",
-    description: "Dopo aver scelto servizio, giorno e orario, il cliente invia al negozio un riepilogo già completo.",
-    sender: "Cliente",
-    recipient: "La tua attività",
-    routeNote: "Arriva direttamente nella chat WhatsApp della tua attività.",
-    recipientView: "Vista del gestore",
-    contact: "Cliente",
+    description: "Dopo la scelta di servizio, giorno e orario, il riepilogo arriva al salone già completo.",
+    sender: "Martina R.",
+    senderRole: "Cliente",
+    recipient: "Salone di Elisa",
+    recipientRole: "Salone",
+    flowDirection: "right",
+    routeNote: "Arriva già completa nella chat WhatsApp del salone.",
+    recipientView: "Vista del salone",
+    contact: "Martina R.",
     contactStatus: "online",
-    avatar: "C",
+    avatar: "M",
     tone: "booking",
-    messageTitle: "📅 Nuova prenotazione!",
+    messageTitle: "📅 Nuova Prenotazione!",
     rows: [
-      { label: "Cliente", value: "Il tuo cliente" },
-      { label: "Giorno", value: "Il tuo giorno" },
-      { label: "Orario", value: "Il tuo orario" },
-      { label: "Servizio", value: "Il servizio scelto" },
-      { label: "Pagamento", value: "Come preferisci" },
+      { label: "👤 Cliente", value: "Martina R." },
+      { label: "📱 Telefono", value: "333 456 7890" },
+      { label: "📅 Data", value: "14/09/2026" },
+      { label: "⏰ Ora", value: "10:30" },
+      { label: "📌 Servizio", value: "Taglio + piega (45€)" },
+      { label: "💳 Pagamento", value: "in salone" },
+      { value: "❌ Per annullare in autonomia:" },
+      { value: "Puoi usare questo link fino a 2 ore prima dell'appuntamento:" },
     ],
+    link: "salone-di-elisa.neatx.store/cancel/…",
     footer: "Prenotazione gestita tramite NeatX. 🚀",
     time: "10:28",
     statusLabel: "RICEVUTO",
@@ -63,22 +85,28 @@ const MESSAGE_SCENES: MessageScene[] = [
     eyebrow: "Promemoria automatico",
     title: "NeatX ricorda l’appuntamento al cliente.",
     description: "Il giorno prima parte il promemoria con tutti i dettagli e il link per annullare o spostare in autonomia.",
-    sender: "NeatX",
-    recipient: "Cliente",
+    sender: "Salone di Elisa",
+    senderRole: "Salone",
+    recipient: "Martina R.",
+    recipientRole: "Cliente",
+    flowDirection: "left",
     routeNote: "Tu non devi scrivere, copiare o ricordarti di inviarlo.",
     recipientView: "Vista del cliente",
-    contact: "NeatX",
+    contact: "Salone di Elisa",
     contactStatus: "account business",
-    avatar: "X",
+    avatar: "S",
     tone: "reminder",
-    messageTitle: "🔔 Promemoria appuntamento!",
+    messageTitle: "🔔 Promemoria Appuntamento!",
     rows: [
-      { label: "Giorno", value: "DOMANI · il tuo giorno" },
-      { label: "Orario", value: "Il tuo orario" },
-      { label: "Servizio", value: "Il servizio scelto" },
-      { value: "Per annullare o spostare in autonomia:" },
+      { value: "🏢 Salone di Elisa" },
+      { label: "👤 Cliente", value: "Martina R." },
+      { label: "📅 Data", value: "DOMANI (14/09/2026)" },
+      { label: "⏰ Ora", value: "10:30" },
+      { label: "📌 Servizio", value: "Taglio + piega" },
+      { value: "❌ Per annullare o spostare in autonomia:" },
+      { value: "Puoi usare questo link:" },
     ],
-    link: "la-tua-attivita.neatx.store/gestisci",
+    link: "salone-di-elisa.neatx.store/cancel/…",
     footer: "Prenotazione gestita tramite NeatX. 🚀",
     time: "18:00",
     statusLabel: "AUTOMATICO",
@@ -89,22 +117,24 @@ const MESSAGE_SCENES: MessageScene[] = [
     eyebrow: "Lista d’attesa automatica",
     title: "Si libera un posto. NeatX avvisa chi aspetta.",
     description: "Quando qualcuno annulla, il primo cliente in lista riceve subito il collegamento per occupare lo spazio libero.",
-    sender: "NeatX",
-    recipient: "Cliente in attesa",
+    sender: "Salone di Elisa",
+    senderRole: "Salone",
+    recipient: "Giulia P.",
+    recipientRole: "Cliente",
+    flowDirection: "left",
     routeNote: "Il buco in agenda può riempirsi senza telefonate.",
     recipientView: "Vista del cliente",
-    contact: "NeatX",
+    contact: "Salone di Elisa",
     contactStatus: "account business",
-    avatar: "X",
+    avatar: "S",
     tone: "waitlist",
     messageTitle: "🎉 Posto liberato!",
     rows: [
-      { value: "Ciao! Si è liberato un posto per il tuo giorno." },
-      { value: "Prenota subito prima che venga occupato:" },
+      { value: "Ciao Giulia, si è liberato un posto per il 14/09/2026." },
+      { value: "Prenota subito:" },
     ],
-    link: "la-tua-attivita.neatx.store/prenota",
-    footer: "Avviso automatico lista d’attesa NeatX.",
-    time: "14:42",
+    link: "salone-di-elisa.neatx.store/prenota",
+    time: "11:42",
     statusLabel: "AUTOMATICO",
   },
   {
@@ -113,21 +143,22 @@ const MESSAGE_SCENES: MessageScene[] = [
     eyebrow: "Spostamento autonomo",
     title: "Il cliente cambia orario. Il gestore viene avvisato.",
     description: "Il nuovo appuntamento viene registrato e al negozio arriva un messaggio chiaro con prima e dopo.",
-    sender: "Cliente",
-    recipient: "La tua attività",
+    sender: "Martina R.",
+    senderRole: "Cliente",
+    recipient: "Salone di Elisa",
+    recipientRole: "Salone",
+    flowDirection: "right",
     routeNote: "Niente scambi infiniti per trovare un nuovo orario.",
-    recipientView: "Vista del gestore",
-    contact: "Cliente",
+    recipientView: "Vista del salone",
+    contact: "Martina R.",
     contactStatus: "online",
-    avatar: "C",
+    avatar: "M",
     tone: "moved",
-    messageTitle: "Ciao, ho spostato il mio appuntamento.",
+    messageTitle: undefined,
     rows: [
-      { label: "Da", value: "Il tuo giorno · il tuo orario" },
-      { label: "A", value: "Il tuo giorno · il nuovo orario" },
+      { value: "Ciao, ho spostato il mio appuntamento dal 14/09/2026 alle 10:30 al 14/09/2026 alle 16:00." },
     ],
-    footer: "Lo spostamento è già registrato in NeatX.",
-    time: "18:06",
+    time: "09:12",
     statusLabel: "AGGIORNATO",
   },
   {
@@ -136,18 +167,22 @@ const MESSAGE_SCENES: MessageScene[] = [
     eyebrow: "Annullamento autonomo",
     title: "Il cliente annulla. Lo spazio torna disponibile.",
     description: "Il gestore riceve la conferma e lo slot può essere proposto automaticamente alla lista d’attesa.",
-    sender: "Cliente",
-    recipient: "La tua attività",
+    sender: "Martina R.",
+    senderRole: "Cliente",
+    recipient: "Salone di Elisa",
+    recipientRole: "Salone",
+    flowDirection: "right",
     routeNote: "L’agenda si aggiorna e il posto non viene dimenticato.",
-    recipientView: "Vista del gestore",
-    contact: "Cliente",
+    recipientView: "Vista del salone",
+    contact: "Martina R.",
     contactStatus: "online",
-    avatar: "C",
+    avatar: "M",
     tone: "cancelled",
-    messageTitle: "Ciao, ho annullato il mio appuntamento.",
-    rows: [{ value: "Il tuo giorno · il tuo orario" }],
-    footer: "L’annullamento è già registrato in NeatX.",
-    time: "18:12",
+    messageTitle: undefined,
+    rows: [
+      { value: "Ciao, ho annullato il mio appuntamento del 14/09/2026 alle 10:30." },
+    ],
+    time: "09:16",
     statusLabel: "AGGIORNATO",
   },
 ];
@@ -155,6 +190,9 @@ const MESSAGE_SCENES: MessageScene[] = [
 export default function CinematicHero() {
   const rootRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const sceneRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const sceneButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const progressIndicatorRef = useRef<HTMLSpanElement>(null);
   const [activeScene, setActiveScene] = useState(0);
 
   useEffect(() => {
@@ -166,18 +204,48 @@ export default function CinematicHero() {
     gsap.registerPlugin(ScrollTrigger);
 
     const context = gsap.context(() => {
+      const syncScenePosition = (progress: number) => {
+        const maxSceneIndex = MESSAGE_SCENES.length - 1;
+        const scenePosition = Math.min(maxSceneIndex, Math.max(0, progress * maxSceneIndex));
+        const nearestScene = Math.round(scenePosition);
+        const isMobileViewport = window.matchMedia("(max-width: 820px)").matches;
+        const navigationPosition = isMobileViewport ? nearestScene : scenePosition;
+
+        sceneRefs.current.forEach((scene, index) => {
+          if (!scene) return;
+          // Leave a tiny visual hand-off between consecutive messages so their
+          // long headings never overlap while the scroll remains continuous.
+          const intensity = isMobileViewport
+            ? Number(index === nearestScene)
+            : Math.max(0, 1 - Math.abs(index - scenePosition) * 2);
+          scene.style.setProperty("--scene-intensity", intensity.toFixed(3));
+          scene.style.setProperty("--message-intensity", index === nearestScene ? "1" : "0");
+        });
+
+        sceneButtonRefs.current.forEach((button, index) => {
+          if (!button) return;
+          const intensity = isMobileViewport
+            ? Number(index === nearestScene)
+            : Math.max(0, 1 - Math.abs(index - scenePosition));
+          button.style.opacity = String(.42 + intensity * .58);
+          button.style.transform = `translateY(${-3 * intensity}px)`;
+        });
+
+        if (progressIndicatorRef.current) {
+          progressIndicatorRef.current.style.transform = `translate3d(${navigationPosition * 100}%, 0, 0)`;
+        }
+
+        setActiveScene((current) => (current === nearestScene ? current : nearestScene));
+      };
+
       ScrollTrigger.create({
         trigger: root,
         start: "top top",
         end: "bottom bottom",
-        onUpdate: ({ progress }) => {
-          const nextScene = Math.min(
-            MESSAGE_SCENES.length - 1,
-            Math.floor(progress * MESSAGE_SCENES.length),
-          );
-          setActiveScene((current) => (current === nextScene ? current : nextScene));
-        },
+        onUpdate: ({ progress }) => syncScenePosition(progress),
       });
+
+      syncScenePosition(0);
 
       if (backdropRef.current) {
         gsap.to(backdropRef.current, {
@@ -209,7 +277,7 @@ export default function CinematicHero() {
     const root = rootRef.current;
     if (!root) return;
     const availableScroll = root.offsetHeight - window.innerHeight;
-    const scenePosition = index / MESSAGE_SCENES.length + 0.02;
+    const scenePosition = index / (MESSAGE_SCENES.length - 1);
     window.scrollTo({
       top: root.offsetTop + availableScroll * scenePosition,
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
@@ -242,6 +310,9 @@ export default function CinematicHero() {
             return (
               <div
                 key={item.id}
+                ref={(element) => {
+                  sceneRefs.current[sceneIndex] = element;
+                }}
                 className={`${styles.sceneGrid} ${isActive ? styles.sceneGridActive : ""}`}
                 aria-hidden={!isActive}
               >
@@ -255,14 +326,21 @@ export default function CinematicHero() {
                   <h1>{item.title}</h1>
                   <p className={styles.description}>{item.description}</p>
 
-                  <div className={styles.direction} aria-label={`${item.sender} invia a ${item.recipient}`}>
-                    <div>
-                      <small>Parte da</small>
+                    <div className={styles.direction} aria-label={`${item.sender} invia a ${item.recipient}`}>
+                      <div>
+                      <small>{item.senderRole}</small>
                       <strong>{item.sender}</strong>
                     </div>
-                    <span className={styles.directionArrow}><i /><b>›</b></span>
+                    <span
+                      className={`${styles.directionArrow} ${
+                        item.flowDirection === "left" ? styles.directionArrowLeft : ""
+                      }`}
+                      aria-hidden="true"
+                    >
+                      <DirectionArrow direction={item.flowDirection} />
+                    </span>
                     <div>
-                      <small>Arriva a</small>
+                      <small>{item.recipientRole}</small>
                       <strong>{item.recipient}</strong>
                     </div>
                   </div>
@@ -292,14 +370,14 @@ export default function CinematicHero() {
                     <div className={styles.whatsappChat}>
                       <span className={styles.whatsappDate}>OGGI</span>
                       <div className={styles.messageBubble}>
-                        <strong>{item.messageTitle}</strong>
+                        {item.messageTitle ? <strong>{item.messageTitle}</strong> : null}
                         {item.rows.map((row, rowIndex) => (
                           <span key={`${item.id}-${rowIndex}`}>
                             {row.label ? <b>{row.label}: </b> : null}{row.value}
                           </span>
                         ))}
                         {item.link ? <span className={styles.messageLink}>{item.link}</span> : null}
-                        <small>{item.footer}</small>
+                        {item.footer ? <small>{item.footer}</small> : null}
                         <time>{item.time}</time>
                       </div>
                     </div>
@@ -317,12 +395,15 @@ export default function CinematicHero() {
 
         <nav className={styles.sceneNav} aria-label="Seleziona il messaggio da vedere">
           <span className={styles.progressTrack}>
-            <span style={{ transform: `scaleX(${(activeScene + 1) / MESSAGE_SCENES.length})` }} />
+            <span ref={progressIndicatorRef} />
           </span>
           <div className={styles.sceneButtons}>
             {MESSAGE_SCENES.map((item, index) => (
               <button
                 key={item.id}
+                ref={(element) => {
+                  sceneButtonRefs.current[index] = element;
+                }}
                 type="button"
                 className={index === activeScene ? styles.activeScene : ""}
                 onClick={() => goToScene(index)}
