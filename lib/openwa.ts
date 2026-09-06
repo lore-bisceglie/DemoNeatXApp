@@ -113,6 +113,29 @@ export async function sendReminderOpenWa(phone: string, text: string): Promise<O
   }
 }
 
+/** Generic sender for an explicitly approved SuperAdmin outreach message. */
+export async function sendOpenWaText(phone: string, text: string) {
+  if (!BASE_URL || !API_KEY || !SESSION_ID) {
+    return { success: false, error: "OpenWA non configurato" } as const;
+  }
+  try {
+    const response = await fetch(`${BASE_URL}/api/sessions/${SESSION_ID}/messages/send-text`, {
+      method: "POST",
+      headers: { "X-API-Key": API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ chatId: chatId(phone), text }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    const data = await response.json().catch(() => ({}));
+    const messageId = data.messageId || data.message_id || data.id;
+    if (response.ok && messageId && data.success !== false) {
+      return { success: true, messageId: String(messageId), channel: "whatsapp" as const };
+    }
+    return { success: false, error: String(data.error || data.message || "OpenWA ha rifiutato il messaggio") } as const;
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Errore OpenWA" } as const;
+  }
+}
+
 /** Dedicated OpenWA sender for waitlist notifications. It intentionally does
  * not alter the legacy lib/sms.ts path used by cancellation flows. */
 export async function sendWaitlistOpenWa(tenantId: string, phone: string, text: string) {
