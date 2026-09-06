@@ -118,13 +118,7 @@ export function requireSuperAdmin(req: Request) {
     .find((part) => part.startsWith("superadmin_session="))
     ?.slice("superadmin_session=".length);
   if (verifySuperAdminSessionToken(sessionCookie)) return null;
-
-  const pwd = req.headers.get("x-admin-password");
-  const expected = process.env.SUPERADMIN_PASSWORD;
-  if (!expected || !pwd || !safeEqual(pwd, expected)) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-  }
-  return null;
+  return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
 }
 
 // ── Tenant Admin auth (IDOR protection) ────────────────
@@ -156,6 +150,10 @@ const SESSION_SECRET = (() => {
 
   throw new Error("[NeatX] SESSION_SECRET non configurato. Imposta la variabile d'ambiente SESSION_SECRET in produzione.");
 })();
+
+export function getSessionSigningSecret() {
+  return SESSION_SECRET;
+}
 export const TENANT_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 giorni
 
 function safeEqual(a: string, b: string) {

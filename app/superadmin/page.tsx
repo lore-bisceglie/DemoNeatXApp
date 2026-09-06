@@ -85,6 +85,12 @@ export default function SuperAdminPage() {
   const [giftTenant, setGiftTenant] = useState<any>(null);
   const [giftChoice, setGiftChoice] = useState<{ plan: "pro" | "elite"; duration: string }>({ plan: "elite", duration: "6" });
   const [gifting, setGifting] = useState(false);
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean | null>(null);
+  const [twoFactorSetup, setTwoFactorSetup] = useState<{ qrCode: string; manualKey: string } | null>(null);
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
+  const [twoFactorSaving, setTwoFactorSaving] = useState(false);
 
   const now = new Date();
   const todayStart = new Date();
@@ -122,6 +128,17 @@ export default function SuperAdminPage() {
     }
   };
 
+  const fetchTwoFactorStatus = async () => {
+    try {
+      const res = await fetch("/api/superadmin/two-factor/status");
+      if (!res.ok) return;
+      const data = await res.json();
+      setTwoFactorEnabled(Boolean(data.enabled));
+    } catch {
+      setTwoFactorEnabled(null);
+    }
+  };
+
   const fetchTenants = async ({ silentUnauthorized = false } = {}) => {
     try {
       const res = await fetch("/api/superadmin/list");
@@ -142,6 +159,7 @@ export default function SuperAdminPage() {
       setAuthError("");
       void fetchRecentActivity();
       void fetchUpcomingRenewals();
+      void fetchTwoFactorStatus();
     } catch (e: unknown) {
       setAuthError(e instanceof Error ? e.message : "Errore");
     } finally {
@@ -181,13 +199,75 @@ export default function SuperAdminPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
     });
+    const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       setAuthError("Password errata");
       setLoading(false);
       return;
     }
     setPassword("");
+    if (data.requiresTwoFactor) {
+      setTwoFactorRequired(true);
+      setLoading(false);
+      return;
+    }
     await fetchTenants();
+  };
+
+  const handleTwoFactorVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setAuthError("");
+    try {
+      const response = await fetch("/api/superadmin/two-factor/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: twoFactorCode }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Codice non valido");
+      setTwoFactorCode("");
+      await fetchTenants();
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : "Codice non valido");
+      setLoading(false);
+    }
+  };
+
+  const startTwoFactorSetup = async () => {
+    setTwoFactorSaving(true);
+    setAuthError("");
+    try {
+      const response = await fetch("/api/superadmin/two-factor/setup", { method: "POST" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Impossibile preparare Authenticator");
+      setTwoFactorCode("");
+      setRecoveryCodes(null);
+      setTwoFactorSetup(data);
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : "Errore di configurazione");
+    } finally {
+      setTwoFactorSaving(false);
+    }
+  };
+
+  const enableTwoFactor = async () => {
+    if (!twoFactorSetup) return;
+    setTwoFactorSaving(true);
+    setAuthError("");
+    try {
+      const response = await fetch("/api/superadmin/two-factor/enable", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: twoFactorCode }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Codice non valido");
+      setRecoveryCodes(data.recoveryCodes || []);
+      setTwoFactorSetup(null);
+      setTwoFactorEnabled(true);
+      setTwoFactorCode("");
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : "Codice non valido");
+    } finally {
+      setTwoFactorSaving(false);
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -212,6 +292,8 @@ export default function SuperAdminPage() {
     setTenants([]);
     setIsAuthenticated(false);
     setPassword("");
+    setTwoFactorRequired(false);
+    setTwoFactorCode("");
   };
 
   const handleCleanupTests = async () => {
@@ -367,18 +449,25 @@ export default function SuperAdminPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#050814] flex items-center justify-center p-4">
-        <form onSubmit={handleLogin} className="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md w-full shadow-2xl">
+        <form onSubmit={twoFactorRequired ? handleTwoFactorVerify : handleLogin} className="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md w-full shadow-2xl">
           <div className="text-center mb-8">
             <div className="text-5xl mb-3">🔐</div>
-            <h1 className="text-2xl font-bold text-white">Super Admin</h1>
-            <p className="text-slate-400 text-sm mt-1">NeatX SaaS — Godmode</p>
+            <h1 className="text-2xl font-bold text-white">{twoFactorRequired ? "Verifica Authenticator" : "Super Admin"}</h1>
+            <p className="text-slate-400 text-sm mt-1">{twoFactorRequired ? "Inserisci il codice a 6 cifre della tua app." : "NeatX SaaS — Godmode"}</p>
           </div>
-          <div className="relative mb-4">
-            <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleLogin(e); }} placeholder="Password segreta" autoFocus className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500" />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">{showPassword ? "👁️" : "👁️‍🗨️"}</button>
-          </div>
+          {twoFactorRequired ? (
+            <div className="mb-4">
+              <input value={twoFactorCode} onChange={e => setTwoFactorCode(e.target.value)} placeholder="123456 oppure codice di recupero" autoFocus autoComplete="one-time-code" inputMode="text" className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500" />
+              <button type="button" onClick={() => { setTwoFactorRequired(false); setTwoFactorCode(""); setAuthError(""); }} className="mt-3 text-xs text-slate-400 hover:text-white">← Torna alla password</button>
+            </div>
+          ) : (
+            <div className="relative mb-4">
+              <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Password segreta" autoFocus className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 pr-10 text-white focus:outline-none focus:border-indigo-500" />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white">{showPassword ? "👁️" : "👁️‍🗨️"}</button>
+            </div>
+          )}
           {authError && <div className="text-red-400 text-sm mb-4 bg-red-500/10 border border-red-500/20 p-3 rounded-lg">{authError}</div>}
-          <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition disabled:opacity-50">{loading ? "Verifica..." : "Entra nel Pannello"}</button>
+          <button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition disabled:opacity-50">{loading ? "Verifica..." : twoFactorRequired ? "Conferma codice" : "Entra nel Pannello"}</button>
         </form>
       </div>
     );
@@ -421,6 +510,9 @@ export default function SuperAdminPage() {
               >
                 Esci
               </button>
+              <button type="button" onClick={startTwoFactorSetup} disabled={twoFactorSaving || twoFactorEnabled === true} className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-default ${twoFactorEnabled ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300" : "border-violet-500/30 bg-violet-500/10 text-violet-200 hover:bg-violet-500/20"}`}>
+                {twoFactorEnabled ? "🛡️ Authenticator attivo" : "🛡️ Proteggi accesso"}
+              </button>
               <button
                 type="button"
                 onClick={handleCleanupTests}
@@ -431,6 +523,7 @@ export default function SuperAdminPage() {
             </div>
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Pannello Super Admin</h1>
             <p className="text-slate-400 text-sm mt-0.5">NeatX SaaS — Godmode Control Panel</p>
+            {twoFactorEnabled === false && <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-3 text-sm text-violet-100"><span><b>Protezione da completare.</b> Attiva Authenticator prima di usare il pannello da altri dispositivi.</span><button type="button" onClick={startTwoFactorSetup} disabled={twoFactorSaving} className="rounded-lg bg-violet-600 px-3 py-2 text-xs font-bold text-white hover:bg-violet-500 disabled:opacity-50">{twoFactorSaving ? "Preparazione..." : "Attiva ora"}</button></div>}
           </div>
 
           {/* STATS 6 CARDS */}
@@ -785,6 +878,41 @@ export default function SuperAdminPage() {
           </div>
         </div>
       </div>
+
+      {twoFactorSetup && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="two-factor-title">
+          <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-sm" />
+          <div className="relative w-full max-w-md rounded-2xl border border-violet-400/35 bg-slate-900 p-6 shadow-2xl">
+            <p className="text-xs font-bold uppercase tracking-widest text-violet-300">🛡️ Accesso protetto</p>
+            <h2 id="two-factor-title" className="mt-1 text-xl font-bold text-white">Collega Authenticator</h2>
+            <p className="mt-2 text-sm text-slate-300">Apri la tua app Authenticator sul telefono, aggiungi un account e scansiona questo QR.</p>
+            <div className="mt-5 flex justify-center rounded-xl bg-white p-3"><img src={twoFactorSetup.qrCode} alt="QR per configurare NeatX in Authenticator" width={220} height={220} /></div>
+            <details className="mt-4 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-400"><summary className="cursor-pointer font-semibold text-slate-300">Non riesci a scansionare?</summary><p className="mt-2 break-all font-mono text-violet-200">{twoFactorSetup.manualKey}</p></details>
+            <label className="mt-5 block text-sm font-semibold text-slate-200">Codice mostrato da Authenticator
+              <input value={twoFactorCode} onChange={(e) => setTwoFactorCode(e.target.value)} placeholder="123456" autoFocus autoComplete="one-time-code" inputMode="numeric" className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 p-3 text-center font-mono text-lg tracking-[0.3em] text-white focus:border-violet-400 focus:outline-none" />
+            </label>
+            {authError && <p className="mt-3 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-300">{authError}</p>}
+            <div className="mt-5 flex gap-3">
+              <button type="button" disabled={twoFactorSaving} onClick={() => { setTwoFactorSetup(null); setTwoFactorCode(""); setAuthError(""); }} className="flex-1 rounded-xl border border-slate-700 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-800 disabled:opacity-50">Annulla</button>
+              <button type="button" disabled={twoFactorSaving || !twoFactorCode.trim()} onClick={enableTwoFactor} className="flex-1 rounded-xl bg-violet-600 px-4 py-3 text-sm font-bold text-white hover:bg-violet-500 disabled:opacity-50">{twoFactorSaving ? "Attivazione..." : "Attiva Authenticator"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {recoveryCodes && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="recovery-title">
+          <div className="absolute inset-0 bg-slate-950/90" />
+          <div className="relative w-full max-w-md rounded-2xl border border-emerald-400/35 bg-slate-900 p-6 shadow-2xl">
+            <p className="text-xs font-bold uppercase tracking-widest text-emerald-300">✓ Authenticator attivo</p>
+            <h2 id="recovery-title" className="mt-1 text-xl font-bold text-white">Salva questi codici di recupero</h2>
+            <p className="mt-2 text-sm text-slate-300">Sono monouso e non verranno mostrati di nuovo. Usali solo se non hai più il telefono.</p>
+            <div className="mt-5 grid grid-cols-2 gap-2 rounded-xl border border-slate-700 bg-slate-950 p-4 font-mono text-sm text-emerald-200">{recoveryCodes.map((code) => <span key={code}>{code}</span>)}</div>
+            <button type="button" onClick={() => navigator.clipboard.writeText(recoveryCodes.join("\n"))} className="mt-4 w-full rounded-xl border border-slate-700 px-4 py-3 text-sm font-bold text-slate-200 hover:bg-slate-800">Copia i codici</button>
+            <button type="button" onClick={() => setRecoveryCodes(null)} className="mt-3 w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-500">Li ho salvati in un posto sicuro</button>
+          </div>
+        </div>
+      )}
 
       {giftTenant && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="gift-title">

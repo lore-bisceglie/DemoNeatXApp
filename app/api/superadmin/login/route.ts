@@ -2,6 +2,8 @@ import { timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
 import { createSuperAdminSessionToken } from "@/lib/auth";
 import { checkRequestRateLimit } from "@/lib/request-rate-limit";
+import { prisma } from "@/lib/prisma";
+import { createPendingTwoFactorToken } from "@/lib/superadmin-two-factor";
 
 function safeEqual(left: string, right: string) {
   const a = Buffer.from(left);
@@ -24,7 +26,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Credenziali non valide" }, { status: 401 });
   }
 
-  const response = NextResponse.json({ success: true });
+  const security = await prisma.superAdminSecurity.findUnique({
+    where: { id: "default" },
+    select: { twoFactorEnabledAt: true, totpSecretEncrypted: true },
+  });
+
+  if (security?.twoFactorEnabledAt && security.totpSecretEncrypted) {
+    const response = NextResponse.json({ success: true, requiresTwoFactor: true });
+    response.cookies.set("superadmin_pending_2fa", createPendingTwoFactorToken(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 5 * 60,
+      path: "/",
+    });
+    return response;
+  }
+
+  const response = NextResponse.json({ success: true, requiresTwoFactor: false });
   response.cookies.set("superadmin_session", createSuperAdminSessionToken(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -37,12 +56,14 @@ export async function POST(request: Request) {
 
 export async function DELETE() {
   const response = NextResponse.json({ success: true });
-  response.cookies.set("superadmin_session", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 0,
-    path: "/",
-  });
+  for (const name of ["superadmin_session", "superadmin_pending_2fa", "superadmin_pending_2fa_setup"]) {
+    response.cookies.set(name, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 0,
+      path: "/",
+    });
+  }
   return response;
 }
