@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const { 
       name, slug, template, password, ownerEmail,
       phone, address, instagramUrl, mapsLink, description, openTime, closeTime,
-      logoUrl, themeColor
+      logoUrl, themeColor, isGifted, giftedPlan, giftedMonths
     } = body;
 
     if (!name || !slug || !template) {
@@ -152,6 +152,10 @@ export async function POST(req: Request) {
 
     const trialLimit = new Date();
     trialLimit.setDate(trialLimit.getDate() + 14);
+    const validGiftPlan = giftedPlan === "pro" ? "pro" : "elite";
+    const validGiftMonths = Math.min(Math.max(Number(giftedMonths) || 0, 1), 36);
+    const giftedUntil = new Date();
+    giftedUntil.setMonth(giftedUntil.getMonth() + validGiftMonths);
 
     // Crea il Tenant con i servizi annessi e la password
     const newTenant = await prisma.tenant.create({
@@ -159,7 +163,7 @@ export async function POST(req: Request) {
         name,
         slug,
         ownerPasswordHash: hashPassword(finalPassword),
-        trialEndsAt: trialLimit,
+        trialEndsAt: isGifted === true ? giftedUntil : trialLimit,
         phone: phone || null,
         address: address || null,
         instagramUrl: instagramUrl || null,
@@ -170,7 +174,8 @@ export async function POST(req: Request) {
         logoUrl: logoUrl || null,
         themeColor: themeColor || 'cyan',
         ownerEmail: ownerEmail || null,
-        trialStatus: "trial_active",
+        trialStatus: isGifted === true ? "gifted" : "trial_active",
+        plan: isGifted === true ? validGiftPlan : "basic",
         isDemoData: false,
         template: template || 'barbiere',
         category: template || 'barbiere',
@@ -252,7 +257,9 @@ export async function POST(req: Request) {
       tenantId: newTenant.id,
       actor: "superadmin",
       action: "tenant_created",
-      message: `Negozio creato dal Super Admin (${template}).`,
+      message: isGifted === true
+        ? `Negozio creato con piano ${validGiftPlan.toUpperCase()} regalato fino al ${giftedUntil.toLocaleDateString("it-IT")}.`
+        : `Negozio creato dal Super Admin (${template}).`,
     });
 
     return NextResponse.json({

@@ -14,6 +14,7 @@ const TRIAL_EMAIL_ACTIONS = {
   reminder3Days: "EMAIL_TRIAL_REMINDER_3_DAYS",
   reminder1Day: "EMAIL_TRIAL_REMINDER_1_DAY",
   expiredOffer: "EMAIL_TRIAL_EXPIRED_OFFER",
+  giftedExpiryReminder: "GIFTED_EXPIRY_REMINDER",
 } as const;
 
 async function wasTrialEmailSent(tenantId: string, action: string) {
@@ -35,7 +36,21 @@ export async function GET(req: Request) {
   }
 
   const now = new Date();
-  const results = { reminder3Days: 0, reminder1Day: 0, expiredOffers: 0, expired: 0, hotLeads: [] as string[] };
+  const results = { reminder3Days: 0, reminder1Day: 0, expiredOffers: 0, expired: 0, giftedExpired: 0, giftedEndingSoon: 0, hotLeads: [] as string[] };
+
+  // --- AVVISO AL SUPER ADMIN: REGALI IN SCADENZA ENTRO 7 GIORNI ---
+  const in7Days = new Date(now.getTime() + 7 * 86400000);
+  const giftedEndingSoon = await prisma.tenant.findMany({
+    where: { isDemoData: false, trialStatus: "gifted", trialEndsAt: { gt: now, lte: in7Days } },
+    select: { id: true, name: true, trialEndsAt: true },
+  });
+  for (const tenant of giftedEndingSoon) {
+    if (await wasTrialEmailSent(tenant.id, TRIAL_EMAIL_ACTIONS.giftedExpiryReminder)) continue;
+    const daysLeft = Math.ceil((tenant.trialEndsAt!.getTime() - now.getTime()) / 86400000);
+    await recordTrialEmail(tenant.id, TRIAL_EMAIL_ACTIONS.giftedExpiryReminder, `Abbonamento regalato in scadenza tra ${daysLeft} giorni.`);
+    results.giftedEndingSoon++;
+    results.hotLeads.push(`${tenant.name} (regalo termina tra ${daysLeft}gg)`);
+  }
 
   // --- TENANT CON TRIAL IN SCADENZA TRA 3 GIORNI ---
   const in2Days = new Date(now.getTime() + 2 * 86400000);
@@ -122,6 +137,17 @@ export async function GET(req: Request) {
     data: { trialStatus: "expired", plan: "basic" },
   });
   results.expired = expiredResult.count;
+
+  // --- FINE AUTOMATICA DEGLI ABBONAMENTI REGALATI ---
+  const expiredGiftResult = await prisma.tenant.updateMany({
+    where: {
+      isDemoData: false,
+      trialStatus: "gifted",
+      trialEndsAt: { lt: now },
+    },
+    data: { trialStatus: "expired", plan: "basic" },
+  });
+  results.giftedExpired = expiredGiftResult.count;
 
   // --- NOTIFICA TELEGRAM HOT LEADS ---
   if (results.hotLeads.length > 0) {

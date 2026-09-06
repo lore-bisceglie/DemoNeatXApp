@@ -81,11 +81,17 @@ export async function GET(req: Request) {
     let eliteCount = 0;
     let trialCount = 0;
     let demoCount = 0;
+    let giftedCount = 0;
 
     tenants.forEach(t => {
       if (t.isDemoData) {
         demoCount++;
         return; // Esclude i dati finti/demo dal calcolo MRR e paganti
+      }
+
+      if (t.trialStatus === 'gifted') {
+        giftedCount++;
+        return; // Il regalo dà accesso, ma non è fatturato né MRR.
       }
 
       if (t.plan === 'pro') {
@@ -110,6 +116,7 @@ export async function GET(req: Request) {
         eliteCount,
         trialCount,
         demoCount,
+        giftedCount,
       },
     });
   } catch (error: unknown) {

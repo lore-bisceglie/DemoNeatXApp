@@ -5,7 +5,15 @@ import Link from "next/link";
 import ActivityLogPanel from "@/app/t/[slug]/admin/ActivityLogPanel";
 import { TENANT_THEME_OPTIONS } from "@/lib/tenant-theme";
 
-type PlanFilter = "all" | "trial" | "pro" | "elite" | "expired" | "never" | "demo";
+type PlanFilter = "all" | "trial" | "pro" | "elite" | "gifted" | "expired" | "never" | "demo";
+
+type SuperAdminActivity = {
+  id: string;
+  action: string;
+  message: string;
+  createdAt: string;
+  tenant: { id: string; name: string; slug: string };
+};
 
 type SuperAdminActivity = {
   id: string;
@@ -57,7 +65,7 @@ export default function SuperAdminPage() {
   const [editTarget, setEditTarget] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
   const [editing, setEditing] = useState(false);
-  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, proCount: 0, eliteCount: 0, trialCount: 0, demoCount: 0 });
+  const [stats, setStats] = useState({ mrr: 0, payingCount: 0, proCount: 0, eliteCount: 0, trialCount: 0, demoCount: 0, giftedCount: 0 });
   const [sortBy, setSortBy] = useState<"date" | "name" | "plan">("date");
   const [detailTenant, setDetailTenant] = useState<any>(null);
   const [password, setPassword] = useState("");
@@ -67,6 +75,9 @@ export default function SuperAdminPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [recentActivity, setRecentActivity] = useState<SuperAdminActivity[]>([]);
+  const [isGifted, setIsGifted] = useState(false);
+  const [giftedPlan, setGiftedPlan] = useState<"pro" | "elite">("elite");
+  const [giftedMonths, setGiftedMonths] = useState("6");
 
   const now = new Date();
   const todayStart = new Date();
@@ -119,16 +130,22 @@ export default function SuperAdminPage() {
 
   const activeTenants = tenants.filter((tenant) => !tenant.isDemoData);
   const trialEndingSoon = activeTenants.filter((tenant) => {
-    if (tenant.plan === "pro" || tenant.plan === "elite" || !tenant.trialEndsAt) return false;
+    if (tenant.trialStatus === "gifted" || tenant.plan === "pro" || tenant.plan === "elite" || !tenant.trialEndsAt) return false;
     const remaining = new Date(tenant.trialEndsAt).getTime() - now.getTime();
     return remaining > 0 && remaining <= 3 * 86400000;
   });
   const lowSmsTenants = activeTenants.filter((tenant) => (tenant.storeSettings?.smsCredits ?? 0) <= 10);
   const inactiveTenants = activeTenants.filter((tenant) => !tenant.trialEndsAt && tenant.plan !== "pro" && tenant.plan !== "elite");
+  const giftedEndingSoon = activeTenants.filter((tenant) => {
+    if (tenant.trialStatus !== "gifted" || !tenant.trialEndsAt) return false;
+    const remaining = new Date(tenant.trialEndsAt).getTime() - now.getTime();
+    return remaining > 0 && remaining <= 7 * 86400000;
+  });
   const attentionItems = [
     ...activeTenants.filter((tenant) => tenant.trialEndsAt && new Date(tenant.trialEndsAt) <= now && tenant.plan !== "pro" && tenant.plan !== "elite").map((tenant) => ({ tenant, tone: "red", title: "Trial scaduto", detail: "Richiede una decisione" })),
     ...trialEndingSoon.map((tenant) => ({ tenant, tone: "amber", title: "Trial in scadenza", detail: `Scade tra ${Math.max(1, Math.ceil((new Date(tenant.trialEndsAt).getTime() - now.getTime()) / 86400000))} gg` })),
     ...lowSmsTenants.map((tenant) => ({ tenant, tone: "cyan", title: "SMS quasi esauriti", detail: `${tenant.storeSettings?.smsCredits ?? 0} SMS rimasti` })),
+    ...giftedEndingSoon.map((tenant) => ({ tenant, tone: "amber", title: "Regalo in scadenza", detail: `Termina il ${new Date(tenant.trialEndsAt).toLocaleDateString("it-IT")}` })),
     ...inactiveTenants.map((tenant) => ({ tenant, tone: "slate", title: "Mai attivato", detail: "Nessun trial o piano attivo" })),
   ].slice(0, 8);
 
@@ -156,12 +173,12 @@ export default function SuperAdminPage() {
       const res = await fetch("/api/superadmin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, slug, template, password: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor })
+        body: JSON.stringify({ name, slug, template, password: tenantPassword, ownerEmail, phone, address, instagramUrl, mapsLink, description, openTime, closeTime, logoUrl, themeColor, isGifted, giftedPlan, giftedMonths })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
       setName(""); setSlug(""); setTenantPassword(""); setPhone(""); setAddress("");
-      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan");
+      setInstagramUrl(""); setMapsLink(""); setDescription(""); setOpenTime(""); setCloseTime(""); setLogoUrl(""); setThemeColor("cyan"); setIsGifted(false); setGiftedPlan("elite"); setGiftedMonths("6");
       fetchTenants();
     } catch (e: unknown) { setError(e instanceof Error ? e.message : "Errore"); }
     finally { setCreating(false); }
@@ -202,6 +219,23 @@ export default function SuperAdminPage() {
     if (!confirm(msg)) return;
     try {
       const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-password": password }, body: JSON.stringify({ tenantId, plan }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Errore");
+      fetchTenants();
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Errore"); }
+  };
+
+  const handleGift = async (tenant: any) => {
+    const plan = prompt(`Piano da regalare a ${tenant.name}: pro oppure elite`, "elite")?.trim().toLowerCase();
+    if (!plan) return;
+    if (plan !== "pro" && plan !== "elite") { alert("Inserisci pro oppure elite."); return; }
+    const monthsText = prompt("Per quanti mesi? (es. 3, 6 o 12)", "6");
+    if (!monthsText) return;
+    const months = Number(monthsText);
+    if (!Number.isInteger(months) || months < 1 || months > 36) { alert("Inserisci un numero da 1 a 36 mesi."); return; }
+    if (!confirm(`Regalare ${plan.toUpperCase()} per ${months} mesi a ${tenant.name}? Alla scadenza passerà automaticamente al rinnovo.`)) return;
+    try {
+      const res = await fetch("/api/superadmin/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tenantId: tenant.id, plan: "gifted", giftedPlan: plan, giftedMonths: months }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
       fetchTenants();
@@ -295,6 +329,7 @@ export default function SuperAdminPage() {
       if (filterPlan === "pro") return t.plan === "pro";
       if (filterPlan === "elite") return t.plan === "elite";
       if (filterPlan === "demo") return Boolean(t.isDemoData);
+      if (filterPlan === "gifted") return t.trialStatus === "gifted";
       const exp = t.trialEndsAt ? new Date(t.trialEndsAt) : null;
       if (filterPlan === "trial") return exp && exp > now && t.plan !== "pro" && t.plan !== "elite";
       if (filterPlan === "expired") return exp && exp <= now && t.plan !== "pro" && t.plan !== "elite";
@@ -335,6 +370,7 @@ export default function SuperAdminPage() {
     { key: "all",     label: `Tutti (${totalCount})`,              active: "bg-slate-600 text-white" },
     { key: "pro",     label: `Pro (${stats.proCount || 0})`,       active: "bg-blue-500/40 text-blue-200 border border-blue-400/50" },
     { key: "elite",   label: `Elite (${stats.eliteCount || 0})`,   active: "bg-fuchsia-500/40 text-fuchsia-200 border border-fuchsia-400/50" },
+    { key: "gifted",  label: `Regalati (${stats.giftedCount || 0})`, active: "bg-violet-500/30 text-violet-200 border border-violet-400/40" },
     { key: "trial",   label: `Trial (${stats.trialCount || 0})`,   active: "bg-amber-500/30 text-amber-200 border border-amber-400/50" },
     { key: "expired", label: `Scaduti (${expiredCount})`,          active: "bg-red-500/30 text-red-200 border border-red-400/50" },
     { key: "never",   label: `Mai attivati (${neverActivated})`,   active: "bg-slate-700 text-slate-300 border border-slate-600" },
@@ -498,6 +534,27 @@ export default function SuperAdminPage() {
                     <option value="vuoto">📋 Vuoto</option>
                   </select>
                 </div>
+                <div className="rounded-lg border border-violet-500/25 bg-violet-500/5 p-3">
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-violet-100">
+                    <input type="checkbox" checked={isGifted} onChange={(e) => setIsGifted(e.target.checked)} className="accent-violet-500" />
+                    🎁 Abbonamento regalato
+                  </label>
+                  <p className="text-xs text-slate-400 mt-1">Non verrà contato né come MRR né come cliente pagante.</p>
+                  {isGifted && (
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                      <label className="text-xs text-slate-300">Piano incluso
+                        <select value={giftedPlan} onChange={(e) => setGiftedPlan(e.target.value as "pro" | "elite")} className={`${ISM} mt-1`}>
+                          <option value="pro">Pro</option><option value="elite">Elite</option>
+                        </select>
+                      </label>
+                      <label className="text-xs text-slate-300">Durata
+                        <select value={giftedMonths} onChange={(e) => setGiftedMonths(e.target.value)} className={`${ISM} mt-1`}>
+                          <option value="3">3 mesi</option><option value="6">6 mesi</option><option value="12">1 anno</option><option value="24">2 anni</option>
+                        </select>
+                      </label>
+                    </div>
+                  )}
+                </div>
                 <details className="border border-slate-800 rounded-lg bg-slate-950 overflow-hidden">
                   <summary className="cursor-pointer p-4 font-medium text-slate-300 hover:text-white hover:bg-slate-900 transition-all text-sm">⚙️ Impostazioni Avanzate (Opzionali)</summary>
                   <div className="p-4 pt-0 space-y-3 border-t border-slate-800 mt-2">
@@ -598,6 +655,7 @@ export default function SuperAdminPage() {
                             <div className="flex flex-col gap-0.5 items-end shrink-0">
                               {tenant.plan === "pro" && <span className="bg-blue-500/20 text-blue-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Pro</span>}
                               {tenant.plan === "elite" && <span className="bg-fuchsia-500/20 text-fuchsia-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Elite</span>}
+                              {tenant.trialStatus === "gifted" && <span className="bg-violet-500/20 text-violet-200 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">🎁 Regalato</span>}
                               {tenant.isDemoData && <span className="bg-slate-700/50 text-slate-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Demo</span>}
                               {!tenant.trialEndsAt && tenant.plan !== "pro" && tenant.plan !== "elite" && <span className="bg-slate-700/30 text-slate-500 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Mai att.</span>}
                               {expired && tenant.plan !== "pro" && tenant.plan !== "elite" && <span className="bg-red-500/20 text-red-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Scaduto</span>}
@@ -613,6 +671,7 @@ export default function SuperAdminPage() {
                             {exp && tenant.plan !== "pro" && tenant.plan !== "elite" && (
                               <div className={`text-xs font-semibold ${expired ? "text-red-400" : "text-orange-400"}`}>{expired ? `🔒 Scaduto da ${Math.abs(days)} gg` : `⏳ ${days} gg rimanenti`}</div>
                             )}
+                            {tenant.trialStatus === "gifted" && exp && <div className="text-xs font-semibold text-violet-300">🎁 Regalato fino al {exp.toLocaleDateString("it-IT")}</div>}
                             {tenant.ownerEmail && <div className="text-xs truncate text-slate-500" title={tenant.ownerEmail}>📧 {tenant.ownerEmail}</div>}
                             <div className="flex items-center justify-between pt-1 border-t border-slate-800/50">
                               <span className="text-xs text-slate-400">💬 {tenant.storeSettings?.smsCredits || 0} SMS</span>
@@ -652,6 +711,7 @@ export default function SuperAdminPage() {
                                     <div className="flex flex-col bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 gap-1 overflow-hidden">
                                       <button onClick={() => { handleMakePlan(tenant.id, "pro"); setOpenMenuId(null); }} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "pro" ? "bg-blue-500/20 text-blue-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>📘 Imposta PRO</button>
                                       <button onClick={() => { handleMakePlan(tenant.id, "elite"); setOpenMenuId(null); }} className={`text-left text-xs px-3 py-2 rounded-lg transition ${tenant.plan === "elite" ? "bg-fuchsia-500/20 text-fuchsia-300 font-bold" : "hover:bg-slate-800 text-slate-300"}`}>🌟 Imposta ELITE</button>
+                                      <button onClick={() => { handleGift(tenant); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-violet-500/15 text-violet-200 transition">🎁 Regala abbonamento</button>
                                       <div className="h-px bg-slate-800 my-1 w-full" />
                                       <button onClick={() => { handleMakePlan(tenant.id, "basic"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-300 transition">🔄 Riporta Trial</button>
                                       <button onClick={() => { handleMakePlan(tenant.id, "expire"); setOpenMenuId(null); }} className="text-left text-xs px-3 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">🔒 Forza Scadenza</button>

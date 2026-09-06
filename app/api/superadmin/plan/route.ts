@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   if (auth) return auth;
 
   try {
-    const { tenantId, plan } = await req.json();
+    const { tenantId, plan, giftedPlan, giftedMonths } = await req.json();
 
     if (!tenantId || !plan) {
       return NextResponse.json({ error: 'Campi mancanti' }, { status: 400 });
@@ -23,7 +23,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Tenant non trovato' }, { status: 404 });
     }
 
-    if (plan === 'pro' || plan === 'elite') {
+    if (plan === 'gifted') {
+      const giftPlan = giftedPlan === 'pro' ? 'pro' : 'elite';
+      const months = Math.min(Math.max(Number(giftedMonths) || 0, 1), 36);
+      const giftedUntil = new Date();
+      giftedUntil.setMonth(giftedUntil.getMonth() + months);
+      await prisma.tenant.update({
+        where: { id: tenantId },
+        data: {
+          plan: giftPlan,
+          trialStatus: 'gifted',
+          trialEndsAt: giftedUntil,
+        },
+      });
+    } else if (plan === 'pro' || plan === 'elite') {
       await prisma.tenant.update({
         where: { id: tenantId },
         data: {
@@ -66,6 +79,7 @@ export async function POST(req: Request) {
       elite: "Piano cambiato in Elite dal Super Admin.",
       expire: "Trial forzato come scaduto dal Super Admin.",
       basic: "Trial riattivato dal Super Admin.",
+      gifted: "Abbonamento regalato dal Super Admin.",
     };
     await logActivity({
       tenantId,
