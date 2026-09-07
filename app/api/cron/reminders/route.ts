@@ -13,7 +13,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const ROME_TIME_ZONE = "Europe/Rome";
-const REMINDER_HOUR = 18;
+// Vercel cron uses UTC and can be delayed. These Rome hours cover the
+// daylight-saving transition plus a delayed backup invocation. The outbox
+// makes repeated runs idempotent, so a reminder is still sent only once.
+const REMINDER_HOURS = new Set([17, 18, 19, 20]);
 const BATCH_SIZE = 100;
 const SEND_CONCURRENCY = 4;
 const OPENWA_CONFLICT_RETRY_DELAY_MS = 8_000;
@@ -62,7 +65,7 @@ function romeHour(date: Date) {
 }
 
 export function isReminderWindow(date = new Date()) {
-  return romeHour(date) === REMINDER_HOUR;
+  return REMINDER_HOURS.has(romeHour(date));
 }
 
 export async function GET(request: Request) {
