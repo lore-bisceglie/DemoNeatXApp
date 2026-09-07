@@ -338,6 +338,22 @@ export default function CinematicHero() {
                     <MessageCircle size={13} aria-hidden="true" />
                     WhatsApp: più visibilità e letture rispetto agli SMS.
                   </p>
+                  <p className={styles.mobileFlowNote}>
+                    <span aria-hidden="true" /> Flusso NeatX · {item.sender} → {item.recipient}
+                  </p>
+                  <div className={styles.mobileSceneSteps} aria-label="Seleziona il messaggio">
+                    {MESSAGE_SCENES.map((scene, index) => (
+                      <button
+                        key={scene.id}
+                        type="button"
+                        className={index === activeScene ? styles.mobileSceneStepActive : ""}
+                        onClick={() => goToScene(index)}
+                      >
+                        <b>{String(index + 1).padStart(2, "0")}</b>
+                        <span>{scene.shortLabel}</span>
+                      </button>
+                    ))}
+                  </div>
 
                   <div className={styles.actions}>
                     <Link href="/registrazione" className={styles.primary}>
