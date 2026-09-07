@@ -29,6 +29,8 @@ IG_ACCOUNT_ID = os.getenv("IG_ACCOUNT_ID")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 from bot_scripts.Automation.ai_provider import openai_text
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "lore-bisceglie/DemoNeatXApp")
 
 missing = []
 if not META_ACCESS_TOKEN: missing.append("META_ACCESS_TOKEN")
@@ -192,6 +194,34 @@ def upload_to_temp_server(file_path):
         print(f"Errore caricamento temp: {resp.text}")
         return None
 
+def upload_to_github_public_url(file_path):
+    """Publish the generated PNG at a stable public URL for Meta."""
+    if not GITHUB_TOKEN or not os.getenv("GITHUB_ACTIONS"):
+        return None
+    path = "bot_scripts/Social/PostGenerator/runtime-post.png"
+    api_url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/contents/{path}"
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    try:
+        existing = requests.get(api_url, headers=headers, params={"ref": "main"}, timeout=30)
+        payload = {
+            "message": "Auto-post: aggiorna immagine pubblica",
+            "content": base64.b64encode(file_path.read_bytes()).decode("ascii"),
+            "branch": "main",
+        }
+        if existing.status_code == 200:
+            payload["sha"] = existing.json().get("sha")
+        uploaded = requests.put(api_url, headers=headers, json=payload, timeout=60)
+        if uploaded.status_code in (200, 201):
+            return uploaded.json().get("content", {}).get("download_url")
+        print(f"Upload GitHub non riuscito ({uploaded.status_code}): {uploaded.text[:300]}")
+    except (OSError, requests.RequestException, ValueError) as exc:
+        print(f"Upload GitHub non riuscito: {exc}")
+    return None
+
 def publish_to_instagram(image_url, caption):
     print("Inizio procedura di pubblicazione su Instagram...")
     url_media = f"https://graph.facebook.com/v21.0/{IG_ACCOUNT_ID}/media"
@@ -276,8 +306,8 @@ def main():
     title = theme.get("main_topic", "L'Innovazione nel Salone")
     img_path = create_graphic_post(title, bg_url)
     
-    # Upload su host temporaneo
-    public_url = upload_to_temp_server(img_path)
+    # Preferisci un URL GitHub stabile; usa tmpfiles solo come fallback.
+    public_url = upload_to_github_public_url(img_path) or upload_to_temp_server(img_path)
     
     if public_url:
         success = publish_to_instagram(public_url, caption)
