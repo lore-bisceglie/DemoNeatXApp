@@ -1,61 +1,32 @@
 {
-  "generated_at": "2026-09-06T13:58:21.777170+02:00",
+  "generated_at": "2026-09-07T15:59:30.532897+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Fisioterapisti"
+    "today_niche": "Centri Estetici"
   },
   "ideas": [
     {
-      "title": "Fisioterapisti: Analisi dei Margini Reali",
-      "hook": "Se sei un fisioterapista e non sai quale trattamento ti fa guadagnare di più a livello orario, stai perdendo soldi ogni giorno.",
-      "video_concept": "Un video focalizzato sul confronto tra terapie manuali e strumentali, mostrando come calcolare il rendimento effettivo orario attraverso i grafici di NeatX.",
-      "blog_topic": "Fisioterapisti: Come calcolare la redditività dei trattamenti con i dati di NeatX",
-      "keywords": [
-        "gestionale fisioterapisti",
-        "agenda fisioterapista"
-      ]
+      "format": "pain shock",
+      "niche": "Centri Estetici",
+      "hook": "Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?",
+      "angle": "Mostra quanto costa davvero acconti automatici che filtrano i clienti che non si presentano.",
+      "cta": "Commenta AGENDA e ti mando il link."
     },
     {
-      "title": "Stop Ore Vuote in Studio",
-      "hook": "Fisioterapisti, sapete esattamente quali sono i giorni e le ore con più buchi in agenda? Ecco come scoprirlo e rimediare.",
-      "video_concept": "Un video rapido in cui si mostra la schermata della dashboard analitica che evidenzia i momenti di calo delle prenotazioni, spiegando come pianificare richiami mirati.",
-      "blog_topic": "Fisioterapisti: Statistiche e Dati con NeatX per eliminare i tempi morti",
-      "keywords": [
-        "prenotazioni fisioterapia",
-        "gestionale fisioterapisti"
-      ]
+      "format": "before after",
+      "niche": "Centri Estetici",
+      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
+      "angle": "Confronto diretto tra caos manuale e link NeatX.",
+      "cta": "Scrivi DEMO se vuoi provarlo."
     },
     {
-      "title": "La Verità sul Tuo Fatturato di Studio",
-      "hook": "Molti fisioterapisti confondono il fatturato lordo con il guadagno reale dello studio. Questa dashboard fa chiarezza in un secondo.",
-      "video_concept": "Confronto visivo tra la gestione caotica delle ricevute cartacee e la pulizia dei grafici di fatturato in tempo reale generati da NeatX.",
-      "blog_topic": "Fisioterapisti: Come monitorare le performance finanziarie dello studio senza errori",
-      "keywords": [
-        "agenda fisioterapista",
-        "gestionale fisioterapisti"
-      ]
-    },
-    {
-      "title": "Tracciamento Incassi Attivo",
-      "hook": "Se gestisci uno studio di fisioterapia e non monitori i trend storici delle prenotazioni, stai pianificando le tue ferie alla cieca.",
-      "video_concept": "Gameplay runner in sottofondo con testo in sovrimpressione che spiega l'importanza di prevedere i flussi di cassa stagionali basandosi sui dati degli anni precedenti.",
-      "blog_topic": "Fisioterapisti: Guida al tracciamento automatico e previsionale dei flussi di cassa",
-      "keywords": [
-        "agenda fisioterapista",
-        "prenotazioni fisioterapia"
-      ]
-    },
-    {
-      "title": "Fidelizzazione Pazienti Sotto Controllo",
-      "hook": "Il tuo gestionale ti dice quanti pazienti completano il ciclo di terapie e quanti spariscono dopo la prima seduta?",
-      "video_concept": "Analisi dei dati relativi al tasso di abbandono dei pazienti. Il video mostra come rintracciare chi ha interrotto il percorso di riabilitazione per ricontattarlo.",
-      "blog_topic": "Fisioterapisti: Come analizzare i dati dei pazienti per migliorare la fidelizzazione",
-      "keywords": [
-        "gestionale fisioterapisti",
-        "prenotazioni fisioterapia"
-      ]
+      "format": "calculator",
+      "niche": "Centri Estetici",
+      "hook": "Un no-show non è un fastidio, è fatturato perso.",
+      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
+      "cta": "Commenta AGENDA."
     }
   ]
 }

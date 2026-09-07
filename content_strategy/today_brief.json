@@ -1,18 +1,18 @@
 {
   "date": "2026-09-07",
-  "niche": "Personal Trainer",
-  "feature": "multi_staff",
-  "feature_label": "Gestione Staff",
-  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
-  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
-  "cover_title": "STOP AI TURNI CAOTICI",
-  "hook_hint": "Se sei tra i personal trainer e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Gestione Staff con NeatX",
+  "niche": "Centri Estetici",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "BASTA NO SHOW",
+  "hook_hint": "Se sei tra i centri estetici e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Zero No-Show con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
