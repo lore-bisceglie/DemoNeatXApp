@@ -1,9 +1,8 @@
 name: NeatX Auto-Reel Machine
 on:
   schedule:
-    # GitHub Actions schedules in UTC. The two checks cover summer and winter
-    # time; the gate below accepts only 14:xx in Rome: one reel per local day.
-    - cron: '0 12,13 * * *'
+    # 12:19 UTC = 14:19 Europe/Rome in summer.
+    - cron: '19 12 * * *'
   workflow_dispatch:
 concurrency:
   group: neatx-auto-reel
@@ -28,15 +27,8 @@ jobs:
             echo "Manual run: publishing now."
             exit 0
           fi
-          rome_hour="$(TZ=Europe/Rome date +'%H')"
-          rome_time="$(TZ=Europe/Rome date +'%Y-%m-%d %H:%M:%S %Z')"
-          if [[ "$rome_hour" == "14" ]]; then
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            echo "Posting window matched: $rome_time"
-          else
-            echo "should_run=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping outside posting window: $rome_time"
-          fi
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+          echo "Scheduled run accepted; GitHub may start it a few minutes later."
       - name: Checkout repository
         if: steps.gate.outputs.should_run == 'true'
         uses: actions/checkout@v5
@@ -45,16 +37,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-      - name: Verify Instagram publishing access
-        if: steps.gate.outputs.should_run == 'true'
-        env:
-          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
-          IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests python-dotenv
-          cd bot_scripts/Social/ReelGenerator
-          python publish_reel.py --check-instagram-access
       - name: Install System Dependencies (FFmpeg & ImageMagick)
         if: steps.gate.outputs.should_run == 'true'
         run: |
@@ -64,14 +46,13 @@ jobs:
         if: steps.gate.outputs.should_run == 'true'
         run: |
           python -m pip install --upgrade pip
-          pip install requests moviepy==1.0.3 edge-tts google-genai google-auth-oauthlib google-api-python-client python-dotenv imageio-ffmpeg pydub numpy pillow playwright tiktok-uploader yt-dlp
+          pip install requests moviepy==1.0.3 edge-tts google-auth-oauthlib google-api-python-client python-dotenv imageio-ffmpeg pydub numpy pillow playwright tiktok-uploader yt-dlp
           python -m playwright install chromium
       - name: Run Auto-Reel Publisher
         if: steps.gate.outputs.should_run == 'true'
         env:
           GITHUB_ACTIONS: "true"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
@@ -100,7 +81,7 @@ jobs:
           commit_message: "Auto-reel: aggiorna commenti YouTube processati"
           file_pattern: "bot_scripts/Social/ReelGenerator/youtube_replied.json"
       - name: Invia notifica Telegram
-        if: always() && steps.gate.outputs.should_run == 'true'
+        if: steps.gate.outputs.should_run == 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

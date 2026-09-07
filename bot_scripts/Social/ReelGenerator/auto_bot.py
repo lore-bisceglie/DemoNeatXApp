@@ -6,8 +6,6 @@ import requests
 import re
 import sys
 from pathlib import Path
-from google import genai
-from google.genai import types
 from dotenv import load_dotenv
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -21,7 +19,6 @@ load_dotenv(SCRIPT_DIR / ".env", override=True)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from hashtag_strategy import build_hashtags, ALWAYS, NICHE_TAGS
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY")
 sys.path.insert(0, os.path.join(str(REPO_ROOT), "bot_scripts", "Automation"))
 from ai_provider import openai_json
@@ -319,17 +316,8 @@ Formatta la risposta ESATTAMENTE come questo JSON (senza markdown, senza backtic
     if isinstance(openai_data, dict):
         print("[+] Copione reel generato con OpenAI.")
         data = openai_data
-    elif not GEMINI_API_KEY:
-        data = build_fallback_content(target, gameplay_style, strategy, "OPENAI_API_KEY/GEMINI_API_KEY mancanti o non disponibili")
     else:
-        try:
-            client = genai.Client(api_key=GEMINI_API_KEY)
-            print("[*] Contattando il cervello di Google Gemini 2.5 Flash...")
-            response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
-            content = response.text.strip()
-            data = json.loads(content)
-        except Exception as e:
-            data = build_fallback_content(target, gameplay_style, strategy, f"Gemini non disponibile: {e}")
+        data = build_fallback_content(target, gameplay_style, strategy, "OpenAI non disponibile")
 
     data["niche"] = target
     data["gameplay_style"] = data.get("gameplay_style") or gameplay_style

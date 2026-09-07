@@ -3,15 +3,10 @@ import json
 import time
 import requests
 import random
-import base64
+import re
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
-
-try:
-    from google import genai
-except ImportError:
-    print("google-genai non installato.")
-    exit(1)
 
 try:
     from playwright.sync_api import sync_playwright
@@ -23,6 +18,7 @@ except ImportError:
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent.parent
 THEME_FILE = PROJECT_ROOT / "bot_scripts" / "Content" / "daily_theme.json"
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # Load env variables (if testing locally)
 ENV_FILE = PROJECT_ROOT / "bot_scripts" / "Social" / "ReelGenerator" / ".env"
@@ -31,21 +27,19 @@ load_dotenv(ENV_FILE)
 META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
 IG_ACCOUNT_ID = os.getenv("IG_ACCOUNT_ID")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "lore-bisceglie/DemoNeatXApp")
+from bot_scripts.Automation.ai_provider import openai_text
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 missing = []
 if not META_ACCESS_TOKEN: missing.append("META_ACCESS_TOKEN")
 if not IG_ACCOUNT_ID: missing.append("IG_ACCOUNT_ID")
 if not PEXELS_API_KEY: missing.append("PEXELS_API_KEY")
-if not GEMINI_API_KEY: missing.append("GEMINI_API_KEY")
+if not OPENAI_API_KEY: missing.append("OPENAI_API_KEY")
 
 if missing:
     print(f"ERRORE: Variabili d'ambiente mancanti: {', '.join(missing)}")
     exit(1)
 
-client = genai.Client(api_key=GEMINI_API_KEY)
 
 def load_theme():
     if not THEME_FILE.exists():
@@ -114,21 +108,13 @@ Angolazione: {angle}
 Hashtag da usare: {industry_hashtags}
 Finisci con una call to action: Clicca il link in bio per provare NeatX."""
 
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
-            return response.text.strip()
-        except Exception as e:
-            error_str = str(e).lower()
-            if "503" in error_str or "unavailable" in error_str or "demand" in error_str:
-                print(f"Alta richiesta API Gemini (tentativo {attempt+1}/{max_retries}). Attendo 30 secondi e riprovo...")
-                time.sleep(30)
-            else:
-                print(f"Errore imprevisto durante la generazione della caption: {e}")
-                break
+    try:
+        caption = openai_text(prompt, model="gpt-4o-mini", max_tokens=300).strip()
+        return re.sub(r"^(ecco (una )?(bozza|proposta di caption)\s*:?[ \t]*)", "", caption, flags=re.I)
+    except Exception as e:
+        print(f"Errore OpenAI durante la generazione della caption: {e}")
                 
-    # Fallback d'emergenza se Gemini è bloccato (evita di far fallire la Action)
+    # Fallback locale per non bloccare la pubblicazione se l'AI non risponde.
     return f"Semplifica la gestione del tuo Salone con NeatX. Meno tempo speso al telefono, più tempo per i tuoi clienti.\n\nClicca il link in bio per provare NeatX! {industry_hashtags}"
 
 def create_graphic_post(title, bg_url):
@@ -205,52 +191,6 @@ def upload_to_temp_server(file_path):
     else:
         print(f"Errore caricamento temp: {resp.text}")
         return None
-
-def upload_to_github_public_url(file_path):
-    """Publish the generated asset at a stable public URL for Meta's fetcher.
-
-    Temporary file hosts occasionally return an HTML error page while keeping a
-    200 response. GitHub Contents gives Meta a real PNG URL and is available in
-    Actions through the repository-scoped token.
-    """
-    if not GITHUB_TOKEN or not os.getenv("GITHUB_ACTIONS"):
-        return None
-    path = "bot_scripts/Social/PostGenerator/runtime-post.png"
-    api_url = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/contents/{path}"
-    headers = {
-        "Authorization": f"Bearer {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
-    existing_sha = None
-    try:
-        existing = requests.get(api_url, headers=headers, params={"ref": "main"}, timeout=30)
-        if existing.status_code == 200:
-            existing_sha = existing.json().get("sha")
-        with open(file_path, "rb") as f:
-            encoded = base64.b64encode(f.read()).decode("ascii")
-        payload = {
-            "message": "Auto-post: aggiorna immagine pubblica",
-            "content": encoded,
-            "branch": "main",
-        }
-        if existing_sha:
-            payload["sha"] = existing_sha
-        uploaded = requests.put(api_url, headers=headers, json=payload, timeout=60)
-        if uploaded.status_code in (200, 201):
-            # Use GitHub's signed download URL (plain raw.githubusercontent.com
-            # can return 404 to Meta's fetcher before its edge cache updates).
-            response_data = uploaded.json()
-            public_url = response_data.get("content", {}).get("download_url")
-            if not public_url:
-                print("Upload GitHub riuscito ma URL pubblico assente.")
-                return None
-            print(f"Immagine pubblicata su URL stabile: {public_url}")
-            return public_url
-        print(f"Upload GitHub non riuscito ({uploaded.status_code}): {uploaded.text[:300]}")
-    except (OSError, requests.RequestException, ValueError) as exc:
-        print(f"Upload GitHub non riuscito: {exc}")
-    return None
 
 def publish_to_instagram(image_url, caption):
     print("Inizio procedura di pubblicazione su Instagram...")
@@ -336,8 +276,8 @@ def main():
     title = theme.get("main_topic", "L'Innovazione nel Salone")
     img_path = create_graphic_post(title, bg_url)
     
-    # Preferisci un URL GitHub stabile: Meta deve scaricare un vero file PNG.
-    public_url = upload_to_github_public_url(img_path) or upload_to_temp_server(img_path)
+    # Upload su host temporaneo
+    public_url = upload_to_temp_server(img_path)
     
     if public_url:
         success = publish_to_instagram(public_url, caption)
