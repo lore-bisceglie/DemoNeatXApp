@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./CinematicHero.module.css";
@@ -24,6 +24,7 @@ type MessageScene = {
   contact: string;
   contactStatus: string;
   avatar: string;
+  avatarUrl?: string;
   tone: "booking" | "reminder" | "waitlist" | "moved" | "cancelled";
   messageTitle?: string;
   rows: Array<{ label?: string; value: string }>;
@@ -32,18 +33,6 @@ type MessageScene = {
   time: string;
   statusLabel: string;
 };
-
-function DirectionArrow({ direction }: { direction: MessageScene["flowDirection"] }) {
-  const path = direction === "right"
-    ? "M2 10H178M170 3l8 7-8 7"
-    : "M178 10H2M10 3l-8 7 8 7";
-
-  return (
-    <svg viewBox="0 0 180 20" preserveAspectRatio="none" role="presentation">
-      <path d={path} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
-    </svg>
-  );
-}
 
 const MESSAGE_SCENES: MessageScene[] = [
   {
@@ -85,16 +74,17 @@ const MESSAGE_SCENES: MessageScene[] = [
     eyebrow: "Promemoria automatico",
     title: "NeatX ricorda l’appuntamento al cliente.",
     description: "Il giorno prima parte il promemoria con tutti i dettagli e il link per annullare o spostare in autonomia.",
-    sender: "Salone di Elisa",
-    senderRole: "Salone",
+    sender: "NeatX",
+    senderRole: "WhatsApp Business",
     recipient: "Martina R.",
     recipientRole: "Cliente",
     flowDirection: "left",
     routeNote: "Tu non devi scrivere, copiare o ricordarti di inviarlo.",
     recipientView: "Vista del cliente",
-    contact: "Salone di Elisa",
+    contact: "NeatX",
     contactStatus: "account business",
     avatar: "S",
+    avatarUrl: "/logo.png",
     tone: "reminder",
     messageTitle: "🔔 Promemoria Appuntamento!",
     rows: [
@@ -117,16 +107,17 @@ const MESSAGE_SCENES: MessageScene[] = [
     eyebrow: "Lista d’attesa automatica",
     title: "Si libera un posto. NeatX avvisa chi aspetta.",
     description: "Quando qualcuno annulla, il primo cliente in lista riceve subito il collegamento per occupare lo spazio libero.",
-    sender: "Salone di Elisa",
-    senderRole: "Salone",
+    sender: "NeatX",
+    senderRole: "WhatsApp Business",
     recipient: "Giulia P.",
     recipientRole: "Cliente",
     flowDirection: "left",
     routeNote: "Il buco in agenda può riempirsi senza telefonate.",
     recipientView: "Vista del cliente",
-    contact: "Salone di Elisa",
+    contact: "NeatX",
     contactStatus: "account business",
     avatar: "S",
+    avatarUrl: "/logo.png",
     tone: "waitlist",
     messageTitle: "🎉 Posto liberato!",
     rows: [
@@ -331,13 +322,10 @@ export default function CinematicHero() {
                       <small>{item.senderRole}</small>
                       <strong>{item.sender}</strong>
                     </div>
-                    <span
-                      className={`${styles.directionArrow} ${
-                        item.flowDirection === "left" ? styles.directionArrowLeft : ""
-                      }`}
-                      aria-hidden="true"
-                    >
-                      <DirectionArrow direction={item.flowDirection} />
+                    <span className={styles.directionDivider} aria-hidden="true">
+                      <span className={styles.directionLeg}><em>Da</em><i /></span>
+                      <span className={styles.whatsappMark}><MessageCircle size={13} /><b>WhatsApp</b></span>
+                      <span className={styles.directionLeg}><em>A</em><i /></span>
                     </span>
                     <div>
                       <small>{item.recipientRole}</small>
@@ -346,6 +334,10 @@ export default function CinematicHero() {
                   </div>
 
                   <p className={styles.routeNote}><span>✓</span>{item.routeNote}</p>
+                  <p className={styles.channelNote}>
+                    <MessageCircle size={13} aria-hidden="true" />
+                    WhatsApp: più visibilità e letture rispetto agli SMS.
+                  </p>
 
                   <div className={styles.actions}>
                     <Link href="/registrazione" className={styles.primary}>
@@ -360,7 +352,9 @@ export default function CinematicHero() {
                   <div className={styles.whatsappWindow} data-tone={item.tone}>
                     <div className={styles.whatsappBar}>
                       <span className={styles.whatsappBack}>‹</span>
-                      <span className={styles.whatsappAvatar}>{item.avatar}</span>
+                      <span className={styles.whatsappAvatar}>
+                        {item.avatarUrl ? <Image src={item.avatarUrl} alt="" width={40} height={40} className={styles.whatsappAvatarImage} /> : item.avatar}
+                      </span>
                       <span className={styles.whatsappContact}>
                         <strong>{item.contact}</strong>
                         <small>{item.contactStatus}</small>
@@ -378,14 +372,13 @@ export default function CinematicHero() {
                         ))}
                         {item.link ? <span className={styles.messageLink}>{item.link}</span> : null}
                         {item.footer ? <small>{item.footer}</small> : null}
-                        <time>{item.time}</time>
+                        <time>{item.time}<span className={styles.readTicks} aria-label="Visualizzato">✓✓</span></time>
                       </div>
                     </div>
                   </div>
                   <div className={styles.automationStamp}>
                     <span className={styles.stampPulse} />
                     <div><small>Flusso NeatX</small><strong>{item.sender} → {item.recipient}</strong></div>
-                    <b>{item.statusLabel}</b>
                   </div>
                 </div>
               </div>
