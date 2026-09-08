@@ -306,8 +306,13 @@ def main():
     title = theme.get("main_topic", "L'Innovazione nel Salone")
     img_path = create_graphic_post(title, bg_url)
     
-    # Preferisci un URL GitHub stabile; usa tmpfiles solo come fallback.
-    public_url = upload_to_github_public_url(img_path) or upload_to_temp_server(img_path)
+    # In Actions usa esclusivamente un URL GitHub stabile: tmpfiles può
+    # restituire una pagina HTML che Meta interpreta come immagine non valida.
+    public_url = upload_to_github_public_url(img_path)
+    if not public_url and not os.getenv("GITHUB_ACTIONS"):
+        public_url = upload_to_temp_server(img_path)
+    if not public_url:
+        print("Errore: impossibile pubblicare l'immagine su un URL stabile.")
     
     if public_url:
         success = publish_to_instagram(public_url, caption)
