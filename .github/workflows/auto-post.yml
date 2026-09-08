@@ -27,6 +27,7 @@ jobs:
       - name: Run Auto-Post Publisher
         env:
           GITHUB_ACTIONS: "true"
+          GITHUB_TOKEN: ${{ github.token }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           IG_ACCOUNT_ID: ${{ secrets.IG_ACCOUNT_ID }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}

@@ -88,15 +88,19 @@ def workflow_status(name, status, log_file=None):
     emoji = "❌" if status == "failure" else "⚠️"
     label = "FALLITO" if status == "failure" else "ANNULLATO"
 
-    # Spiegazione chiara quando il fallimento è dovuto al blocco Meta
-    # (Instagram/Facebook API): evita di mostrare solo un log criptico.
+    # Spiegazione chiara senza attribuire ogni errore a un token Meta.
     meta_hint = ""
     if status == "failure" and log_tail:
         lower = log_tail.lower()
-        if any(keyword in lower for keyword in [
-            "error_code", "oauthexception", "session has expired",
-            "access token", "permission", "meta", "instagram", "graph.facebook",
-            "unauthorized", "invalid token", "app not setup", "rate limit",
+        if "image format is not supported" in lower or "formato immagine sconosciuto" in lower:
+            meta_hint = (
+                "\n\n⚠️ <b>Immagine rifiutata da Instagram.</b>\n"
+                "Il file generato non è stato pubblicato da un URL immagine valido. "
+                "Il token Meta non è la causa di questo errore."
+            )
+        elif any(keyword in lower for keyword in [
+            "session has expired", "access token", "invalid token",
+            "unauthorized", "app not setup", "oauth token", "permission denied",
         ]):
             meta_hint = (
                 "\n\n⚠️ <b>Causa probabile: problema con l'API Meta (Instagram/Facebook).</b>\n"
