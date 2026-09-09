@@ -11,7 +11,7 @@ on:
       mode:
         description: "Controlla i collegamenti oppure invia realmente"
         required: true
-        default: "check"
+        default: "send"
         type: choice
         options:
           - check
@@ -23,6 +23,7 @@ on:
       confirm:
         description: "Per un invio reale scrivi SEND_REMINDERS"
         required: false
+        default: "SEND_REMINDERS"
         type: string
 
 permissions:
