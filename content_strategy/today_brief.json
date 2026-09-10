@@ -1,18 +1,18 @@
 {
-  "date": "2026-09-09",
-  "niche": "Fisioterapisti",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "GUADAGNI DA RECENSIONI",
-  "hook_hint": "Se sei tra i fisioterapisti e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Recensioni Automatiche con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "date": "2026-09-10",
+  "niche": "Barbieri",
+  "feature": "timesheet",
+  "feature_label": "Timesheet Commercialista",
+  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+  "cover_title": "TEMPO VALORE PERDUTO",
+  "hook_hint": "Se sei tra i barbieri e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Timesheet Commercialista con NeatX",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
