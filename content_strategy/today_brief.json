@@ -1,18 +1,18 @@
 {
   "date": "2026-09-11",
-  "niche": "Centri Estetici",
-  "feature": "conferme",
-  "feature_label": "Conferme appuntamento",
-  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
-  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
-  "cover_title": "DIMENTICA I NO-SHOW",
-  "hook_hint": "Se sei tra i centri estetici e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: Conferme appuntamento con NeatX",
+  "niche": "Barbieri",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "BASTA NO SHOW",
+  "hook_hint": "Se sei tra i barbieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Zero No-Show con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
