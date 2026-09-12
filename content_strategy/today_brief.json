@@ -1,18 +1,18 @@
 {
-  "date": "2026-09-11",
-  "niche": "Barbieri",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "BASTA NO SHOW",
-  "hook_hint": "Se sei tra i barbieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Zero No-Show con NeatX",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "date": "2026-09-12",
+  "niche": "Centri Estetici",
+  "feature": "timesheet",
+  "feature_label": "Timesheet Commercialista",
+  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+  "cover_title": "ORE PERDUTE FINITE",
+  "hook_hint": "Se sei tra i centri estetici e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Timesheet Commercialista con NeatX",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
