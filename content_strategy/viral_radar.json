@@ -1,66 +1,32 @@
 {
-  "generated_at": "2026-09-12T13:58:43.889956+02:00",
+  "generated_at": "2026-09-13T15:07:28.258503+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Tatuatori"
+    "today_niche": "Barbieri"
   },
   "ideas": [
     {
-      "title": "Tatuatori: Conferme appuntamento con NeatX",
-      "hook": "Se passi ore a messaggiare per confermare i tatuaggi del sabato e i clienti spariscono comunque, stai perdendo ore di lavoro e soldi.",
-      "description": "Video focalizzato sul problema delle conferme manuali per i tatuatori. Spiega come NeatX automatizza il processo di sollecito garantendo un'agenda pulita e meno no-show senza dover inviare messaggi manuali uno a uno. Gameplay di sottofondo in stile runner per mantenere alta l'attenzione.",
-      "keywords": [
-        "prenotazioni tatuatore",
-        "agenda tatuatori",
-        "caparra tatuaggio"
-      ],
-      "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting"
+      "format": "pain shock",
+      "niche": "Barbieri",
+      "hook": "Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?",
+      "angle": "Mostra quanto costa davvero telefono che squilla tutto il giorno e messaggi senza fine.",
+      "cta": "Commenta AGENDA e ti mando il link."
     },
     {
-      "title": "Tatuatori: Zero No-Show con NeatX",
-      "hook": "Quanti soldi hai perso questo mese per colpa di quel cliente che ha dimenticato la sessione di mezza giornata per il suo tatuaggio?",
-      "description": "Analisi del costo reale di un no-show per uno studio di tatuaggi. Spiegazione di come un sistema di conferme strutturato ed automatico elimini le dimenticanze dei clienti pigri o distratti.",
-      "keywords": [
-        "agenda tatuatori",
-        "caparra tatuaggio",
-        "no-show tatuaggi"
-      ],
-      "image_prompt": "photorealistic macro shot of a tattoo machine resting on a wooden table next to a smartphone showing a successfully confirmed calendar slot, cinematic lighting"
+      "format": "before after",
+      "niche": "Barbieri",
+      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
+      "angle": "Confronto diretto tra caos manuale e link NeatX.",
+      "cta": "Scrivi DEMO se vuoi provarlo."
     },
     {
-      "title": "Tatuatori: Prenotazione 24 ore su 24 con NeatX",
-      "hook": "Smetti di rispondere ai messaggi Direct di Instagram alle due di notte solo per far scegliere l'orario di un tatuaggio.",
-      "description": "Mostra lo stress del tatuatore che deve gestire le prenotazioni di continuo a mano. Presenta la soluzione di un'agenda digitale NeatX attiva 24/7 che fa prenotare i clienti in autonomia rimandando la conferma definitiva alla tua approvazione.",
-      "keywords": [
-        "prenotazioni tatuatore",
-        "agenda tatuatori",
-        "gestione studio tatuaggi"
-      ],
-      "image_prompt": "cinematic low angle shot of a tattoo artist focusing on drawing a sketch on a tablet, with a smartphone in the foreground displaying a booking confirmation page, warm neon ambient light"
-    },
-    {
-      "title": "Tatuatori e Caparra: Gestione Sicura con NeatX",
-      "hook": "Il cliente non si presenta all'appuntamento e ti rendi conto di non avergli chiesto la caparra perché ti sei perso tra le chat di WhatsApp.",
-      "description": "Un video mirato a far capire come la gestione disordinata delle prenotazioni causi la perdita delle caparre. Spiega come legare la prenotazione a una procedura di conferma chiara per blindare la giornata lavorativa.",
-      "keywords": [
-        "caparra tatuaggio",
-        "prenotazioni tatuatore",
-        "no-show tatuaggi"
-      ],
-      "image_prompt": "high quality dramatic shot of a modern tattoo parlor, focused on a sleek counter with a tablet showing a secure payment and booking confirmation interface, clean minimalist setup"
-    },
-    {
-      "title": "Tatuatori: Timesheet Commercialista con NeatX",
-      "hook": "Arriva fine mese e devi rincorrere i foglietti di carta e la chat di WhatsApp per ricostruire quante ore di sessione hai fatto davvero.",
-      "description": "Illustra come organizzare il backend della tua attività di tatuatore. Con NeatX puoi esportare i dati delle sessioni confermate e completate direttamente in un report pulito per il commercialista, eliminando i quaderni scritti a mano.",
-      "keywords": [
-        "agenda tatuatori",
-        "prenotazioni tatuatore",
-        "gestione cassa tatuaggi"
-      ],
-      "image_prompt": "professional close-up of a tablet displaying clean financial charts and booking timesheets inside an artistic tattoo studio, natural evening light coming through a window"
+      "format": "calculator",
+      "niche": "Barbieri",
+      "hook": "Un no-show non è un fastidio, è fatturato perso.",
+      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
+      "cta": "Commenta AGENDA."
     }
   ]
 }
