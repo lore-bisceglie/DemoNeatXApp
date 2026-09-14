@@ -1,18 +1,18 @@
 {
   "date": "2026-09-14",
-  "niche": "Fisioterapisti",
-  "feature": "booking",
-  "feature_label": "Prenotazione 24 ore su 24",
-  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-  "promise": "clienti che prenotano da soli anche mentre dormi",
-  "cover_title": "PRENOTAZIONE SEMPLICE",
-  "hook_hint": "Se sei tra i fisioterapisti e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Prenotazione 24 ore su 24 con NeatX",
+  "niche": "Tatuatori",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "STOP AI CLIENTI ASSENTI",
+  "hook_hint": "Se sei tra i tatuatori e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Zero No-Show con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
