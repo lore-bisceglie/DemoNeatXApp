@@ -1,65 +1,67 @@
 {
-  "generated_at": "2026-09-16T15:09:34.096317+02:00",
+  "generated_at": "2026-09-17T15:03:59.091902+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Barbieri"
+    "today_niche": "Coach e Consulenti"
   },
   "ideas": [
     {
-      "title": "Stop ai clienti che non si presentano in salone",
-      "hook": "Quanti soldi hai perso questo sabato per colpa di quel cliente che non si e presentato a tagliare i capelli?",
-      "video_concept": "Un video con gameplay di block miner in cui si spiega come NeatX risolve il problema dei no-show introducendo gli acconti automatici che filtrano solo i clienti davvero intenzionati a presentarsi.",
-      "blog_title": "Barbieri: Zero No-Show con NeatX e acconti automatici",
+      "niche": "Coach e Consulenti",
+      "hook": "Se sei un coach con collaboratori e segni ancora le ore su Excel, stai perdendo soldi ogni mese.",
+      "cover_title": "DIMENTICA FOGLI PERDUTI",
+      "video_concept": "Mostra un gameplay in stile neon_racer con testo in sovrimpressione che spiega quanto tempo si perde a rincorrere i dipendenti per farsi consegnare le ore lavorate, per poi mostrare la transizione verso NeatX che genera tutto in automatico.",
+      "blog_title": "Coach e Consulenti: Come eliminare i fogli Excel con il Timesheet di NeatX",
       "keywords": [
-        "gestionale barbiere",
-        "no show barber shop",
-        "prenotazioni barbiere"
+        "agenda consulente",
+        "prenotazioni coach",
+        "booking consulenze"
       ]
     },
     {
-      "title": "Come blindare la tua agenda da barbiere",
-      "hook": "Se sei un barbiere e tieni ancora gli slot liberi senza un acconto automatico, stai regalando il tuo tempo.",
-      "video_concept": "Focus visivo su uno smartphone che mostra l'agenda di NeatX con tutti gli slot del sabato bloccati e contrassegnati come pagati, mentre si spiega l'efficacia psicologica dell'acconto.",
-      "blog_title": "Come eliminare i tempi morti nel tuo barber shop con NeatX",
+      "niche": "Coach e Consulenti",
+      "hook": "Il tuo commercialista odia ricevere le ore dei tuoi dipendenti scritte a mano o su file Excel disordinati.",
+      "cover_title": "CSV PRONTO IN UN CLICK",
+      "video_concept": "Analisi del problema classico di fine mese: la consegna dei dati al consulente fiscale. Spiegazione di come NeatX permetta di esportare un file CSV perfetto per il commercialista senza fare calcoli manuali.",
+      "blog_title": "Coach e Consulenti: Timesheet Commercialista con NeatX",
       "keywords": [
-        "prenotazioni barbiere",
-        "no show barber shop",
-        "gestione salone barbiere"
+        "booking consulenze",
+        "agenda consulente",
+        "prenotazioni coach"
       ]
     },
     {
-      "title": "Ogni ora lavorata nel tuo barber shop deve essere pagata",
-      "hook": "Basta brutte sorprese il sabato pomeriggio: ecco come avere la certezza matematica che ogni cliente si presentera al taglio.",
-      "video_concept": "Analisi dei costi derivanti da un solo no-show a settimana e dimostrazione di come la funzione di pagamento anticipato di NeatX protegga il fatturato del barbiere.",
-      "blog_title": "La guida definitiva per azzerare i no-show nel tuo salone di barbiere",
+      "niche": "Coach e Consulenti",
+      "hook": "Gestire i turni e le ferie dei tuoi collaboratori nello studio di consulenza non deve essere un secondo lavoro.",
+      "cover_title": "TURNI E FERIE IN UN CLICK",
+      "video_concept": "Focus sulla semplicità di pianificazione all'interno del proprio studio. Mostra visivamente come approvare ferie e permessi e strutturare i turni dei collaboratori senza scambiare decine di messaggi su WhatsApp.",
+      "blog_title": "Come gestire i turni e i permessi del tuo studio di consulenza senza impazzire",
       "keywords": [
-        "gestionale barbiere",
-        "no show barber shop",
-        "acconto prenotazione barbiere"
+        "agenda consulente",
+        "booking consulenze"
       ]
     },
     {
-      "title": "Addio perdite di tempo con gli acconti automatici",
-      "hook": "Il segreto dei barbieri che non hanno mai un buco in agenda e incassano anche se il cliente decide di non venire.",
-      "video_concept": "Confronto ironico ma professionale tra il vecchio metodo di prenotazione su carta e il sistema NeatX che richiede l'acconto, eliminando i clienti ritardatari o assenti.",
-      "blog_title": "Perche i migliori barbieri usano gli acconti automatici NeatX",
+      "niche": "Coach e Consulenti",
+      "hook": "Quante ore di lavoro dei tuoi assistenti e collaboratori si perdono tra una sessione di coaching e l'altra?",
+      "cover_title": "TRACCIA ORE REALI",
+      "video_concept": "Video incentrato sulla precisione del tracking orario. Spiega come la mancanza di un sistema centralizzato causi una perdita invisibile di marginalità sulle consulenze erogate dal team.",
+      "blog_title": "Ottimizzazione del tempo per coach: come tracciare le ore dei collaboratori senza errori",
       "keywords": [
-        "gestionale barbiere",
-        "prenotazioni barbiere",
-        "no show barber shop"
+        "prenotazioni coach",
+        "agenda consulente"
       ]
     },
     {
-      "title": "Filtra i clienti del tuo barber shop prima che prenotino",
-      "hook": "Smetti di rincorrere le persone al telefono: attiva l'acconto automatico e riempi il salone solo di clienti paganti.",
-      "video_concept": "Spiegazione passo dopo passo di come attivare la funzione no-show su NeatX, mostrando l'interfaccia semplice e la reazione positiva dei clienti piu fedeli.",
-      "blog_title": "Come NeatX trasforma i no-show in guadagno sicuro per i barbieri",
+      "niche": "Coach e Consulenti",
+      "hook": "Smetti di rincorrere il tuo staff a fine mese per farti dare il riepilogo delle ore lavorate.",
+      "cover_title": "BASTA FOGLI VOLANTI",
+      "video_concept": "Un video dinamico che mette a confronto la vecchia gestione cartacea o disorganizzata con la dashboard digitale di NeatX, dove ogni collaboratore inserisce le ore e il sistema compila il report finale.",
+      "blog_title": "Timesheet digitale per consulenti: addio carta e fogli di calcolo smarriti",
       "keywords": [
-        "prenotazioni barbiere",
-        "no show barber shop",
-        "gestionale barbiere"
+        "booking consulenze",
+        "prenotazioni coach"
       ]
     }
   ]
