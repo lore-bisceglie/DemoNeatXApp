@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T15:03:59.091902+02:00",
+  "generated_at": "2026-09-18T14:43:22.622079+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
@@ -8,61 +8,25 @@
   },
   "ideas": [
     {
+      "format": "pain shock",
       "niche": "Coach e Consulenti",
-      "hook": "Se sei un coach con collaboratori e segni ancora le ore su Excel, stai perdendo soldi ogni mese.",
-      "cover_title": "DIMENTICA FOGLI PERDUTI",
-      "video_concept": "Mostra un gameplay in stile neon_racer con testo in sovrimpressione che spiega quanto tempo si perde a rincorrere i dipendenti per farsi consegnare le ore lavorate, per poi mostrare la transizione verso NeatX che genera tutto in automatico.",
-      "blog_title": "Coach e Consulenti: Come eliminare i fogli Excel con il Timesheet di NeatX",
-      "keywords": [
-        "agenda consulente",
-        "prenotazioni coach",
-        "booking consulenze"
-      ]
+      "hook": "Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?",
+      "angle": "Mostra quanto costa davvero turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato.",
+      "cta": "Commenta AGENDA e ti mando il link."
     },
     {
+      "format": "before after",
       "niche": "Coach e Consulenti",
-      "hook": "Il tuo commercialista odia ricevere le ore dei tuoi dipendenti scritte a mano o su file Excel disordinati.",
-      "cover_title": "CSV PRONTO IN UN CLICK",
-      "video_concept": "Analisi del problema classico di fine mese: la consegna dei dati al consulente fiscale. Spiegazione di come NeatX permetta di esportare un file CSV perfetto per il commercialista senza fare calcoli manuali.",
-      "blog_title": "Coach e Consulenti: Timesheet Commercialista con NeatX",
-      "keywords": [
-        "booking consulenze",
-        "agenda consulente",
-        "prenotazioni coach"
-      ]
+      "hook": "Prima agenda piena di messaggi, dopo clienti che prenotano da soli.",
+      "angle": "Confronto diretto tra caos manuale e link NeatX.",
+      "cta": "Scrivi DEMO se vuoi provarlo."
     },
     {
+      "format": "calculator",
       "niche": "Coach e Consulenti",
-      "hook": "Gestire i turni e le ferie dei tuoi collaboratori nello studio di consulenza non deve essere un secondo lavoro.",
-      "cover_title": "TURNI E FERIE IN UN CLICK",
-      "video_concept": "Focus sulla semplicità di pianificazione all'interno del proprio studio. Mostra visivamente come approvare ferie e permessi e strutturare i turni dei collaboratori senza scambiare decine di messaggi su WhatsApp.",
-      "blog_title": "Come gestire i turni e i permessi del tuo studio di consulenza senza impazzire",
-      "keywords": [
-        "agenda consulente",
-        "booking consulenze"
-      ]
-    },
-    {
-      "niche": "Coach e Consulenti",
-      "hook": "Quante ore di lavoro dei tuoi assistenti e collaboratori si perdono tra una sessione di coaching e l'altra?",
-      "cover_title": "TRACCIA ORE REALI",
-      "video_concept": "Video incentrato sulla precisione del tracking orario. Spiega come la mancanza di un sistema centralizzato causi una perdita invisibile di marginalità sulle consulenze erogate dal team.",
-      "blog_title": "Ottimizzazione del tempo per coach: come tracciare le ore dei collaboratori senza errori",
-      "keywords": [
-        "prenotazioni coach",
-        "agenda consulente"
-      ]
-    },
-    {
-      "niche": "Coach e Consulenti",
-      "hook": "Smetti di rincorrere il tuo staff a fine mese per farti dare il riepilogo delle ore lavorate.",
-      "cover_title": "BASTA FOGLI VOLANTI",
-      "video_concept": "Un video dinamico che mette a confronto la vecchia gestione cartacea o disorganizzata con la dashboard digitale di NeatX, dove ogni collaboratore inserisce le ore e il sistema compila il report finale.",
-      "blog_title": "Timesheet digitale per consulenti: addio carta e fogli di calcolo smarriti",
-      "keywords": [
-        "booking consulenze",
-        "prenotazioni coach"
-      ]
+      "hook": "Un no-show non è un fastidio, è fatturato perso.",
+      "angle": "Stima soldi persi in un mese e collega promemoria/acconto.",
+      "cta": "Commenta AGENDA."
     }
   ]
 }
