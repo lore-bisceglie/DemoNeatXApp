@@ -1,18 +1,18 @@
 {
-  "date": "2026-09-24",
-  "niche": "Barbieri",
-  "feature": "timesheet",
-  "feature_label": "Timesheet Commercialista",
-  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-  "cover_title": "ORE PERDUTE",
-  "hook_hint": "Se sei tra i barbieri e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
-  "blog_topic": "Barbieri: Timesheet Commercialista con NeatX",
-  "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
+  "date": "2026-09-25",
+  "niche": "Centri Estetici",
+  "feature": "conferme",
+  "feature_label": "Conferme appuntamento",
+  "pain": "clienti che dimenticano l'appuntamento e conferme gestite a mano",
+  "promise": "agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici",
+  "cover_title": "AGENDA SENZA DIMENTICHE",
+  "hook_hint": "Se sei tra i centri estetici e clienti che dimenticano l'appuntamento e conferme gestite a mano, stai perdendo soldi.",
+  "blog_topic": "Centri Estetici: Conferme appuntamento con NeatX",
+  "gameplay_style": "block_miner",
+  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a clean appointment confirmation screen on a smartphone, a client who will not forget, premium realistic lighting",
   "keywords": [
-    "gestionale barbiere",
-    "prenotazioni barbiere",
-    "no show barber shop"
+    "gestionale centro estetico",
+    "prenotazioni estetista",
+    "agenda centro estetico"
   ]
 }
