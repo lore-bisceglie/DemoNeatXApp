@@ -1,18 +1,18 @@
 {
   "date": "2026-09-28",
-  "niche": "Coach e Consulenti",
-  "feature": "timesheet",
-  "feature_label": "Timesheet Commercialista",
-  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
-  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
-  "cover_title": "ORE PERDUTE STOP",
-  "hook_hint": "Se sei tra i coach e consulenti e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
-  "blog_topic": "Coach e Consulenti: Timesheet Commercialista con NeatX",
+  "niche": "Fisioterapisti",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "ADDIO ACCONTI",
+  "hook_hint": "Se sei tra i fisioterapisti e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Fisioterapisti: Zero No-Show con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern office workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "agenda fisioterapista",
+    "prenotazioni fisioterapia",
+    "gestionale fisioterapisti"
   ]
 }
