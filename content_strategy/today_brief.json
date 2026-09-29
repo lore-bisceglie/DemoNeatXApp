@@ -1,18 +1,18 @@
 {
   "date": "2026-09-29",
-  "niche": "Centri Estetici",
-  "feature": "recensioni",
-  "feature_label": "Recensioni Automatiche",
-  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
-  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
-  "cover_title": "PIÙ RECENSIONI, MENO RABBIA",
-  "hook_hint": "Se sei tra i centri estetici e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
-  "blog_topic": "Centri Estetici: Recensioni Automatiche con NeatX",
+  "niche": "Tatuatori",
+  "feature": "timesheet",
+  "feature_label": "Timesheet Commercialista",
+  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+  "cover_title": "TATUATORI: TURNI E CSV",
+  "hook_hint": "Se sei tra i tatuatori e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Timesheet Commercialista con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern beauty center workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
   "keywords": [
-    "gestionale centro estetico",
-    "prenotazioni estetista",
-    "agenda centro estetico"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
