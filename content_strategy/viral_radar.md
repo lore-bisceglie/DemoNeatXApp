@@ -1,24 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-09-29T16:37:47.877959+02:00
+Generato: 2026-09-30T16:38:00.125849+02:00
 
-## Idea 1: Sei tra i tatuatori e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Tatuatori
-- hook: Sei tra i tatuatori e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero ore dei dipendenti segnate a mano su fogli Excel persi.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Se sei un coach stanco di rincorrere i clienti per confermare la sessione, stai perdendo ore di lavoro ogni settimana.
+- title: CONFERME SMART ORA
+- hook: Se sei un coach stanco di rincorrere i clienti per confermare la sessione, stai perdendo ore di lavoro ogni settimana.
+- video_concept: Gameplay in stile runner con testo dinamico a schermo che mostra la transizione da un'agenda piena di appuntamenti dimenticati a una gestione ordinata e senza no-show.
+- blog_title: Coach e Consulenti: Conferme appuntamento con NeatX
+- keywords: ['agenda consulente', 'prenotazioni coach', 'booking consulenze']
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Tatuatori
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Per i consulenti che passano la serata a mandare messaggi manuali per sapere se il cliente si presenterà domani: esiste un modo migliore.
+- title: STOP NO-SHOW CONSULENZE
+- hook: Per i consulenti che passano la serata a mandare messaggi manuali per sapere se il cliente si presenterà domani: esiste un modo migliore.
+- video_concept: Video di gameplay veloce runner con voiceover che spiega l'impatto economico di un'agenda disordinata e come le conferme automatiche risolvono il problema senza stress.
+- blog_title: Come eliminare i no-show nella consulenza senza perdere ore al telefono
+- keywords: ['agenda consulente', 'booking consulenze', 'prenotazioni coach']
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Tatuatori
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Quanti soldi perdi ogni mese quando un cliente si dimentica della tua consulenza all'ultimo minuto? Calcoliamo il danno reale.
+- title: AGENDA ORDINATA SUBITO
+- hook: Quanti soldi perdi ogni mese quando un cliente si dimentica della tua consulenza all'ultimo minuto? Calcoliamo il danno reale.
+- video_concept: Schermata con calcolo matematico delle perdite mensili di un professionista dovute ai no-show, sovrapposta a un gameplay dinamico e rilassante.
+- blog_title: La guida definitiva per proteggere il tempo dei coach dai clienti distratti
+- keywords: ['prenotazioni coach', 'agenda consulente', 'booking consulenze']
+
+## Idea 4: Se gestisci ancora le conferme dei tuoi appuntamenti di coaching manualmente su WhatsApp, stai rallentando la crescita del tuo business.
+- title: BASTA CONFERME A MANO
+- hook: Se gestisci ancora le conferme dei tuoi appuntamenti di coaching manualmente su WhatsApp, stai rallentando la crescita del tuo business.
+- video_concept: Visualizzazione del contrasto tra il caos dei messaggi manuali inviati uno a uno e la pulizia di un sistema di prenotazione centralizzato.
+- blog_title: Perché le conferme di appuntamento manuali stanno danneggiando la tua attività di coaching
+- keywords: ['prenotazioni coach', 'booking consulenze', 'agenda consulente']
+
+## Idea 5: I tuoi clienti dimenticano le sessioni di consulenza perché non hai un sistema di conferma strutturato. Ecco come rimediare oggi stesso.
+- title: PRENOTAZIONI SENZA ERRORI
+- hook: I tuoi clienti dimenticano le sessioni di consulenza perché non hai un sistema di conferma strutturato. Ecco come rimediare oggi stesso.
+- video_concept: Gameplay runner con focus sui benefici di un'agenda sempre aggiornata e pulita, con indicazioni chiare su come configurare il sistema.
+- blog_title: Gestione del tempo per consulenti: come automatizzare i promemoria in modo professionale
+- keywords: ['booking consulenze', 'agenda consulente', 'prenotazioni coach']
