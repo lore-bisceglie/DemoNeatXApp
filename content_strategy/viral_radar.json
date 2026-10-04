@@ -1,71 +1,41 @@
 {
-  "generated_at": "2026-10-03T15:02:48.085910+02:00",
+  "generated_at": "2026-10-04T15:42:04.770166+02:00",
   "signals_used": {
     "reel_history_count": 20,
     "viral_hits_count": 0,
     "blog_titles_count": 10,
-    "today_niche": "Tatuatori"
+    "today_niche": "Personal Trainer"
   },
   "ideas": [
     {
-      "title": "Quanto guadagna davvero un tatuatore",
-      "hook": "Se gestisci uno studio di tatuaggi e non sai quale stile ti fa guadagnare di più a fine mese, stai perdendo soldi.",
-      "pain": "Non sapere quali servizi rendono di più e quanto si incassa realmente al netto dei costi.",
-      "solution": "Dashboard NeatX con statistiche in tempo reale su incassi e performance dei singoli servizi.",
-      "blog_title": "Tatuatori: Statistiche e Dati con NeatX",
-      "keywords": [
-        "agenda tatuatori",
-        "prenotazioni tatuatore"
-      ],
-      "gameplay_style": "runner"
+      "title": "Il filtro definitivo contro i clienti che spariscono all'ultimo minuto",
+      "hook": "Se sei un personal trainer e non usi gli acconti automatici per filtrare chi non si presenta all'allenamento, stai perdendo centinaia di euro ogni settimana.",
+      "concept": "Video con gameplay block_miner in sottofondo. Il testo in sovrimpressione spiega come l'agenda di NeatX cancella automaticamente le prenotazioni non confermate da un acconto, liberando lo slot per clienti realmente interessati.",
+      "blog_title": "Personal Trainer: Zero No-Show con NeatX"
     },
     {
-      "title": "Le ore vuote nel tuo studio di tatuaggi",
-      "hook": "Sai esattamente quali ore e giorni della settimana il tuo studio di tatuaggi resta vuoto e ti fa perdere clienti?",
-      "pain": "Orari vuoti non monitorati e impossibilità di pianificare promozioni mirate nei momenti di calo.",
-      "solution": "Report analitici di NeatX per individuare i trend di prenotazione e ottimizzare i turni.",
-      "blog_title": "Come ottimizzare l'agenda del tuo studio di tatuaggi con i dati",
-      "keywords": [
-        "agenda tatuatori",
-        "prenotazioni tatuatore"
-      ],
-      "gameplay_style": "runner"
+      "title": "Come assicurarsi che ogni ora in sala pesi sia pagata in anticipo",
+      "hook": "Smetti di aspettare clienti che ti avvisano solo dieci minuti prima del turno. Ecco come blindare il tuo calendario obbligando il pagamento di un acconto alla prenotazione.",
+      "concept": "Schermata split-screen: in alto il gameplay block_miner, in basso una simulazione dell'interfaccia NeatX in cui il cliente deve versare l'acconto per confermare lo slot orario.",
+      "blog_title": "Gestione prenotazioni palestra: come azzerare i buchi in agenda"
     },
     {
-      "title": "La verità sulle caparre nei tatuaggi",
-      "hook": "Molti tatuatori non calcolano quanto incidono i no-show sul fatturato mensile prima di inserire la caparra obbligatoria.",
-      "pain": "Mancanza di tracciamento delle perdite economiche dovute ai clienti che non si presentano.",
-      "solution": "Statistiche integrate NeatX per monitorare l'impatto economico dei no-show e gestire le caparre.",
-      "blog_title": "Tatuatori: Zero No-Show con NeatX",
-      "keywords": [
-        "caparra tatuaggio",
-        "prenotazioni tatuatore"
-      ],
-      "gameplay_style": "runner"
+      "title": "Basta rincorrere i clienti per farsi pagare l'acconto",
+      "hook": "Chiedere la ricarica o il bonifico su WhatsApp per confermare l'allenamento ti fa sembrare non professionale. Ecco come rendere il pagamento dell'acconto automatico e invisibile.",
+      "concept": "Focus sul contrasto tra la gestione manuale stressante e la fluidità di un gestionale per personal trainer che automatizza la transazione prima dell'inserimento in calendario.",
+      "blog_title": "Gestionale Personal Trainer: automatizzare gli acconti senza imbarazzo"
     },
     {
-      "title": "Stili di tatuaggio più redditizi",
-      "hook": "Continuare a proporre stili di tatuaggio che richiedono troppe ore ma rendono pochissimo è il modo più rapido per rimetterci soldi.",
-      "pain": "Non conoscere la redditività oraria dei diversi stili di tatuaggio offerti in studio.",
-      "solution": "Analisi delle performance e dei trend di incasso su NeatX per capire cosa spinge davvero il fatturato.",
-      "blog_title": "Tatuatori: Come analizzare i servizi più richiesti",
-      "keywords": [
-        "agenda tatuatori",
-        "caparra tatuaggio"
-      ],
-      "gameplay_style": "runner"
+      "title": "La regola d'oro per non perdere mai più una quota oraria",
+      "hook": "Un'ora vuota nel tuo studio di personal training è un costo fisso che non recuperi. Questo sistema cancella chi prenota ma non paga la caparra entro trenta minuti.",
+      "concept": "Video dinamico che mostra come la funzionalità no-show di NeatX protegge il fatturato dei professionisti del fitness riducendo a zero le ore perse.",
+      "blog_title": "Come proteggere il tuo tempo e ottimizzare il fatturato del tuo studio di personal training"
     },
     {
-      "title": "Inviare i dati al commercialista senza stress",
-      "hook": "Se a fine mese passi ancora ore a sommare gli acconti e le caparre dei tatuaggi per il commercialista, stai sprecando tempo prezioso.",
-      "pain": "Gestione manuale e caotica della contabilità, dei depositi e degli incassi dello studio.",
-      "solution": "Esportazione immediata dei dati e dei report finanziari tramite la dashboard NeatX.",
-      "blog_title": "Tatuatori: Timesheet Commercialista con NeatX",
-      "keywords": [
-        "caparra tatuaggio",
-        "prenotazioni tatuatore"
-      ],
-      "gameplay_style": "runner"
+      "title": "Il segreto dei personal trainer che hanno l'agenda sempre piena e pagata",
+      "hook": "La differenza tra chi fatica a riempire la giornata e chi ha ogni singolo slot prenotato e già pagato sta solo nello strumento di prenotazione che usa.",
+      "concept": "Spiegazione rapida basata su dati e statistiche reali di come l'introduzione della barriera all'ingresso dell'acconto automatico selezioni solo clienti ad alto valore.",
+      "blog_title": "Perché l'acconto automatico aumenta la fidelizzazione dei tuoi clienti di personal training"
     }
   ]
 }
