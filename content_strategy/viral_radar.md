@@ -1,33 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-10-04T15:42:04.770166+02:00
+Generato: 2026-10-05T18:49:11.769032+02:00
 
-## Idea 1: Se sei un personal trainer e non usi gli acconti automatici per filtrare chi non si presenta all'allenamento, stai perdendo centinaia di euro ogni settimana.
-- title: Il filtro definitivo contro i clienti che spariscono all'ultimo minuto
-- hook: Se sei un personal trainer e non usi gli acconti automatici per filtrare chi non si presenta all'allenamento, stai perdendo centinaia di euro ogni settimana.
-- concept: Video con gameplay block_miner in sottofondo. Il testo in sovrimpressione spiega come l'agenda di NeatX cancella automaticamente le prenotazioni non confermate da un acconto, liberando lo slot per clienti realmente interessati.
-- blog_title: Personal Trainer: Zero No-Show con NeatX
+## Idea 1: Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?
+- format: pain shock
+- niche: Centri Estetici
+- hook: Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero telefono che squilla tutto il giorno e messaggi senza fine.
+- cta: Commenta AGENDA e ti mando il link.
 
-## Idea 2: Smetti di aspettare clienti che ti avvisano solo dieci minuti prima del turno. Ecco come blindare il tuo calendario obbligando il pagamento di un acconto alla prenotazione.
-- title: Come assicurarsi che ogni ora in sala pesi sia pagata in anticipo
-- hook: Smetti di aspettare clienti che ti avvisano solo dieci minuti prima del turno. Ecco come blindare il tuo calendario obbligando il pagamento di un acconto alla prenotazione.
-- concept: Schermata split-screen: in alto il gameplay block_miner, in basso una simulazione dell'interfaccia NeatX in cui il cliente deve versare l'acconto per confermare lo slot orario.
-- blog_title: Gestione prenotazioni palestra: come azzerare i buchi in agenda
+## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- format: before after
+- niche: Centri Estetici
+- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- angle: Confronto diretto tra caos manuale e link NeatX.
+- cta: Scrivi DEMO se vuoi provarlo.
 
-## Idea 3: Chiedere la ricarica o il bonifico su WhatsApp per confermare l'allenamento ti fa sembrare non professionale. Ecco come rendere il pagamento dell'acconto automatico e invisibile.
-- title: Basta rincorrere i clienti per farsi pagare l'acconto
-- hook: Chiedere la ricarica o il bonifico su WhatsApp per confermare l'allenamento ti fa sembrare non professionale. Ecco come rendere il pagamento dell'acconto automatico e invisibile.
-- concept: Focus sul contrasto tra la gestione manuale stressante e la fluidità di un gestionale per personal trainer che automatizza la transazione prima dell'inserimento in calendario.
-- blog_title: Gestionale Personal Trainer: automatizzare gli acconti senza imbarazzo
-
-## Idea 4: Un'ora vuota nel tuo studio di personal training è un costo fisso che non recuperi. Questo sistema cancella chi prenota ma non paga la caparra entro trenta minuti.
-- title: La regola d'oro per non perdere mai più una quota oraria
-- hook: Un'ora vuota nel tuo studio di personal training è un costo fisso che non recuperi. Questo sistema cancella chi prenota ma non paga la caparra entro trenta minuti.
-- concept: Video dinamico che mostra come la funzionalità no-show di NeatX protegge il fatturato dei professionisti del fitness riducendo a zero le ore perse.
-- blog_title: Come proteggere il tuo tempo e ottimizzare il fatturato del tuo studio di personal training
-
-## Idea 5: La differenza tra chi fatica a riempire la giornata e chi ha ogni singolo slot prenotato e già pagato sta solo nello strumento di prenotazione che usa.
-- title: Il segreto dei personal trainer che hanno l'agenda sempre piena e pagata
-- hook: La differenza tra chi fatica a riempire la giornata e chi ha ogni singolo slot prenotato e già pagato sta solo nello strumento di prenotazione che usa.
-- concept: Spiegazione rapida basata su dati e statistiche reali di come l'introduzione della barriera all'ingresso dell'acconto automatico selezioni solo clienti ad alto valore.
-- blog_title: Perché l'acconto automatico aumenta la fidelizzazione dei tuoi clienti di personal training
+## Idea 3: Un no-show non è un fastidio, è fatturato perso.
+- format: calculator
+- niche: Centri Estetici
+- hook: Un no-show non è un fastidio, è fatturato perso.
+- angle: Stima soldi persi in un mese e collega promemoria/acconto.
+- cta: Commenta AGENDA.
