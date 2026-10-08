@@ -1,24 +1,38 @@
 # NeatX Viral Radar
 
-Generato: 2026-10-07T17:05:44.862396+02:00
+Generato: 2026-10-08T17:13:49.780795+02:00
 
-## Idea 1: Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?
-- format: pain shock
-- niche: Parrucchieri
-- hook: Sei tra i parrucchieri e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero acconti automatici che filtrano i clienti che non si presentano.
-- cta: Commenta AGENDA e ti mando il link.
+## Idea 1: Automazione turni e ferie per studi di coaching
+- title: Automazione turni e ferie per studi di coaching
+- video_hook: Se gestisci uno studio di coaching con più collaboratori e perdi ore a incastrare ferie e turni su WhatsApp, stai letteralmente buttando via soldi.
+- video_concept: Sfondo video stile neon_racer con scritte rapide a schermo che mostrano il caos di una chat di gruppo paragonato alla pulizia di un'agenda centralizzata NeatX.
+- blog_title: Come coordinare i turni dei collaboratori nel tuo studio di consulenza senza impazzire
+- keywords: ['agenda consulente', 'gestione staff coaching', 'coordinamento turni consulenti']
 
-## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- format: before after
-- niche: Parrucchieri
-- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
-- angle: Confronto diretto tra caos manuale e link NeatX.
-- cta: Scrivi DEMO se vuoi provarlo.
+## Idea 2: Stop all'assegnazione errata dei clienti
+- title: Stop all'assegnazione errata dei clienti
+- video_hook: Il peggior incubo di un consulente? Un cliente che prenota una sessione strategica e finisce nell'agenda del collaboratore sbagliato mandando all'aria la giornata.
+- video_concept: Gameplay neon_racer ad alta velocità con testo che spiega come NeatX distribuisca automaticamente i clienti al professionista corretto in base alla specializzazione.
+- blog_title: Assegnazione clienti automatica: come evitare errori di prenotazione nel tuo team di coach
+- keywords: ['booking consulenze', 'assegnazione clienti automatica', 'software prenotazione coaching']
 
-## Idea 3: Un no-show non è un fastidio, è fatturato perso.
-- format: calculator
-- niche: Parrucchieri
-- hook: Un no-show non è un fastidio, è fatturato perso.
-- angle: Stima soldi persi in un mese e collega promemoria/acconto.
-- cta: Commenta AGENDA.
+## Idea 3: Agende separate per ogni collaboratore dello studio
+- title: Agende separate per ogni collaboratore dello studio
+- video_hook: Ecco come i migliori studi di consulenza gestiscono dieci collaboratori diversi con agende separate e sincronizzate senza inviare un singolo messaggio di conferma manuale.
+- video_concept: Montaggio dinamico con stile neon_racer che mette a confronto la visualizzazione delle singole agende configurate su NeatX.
+- blog_title: Coach e Consulenti: Gestione Staff con NeatX
+- keywords: ['agenda consulente', 'prenotazioni coach', 'booking consulenze']
+
+## Idea 4: Risoluzione dei conflitti di ferie e sovrapposizioni
+- title: Risoluzione dei conflitti di ferie e sovrapposizioni
+- video_hook: Se lo staff del tuo centro di consulenza si ritrova con appuntamenti sovrapposti durante i giorni di ferie, il problema non sono i tuoi collaboratori ma lo strumento che usi.
+- video_concept: Grafica testuale su gameplay neon_racer che mostra l'impostazione automatica dei blocchi orari per le ferie approvate su NeatX.
+- blog_title: Gestione ferie e turni per studi di coaching: la guida definitiva all'automazione
+- keywords: ['booking consulenze', 'gestione ferie staff', 'agenda consulente']
+
+## Idea 5: Eliminare Excel per la gestione dello staff di consulenza
+- title: Eliminare Excel per la gestione dello staff di consulenza
+- video_hook: Gestire i turni dello studio di coaching su Excel ti costa fino a cinque ore a settimana che potresti vendere come consulenze individuali ad alto valore.
+- video_concept: Video con ritmo incalzante neon_racer incentrato sul calcolo del tempo risparmiato e sul guadagno effettivo grazie all'automatizzazione dei turni dello staff.
+- blog_title: Perché Excel sta distruggendo la produttività del tuo team di consulenza
+- keywords: ['prenotazioni coach', 'gestione staff consulenza', 'software gestione turni']
