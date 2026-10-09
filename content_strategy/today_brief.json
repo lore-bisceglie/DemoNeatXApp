@@ -1,18 +1,18 @@
 {
-  "date": "2026-10-08",
-  "niche": "Coach e Consulenti",
+  "date": "2026-10-09",
+  "niche": "Tatuatori",
   "feature": "multi_staff",
   "feature_label": "Gestione Staff",
   "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
   "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
-  "cover_title": "ADDIO TURNI",
-  "hook_hint": "Se sei tra i coach e consulenti e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
-  "blog_topic": "Coach e Consulenti: Gestione Staff con NeatX",
-  "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern office workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
+  "cover_title": "STAFF TATUATORI ORGANIZZATO",
+  "hook_hint": "Se sei tra i tatuatori e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
+  "blog_topic": "Tatuatori: Gestione Staff con NeatX",
+  "gameplay_style": "runner",
+  "image_prompt": "photorealistic cinematic scene inside a modern tattoo studio workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "prenotazioni tatuatore",
+    "agenda tatuatori",
+    "caparra tatuaggio"
   ]
 }
