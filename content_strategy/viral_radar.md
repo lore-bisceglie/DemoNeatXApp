@@ -1,24 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-10-10T16:14:21.933981+02:00
+Generato: 2026-10-11T16:39:09.210436+02:00
 
-## Idea 1: Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?
+## Idea 1: Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?
 - format: pain shock
-- niche: Centri Estetici
-- hook: Sei tra i centri estetici e stai ancora gestendo tutto su WhatsApp?
-- angle: Mostra quanto costa davvero turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato.
+- niche: Fisioterapisti
+- hook: Sei tra i fisioterapisti e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche.
 - cta: Commenta AGENDA e ti mando il link.
 
 ## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
 - format: before after
-- niche: Centri Estetici
+- niche: Fisioterapisti
 - hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
 - angle: Confronto diretto tra caos manuale e link NeatX.
 - cta: Scrivi DEMO se vuoi provarlo.
 
 ## Idea 3: Un no-show non è un fastidio, è fatturato perso.
 - format: calculator
-- niche: Centri Estetici
+- niche: Fisioterapisti
 - hook: Un no-show non è un fastidio, è fatturato perso.
 - angle: Stima soldi persi in un mese e collega promemoria/acconto.
 - cta: Commenta AGENDA.
