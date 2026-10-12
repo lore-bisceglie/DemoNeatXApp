@@ -1,18 +1,18 @@
 {
   "date": "2026-10-12",
-  "niche": "Parrucchieri",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "ACCONTI NON PERDUTI",
-  "hook_hint": "Se sei tra i parrucchieri e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Parrucchieri: Zero No-Show con NeatX",
+  "niche": "Barbieri",
+  "feature": "booking",
+  "feature_label": "Prenotazione 24 ore su 24",
+  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
+  "promise": "clienti che prenotano da soli anche mentre dormi",
+  "cover_title": "ADDIO TELEFONO",
+  "hook_hint": "Se sei tra i barbieri e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Prenotazione 24 ore su 24 con NeatX",
   "gameplay_style": "runner",
-  "image_prompt": "photorealistic cinematic scene inside a modern Italian hair salon workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
   "keywords": [
-    "gestionale parrucchieri",
-    "prenotazioni parrucchiere",
-    "agenda salone"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
