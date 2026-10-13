@@ -1,18 +1,18 @@
 {
   "date": "2026-10-13",
-  "niche": "Fisioterapisti",
-  "feature": "multi_staff",
-  "feature_label": "Gestione Staff",
-  "pain": "turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato",
-  "promise": "ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto",
-  "cover_title": "FISIOTERAPISTI: AGENDAS SEPARATE",
-  "hook_hint": "Se sei tra i fisioterapisti e turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Gestione Staff con NeatX",
+  "niche": "Personal Trainer",
+  "feature": "no_show",
+  "feature_label": "Zero No-Show",
+  "pain": "acconti automatici che filtrano i clienti che non si presentano",
+  "promise": "ogni slot occupato da clienti che hanno già pagato",
+  "cover_title": "SLOT OCCUPATI GARANTITI",
+  "hook_hint": "Se sei tra i personal trainer e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: Zero No-Show con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: separate agendas for multiple staff members on a screen with organized shifts and assignments, a calm coordinated team, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
