@@ -1,0 +1,1 @@
+# Bozze Email di Benvenuto - 2026-10-13\n\n## Email per Luca (Ink Master Studio)\n[Errore di generazione AI. Riprovare più tardi.]\n\n---\n\n## Email per Sara (Nails & Beauty)\n[Errore di generazione AI. Riprovare più tardi.]\n\n---\n\n
