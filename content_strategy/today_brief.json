@@ -1,18 +1,18 @@
 {
   "date": "2026-10-16",
-  "niche": "Fisioterapisti",
-  "feature": "booking",
-  "feature_label": "Prenotazione 24 ore su 24",
-  "pain": "telefono che squilla tutto il giorno e messaggi senza fine",
-  "promise": "clienti che prenotano da soli anche mentre dormi",
-  "cover_title": "CALMA NOTTE TUTTI",
-  "hook_hint": "Se sei tra i fisioterapisti e telefono che squilla tutto il giorno e messaggi senza fine, stai perdendo soldi.",
-  "blog_topic": "Fisioterapisti: Prenotazione 24 ore su 24 con NeatX",
+  "niche": "Barbieri",
+  "feature": "timesheet",
+  "feature_label": "Timesheet Commercialista",
+  "pain": "ore dei dipendenti segnate a mano su fogli Excel persi",
+  "promise": "turni, ferie e permessi in un click, CSV pronto per il commercialista",
+  "cover_title": "ORE PERDUTE STOP",
+  "hook_hint": "Se sei tra i barbieri e ore dei dipendenti segnate a mano su fogli Excel persi, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Timesheet Commercialista con NeatX",
   "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern physiotherapy clinic workplace: a client booking an appointment by themselves on a smartphone app while the professional is free and not on the phone, a clean modern booking screen, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a digital timesheet dashboard on a screen showing staff shifts and a ready CSV file for the accountant, no paper or spreadsheets, premium realistic lighting",
   "keywords": [
-    "agenda fisioterapista",
-    "prenotazioni fisioterapia",
-    "gestionale fisioterapisti"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
