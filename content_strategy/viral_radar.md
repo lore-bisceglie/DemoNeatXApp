@@ -1,38 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-10-18T14:27:34.148505+02:00
+Generato: 2026-10-19T17:18:35.568400+02:00
 
-## Idea 1: Se sei un consulente o un coach e ti ritrovi ancora con orari buchi perché i clienti non si presentano, stai letteralmente regalando il tuo tempo.
-- title: Quanto ti costa davvero ogni no-show nella tua consulenza
-- hook: Se sei un consulente o un coach e ti ritrovi ancora con orari buchi perché i clienti non si presentano, stai letteralmente regalando il tuo tempo.
-- concept: Dimostrazione pratica di quanti guadagni si perdono ogni mese senza un sistema di acconto automatico. Si mostra come l'inserimento della caparra obbligatoria all'atto della prenotazione su NeatX elimini del tutto chi fa perdere tempo.
-- blog_title: Coach e Consulenti: Zero No-Show con NeatX
-- call_to_action: Attiva gli acconti automatici su NeatX e blocca solo clienti davvero interessati.
+## Idea 1: Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?
+- format: pain shock
+- niche: Coach e Consulenti
+- hook: Sei tra i coach e consulenti e stai ancora gestendo tutto su WhatsApp?
+- angle: Mostra quanto costa davvero acconti automatici che filtrano i clienti che non si presentano.
+- cta: Commenta AGENDA e ti mando il link.
 
-## Idea 2: I coach professionisti non rincorrono i clienti per confermare gli appuntamenti: usano gli acconti automatici per selezionare solo chi è motivato a pagare.
-- title: Come filtrare i clienti poco seri prima della prima call
-- hook: I coach professionisti non rincorrono i clienti per confermare gli appuntamenti: usano gli acconti automatici per selezionare solo chi è motivato a pagare.
-- concept: Analisi della psicologia del cliente. Impostare una caparra non allontana i clienti buoni, ma fa da filtro naturale contro i curiosi, garantendo che ogni slot in agenda sia saldato.
-- blog_title: Come eliminare i clienti fantasma nelle consulenze online e dal vivo
-- call_to_action: Configura la tua agenda NeatX con caparra preventiva in meno di due minuti.
+## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- format: before after
+- niche: Coach e Consulenti
+- hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
+- angle: Confronto diretto tra caos manuale e link NeatX.
+- cta: Scrivi DEMO se vuoi provarlo.
 
-## Idea 3: Il consulente A passa la domenica a mandare messaggi di promemoria. Il consulente B ha la settimana piena di slot confermati e già pagati su NeatX.
-- title: Consulente A vs Consulente B: la gestione dell'agenda
-- hook: Il consulente A passa la domenica a mandare messaggi di promemoria. Il consulente B ha la settimana piena di slot confermati e già pagati su NeatX.
-- concept: Format di confronto visivo tra due metodi di lavoro. Evidenzia la differenza di stress e fatturato tra chi subisce i no-show e chi automatizza l'incasso della caparra.
-- blog_title: Ottimizzare il booking per consulenti: automazione e pagamenti anticipati
-- call_to_action: Smetti di mandare promemoria manuali: prova NeatX oggi stesso.
-
-## Idea 4: Se ti vergogni a chiedere un acconto per la tua sessione di coaching, stai abbassando il valore percepito del tuo servizio.
-- title: Perché chiedere l'acconto aumenta il valore della tua consulenza
-- hook: Se ti vergogni a chiedere un acconto per la tua sessione di coaching, stai abbassando il valore percepito del tuo servizio.
-- concept: Spiegazione di come il pagamento anticipato o il versamento della caparra posizioni il coach come figura d'elite, aumentando l'impegno del cliente e la presenza effettiva agli appuntamenti.
-- blog_title: Aumentare il valore percepito della tua consulenza con il sistema di caparra
-- call_to_action: Proteggi il tuo tempo da consulente con NeatX.
-
-## Idea 5: Tre appuntamenti annullati all'ultimo minuto questa settimana? Ecco la procedura esatta per azzerare i no-show nel tuo studio di consulenza.
-- title: Addio promemoria manuali e sessioni saltate all'ultimo minuto
-- hook: Tre appuntamenti annullati all'ultimo minuto questa settimana? Ecco la procedura esatta per azzerare i no-show nel tuo studio di consulenza.
-- concept: Tutorial rapido che mostra l'esperienza utente su NeatX: il cliente sceglie la data, paga l'acconto e riceve la conferma automatica con lo slot bloccato.
-- blog_title: Guida pratica: impostare acconti automatici per coach e consulenti
-- call_to_action: Passa a NeatX e riempi la tua agenda solo con appuntamenti confermati.
+## Idea 3: Un no-show non è un fastidio, è fatturato perso.
+- format: calculator
+- niche: Coach e Consulenti
+- hook: Un no-show non è un fastidio, è fatturato perso.
+- angle: Stima soldi persi in un mese e collega promemoria/acconto.
+- cta: Commenta AGENDA.
