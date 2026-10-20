@@ -1,43 +1,43 @@
 # NeatX Content Calendar
 
-## 2026-10-20 - Personal Trainer - Zero No-Show
-- Dolore: acconti automatici che filtrano i clienti che non si presentano
-- Promessa: ogni slot occupato da clienti che hanno già pagato
-- Cover: CANCELLA NO-SHOW
-- Blog: Personal Trainer: Zero No-Show con NeatX
-
-## 2026-10-21 - Barbieri - Prenotazione 24 ore su 24
-- Dolore: telefono che squilla tutto il giorno e messaggi senza fine
-- Promessa: clienti che prenotano da soli anche mentre dormi
-- Cover: AUTOMATIZZA PRENOTAZIONI
-- Blog: Barbieri: Prenotazione 24 ore su 24 con NeatX
-
-## 2026-10-22 - Centri Estetici - Statistiche e Dati
-- Dolore: non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti
-- Promessa: dashboard con incassi, trend e performance in tempo reale
-- Cover: TRACCIA I GUADAGNI
-- Blog: Centri Estetici: Statistiche e Dati con NeatX
-
-## 2026-10-23 - Parrucchieri - Recensioni Automatiche
+## 2026-10-20 - Barbieri - Recensioni Automatiche
 - Dolore: clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche
 - Promessa: recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta
-- Cover: OTTIMIZZA RECENSIONI
-- Blog: Parrucchieri: Recensioni Automatiche con NeatX
+- Cover: CLIENTI SILENZIOSI
+- Blog: Barbieri: Recensioni Automatiche con NeatX
 
-## 2026-10-24 - Tatuatori - Conferme appuntamento
+## 2026-10-21 - Personal Trainer - Prenotazione 24 ore su 24
+- Dolore: telefono che squilla tutto il giorno e messaggi senza fine
+- Promessa: clienti che prenotano da soli anche mentre dormi
+- Cover: AUTO-PRENOTAZIONE
+- Blog: Personal Trainer: Prenotazione 24 ore su 24 con NeatX
+
+## 2026-10-22 - Parrucchieri - Statistiche e Dati
+- Dolore: non sai quanto guadagni davvero, quali servizi rendono di piu, quali orari sono vuoti
+- Promessa: dashboard con incassi, trend e performance in tempo reale
+- Cover: GUADAGNI NASCOSTI
+- Blog: Parrucchieri: Statistiche e Dati con NeatX
+
+## 2026-10-23 - Coach e Consulenti - Conferme appuntamento
 - Dolore: clienti che dimenticano l'appuntamento e conferme gestite a mano
 - Promessa: agenda più ordinata e meno no-show senza promettere invii WhatsApp automatici
-- Cover: CONFERME INSTANTANEE
-- Blog: Tatuatori: Conferme appuntamento con NeatX
+- Cover: NO-SHOW ZERO
+- Blog: Coach e Consulenti: Conferme appuntamento con NeatX
 
-## 2026-10-25 - Fisioterapisti - Timesheet Commercialista
-- Dolore: ore dei dipendenti segnate a mano su fogli Excel persi
-- Promessa: turni, ferie e permessi in un click, CSV pronto per il commercialista
-- Cover: SEMPLIFICA TIMESHEET
-- Blog: Fisioterapisti: Timesheet Commercialista con NeatX
+## 2026-10-24 - Fisioterapisti - Zero No-Show
+- Dolore: acconti automatici che filtrano i clienti che non si presentano
+- Promessa: ogni slot occupato da clienti che hanno già pagato
+- Cover: CLIENTI INAFFIDABILI
+- Blog: Fisioterapisti: Zero No-Show con NeatX
 
-## 2026-10-26 - Coach e Consulenti - Gestione Staff
+## 2026-10-25 - Tatuatori - Gestione Staff
 - Dolore: turni multipli, ferie da coordinare e clienti assegnati al collaboratore sbagliato
 - Promessa: ogni staff con la propria agenda, turni automatici e clienti assegnati al professionista giusto
-- Cover: ORGANIZZA STAFF EFFICACEMENTE
-- Blog: Coach e Consulenti: Gestione Staff con NeatX
+- Cover: CLIENTI SMARRITI
+- Blog: Tatuatori: Gestione Staff con NeatX
+
+## 2026-10-26 - Centri Estetici - Timesheet Commercialista
+- Dolore: ore dei dipendenti segnate a mano su fogli Excel persi
+- Promessa: turni, ferie e permessi in un click, CSV pronto per il commercialista
+- Cover: ORE PERDUTE
+- Blog: Centri Estetici: Timesheet Commercialista con NeatX

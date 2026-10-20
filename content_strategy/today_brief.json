@@ -1,18 +1,18 @@
 {
   "date": "2026-10-20",
-  "niche": "Personal Trainer",
-  "feature": "no_show",
-  "feature_label": "Zero No-Show",
-  "pain": "acconti automatici che filtrano i clienti che non si presentano",
-  "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "CANCELLA NO-SHOW",
-  "hook_hint": "Se sei tra i personal trainer e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Personal Trainer: Zero No-Show con NeatX",
+  "niche": "Barbieri",
+  "feature": "recensioni",
+  "feature_label": "Recensioni Automatiche",
+  "pain": "clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche",
+  "promise": "recensioni Google da ogni cliente soddisfatto, feedback privato per chi si lamenta",
+  "cover_title": "CLIENTI SILENZIOSI",
+  "hook_hint": "Se sei tra i barbieri e clienti soddisfatti che non lasciano recensioni e clienti arrabbiati che le lasciano pubbliche, stai perdendo soldi.",
+  "blog_topic": "Barbieri: Recensioni Automatiche con NeatX",
   "gameplay_style": "neon_racer",
-  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "image_prompt": "photorealistic cinematic scene inside a luxury barber shop workplace: a 5-star Google review notification appearing on a smartphone right after an appointment, a happy satisfied client, premium realistic lighting",
   "keywords": [
-    "agenda personal trainer",
-    "prenotazioni palestra",
-    "gestionale personal trainer"
+    "gestionale barbiere",
+    "prenotazioni barbiere",
+    "no show barber shop"
   ]
 }
