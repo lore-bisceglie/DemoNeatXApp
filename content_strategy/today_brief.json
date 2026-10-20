@@ -1,18 +1,18 @@
 {
-  "date": "2026-10-19",
-  "niche": "Coach e Consulenti",
+  "date": "2026-10-20",
+  "niche": "Personal Trainer",
   "feature": "no_show",
   "feature_label": "Zero No-Show",
   "pain": "acconti automatici che filtrano i clienti che non si presentano",
   "promise": "ogni slot occupato da clienti che hanno già pagato",
-  "cover_title": "BASTA NO SHOW",
-  "hook_hint": "Se sei tra i coach e consulenti e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
-  "blog_topic": "Coach e Consulenti: Zero No-Show con NeatX",
-  "gameplay_style": "block_miner",
-  "image_prompt": "photorealistic cinematic scene inside a modern office workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
+  "cover_title": "CANCELLA NO-SHOW",
+  "hook_hint": "Se sei tra i personal trainer e acconti automatici che filtrano i clienti che non si presentano, stai perdendo soldi.",
+  "blog_topic": "Personal Trainer: Zero No-Show con NeatX",
+  "gameplay_style": "neon_racer",
+  "image_prompt": "photorealistic cinematic scene inside a modern gym workplace: a smartphone showing a confirmed appointment with a paid deposit, a calendar with the time slot marked as paid and locked, a calm professional in the background, premium realistic lighting",
   "keywords": [
-    "agenda consulente",
-    "prenotazioni coach",
-    "booking consulenze"
+    "agenda personal trainer",
+    "prenotazioni palestra",
+    "gestionale personal trainer"
   ]
 }
