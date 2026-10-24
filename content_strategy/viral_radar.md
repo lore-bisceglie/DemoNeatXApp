@@ -1,24 +1,24 @@
 # NeatX Viral Radar
 
-Generato: 2026-10-23T15:05:10.901589+02:00
+Generato: 2026-10-24T14:27:22.295961+02:00
 
-## Idea 1: Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?
+## Idea 1: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
 - format: pain shock
-- niche: Barbieri
-- hook: Sei tra i barbieri e stai ancora gestendo tutto su WhatsApp?
+- niche: Personal Trainer
+- hook: Sei tra i personal trainer e stai ancora gestendo tutto su WhatsApp?
 - angle: Mostra quanto costa davvero clienti che dimenticano l'appuntamento e conferme gestite a mano.
 - cta: Commenta AGENDA e ti mando il link.
 
 ## Idea 2: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
 - format: before after
-- niche: Barbieri
+- niche: Personal Trainer
 - hook: Prima agenda piena di messaggi, dopo clienti che prenotano da soli.
 - angle: Confronto diretto tra caos manuale e link NeatX.
 - cta: Scrivi DEMO se vuoi provarlo.
 
 ## Idea 3: Un no-show non è un fastidio, è fatturato perso.
 - format: calculator
-- niche: Barbieri
+- niche: Personal Trainer
 - hook: Un no-show non è un fastidio, è fatturato perso.
 - angle: Stima soldi persi in un mese e collega promemoria/acconto.
 - cta: Commenta AGENDA.
